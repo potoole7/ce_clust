@@ -1,0 +1,218 @@
+\documentclass{article}
+
+\usepackage[top=3cm, bottom=3cm, left=3cm,right=3cm]{geometry}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage{graphicx}
+\usepackage{bm}
+\usepackage{titlesec}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{bbm}
+\usepackage{todonotes}
+\usepackage{pdflscape}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{authblk}
+\usepackage{pdfpages}
+\usepackage{setspace} 
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{tikz}
+\usepackage[colorlinks=true,citecolor=blue, linkcolor=blue]{hyperref}
+\usepackage{multirow}
+\usepackage{todonotes}
+\setlength{\tabcolsep}{5pt}
+%%\setlength{\parindent}{0pt}
+\usepackage[parfill]{parskip}
+\renewcommand{\arraystretch}{1.5}
+
+% \renewcommand\Affilfont{\itshape\footnotesize}
+% \def\ci{\perp\!\!\!\perp}
+
+% \renewcommand\Affilfont{\itshape\footnotesize}
+% \linespread{1.5}
+
+% Nature Bibliography style
+% \usepackage[backend=biber,style=nature]{biblatex}
+% \addbibresource{library.bib} 
+
+\title{Extreme Value Theory Notes}
+\author{Paddy O'Toole}
+\date{\today}
+
+\begin{document}
+
+
+\maketitle
+
+\tableofcontents
+
+
+\todo{Add back in when bib file is created}
+\todo{Remove warnings from chktex}
+% \todo{Add macros for Y-i, a_mid_i, b_mid_i?}
+% \todo{Get snippets working with vimtex(just use c-s)}
+\todo{Add introduction, including stuff from Coles book?}
+\todo{How to number equations?}
+\todo{Correct spelling mistakes etc}
+
+\section{Introduction}\label{sec:intro}
+
+\section{Univariate extremes}\label{sec:uni}
+
+\section{Conditional extremes model}\label{sec:ce}
+
+\todo{Look back into page 500 and equation 1.5, needed here?}
+
+\begin{itemize} 
+  \item Continuous vector variable $\bm{X} = (X_1, X_2, \ldots, X_d)$. 
+  \item Want to estimate $\mathbb{P}(\bm{X} \in \bm{C})$, where $\bm{C}$ is an extreme set such that $\forall \bm{X} \in \bm{C}$, at least one component of $\bm{X}$ i extreme. 
+  \item $C_i$ corresponds to the part of $C$ for which $X_i$ is the largest component of $\bm{X}$, by quantiles of the marginal distribution. 
+  \item $C_i = C \cap \left\{ \bm{x} \in \mathbb{R}^d: F_{X_i}(x_i) > F_{X_j}(x_j); j = 1, \ldots, d; j \ne i \right\}$ for $i = 1, \ldots, d$., where $F_{X_i}$ is the marginal distribution function of $X_i$.\todo{Double check capitalisation on Fs}
+  \item Ignore subsets $C \cap \left\{ \bm{X} \in \mathbb{R}^d: F_{X_i}(X_i) = F_{X_j}(x_j) \text{for some} j \ne i \right\}$, as they are null sets. 
+  \item C is an extreme set if all $x_i$-values in non-empty $C_i$ fall in upper tail of $F_{X_i}$, i.e.\ if $\nu_{X_i} = \inf_{\bm{x} \in C_i}{(x_i)}$, then $F_{X_i}(\nu_{X_i})$ is close 1 for $i = 1, \ldots, d$, so 
+  \[
+  \mathbb{P}(\bm{X} \in \bm{C}) = \sum_{i=1}^{d}{\mathbb{P}(\bm{X} \in C_i)} = \sum_{i=1}^{d}\textcolor{blue}{\mathbb{P}(\bm{X} \in C_i\mid X_i > \nu_{X_i})}\textcolor{red}{\mathbb{P}(X_i> \nu_{X_i})}
+  \]
+  \item \textcolor{red}{red probability is estimated with marginal extreme value model}, while the \textcolor{blue}{blue probability is estimated using an extreme value model for the dependence structure}. 
+\end{itemize}
+
+\subsection{Marginal extremes model}
+
+\begin{itemize}
+  \item Model marginal tail of $X_i$ with Generalised Pareto distribution (GPD):
+    \[
+      \mathbb{P}(X_i > x + u_{X_i} \mid X_i > u_{X_i}) = {(1 + \xi_ix/\sigma_i)}_{+}^{-1/\xi_i}, x > 0 \todo{Fix this!}
+    \]
+    where $u_{X_i}$ is a high threshold, $\xi_i$ is the shape parameter, $\sigma_i$ is the scale parameter, and ${x}_{+} = \max(x, 0)$.
+  \item Require a model for complete marginal distribution $F_{X_i}$  of $X_i$, so need to describe all $X_j$ values that can occur with any large $X_i$ value, which leads to the following piecewise semi-parametric model:
+    \[
+      \hat{F}_{X_i}(x) = \begin{cases}
+        1 - \{ 1 - \tilde{F}_{X_i}(u_{X_i})\} \left\{1 + \xi_i(x - u_{X_i})/\sigma_i\right\}_{+}^{-1/\xi_i} & \text{if } x > u_{X_i} \\
+        \tilde{F}_{X_i}(x) & \text{if } x \le u_{X_i}
+      \end{cases}
+    \]
+    where $\tilde{F}_{X_i}$ is the empirical distribution function of the $X_i$ values. 
+  \item This gives us estimates of $\mathbb{P}(X_i < \nu_{X_i})$.
+\end{itemize}
+
+\subsection{Marginal transformation}
+
+\todo{Describe need for marginal transformation to estimate dependence model}
+
+\subsubsection{Gumbel transformation}
+
+\begin{align*}
+  Y_i &= -\log[-\log\{\hat{F}_{X_i}(X_i)\}], i = 1, \ldots, d \\
+      &= t_i(X_i; \phi_i, \tilde{F}_{X_i}(X_i)) \\
+      &= t_i(X_i),
+\end{align*}
+where $\phi_i = (\sigma_i, \xi_i)$ are marginal parameters. \\
+This gives $\mathbb{P}(Y_i \le y) = \exp(-\exp(-y)) \implies \mathbb{P}(Y_i > y) \sim \exp(-y) \text{ as } y \rightarrow \infty$, so $Y_i$ has an exponential upper tail. 
+
+\subsubsection{Laplace transformation}
+Following \todo{Insert citation for Keef}, the Laplace transformation is given by
+\todo{Check capitalisation, F vs F hat here}
+\[
+  Y_i = \begin{cases}
+    \log\{2F_{X_i}(x_i)\} &\text{ for } X_i < F_{X_i}^{-1}(0.5) \\
+    -\log\{2[1 - F_{X_i}(x_i)]\} &\text{ for } X_i \ge F_{X_i}^{-1}(0.5) \\
+  \end{cases}
+\]
+which means that 
+\[
+  \mathbb{P}(Y_i \le y) = \begin{cases}
+    \exp(y)/2 &\text{ for } y < 0 \\
+    1-\exp(-y)/2 &\text{ for } y \ge 0 \\
+  \end{cases}
+\]
+so that both tails of $Y_i$ are exponential, and so for any $u > 0$, the distribution of $Y_i - u \mid Y_i > u$ and $(-Y_i + u) \mid Y_i \le -u$ are exponential with mean 1. 
+This greatly simplifies the normalising functions seen in section \todo{reference section}, as for Gumbel margins a more complex normalising function is required for negatively associated variables. 
+
+\subsection{Asymptotic dependence}
+
+\begin{itemize}
+  \item $
+      \lim_{y \rightarrow \infy}\{\mathbb{P}(\bm{Y}_{-i} \mid Y_i > y)\} = \begin{cases}
+      0 &\text{for asymptotic independence} \\
+      \ne 0 &\text{for asymptotic dependence}, 
+    \end{cases}
+    $ \\
+  where $\bm{Y}_{-i} = (Y_1, Y_2, \ldots, Y_{i-1}, Y_{i+1}, \ldots, Y_d)$. 
+  \item Existing methods for multivariate extremes (e.g.\ max-stable processes, copulas) can only model $\mathbb{P}(\bm{X} \in C)$ under asymptotic dependence.\todo{revisit this and talk a bit more about it!}
+\end{itemize}
+
+\subsubsection{Limit assumption}
+
+\begin{itemize}
+  \item For each $Y_i$, want to estimate $\mathbb{P}(Y_{-i} \le y_{-i} \mid Y_i = y_i)$ as $y \rightarrow \infty$. 
+  \item We require the limiting distribution to be non-degenerate for all margins (see section\ref{sec:uni})
+  \item Therefore, assume for every $i$ that there are vector normalising functions $\bm{a}_{\mid i}(y_i),\bm{b}_{\mid i}(y_i), \in \mathbb{R} \righarrow \mathbb{R}^{(d-1)}$ such that for fixed $\bm{z}_{\mid i}$, 
+    \[
+      \lim_{y_i \rightarrow \infty}\{\mathbb{P}(\bm{Y}_{-i} \le \bm{a}_{\mid i}(y_i) + \bm{b}_{\mid i}(y_i)\bm{z}_{\mid i} \mid Y_i = y_i)\} = \bm{G}_{\mid i}(\bm{z}_{\mid i})
+    \] \todo{revisit, probably wrong}
+    where all margins of $\bm{G}_{\mid i}$ are non-degenerate, so 
+    \[
+    \lim_{z \rightarrow \infty}{\bm{G}_{j \mid i}(\bm{z})} = 1, \forall j \ne i
+    \] (no mass at $+\infty$, some allowed at $-\infty$).
+  \item Alternatively, the standardised variables
+    \[
+      \bm{Z}_{\mid i} = \frac{\bm{Y}_{-i} - \bm{a}_{\mid i}(y_i)} {\bm{b}_{\mid i}(y_i)}
+    \]
+    have the property that 
+    \[
+      \lim_{y_i \rightarrow \infty}\{\mathbb{P}(\bm{Z}_{\mid i} \le \bm{z}_{\mid i} \mid Y_i = y_i)\} = \bm{G}_{\mid i}(\bm{z}_{\mid i})
+    \]
+  \item Conditional on $Y_i > u_i$ as $u_i \rightarrow \infty$, $Y_i  - u_i$ and $\bm{Z}_{\mid i}$ are independent in the limit with limiting marginal distributions being exponential and $G_{\mid i}$ respectively:
+    \[
+      \mathbb{P}(\bm{Z}_{\mid i} \le \bm{z}_{\mid i}, Y_i - u_i = y_i \mid Y_i > u_i) \rightarrow G_{\mid i}(\bm{z}_i) \exp(-y) \text{ ,as } u_i \rightarrow \infty
+    \]
+  \item For each $j \ne i$, 
+    \[
+      Z_{j\mid i} = \frac{Y_j - a_{j\mid i}(y_i)}{b_{j\mid i}(y_i)} \sim G_{j\mid i}(z_{j\mid i}) \text { given } Y_i = y \text{ as } y_i \rightarrow \infty
+    \]
+    $\implies G_{j \mid i}$ is the marginal distribution of $G_{\mid i}$ associated with $Y_j$.
+\end{itemize}
+
+\subsubsection{Normalisation}
+
+\subsection{Conditional dependence model}
+
+\subsection{Extrapolation}
+
+\subsection{Diagnostics}
+
+\subsection{Inference}
+
+\subsubsection{All conditionals}
+
+\subsection{Uncertainty estimation (bootstrap)}
+
+\subsection{Return level}
+
+\subsection{New constraints}
+
+\subsubsection{Application}
+
+\section{Applications of conditional extremes model}
+
+\section{Clustering}
+
+\subsection{Bayesian extremal spatial clustering}
+\subsubsection{Introduction}
+\subsubsection{Model -- data}
+\subsubsection{Spatial dependence model}
+\subsubsection{(Bayesian) inference}
+\paragraph{Marginal component}
+\paragraph{Dependence}
+\subsubsection{Priors}
+\subsubsection{Reversible jump MCMC algorithm}
+
+\subsection{Other forms of extremal clustering}
+
+\section{Bayesian extremes}
+
+\end{document}

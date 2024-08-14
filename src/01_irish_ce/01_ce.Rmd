@@ -1,0 +1,325 @@
+---
+title: "Conditional extremes analysis of Irish rainfall and windspeed data"
+author: "Paddy O'Toole"
+date: "2024-07-17"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, dev = "pdf")
+knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
+```
+
+## Libs & metadata
+
+```{r, results = 'hide', message = FALSE}
+library(sf)
+library(dplyr, quietly = TRUE)
+library(ggplot2)
+library(lubridate)
+library(texmex)
+library(gridExtra)
+library(patchwork)
+
+source("src/functions.R")
+
+theme <- theme_bw() +
+  theme(
+    legend.position = "bottom",
+    plot.title = element_text(size = 16),
+    axis.text = element_text(size = 12),
+    axis.title = element_text(size = 14, face = "bold"),
+    legend.text = element_text(size = 12),
+    strip.text = element_text(size = 13, face = "bold"),
+    strip.background = element_rect(fill = NA, colour = "black"),
+    plot.tag = element_text(size = 16, face = "bold"),
+    panel.background = element_rect(fill = NA, colour = "black")
+  )
+
+min_max_dates <- as_date(c("1990-01-01", "2020-12-31"))
+all_dates <- seq.Date(min_max_dates[1], min_max_dates[2], by = "day")
+```
+
+
+## Load Data
+
+Load data on Irish rainfall and windspeeds at various sites, with 
+associated shapefiles. 
+```{r}
+data <- readr::read_csv(
+  "data/met_eireann/final/met_eir_wind.csv.gz",
+  show_col_types = FALSE
+) %>%
+  filter(date %in% all_dates, !is.na(wind_speed))
+
+# load shapefile
+areas <- sf::read_sf("data/met_eireann/final/irl_shapefile.geojson")
+```
+
+## Exploration 
+
+Pairs plots for areas with low (Aughnasheelan (Miskawn)) and higher asymptotic 
+extremal dependence (Loughglinn).
+
+```{r}
+data %>% 
+  filter(name == "Aughnasheelan (Miskawn)") %>% 
+  ggplot(aes(x = rain, y = wind_speed)) + 
+  geom_point() + 
+  geom_hline(yintercept = 10.91, colour = "red") + 
+  geom_vline(xintercept = 2, colour = "blue") + 
+  theme + 
+  ggtitle("Rainfall vs Wind in Aughnasheelan")
+```
+
+```{r}
+data %>% 
+  filter(name == "Loughglinn") %>% 
+  ggplot(aes(x = rain, y = wind_speed)) + 
+  geom_point() + 
+  geom_hline(yintercept = 7.024, colour = "red") + 
+  geom_vline(xintercept = 5.3, colour = "blue") + 
+  theme + 
+  ggtitle("Rainfall vs Wind in Loughglinn")
+```
+
+Seem to be very similar? Although a and b are both 0.01 for 
+Aughnasheelan (Miskawn), but 0.321 and 0.265 for Loughglinn. 
+A lot more extremal observations for Loughlinn though.
+windspeeds.
+
+## Fit CE model
+
+Create a matrix of rainfall vs windspeed for each site:
+```{r}
+mat_list <- data %>% group_split(name) %>% purrr::map(\(x) {
+    mat <- as.matrix(select(x, rain, wind_speed))
+    colnames(mat) <- c("rain", "windspeed")
+    return(mat)
+})
+names(mat_list) <- unique(data$name)
+```
+
+For each site, fit marginal models (i.e. GPD over some threshold):
+```{r}
+marginal <- lapply(mat_list, migpd, mqu = .95, penalty = "none")
+```
+
+For each site, fit dependence models:
+```{r}
+# fit for each site
+dependence <- lapply(marginal, \(x) {
+  # fit for rain and wind speed
+  lapply(c("rain", "windspeed"), \(col) {
+    mexDependence(x, which = col, dqu = 0.95)
+  })
+})
+```
+
+## Dependence
+
+Want to plot a and b for rain and windspeed for each site. 
+
+First, must extract a and b values for each site and preprocess plot data:
+```{r}
+# pull a and b values for each site
+a_b_vals <- lapply(dependence, \(x) {
+ list(
+   summary(x[[1]])$dependence[1:2],
+   summary(x[[2]])$dependence[1:2]
+ )
+})
+
+# convert to dataframe
+a_b_df <- bind_rows(lapply(seq_along(a_b_vals), \(i) {
+  data.frame(
+    "name" = names(a_b_vals)[i],
+    "var"  = c("rain", "rain", "windspeed", "windspeed"),
+    "parameter" = c("a", "b", "a", "b"),
+    "value" = c(
+      a_b_vals[[i]][[1]][1], a_b_vals[[i]][[1]][2],
+      a_b_vals[[i]][[2]][1], a_b_vals[[i]][[2]][2]
+    )
+    # "a"    = c(a_b_vals[[i]][[1]][1], a_b_vals[[i]][[2]][1]),
+    # "b"    = c(a_b_vals[[i]][[1]][2], a_b_vals[[i]][[2]][2])
+  )
+}))
+
+# join in area information, change to sf
+a_b_sf <- left_join(
+  a_b_df, 
+  distinct(data, name, lon, lat)
+) %>% 
+  st_as_sf(coords = c("lon", "lat"))
+st_crs(a_b_sf) <- "WGS84"
+```
+
+Now plot:
+```{r, fig.width=16, fig.height=12}
+p_lst <- lapply(c("a", "b"), \(x) {
+  ggplot() +
+    geom_sf(data = areas, colour = "black") +
+    geom_sf(
+      data = filter(a_b_sf, parameter == x),
+      # aes(fill = value, size = value),
+      aes(fill = value, size = value),
+      colour = "black",
+      stroke = 1,
+      pch = 21
+    ) +
+    facet_wrap(var ~ parameter, ncol = 2) + 
+    scale_size_continuous(
+      breaks = seq(0, 0.5, by = 0.1),
+      labels = c("0", "0.1", "0.2", "0.3", "0.4", "0.5")
+    ) +
+    scale_fill_gradientn(
+      colours = RColorBrewer::brewer.pal(name = "Blues", n = 7),
+      breaks = seq(0, 0.5, by = 0.1),
+      labels = c("0", "0.1", "0.2", "0.3", "0.4", "0.5"),
+      guide = "legend"
+    ) +
+    guides(fill = guide_legend(), size = guide_legend()) +
+    labs(fill = "", size = "") +
+    theme
+})
+
+p_lst[[1]] / p_lst[[2]]
+```
+
+Positive asymptotic dependence of various strengths is found for rainfall 
+and wind speed across all sites. 
+Rainfall appears to have greater asymptotic extremal dependence on wind speed
+than vice versa for most regions. 
+
+## Marginal
+
+Show summaries for rainfall and wind for two sites previously chosen:
+```{r}
+summary(marginal$`Aughnasheelan (Miskawn)`)
+```
+
+```{r}
+summary(marginal$Loughglinn)
+```
+
+Both have infinite upper end points for rain, but Loughlinn has much lower 
+threshold for windspeeds, giving much more extremal observations. 
+
+Similarly, extract 
+First, must extract sigma and xi values for each site and preprocess plot data:
+```{r}
+# TODO: Functionalise
+# pull xi and sigma values for each site
+gpd_vals <- lapply(marginal, \(x) {
+ list(
+   summary(x)$co[3:4, 1],
+   summary(x)$co[3:4, 2]
+ )
+})
+
+# convert to dataframe
+gpd_df <- bind_rows(lapply(seq_along(gpd_vals), \(i) {
+  data.frame(
+    "name" = names(gpd_vals)[i],
+    "var"  = c("rain", "rain", "windspeed", "windspeed"),
+    "parameter" = c("sigma", "xi", "sigma", "xi"),
+    "value" = c(
+      gpd_vals[[i]][[1]][1], gpd_vals[[i]][[1]][2],
+      gpd_vals[[i]][[2]][1], gpd_vals[[i]][[2]][2]
+    )
+    # "a"    = c(gpd_vals[[i]][[1]][1], gpd_vals[[i]][[2]][1]),
+    # "b"    = c(gpd_vals[[i]][[1]][2], gpd_vals[[i]][[2]][2])
+  )
+}))
+
+# join in area information, change to sf
+gpd_sf <- left_join(
+  gpd_df, 
+  distinct(data, name, lon, lat)
+) %>% 
+  st_as_sf(coords = c("lon", "lat"))
+st_crs(gpd_sf) <- "WGS84"
+```
+
+Now plot sigma values:
+```{r, fig.width=16, fig.height=12}
+ggplot() +
+  geom_sf(data = areas, colour = "black") +
+  geom_sf(
+    data = filter(gpd_sf, parameter == "sigma"),
+    # aes(fill = value, size = value),
+    aes(fill = value, size = value),
+    colour = "black",
+    stroke = 1,
+    pch = 21
+  ) +
+  facet_wrap(~var, ncol = 2) + 
+  ggtitle("Sigma values") + 
+  scale_size_continuous(
+    # breaks = seq(0, 0.5, by = 0.1),
+    breaks = seq(0, 12, by = 3),
+    # labels = c("0", "0.1", "0.2", "0.3", "0.4", "0.5")
+    labels = c("0", "3", "6", "9", "12")
+  ) +
+  scale_fill_gradientn(
+    colours = RColorBrewer::brewer.pal(name = "Blues", n = 7),
+    # breaks = seq(0, 0.5, by = 0.1),
+    breaks = seq(0, 12, by = 3),
+    # labels = c("0", "0.1", "0.2", "0.3", "0.4", "0.5"),
+    labels = c("0", "3", "6", "9", "12"),
+    guide = "legend"
+  ) +
+  guides(fill = guide_legend(), size = guide_legend()) +
+  labs(fill = "", size = "") +
+  theme
+```
+
+and xi values:
+```{r, fig.width=16, fig.height=12}
+# TODO: Make deliniation between positive and negative values more obvious
+ggplot() +
+  geom_sf(data = areas, colour = "black") +
+  geom_sf(
+    data = filter(gpd_sf, parameter == "xi"),
+    # aes(fill = value, size = value),
+    aes(fill = value, size = value),
+    colour = "black",
+    stroke = 1,
+    pch = 21
+  ) +
+  facet_wrap(~var, ncol = 2) + 
+  ggtitle("Xi values") + 
+  scale_size_continuous(
+    # breaks = seq(0, 0.5, by = 0.1),
+    # labels = c("0", "0.1", "0.2", "0.3", "0.4", "0.5")
+    breaks = round(seq(-0.3, 0.3, by = 0.1), 1), 
+  ) +
+  scale_fill_gradient2(
+    low = "blue3",
+    high = "red3",
+    na.value = "grey",
+    breaks = round(seq(-0.3, 0.3, by = 0.1), 1) 
+    # label = scales::label_percent(accuracy = 1, trim = TRUE)
+  ) + 
+  guides(fill = guide_legend(), size = guide_legend()) +
+  labs(fill = "", size = "") +
+  theme
+```
+
+Appears that there are some positive shape parameter estimates here for both
+rain and windspeed, which would result in our GPD having an infinite upper 
+end point, is that realistic?
+```{r}
+list(
+  "rain" = summary(gpd_sf[gpd_sf$parameter == "xi" & gpd_sf$var == "rain", ]$value),
+  "ws"   = summary(gpd_sf[gpd_sf$parameter == "xi" & gpd_sf$var == "windspeed", ]$value)
+)
+```
+
+
+## Diagnostics
+
+```{r}
+ggplot(dependence[[1]])
+```
+

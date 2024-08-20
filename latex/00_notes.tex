@@ -35,14 +35,13 @@
 % \renewcommand\Affilfont{\itshape\footnotesize}
 % \linespread{1.5}
 
+% Define a custom note command for general notes
+\newcommand{\mynote}[1]{\todo[color=yellow!40,inline]{#1}}
+
 % Nature Bibliography style
 \usepackage[backend=biber,style=nature]{biblatex}
-% \usepackage{biblatex}
 \addbibresource{library.bib} 
-% \addbibresource{~/bath_repos/TFR/latex/library.bib} 
 
-\usepackage{biblatex}
-\addbibresource{library.bib}
 
 \title{Extreme Value Theory Notes}
 \author{Paddy O'Toole}
@@ -56,10 +55,14 @@
 
 
 \todo{Limit number of warnings from chktex}
+\todo{Replace notes in text with calls to mynote}
 % \todo{Add macros for Y-i, a_mid_i, b_mid_i?}
 % \todo{Get snippets working with vimtex(just use c-s)}
 \todo{Add introduction, including stuff from Coles book?}
 \todo{number equations}
+\todo{Remove numbers for un-referenced equations}
+\todo{Tidy bibtex references}
+\todo{Include authors names rather than numbering for references}
 
 \section{Introduction}\label{sec:intro}
 
@@ -264,7 +267,7 @@ This greatly simplifies the normalising functions seen in section \ref{subsubsec
 
 \begin{itemize}
   \item Want to estimate $\bm{\theta}_{\mid i}$ under minimal assumptions about $\bm{G}_{\mid i}$. \todo{Do I explicitely define theta and psi as parameters of G and marginals anywhere?}
-  \item Assume $Z_{\mid i}$ has two finite marginal moments, $\bm{\mu}_{\mid i}$ and $\bm{\sigma}_{\mid i}$ (Note: $\bm{\sigma}_{\mid i}$ is the vector of standard deviations of $\bm{Z}_{\mid i}$, separate to parameter of GPD) \todo{Will have to change one of these, see Christian's paper}
+  \item Assume $Z_{\mid i}$ has two finite marginal moments, $\bm{\mu}_{\mid i}$ and $\bm{\sigma}_{\mid i}$ (Note: $\bm{\sigma}_{\mid i}$ is the vector of standard deviations of $\bm{Z}_{\mid i}$, separate to parameter of GPD) \todo{Will have to change one of these, see Christian's paper (he uses psi and nu)}
   \item Therefore $\bm{Y}_{-i} \mid Y_i = y$ for $y > u_{Y_i}$ has vector mean and standard deviation
     \begin{align*}
       \bm{\mu}_{\mid i}(y) &= \bm{a}_{\mid i}(y) + \bm{\mu}_{\mid i}{\bm{b}_{\mid i}}(y), \\
@@ -384,21 +387,126 @@ Some new constraints for the conditional extremes model were introduced in \cite
 
 \section{Applications of conditional extremes model}
 
-\section{Clustering}
+\section{Bayesian spatial clustering for extremes} 
+\todo{Make this a subsection of a clustering section!}
 
-\subsection{Bayesian extremal spatial clustering}
-\subsubsection{Introduction}
-\subsubsection{Model -- data}
-\subsubsection{Spatial dependence model}
-\subsubsection{(Bayesian) inference}
-\paragraph{Marginal component}
-\paragraph{Dependence}
-\subsubsection{Priors}
-\subsubsection{Reversible jump MCMC algorithm}
+This algorithm for Bayesian spatial clustering of (hydrological) extremes is detailed in \cite{Rohrbeck2021}.
+\begin{itemize}
+  \item Clustering is done for two main reasons:
+    \begin{itemize}
+      \item interpretation
+      \item improve inference by pooling information over similarly distributed variables.
+    \end{itemize}
+  \item The first is usually done for extremes by fitting multiple marginal GPDs and applying generic clustering techniques (k-means, k-mediods, etc) on some summary statistic (such as the scale parameter, $\sigma$). 
+  \item The second often uses hierarchical modelling. Naturally in extreme analyses we have a lack of data, so pooling similar sites etc.\ for parameter estimation is highly advantageous. 
+  \item Existing spatial clustering focuses on either the marginal distributions or the dependence structure. 
+  \item This Bayesian clustering algorithm combines both ((1) GPD and (2) $\chi$) into likelihood, with reversible jump MCMC algorithm used to estimate cluster allocation and cluster specific marginal parameters. 
 
-\subsection{Other forms of extremal clustering}
+\subsection{Model}
 
-\section{Bayesian extremes}
+\subsubsection{Data}
+
+\begin{itemize}
+  \item K sites with spatial locations $s_1, \ldots, s_k \in \mathbb{R}^2$.
+  \item For areal data, $s_i$ is the centroid of the $k^{th}$ areal unit. 
+  \item For geostatistical data, $s_i$ is the point location of $k^{th}$ site. 
+  \item Distance $d_{k, k'} \ge 0$ between sites $k$ and $k'$.
+  \item Declustering performed for each site, as data is seasonal and spatio-temporally dependent - only use highest observation per subperiod for which sitewise data is broken into..
+  \item $R_{k, 1}, \ldots, R_{k, t}$ denotes the time series for site $k$ after declustering. 
+  \item Assumed independent $\forall t \ne t'$. 
+  \item $K$ latent variables $\bm{Z} = (Z_1, \ldots, Z_k)$, where $Z_k$ is the latent variable representing the cluster membership for site $k$.
+  \item Let $J \in \{1, \ldots, K\}$ represent the number of clusters (so $J$ is also a random variable!).
+  \item Cluster based on (1) similar marginal distributions and (2) spatial dependence (represented with $\chi_{k, k'}$) being greater between sites in the same cluster than sites in different clusters. 
+\end{itemize}
+
+\subsubsection{Marginal Model}
+
+\begin{itemize}
+  \item $R_{k, t} - u_k \mid R_{k, t} > u_k \sim \text{GPD}(\psi_k, \nu_k)$, so we have site-specific marginal parameters and thresholds. 
+  \item In clustering, want cluster-specific, rather than site-specific GPD parameters, i.e.\ 
+  \[
+    R_{k, t} - u_k \mid (Z_k = j, R_{k, t} > u_k) \sim \text{GPD}(\sigma_j, \xi_j).
+  \]
+  Note here that we still have site-specific thresholds. \todo{Need to unify notation here}
+\item Parameters of marginal model given $\bm{Z}$ denoted by $\bm{\theta}_m^{(J)} = \{\bm{\sigma}^{(J)}, \bm{\psi}^{(J)}\}$, where $\bm{\sigma}^{(J)} = (\sigma_1, \ldots, \sigma_J)$ and $\bm{\psi}^{(J)} = (\psi_1, \ldots, \psi_J)$. \todo{have J superscript within bm call}
+\end{itemize}
+
+\subsubsection{Dependence Model}
+
+\begin{itemize}
+  \item Rather than model full joint distribution over extreme events at sites, model $\chi_{k, k'}$ for pairwise extremal dependence ($\chi_{k, k'}$ defined above) \todo{Have section on multivariate extremes which has a definition for chi}
+  \item $\chi_{k, k'} \in [0, 1]$ gives the limit probability of site $k$ observing an extreme event given site $k'$ recording one. 
+  \item Constrain $\chi_{k, k'}$, conditional on $\bm{Z}$ such that expected value is larger within clusters than for sites in different clusters: 
+  \begin{equation} \label{eq:chi_exp}
+    \mathbb{E}(\chi_{k, k'} \mid Z_k = Z_{k'}) \ge \mathbb{E}(\chi_{k, k'} \mid Z_k \ne Z_{k'})
+  \end{equation}
+  \item Further constrain so that $\chi_{k, k'}$ decreases with increasing distance between sites $d_{k, k'}$, with exponential decay which is also faster for sites in different clusters:
+  \begin{equation} \label{eq:chi_dist}
+    \mathbb{E}(\chi_{k, k'} \mid Z_k = j, Z_{k'} = j') = \begin{cases}
+      \exp(-\gamma_j d_{k, k'}) &\text{if } Z_k = Z_{k'} = j \\
+      \exp(-\gamma_0 d_{k, k'}) &\text{if } Z_k \ne Z_{k'}, \\
+    \end{cases}
+  \end{equation}
+  where $\gamma_0 > \max(\gamma_1, \ldots, \gamma_J) \ge 0$, which is ensured by introducing parameters $(\epsilon_1, \ldots, \epsilon_J), \epsilon_j \ge 0$ and constraining the cluster specific decay factors s.t.\ $\log(\gamma_j) = \log(\gamma_0) - \epsilon_j$.
+\item $\chi_{k, k'} \mid \bm{Z} \in [0, 1]$ may differ between two pairs of sites and within the same cluster with same $d_{k, k'}$ (due to factors like topology), so we choose a beta distribution model with 
+  \todo{Ask Christian about use of Beta distribution here}
+  \begin{equation} \label{eq:beta_mod}
+    \chi_{k, k'} \mid \bm{Z} \sim \begin{cases}
+      \text{Beta}\left(\frac{\beta \exp(-\gamma_j d_{k, k'})}{1 - \exp(-\gamma_j d_{k, k'})}, \beta\right) \text{ if } Z_k = Z_{k'} = j \\
+      \text{Beta}\left(\frac{\beta \exp(-\gamma_0 d_{k, k'})}{1 - \exp(-\gamma_0 d_{k, k'})}, \beta\right) \text{ if } Z_k \ne Z_{k'} \\
+    \end{cases}
+  \end{equation}
+  which has expectation equal to \ref{eq:chi_exp}. 
+  \item $\beta > 0$ is inversely proportional to the variance of $\chi_{k, k'}$.
+  \item Therefore, dependence parameters are $\bm{\theta}_D^{(J)} = \gamma_0, \bm{\epsilon}^{(J)}, \beta\}$. \todo{Why not gamma j? Do we only need to estimate the epsilons that relate them to gamma 0?} 
+  \item $\chi_{k, k'}$ only considered for adjacent sites.
+  \item For geostatistical data, we derive the Voronoi partition of area and define sites as being adjacent if Voronoi cells are. \mynote{Could be expanded with SPDE approach from INLA? Interesting compromise though}
+\end{itemize}
+  
+\subsection{Inference}
+
+\begin{itemize}
+  \item Bayesian inference used to estimate $J, \bm{Z}, \bm{\theta}_m^{(J)}, \bm{\theta}_D^{(J)}$, using declustered data $\bm{D} = \{r_{k, 1}, \ldots, r_{k, t}\}; k = 1, \ldots, K$.
+  \item For marginal, data is marginal exceedances over threshold while for dependence the ranks of variables are used. 
+  \item Because of this \textcolor{red}{difference in data}, inference for both sets of parameters is largely independent, and we can approximate the joint likelihood using the independent decomposition:
+  \[
+    L(\bm{\theta}_m^{(J)}, \bm{\theta}_D^{(J)} \mid \bm{D}, \bm{Z}) = L_m(\bm{\theta}_m^{(J)} \mid \bm{D}, \bm{Z}) L_D(\bm{\theta}_D^{(J)} \mid \bm{D}, \bm{Z}).
+  \]
+\end{itemize}
+
+\subsubsection{Marginal component}
+
+\begin{itemize}
+  \item Assuming thresholded data independent over all sites:
+    \[
+      L_m(\bm{\theta}_m^{(J)} \mid \bm{D}, \bm{Z}) = \prod_{k=1}^{K}{\prod_{\{t:r_{k, t} > u_k\}}{\frac{1}{\sigma_{Z_k}}\left( 1 + \xi_{Z_k} \frac{r_{k, t} - u_k}{\sigma_{Z_k}} \right)_+^{-1/\xi_{Z_k} -1}}}
+    \]
+    \todo{Ask Christian why the subscript is Zk here, rather than just k?}
+  \item However, assuming spatial independence is not a valid assumption, as severe weather events usually affect a number of sites simultaneously. \mynote{There could be an option to include this additional constraint to the marginal component of the likelihood in an R package}
+  \item General theory for asymptotic distribution of MLE $\hat{\bm{\theta}}_m^{(J)}$ for GPD parameters under independence assumption is 
+    \[
+      \sqrt{T}(\hat{\bm{\theta}}_m^{(J)} - \bm{\theta}_m^{(J)}) \sim \text{N}(0, \Sigma = H(\bm{\theta}_m^{(J)})^{-1}V(\bm{\theta}_m^{(J)})H(\bm{\theta}_m^{(J)})^{-1}),
+    \]
+\end{itemize}
+  where $\bm{\theta}_m^{(J)}$ are the true parameter, H denotes the Fischer information (see paper for full definition).
+  \item Using $L_m(\bm{\theta}_m^{(J)} \mid \bm{D}, \bm{Z})$ would underestimate the variance of $\bm{\theta}_m^{(J)}$ due to spatial dependence.
+  \item Adjust likelihood around it's mode:
+    \[
+      L_m^{\text{adj}}(\bm{\theta}_m^{(J)} \mid \bm{D}, \bm{Z}) = L_m(\bm{\theta}_m^{(J)} + \bm{B}(\bm{\theta}_m^{(J)} - \hat{\bm{\theta}}_m^{(J)}) \mid \bm{D}, \bm{Z}),
+    \]
+    where the $2J \times 2J$ matrix $B$ depends on $\bm{Z}$ and is
+    \todo{Fix}
+    % \[
+    %   \bm{B} = \left\{\[H(\bm{\theta}_m^{(J)})\]^{1/2}\right\}^{-1}
+    % \]
+  \item B is a block matrix of $J 2 \times 2$ blocks for each clustering, allowing for efficient computation. 
+  \item Take $ L_m(\bm{\theta}_m^{(J)} \mid \bm{D}, \bm{Z}) =  L_m^{\text{adj}}(\bm{\theta}_m^{(J)} \mid \bm{D}, \bm{Z})$.
+  \mynote{i.e.\ use the adjusted likelihood hereafter for the marginal component of the likelihood}
+  
+  \subsubsection{Dependence component}
+  \todo{TODO!}
+
+
 
 \printbibliography
 

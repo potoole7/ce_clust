@@ -36,8 +36,13 @@
 % \linespread{1.5}
 
 % Nature Bibliography style
-% \usepackage[backend=biber,style=nature]{biblatex}
-% \addbibresource{library.bib} 
+\usepackage[backend=biber,style=nature]{biblatex}
+% \usepackage{biblatex}
+\addbibresource{library.bib} 
+% \addbibresource{~/bath_repos/TFR/latex/library.bib} 
+
+\usepackage{biblatex}
+\addbibresource{library.bib}
 
 \title{Extreme Value Theory Notes}
 \author{Paddy O'Toole}
@@ -45,19 +50,16 @@
 
 \begin{document}
 
-
 \maketitle
 
 \tableofcontents
 
 
-\todo{Add back in when bib file is created}
-\todo{Remove warnings from chktex}
+\todo{Limit number of warnings from chktex}
 % \todo{Add macros for Y-i, a_mid_i, b_mid_i?}
 % \todo{Get snippets working with vimtex(just use c-s)}
 \todo{Add introduction, including stuff from Coles book?}
-\todo{How to number equations?}
-\todo{Correct spelling mistakes etc}
+\todo{number equations}
 
 \section{Introduction}\label{sec:intro}
 
@@ -66,12 +68,18 @@
 \section{Conditional extremes model}\label{sec:ce}
 
 \todo{Look back into page 500 and equation 1.5, needed here?}
+\todo{Uses beta for GPD scale, but beta used for normalising function, and want sigma for moments of Z, need to have consistent notation}
+\todo{Improve equation referencing etc}
+
+Description of model comes from \cite{Heffernan2004}, with the addition of using Laplace margins and constraining the normalising function parameters coming from \cite{Keef2013}.
+
+\subsection{Data}
 
 \begin{itemize} 
   \item Continuous vector variable $\bm{X} = (X_1, X_2, \ldots, X_d)$. 
   \item Want to estimate $\mathbb{P}(\bm{X} \in \bm{C})$, where $\bm{C}$ is an extreme set such that $\forall \bm{X} \in \bm{C}$, at least one component of $\bm{X}$ i extreme. 
   \item $C_i$ corresponds to the part of $C$ for which $X_i$ is the largest component of $\bm{X}$, by quantiles of the marginal distribution. 
-  \item $C_i = C \cap \left\{ \bm{x} \in \mathbb{R}^d: F_{X_i}(x_i) > F_{X_j}(x_j); j = 1, \ldots, d; j \ne i \right\}$ for $i = 1, \ldots, d$., where $F_{X_i}$ is the marginal distribution function of $X_i$.\todo{Double check capitalisation on Fs}
+  \item $C_i = C \cap \left\{ \bm{x} \in \mathbb{R}^d: F_{X_i}(x_i) > F_{X_j}(x_j); j = 1, \ldots, d; j \ne i \right\}$ for $i = 1, \ldots, d$., where $F_{X_i}$ is the marginal distribution function of $X_i$. % \todo{Double check capitalisation on Fs}
   \item Ignore subsets $C \cap \left\{ \bm{X} \in \mathbb{R}^d: F_{X_i}(X_i) = F_{X_j}(x_j) \text{for some} j \ne i \right\}$, as they are null sets. 
   \item C is an extreme set if all $x_i$-values in non-empty $C_i$ fall in upper tail of $F_{X_i}$, i.e.\ if $\nu_{X_i} = \inf_{\bm{x} \in C_i}{(x_i)}$, then $F_{X_i}(\nu_{X_i})$ is close 1 for $i = 1, \ldots, d$, so 
   \[
@@ -83,12 +91,12 @@
 \subsection{Marginal extremes model}
 
 \begin{itemize}
-  \item Model marginal tail of $X_i$ with Generalised Pareto distribution (GPD):
-    \[
-      \mathbb{P}(X_i > x + u_{X_i} \mid X_i > u_{X_i}) = {(1 + \xi_ix/\sigma_i)}_{+}^{-1/\xi_i}, x > 0 \todo{Fix this!}
-    \]
+  \item Model marginal tail of $X_i$ with Generalised Pareto Distribution (GPD):
+    % \[
+    %   \mathbb{P}(X_i > x + u_{X_i} \mid X_i > u_{X_i}) = {(1 + \xi_ix/\sigma_i)}_{+}^{-1/\xi_i}, x > 0 \todo{Fix this!}
+    % \]
     where $u_{X_i}$ is a high threshold, $\xi_i$ is the shape parameter, $\sigma_i$ is the scale parameter, and ${x}_{+} = \max(x, 0)$.
-  \item Require a model for complete marginal distribution $F_{X_i}$  of $X_i$, so need to describe all $X_j$ values that can occur with any large $X_i$ value, which leads to the following piecewise semi-parametric model:
+  \item Require a model for complete marginal distribution $F_{X_i}$  of $X_i$, so need to describe all $X_j$ values that can occur with any large $X_i$ value, which leads to the following piecewise semiparameteric model:
     \[
       \hat{F}_{X_i}(x) = \begin{cases}
         1 - \{ 1 - \tilde{F}_{X_i}(u_{X_i})\} \left\{1 + \xi_i(x - u_{X_i})/\sigma_i\right\}_{+}^{-1/\xi_i} & \text{if } x > u_{X_i} \\
@@ -114,8 +122,7 @@ where $\phi_i = (\sigma_i, \xi_i)$ are marginal parameters. \\
 This gives $\mathbb{P}(Y_i \le y) = \exp(-\exp(-y)) \implies \mathbb{P}(Y_i > y) \sim \exp(-y) \text{ as } y \rightarrow \infty$, so $Y_i$ has an exponential upper tail. 
 
 \subsubsection{Laplace transformation}
-Following \todo{Insert citation for Keef}, the Laplace transformation is given by
-\todo{Check capitalisation, F vs F hat here}
+The Laplace transformation detailed in \cite{Keef2013} is given by
 \[
   Y_i = \begin{cases}
     \log\{2F_{X_i}(x_i)\} &\text{ for } X_i < F_{X_i}^{-1}(0.5) \\
@@ -130,13 +137,13 @@ which means that
   \end{cases}
 \]
 so that both tails of $Y_i$ are exponential, and so for any $u > 0$, the distribution of $Y_i - u \mid Y_i > u$ and $(-Y_i + u) \mid Y_i \le -u$ are exponential with mean 1. 
-This greatly simplifies the normalising functions seen in section \todo{reference section}, as for Gumbel margins a more complex normalising function is required for negatively associated variables. 
+This greatly simplifies the normalising functions seen in section \ref{subsubsec:norm}, as for Gumbel margins a more complex normalising function is required for negatively associated variables. 
 
 \subsection{Asymptotic dependence}
 
 \begin{itemize}
   \item $
-      \lim_{y \rightarrow \infy}\{\mathbb{P}(\bm{Y}_{-i} \mid Y_i > y)\} = \begin{cases}
+      \lim_{y \rightarrow \infty}\{\mathbb{P}(\bm{Y}_{-i} \mid Y_i > y)\} = \begin{cases}
       0 &\text{for asymptotic independence} \\
       \ne 0 &\text{for asymptotic dependence}, 
     \end{cases}
@@ -150,7 +157,7 @@ This greatly simplifies the normalising functions seen in section \todo{referenc
 \begin{itemize}
   \item For each $Y_i$, want to estimate $\mathbb{P}(Y_{-i} \le y_{-i} \mid Y_i = y_i)$ as $y \rightarrow \infty$. 
   \item We require the limiting distribution to be non-degenerate for all margins (see section\ref{sec:uni})
-  \item Therefore, assume for every $i$ that there are vector normalising functions $\bm{a}_{\mid i}(y_i),\bm{b}_{\mid i}(y_i), \in \mathbb{R} \righarrow \mathbb{R}^{(d-1)}$ such that for fixed $\bm{z}_{\mid i}$, 
+  \item Therefore, assume for every $i$ that there are vector normalising functions $\bm{a}_{\mid i}(y_i),\bm{b}_{\mid i}(y_i), \in \mathbb{R} \rightarrow \mathbb{R}^{(d-1)}$ such that for fixed $\bm{z}_{\mid i}$, 
     \[
       \lim_{y_i \rightarrow \infty}\{\mathbb{P}(\bm{Y}_{-i} \le \bm{a}_{\mid i}(y_i) + \bm{b}_{\mid i}(y_i)\bm{z}_{\mid i} \mid Y_i = y_i)\} = \bm{G}_{\mid i}(\bm{z}_{\mid i})
     \] \todo{revisit, probably wrong}
@@ -177,25 +184,203 @@ This greatly simplifies the normalising functions seen in section \todo{referenc
     $\implies G_{j \mid i}$ is the marginal distribution of $G_{\mid i}$ associated with $Y_j$.
 \end{itemize}
 
-\subsubsection{Normalisation}
+\subsubsection{Normalisation} \label{subsubsec:norm}
+
+\begin{itemize}
+  \item Under Gumbel margins, normalising functions have simple form for class of positively associated variable, but more complex for negatively associated variables:
+    \todo{Fix, missing curly bracket}
+    % \begin{align*}
+    %   \bm{a}_{\mid i}(y) &= \bm{\alpha}_i y + I_{\{\bm{\alpha}_{\mid i} = 0, \bm{\beta}_{\mid i} < 0\}}\{_\bm{\gamma}_{\mid i} - \bm{\delta}_{\mid i}\log(y)\}, \\
+    %   \bm{b}_{\mid i}(y) &= y^{\bm{\beta}_{\mid i}}, 
+    % \end{align*}
+    where $\bm{\alpha}_{\mid i}, \bm{\beta}_{\mid i}, \bm{\gamma}_{\mid i}, \bm{\delta}_{\mid i}$ are vector constants, $\bm{\alpha}_{\mid i} \in [0, 1], \bm{\beta}_{\mid i} \in (-\infty, 1], \bm{\gamma}_{\mid i} \in (-\infty, \infty) , \bm{\delta}_{\mid i} \in [0, 1]$. 
+  \item Under Laplace marginals, as in \cite{Keef2013}, the indicator term disappears, and we have that $\bm{\alpha}_{\mid i} \in [-1, 1]$. 
+  \item $\alpha_{j \mid i}$ controls the level of association between $Y_j$ and large $Y_i$, with positive and negative values indicating positive and negative asymptotic dependence, respectively, and values closer to 0 indicating stronger asymptotic independence. 
+  % \item $\beta_{j \mid i}$ controls the rate of convergence to the limiting
+    % distribution, with values closer to 1 indicating slower convergences %
+    % came from copilot, is this right??
+  \item $\beta_{j \mid i}$ controls the spread $\ldots$ \todo{Fill in more formally}
+\end{itemize}
+
+\todo{Add interpretation of alpha and beta from Keef paper (page 400)}
 
 \subsection{Conditional dependence model}
 
+\begin{itemize}
+  \item $\bm{G}_{\mid i}$ is modelled nonparameterically as the empirical distribution of 
+    \[ 
+      \bm{Z}_{\mid i} = \frac{\bm{Y}_{-i} - \bm{\alpha}_{\mid i}(Y_i)}{(Y_i)^{\bm{\beta}_{\mid i}}}
+    \]
+  \item All $d$ different conditional distributions are estimated separately.
+\end{itemize}
+
+\todo{on page 508, do I need to talk about Z hat? How G hat is its empirical distribution?}
+
 \subsection{Extrapolation}
+
+\begin{itemize}
+  \item Can simulate from $\bm{X}|\bm{X}_i > \nu_{X_i}$ by simulating from $\bm{Y}|\bm{Y}_i > y_i$ and transforming back to $\bm{X}$ space, using the following algorithm:
+    \begin{enumerate}
+      \item Simulate $Y_i$ from the transformed marginal distribution conditional on exceeding $t_i(\nu_{X_i})$.
+      \item Sample $\bm{Z}_{\mid i}$ from $\hat{G}_{\mid i}$, independently of $Y_i$. 
+      \item Obtain $\bm{Y}_{-i} = \bm{\alpha}_{\mid i}(Y_i) + (Y_i)^{\bm{\beta}_{\mid i}}\bm{Z}_{\mid i}$.
+      \item Transform $\bm{Y} = (\bm{Y}_{-i}, Y_i)$ back to the original scale by using the inverse of the marginal transformation. 
+      \item the resulting vector $\bm{X}$ is a simulated value from $\bm{X} \mid X_i > \nu_{X_i}$.
+    \end{enumerate}
+  \item This algorithm can be used to estimate $\mathbb{P}(\bm{X} \in C_i \mid X_i > \nu_{X_i})$ by evaluating it as the long run proportion of the generated sample that falls in $C_i$. 
+\end{itemize}
 
 \subsection{Diagnostics}
 
+\begin{itemize}
+  \item Marginals are diagnosed as in univariate EVT (threshold with mean excess plot etc.\ , model fit assessed with probability and quantile plots)
+  \item Dependence:
+    \begin{itemize}
+      \item Normalised variable $\bm{Z}_{\mid i}$ must have stable distribution over range of $Y_i$ used for estimation and evaluation. 
+      \item Independence of $\bm{Z}_{\mid i}$ and $Y_i$ given $Y_i > u_i$ for high threshold $u_i$ is explored (similar to diagnostics for `ordinary' linear model)
+      \item Can also use standard statistical tests for independence. 
+    \end{itemize}
+\end{itemize}
+
 \subsection{Inference}
+
+\begin{itemize}
+  \item Inference for marginal parameters $\bm{\psi}$ and dependence parameters $\theta$ is done stepwise (loss of efficiency deemed small, estimation methods much easier)
+\end{itemize}
+
+\subsubsection{Marginal Estimation}
+
+\begin{itemize}
+  \item $d$ univariate distributions estimated jointly assuming independence between components in LL:
+    \[
+      \log\{L(\bm{\psi})\} = \sum_{i=1}^{d}{\sum_{j=1}^{n_{u_{X_i}}}{\log\{\hat{f}_{X_i}(x_{i \mid i, k})\}}}
+    \]
+    $f_{X_i}$ is the density associated with semiparameteric marginal $\hat{F}_{X_i}$, and $n_{u_{X_i}}$ is the number of exceedances of $u_{X_i}$.
+  \item Equivalent to fitting GPD for each margin to excesses over marginal threshold
+  \item Can estimate GPD using more complicated methods, such as extreme value GAMs and spatiotemporal models which allow for covariates and information borrowing between marginals.
+\end{itemize}
+
+\subsubsection{Single conditional}
+
+\begin{itemize}
+  \item Want to estimate $\bm{\theta}_{\mid i}$ under minimal assumptions about $\bm{G}_{\mid i}$. \todo{Do I explicitely define theta and psi as parameters of G and marginals anywhere?}
+  \item Assume $Z_{\mid i}$ has two finite marginal moments, $\bm{\mu}_{\mid i}$ and $\bm{\sigma}_{\mid i}$ (Note: $\bm{\sigma}_{\mid i}$ is the vector of standard deviations of $\bm{Z}_{\mid i}$, separate to parameter of GPD) \todo{Will have to change one of these, see Christian's paper}
+  \item Therefore $\bm{Y}_{-i} \mid Y_i = y$ for $y > u_{Y_i}$ has vector mean and standard deviation
+    \begin{align*}
+      \bm{\mu}_{\mid i}(y) &= \bm{a}_{\mid i}(y) + \bm{\mu}_{\mid i}{\bm{b}_{\mid i}}(y), \\
+      \bm{\sigma}_{\mid i}(y) &= \bm{\sigma}_{\mid i}{\bm{b}_{\mid i}}(y),
+    \end{align*}
+  \item (Note: $\bm{\mu}_{\mid i}(y)$ is the vector mean, while $\bm{\mu}_{\mid i}$ are it's respective parameters)
+  \item $\implies$ $(\bm{\theta}_{\mid i}, \bm{\lambda}_{\mid i} = (\bm{\mu}_{\mid i}, \bm{\sigma}_{\mid i}))$ are parameters of multivariate regression model to be estimated. 
+  \item Assume components of $\bm{Z}_{\mid i}$ are independent and Gaussian, for simplicity and convenience. 
+  \item Independence assumption is reasonable as $\bm{\theta}_{\mid i}$ determines only the marginal behaviour of the conditional distribution. 
+  \item The objective function for the point estimation of $(\bm{\theta}_{\mid i}, \bm{\lambda}_{\mid i})$ is 
+    \[
+      Q_{\mid i}(\bm{\theta}_{\mid i}, \bm{\lambda}_{\mid i}) = \sum_{j \ne i}\sum_{k=1}^{n_{u_{Y_i}}}{\left[\log\{\sigma_{j \mid i}(y_{i\mid i, k})\} + \frac{1}{2} \left\{ \frac{y_{j\mid i, k} - \mu_{j\mid i}(y_{j\mid i, k})}{\sigma_{j \mid i}(y_{i\mid i, k})} \right\}^2 \right]}
+    \]
+  \item Maximise jointly w.r.t $\bm{\theta}_{\mid i}$, $\bm{\lambda}_{\mid i}$, to obtain $\hat{\bm{\theta}}_{\mid i}$ with $\hat{\bm{\lambda}}_{\mid i} $ being nuisance parameters.
+  \item For Gumbel margins, must estimate dependence model in two steps, first fixing $\gamma_{j \mid i} = \delta_{j \mid i} = 0$, then estimating both if the indicator function in equation hmm is satisfied.\todo{reference correct equation}
+\end{itemize}
 
 \subsubsection{All conditionals}
 
+\begin{itemize}
+  \item Falsely assume independence between different conditional distributions: 
+    \[
+      \hat{Q}( \bm{\theta}, \bm{\lambda}) = \sum_{i=1}^{d}{Q_{\mid i}(\bm{\theta}_{\mid i}, \bm{\lambda}_{\mid i})}
+    \]
+  \item False assumption above approximates the pseudo-likelihood as marginal density of $\hat{Y}_{-i}$ and conditional density of $\hat{Y}_{-i} \mid Y_i = y_i$ when $y_i < u_{Y_i}$ negligibly influence the shape of the pseudo-likelihood. 
+  \item If variables all mutually asymptotically independent, then for sufficiently large $u_{Y_i}$ each datum will exceed at most one threshold, so independence assumption will be satisfied. 
+\end{itemize}
+
 \subsection{Uncertainty estimation (bootstrap)}
+
+\begin{itemize}
+  \item Uncertainty comes from semiparameteric marginal models, normalising functions and distributions of residuals. 
+  \item Semiparametric bootstrap used to evaluate standard errors of model parameter estimates and other estimated parameters such as $\mathbb{P}(\bm{X} \in \bm{C})$. 
+  \item Assume marginal and dependence thresholds are fixed, therefore uncertainty due to threshold selection not accounted for. 
+  \item Three stages: data generation under fitted model, estimation of model parameters, and derivation of estimate of parameters linked to extrapolation. 
+  \item Two-step sampling algorithm used for data generation to replicate both the marginal and dependence features of the data. 
+  \item \ldots
+\end{itemize}
+
+\todo{Finish this section}
 
 \subsection{Return level}
 
+When multivariate set $\bm{C}$ is described by single parameter $nu$ (i.e.\ $C = C(\nu)$), the return level $\nu_p$ for event with probability $p$ is defined as 
+\[
+  \mathbb{P}(\bm{Y} \in C(\nu_p)) = p
+\]
+
 \subsection{New constraints}
 
+Some new constraints for the conditional extremes model were introduced in \cite{Keef2013}.
+
+\begin{itemize}
+  \item The coefficient of tail dependence between the pair of variables $(X_i, X_j)$ is given by
+    \[
+      \chi_{ij}(p, q) = \mathbb{P}\{X_j > F_j^{-1}(q) \mid X_i > F_i^{-1}(p)\} \text { for } p, q \in (0, 1)
+    \]
+  \item The limiting positive dependence between two variables is given by 
+    \[
+      \chi^+_{ij}\lim_{p \rightarrow 1}{\chi_{ij}(p, p)}
+    \],
+    while the limiting negative dependence is 
+    \[
+      \chi^-_{ij} = \lim_{p \rightarrow 1}{1-\chi_{ij}(1 - p, p)}
+    \]
+  \item Asymptotic positive dependence between pair $(X_i, X_j)$ gives $\chi^+_{ij} >0 1$, while asymptotic independence gives $\chi^+_{ij} = 0$.
+  \item Similarly, asymptotic negative dependence gives $\chi^-_{ij} > 0$, while asymptotic independence gives $\chi^-_{ij} = 0$.
+  \item We must preserve the bounds implied by the asymptotic dependence through a stochastic ordering of the conditional distributions of $Y_j \mid Y_i = y$ for large $y$ associated with asymptotic negative dependence, asymptotic independence, and asymptotic positive dependence, respectively. 
+  \item Otherwise, the resulting joint probabilities can exceed the marginal probabilities, i.e.\
+    \[
+    \hat{\mathbb{P}}(X_i > F_i^{-1}(p),X_j > F_j^{-1}(q)) > \max(1-p, 1-q)
+    \]
+  \item Let the $q^{th}$ conditional quantile of $Y_j \mid Y_i = y$ for large $y$ be $y_{j \mid i}(q)$ and quantiles under the assumption of asymptotic positive and negative dependence be $y^+_{j \mid i}(q)$ and $y^-_{j \mid i}(q)$, respectively. 
+    Then
+    \begin{equation} \label{eq:ordering}
+      y^-_{j \mid i}(q) \le y_{j \mid i}(q) \le y^+_{j \mid i}(q)
+    \end{equation}
+    for
+    \begin{align*}
+      y^-_{j \mid i}(q) &= -y + \bm{Z}_{j \mid i}^-(q), \\
+      y_{j \mid i}(q) &= \alpha_{j \mid i}y + y^{\beta_{j \mid i}}(q), \\
+      y^+_{j \mid i}(q) &= y + \bm{Z}_{j \mid i}^+(q),
+    \end{align*}
+    where
+    $\hat{G}^-_{j\mid i}\{Z^-_{j \mid i}(q)\} = 
+    \hat{G}_{j\mid i}\{Z_{j \mid i}(q)\} = 
+  \hat{G}^+_{j\mid i}\{Z^+_{j \mid i}(q)\} = q$, where the $\hat{G}^-_{j \mid i}, \ldots$ are the estimated empirical distributions of $\bm{Z}_i$ for $Y_i > u$ under the assumption of asymptotic negative dependence, etc.
+  \item Under the assumption of the asymptotic dependence for $(Y_i, Y_j)$ with $Y_i > u$, $Z^+_{j \mid i}(q)$ is the empirical $q^{th}$ quantile of $Z^+_{j \mid i} = Y_j - Y_i \text{ for } Y_i > u$. \\
+  \item Similarly, $\ldots Z^-_{j \mid i}(q) = Y_j + Y_i$. \\
+  \item Under the conditional extremes model, we estimate $Z_{j \mid i}(q)$ as the empirical $q^{th}$ quantile of $Z_{j \mid i} = (Y_j - \alpha_{j \mid i}Y_i) / Y_i^{\beta_{j \mid i}}$
+  \item The theorem governing this ordering constraint is given by: \\
+  \todo{Fix theorem environment}
+  % \begin{theorem}
+    For $\nu > u$, the ordering constraint \ref{eq:ordering} holds for all $y > \nu$ iff both Case 1 and II hold. \\
+    \textbf{Case 1}: Either 
+    \[
+      \alpha_{j \mid i} \le \min\{
+      1, 
+      1 - \beta_{j \mid i}Z_{j \mid i}(q)\nu^{\beta_{j \mid i} - 1}, 
+      1 - \beta_{j \mid i}Z_{j \mid i}(q) + \nu^{-1}Z^+_{j \mid i}(q)
+      \}
+    \]
+    or 
+    % \todo{Reference constraint above which orders ys}
+    \todo{Finish theorem! Actually painful to type out lol}
+  % \end{theorem}
+  \item We only impose constraints on extrapolation to give greatest flexibility $\implies$ take $v$ to be above the maximum observed $Y_i$. 
+  \item The constraints are built into the inference by having the profile likelihood for $(\alpha_{j \mid i}, \beta_{j \mid i})$ obtained by MLE equal 0 if Theorem 1 is not satisfied.
+  \item Also reduces variance of estimators by removing inconsistent estimates. 
+\end{itemize}
+
 \subsubsection{Application}
+
+\subsection{Comparisons to other methods}
+\todo{cite Tawn paper comparing CE to max-stable and Gaussian processes}
+\todo{Do this section, try summarise, don't have to have too much detail}
 
 \section{Applications of conditional extremes model}
 
@@ -214,5 +399,7 @@ This greatly simplifies the normalising functions seen in section \todo{referenc
 \subsection{Other forms of extremal clustering}
 
 \section{Bayesian extremes}
+
+\printbibliography
 
 \end{document}

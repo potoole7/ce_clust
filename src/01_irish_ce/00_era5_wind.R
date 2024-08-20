@@ -1,4 +1,4 @@
-##### Preprocess netcdf into dataframe ####
+##### Preprocess netcdf of ERA5 wind speeds into dataframe ####
 
 #### Libraries ####
 
@@ -33,13 +33,21 @@ files <- list.files("data", pattern = ".nc", full.names = TRUE)
 # data <- data.table::fread("data/era5_windspeed.csv.gz")
 # gc()
 
-# load wind station data
+# load weather station data
 met_eir <- readr::read_csv("data/met_eireann/final/met_eir.csv.gz")
 # take locations only to match to grid points
 met_eir_sf <- met_eir %>% 
   distinct(name, county, province, lon, lat) %>% 
   sf::st_as_sf(coords = c("lon", "lat"))
 st_crs(met_eir_sf) <- "WGS84"
+
+# function to find value corresponding to maximum density estimate for vector
+max_density <- \(vec) {
+  if (length(vec) == 1) return(vec)
+  # return maximum kernel density estimate
+  return(with(density(vec), x[which.max(y)]))
+}
+
 
 # function to perform preprocessing on single dataset
 preprocess_netcdf <- \(file) {
@@ -52,14 +60,21 @@ preprocess_netcdf <- \(file) {
   # take daily maximum windspeeds
   data <- data %>% 
     mutate(
-      # calculate wind speed from u and v components
+      # calculate wind speed and direction from u and v components
       wind_speed = sqrt(u10 ** 2 + v10 ** 2),
+      # wind_dir   = atan2(u10, v10) * (180 / pi), # convert to degrees
+      wind_dir = (180 + (180 / pi) * atan2(u10, v10)) %% 360,
       # pull day from time
-      date = as_date(time)
+      date       = as_date(time)
     ) %>% 
-    # take daily maximum windspeeds
+    # take daily maximum windspeeds and most frequent wind direction
     group_by(longitude, latitude, date) %>% 
-    summarise(wind_speed = max(wind_speed, na.rm = TRUE), .groups = "drop") %>% 
+    summarise(
+      wind_speed = max(wind_speed, na.rm = TRUE), 
+      # wind_dir   = mean(wind_dir, na.rm = TRUE), 
+      wind_dir     = max_density(wind_dir),
+      .groups = "drop"
+    ) %>% 
     distinct(longitude, latitude, date, .keep_all = TRUE)
   
   return(data) 

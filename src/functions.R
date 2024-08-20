@@ -24,6 +24,10 @@ load_netcdf <- function(file) {
   # create dummy data.table to store data in
   lon_vals <- nc_connection$dim$longitude$vals
   lat_vals <- nc_connection$dim$latitude$vals
+  if (is.null(lon_vals)) {
+    lon_vals <-  nc_connection$dim$lon$vals
+    lat_vals <- nc_connection$dim$lat$vals
+  }
   time_vals <- nc_connection$dim$time$vals
   # ret <- data.table(
   #   "longitude" = rep(lon_vals, each = length(lat_vals) * length(time_vals)),
@@ -37,25 +41,37 @@ load_netcdf <- function(file) {
   # )
   # gc()
 
+  # only add time vals if available
+  vals <- list(lon_vals, lat_vals)
+  names <- c("longitude", "latitude")
+  if (!is.null(time_vals)) {
+    vals <- c(vals, list(time_vals))
+    names <- c(names, "time")
+  }
   ret <- lapply(seq_along(data), \(i) {
-    dimnames(data[[i]]) <- list(lon_vals, lat_vals, time_vals)
+    dimnames(data[[i]]) <- vals
     melt(
       data[[i]],
-      varnames = c("longitude", "latitude", "time"),
+      varnames = names,
       value.name = names(data)[i]
     )
   })
   rm(data); gc()
 
-  ret <- ret[[1]] %>% 
-    bind_cols(select(ret[[2]], "v10")) %>%
-    # bind_cols(select(ret[[3]], "msl")) %>%
-    # filter(time == 1) %>% 
-    # filter(time == 920424) %>% 
-    # ggplot() + 
-    # geom_raster(aes(x = longitude, y = latitude, fill = u10))
-    identity()
-
+  # (specific to wind speed) Join list variables
+  if ("u10" %in% as.vector(vapply(ret, names, character(ncol(ret[[1]]))))) {
+    ret <- ret[[1]] %>% 
+      bind_cols(select(ret[[2]], "v10")) %>%
+      # bind_cols(select(ret[[3]], "msl")) %>%
+      # filter(time == 1) %>% 
+      # filter(time == 920424) %>% 
+      # ggplot() + 
+      # geom_raster(aes(x = longitude, y = latitude, fill = u10))
+      identity()
+  } else {
+    ret <- ret[[1]]
+  }
+  
   # add data to this data.table
   # for (i in seq_len(length(data))) {
     # ret[, (3 + i)] <- as.vector(matrix(
@@ -68,10 +84,12 @@ load_netcdf <- function(file) {
 
   # preprocess time
   # time since this date
-  reference_date <- as.POSIXct(
-    substr(nc_connection$dim$time$units, 13, 31), tz = "UTC"
-  )
-  ret$time <- reference_date + ret$time * 3600
+  if (!is.null(time_vals)) {
+    reference_date <- as.POSIXct(
+      substr(nc_connection$dim$time$units, 13, 31), tz = "UTC"
+    )
+    ret$time <- reference_date + ret$time * 3600
+  }
 
   ret <- setDT(ret)
 

@@ -174,16 +174,26 @@ Mainly lit review on clustering.
 \begin{itemize}
   \item Clustering on extremes done for two reasons: improved explainability and improved parameter estimation. 
   \item First kind mainly focuses on deriving distance matrices for some metric (such as marginal GPD parameters, F-madogram, etc) and applying some classical clustering algorithm such as k-mediods. Can talk about different papers which have done this.
-  \item Second kind uses hierarchical modelling and generally produces latent, ``data-driven'' group structure, methods for estimating likelihood can be split between Frequentist methods which use some flavour of EM algorithm, and Bayesian which uses MCMC, in particular \cite{Bottolo2003} and  \cite{Rohrbeck2021}, which use RJMCMC. 
+  \item Second kind uses hierarchical modelling and generally produces latent, ``data-driven'' group structure, methods for estimating likelihood can be split between Frequentist methods which use some flavour of EM algorithm, and Bayesian which uses MCMC, in particular \cite{Bottolo2003} and  \cite{Rohrbeck2021}, which use RJMCMC (other methods (possibly from outside extrems) include use of ``stick-breaking prior'' and latent Dirichlet allocation, reference).
   \item This kind particularly useful for extremes because of lack of data causing ``naive'' marginal $\xi$ values to have large variance (which in turn feeds into estimates of $\alpha$ and $\beta$ for CE model). 
+  \item Earlier paper in this vein is \cite{Cooley2007}, but this only used domain-knowledge to fit two seperate $\xi$ values for different regions (mountainous and plains).
+  \item Talk about Frequentist EM papers for GEV (\cite{Dupuis2023}) and GPD (\cite{Carreau2017})
+  \item Talk about \cite{Rohrbeck2021}, how it changes RJMCMC algorithm from \cite{Bottolo2003} and uses GPD rather than PP (review both papers), how it might be an improvement on Frequentist EM methods for various reasons: 
+    \begin{enumerate}
+      \item Use of priors desirable where data is naturally lacking for extremal context (but may also be shunned for being opinionated?), mention use of Penalised complexity prior for $\xi$ in INLA implementation of GPD. 
+      \item Inference for the \cite{Carreau2017} is quite conceptually difficult, making use of U-statistics for probability weighted moment estimators and in the GEV paper required a  consistency analysis of the QML methods used
+      \item In contrast, inference for Bayesian problem could be seen as somewhat simpler, can be simply expressed through DAG with hyperpriors to enable partial pooling, can more easily limit e.g.\ $\xi$ to more reasonable values, spatial interpolation is easy (but can be made more complex), number of regions/clusters to use can be estimated with within MCMC scheme rather than e.g. cross-validation as in \cite{Carreau2017}.
+      \item Any improvements in computational speed? Can talk about INLA implementation of CE and how it allows for modelling of many regions, opens up use in geostatistical context,
+      \item Probabilistically defines uncertainty around parameter estimates, which is nice, compared to having to define complicated bootstrapping schemes or other methods to quantify uncertainty in Frequentist setting. 
+      \item Also reference context of conditional extremes model, rather than GPD or GEV explicitely (although GPD must be estimated to then estimate CE parameters), probably more easily formulated in hierarchical Bayesian model (how?)
+    \end{enumerate}
+  \item Therefore, seems like a Bayesian clustering scheme for Conditional Extremes, something which has never been done before, would be desirable. Would likely largely follow \cite{Rohrbeck2021}, but wouldn't need two likelihood components as marginal estimates required to then estimate alpha parameters (or would it? Scheme could be more complicated then as you couldn't partition likelihood into decoupled components)  \mynote{Should/Do I need to go into much detail about what this would look like?}
 \end{itemize}
-
-
 
 \section{Motivating example}\label{sec:example}
 
 \begin{enumerate}
-  \item \textbf{Introduction} to why we look at motivating example (to show how CE model works, and a simple, likely incorrect clustering procedure can be performed on the outputted parameters/regression lines) \todo{Fill in more}
+  \item \textbf{Introduction}: Why we look at motivating example (to show how CE model works, how parameter estimates have large variance, and a simple, likely incorrect clustering procedure can be performed on the outputted parameters/regression lines) \todo{Fill in more}
   \item \textbf{Data}: Weekly Winter precipitation sum and daily wind speed maxima for Ireland from 1990 to 2020 inclusive, 
     % ignoring weeks with no rain, 
     as in \cite{Vignotto2021}. Include single exploratory plot to showcase data (left plot could have locations of weather sites, right could have rainfall plotted against wind speed for a given site).
@@ -220,7 +230,7 @@ Mainly lit review on clustering.
       \item \textbf{Dependence}:
         \begin{enumerate}
           \item Show diagnostic and quantile plots for CE for some location(s),
-          \item Show bootstrapped $\alpha$ and $\beta$ values for rain $\mid$ wind speed and wind speed $\mid$ rain for different thresholds, motivating choice of CE threshold at 70th quantile, and fixing $\beta$ at 0.1 so that all variability is in $\alpha$ (also makes interpretation easier). 
+          \item Show bootstrapped $\alpha$ and $\beta$ values for rain $\mid$ wind speed and wind speed $\mid$ rain for different thresholds, motivating choice of CE threshold at 70th quantile, and fixing $\beta$ at 0.1 so that all variability is in $\alpha$ (also makes interpretation easier, and need for this further highlights need for better parameter estimation through grouping and/or some hierarchical model). 
           \item Bootstrapped values for $\xi$ (under vanilla \texttt{texmex} marginal estimates, rather than \texttt{evgam}) and $\alpha$ show that uncertainty high in both, even when fixing $\beta$. 
           \item Maps of $\alpha$ values conditioning on rain and windspeed, possibly cross-hatch where bootstrapped $\alpha$ values have 95\% CI which intersects 0. 
           \item Plot of $\alpha$ values versus longitude and latitude (possibly coloured by distance to coast), showing how space is main driver in difference (unsurprising as used as only covariate in marginal \texttt{evgam} model). 

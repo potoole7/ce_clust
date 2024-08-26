@@ -82,10 +82,9 @@
     \large   
     \vspace{1.5cm}
     \end{center}
- 
 \newpage
 
-\todo{edit TFR contract text to make abstract}
+\todo{Taken from contract, edit to form proper abstract}
 \begin{abstract}
   Conditional extreme value models have proven useful for analysing the joint tail behaviour of random vectors. 
   While an extensive amount of work to estimate conditional extremes models exists in multivariate and spatial applications, the prospect of clustering for models of this type has not yet been explored. 
@@ -93,20 +92,116 @@
   It will also involve the review of existing state-of-the-art clustering methods within extreme value analysis. 
 \end{abstract}
 
+
+\begin{center}
+\paragraph{Responsible Research and Innovation} ~\linebreak
+\todo{Make linebreak the same as abstract}
+\todo{Add Responsible Research and Innovation statement}
+Fill in!
+
+\end{center}
+
+\newpage
+
 \tableofcontents
 
 \newpage
 
+Prospective ordering of sections:
+\begin{enumerate}
+  \item Introduction
+  \item Peaks-over-threshold method for univariate extremes
+  \item Conditional extremes model
+  \item Clustering for extremes
+  \item Motivating example
+  \item Discussion and future work
+\end{enumerate}
+\todo{Order important, hard to think of what might be best}
+\todo{Need to motivate need for dependence modelling as in H\&T 2004 and Winter 2016 papers}
 
 \section{Introduction}\label{sec:intro}
 
-\section{Literature Review}\label{sec:lit_review}
+\begin{itemize}
+  \item Intro to EVT
+  \item
+\end{itemize}
 
-\section{Conditional Extremes Model}\label{sec:lit_review}
+\section{Peaks-over-threshold method for univariate extremes}\label{sec:uni}
 
-\section{Motivating Example}\label{sec:example}
+\section{Conditional extremes model}\label{sec:ce}
 
-% \printbibliography
+\section{Clustering for extremes}\label{sec:clustering}
+
+\section{Motivating example}\label{sec:example}
+
+\begin{enumerate}
+  \item \textbf{Introduction} to why we look at motivating example (to show how CE model works, and a simple, likely incorrect clustering procedure can be performed on the outputted parameters/regression lines) \todo{Fill in more}
+  \item \textbf{Data}: Weekly Winter precipitation sum and daily wind speed maxima for Ireland from 1990 to 2020 inclusive, ignoring weeks with no rain, as in \cite{Vignotto2021}. Include single exploratory plot to showcase data (left plot could have locations of weather sites, right could have rainfall plotted against wind speed for a given site).
+  \todo{Test removing weeks with no rain versus keeping them, does this result in larger thresholds through quantile regression being taken?}
+  \begin{itemize}
+    \item Precipitation data from Met Eireann, wind speed data from ERA5 reanalysis, reference accordingly (also map from 
+  \end{itemize}
+  \item \textbf{Model}:
+    \begin{enumerate}
+      \item \textbf{Marginal model}: uses \texttt{evgam} to estimate $\sigma, \xi$ at each location smoothing both over space (can take from ITT2 report) for GPDs fitted to precipitation and wind speed, respectively.
+      \begin{itemize}
+        \item Also uses method from \cite{Youngman2019} whereby location-specific thresholds are defined as fixed quantiles and estimated by quantile regression.
+      \end{itemize}
+      \item \textbf{Dependence model} uses \texttt{texmex} to fit conditional extremes model on top of marginal models to estimate $\alpha, \beta$ for rain $\mid$ wind speed and vice versa for each location. 
+        Vanilla CE used for simplicity of implementation for this motivating example. 
+      % \item \textbf{Clustering}: Two (likely incorrect/significantly flawed) simple clustering algorithms:
+      \item \textbf{Clustering}: (likely incorrect/significantly flawed or overly simplistic, which is fine as it motivates further work) simple clustering algorithms:
+        \begin{itemize}
+        % \begin{enumerate}
+        % \item Euclidean distance between centroids for each location defined as
+        % \[
+        %   (\alpha_{rain}, \beta_{rain}, \alpha_{wind speed}, \beta_{wind speed}), 
+        % \] 
+        % perform k-mediods clustering on distance matrix, use elbow plot to choose number of clusters \todo{Should I even include this? Very exploratory!}
+          \item Following similar method to \cite{Vignotto2021}, at each location have Laplace distributed fitted regression lines $Y_{-i} = \alpha_{\mid i}(Y_{\mid i}) + Y_{\mid i}^{\beta_{\mid i}} Z_{\mid i}$, take excesses over high quantile (same as in dependence modelling) (no need for their risk function), partition into subsets of points which are extreme for one of or both rainfall and wind speeds, calculate KL divergence between locations as in paper to get distance matrix, perform k-mediods on this (gives centroid to each cluster which corresponds to an actual data point). Choose optimal number of clusters using silhouette method. 
+        % \end{enumerate}
+        \end{itemize}
+      \item \textbf{Refitting}: Refit model using data from all cluster members centred at cluster centroid, see if this reduces variance in estimates for $\xi$ (could leave $\sigma$ estimated for each individual site) \todo{Still to do!}
+    \end{enumerate}
+  \item \textbf{Results}: 
+    \begin{enumerate}
+      \item \textbf{Marginals}: Show maps of $\sigma$ and $\xi$ for both rain and wind speed, $\ldots$ (what else?)
+      \item Possibly show uncertainty in $\xi$ estimates
+      \item \textbf{Dependence}:
+        \begin{enumerate}
+          \item Show bootstrapped $\alpha$ and $\beta$ values for rain $\mid$ wind speed and wind speed $\mid$ rain for different thresholds, motivating choice of CE threshold at 70th quantile, and fixing $\beta$ at 0.1 so that all variability is in $\alpha$ (also makes interpretation easier). 
+          \item Bootstrapped values for $\xi$ (under vanilla \texttt{texmex} marginal estimates, rather than \texttt{evgam}) and $\alpha$ show that uncertainty high in both, even when fixing $\beta$. 
+          \item Maps of $\alpha$ values conditioning on rain and windspeed, possibly cross-hatch where bootstrapped $\alpha$ values have 95\% CI which intersects 0. 
+          \item Plot of $\alpha$ values versus longitude and latitude (possibly coloured by distance to coast), showing how space is main driver in difference (unsurprising as used as only covariate in marginal \texttt{evgam} model). 
+        \end{enumerate}
+      \item \textbf{Clustering}
+        \begin{enumerate}
+          \item Plot Laplace regression lines with quantiles and separation of bivariate space into regions where one or both variables are extreme, as in \cite{Vignotto2021}. 
+          \item Show map of cluster membership, possibly under multiple $K$ values. 
+        \end{enumerate} 
+      \item \textbf{Refitting}
+        \begin{enumerate}
+          \item New bootstrapped values for $\xi$ and $\alpha$, hopefully see reduction in variance, but likely not much as our clustering hasn't been very principled and is merely used as a motivating example. 
+          \item New maps of $\alpha$ values, with points coloured by cluster membership and cluster centroids denoted with different shape. 
+        \end{enumerate}
+    \end{enumerate}
+  \item \textbf{Discussion}:
+    \begin{itemize}
+      \item Marginal and dependence parameter estimates show how $\xi$ and $sigma$ vary over space for Ireland, with the north-west having the most extreme weather conditions. 
+      \item Uncertainty in $\xi$ values shown in bootstrapping motivates need for clustering to reduce variance in estimates.
+      \item Clustering not very principled and done more for explainability purposes than improving parameter estimation, but can comment on how it does at this task, and if this is likely done poorly than this motivates further work. 
+    \end{itemize}
+\end{enumerate}
+\section{Discussion and future work}\label{sec:discussion}
+
+\section{Code availability}
+
+\begin{itemize}
+  \item Code for analysis available at \url{https://github.com/potoole7/TFR}.
+  \item Fork of \texttt{texmex} package available at \url{http://github.com/potoole7/texmex}, adds functionality to fix $\beta$ values and only estimate $\alpha$. \todo{anything else added?}
+\end{itemize}
+
+\newpage
 \bibliography{library}
 
 \end{document}

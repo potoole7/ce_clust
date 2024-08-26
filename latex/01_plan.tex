@@ -121,23 +121,73 @@ Prospective ordering of sections:
 
 \section{Introduction}\label{sec:intro}
 
+\todo{Do this section!}
+
 \begin{itemize}
-  \item Intro to EVT
-  \item
+  \item Why extremes (modelling tails of distributions where underlying stochastic process is assumed).
+  \item Some simple, examples of uses in marginal estimation (and more complicated examples from reading course).
+  \item $\ldots$
+  \item Summarise what will be talked about in the rest of the report.
 \end{itemize}
 
 \section{Peaks-over-threshold method for univariate extremes}\label{sec:uni}
 
+Follow other papers using GPD, like \cite{Carreau2017}. 
+\begin{itemize}
+  \item Peaks over threshold (reference Halkema and de Haan 1974, Pickands 1975, see Carreau 2017 for example) definition for extremes (including reference to limiting extreme value distribution $G$ from Coles 2001)
+  \item Conditional CDF of GPD distribution
+  \item Different tails of GPD for different signs of shape parameter
+  \item Talk about different threshold selection methods, e.g.\ stability plots, including quantile regression method used in \cite{Youngman2019}.
+  \item IID assumption in GPD as defined above, can model parameters as covariates, numerous methods to do this, such as using \texttt{evgam} as first introduced in \cite{Youngman2019}, and also Gaussian processes and INLA (with references).
+  \item Return levels (m-observations, n-year, from \cite{Coles2001}) can be estimated from GPD parameters (derived from conditional probability and exceedance probability, as in \cite{Cooley2007} and \cite{Coles2001}). 
+  \item Reference difficulty in estimating GPD and particularly $\xi$ due to lack of data and strange likelihood (following \cite{Coles2001}). 
+  \item Also mention inadequacy of return level estimates with univariate methods when dependence is seen, as seen in Pacific Northwest in \cite{Winter2016}, motivating use of dependence models. 
+\end{itemize}
+
 \section{Conditional extremes model}\label{sec:ce}
 
+Below narrative is a bit jumbled, can order better by looking at \cite{Heffernan2004}, \cite{Keef2013} and applied conditional extremes papers again. 
+\todo{Anything else to add?}
+
+\begin{itemize}
+  \item Introduction to dependence modelling for extremes, following \cite{Heffernan2004} for modelling $\mathbb{P}(\bm{X} \in \bm{C})$, i.e.\ an observation which is extreme in more than one dimension, be that for multiple variables at a single location (e.g.\ rain and wind speed) or across multiple locations and/or times. 
+  \item Following \cite{Tawn2018} and \cite{Heffernan2004}, introduce other methods for modelling dependence in extremes, such as max-stable, Pareto and Gaussian processes, and copulas, and their limitations, both in the restrictiveness of the type of dependence these methods can model, and their computational feasibility.
+  \item Something on marginal model as piecewise ECDF and GPD, which can be fitted using any method mentioned in \ref{sec:uni}. 
+  \item Starting from asymptotic motivation, define conditional extremes model as in \cite{Heffernan2004} and in applied paper as the non-parametric regression equation $Y_{-i} = a_{\mid i}(Y_{\mid i}) + \b_{\mid i}(Y_{\mid i}) Z_{\mid i}$
+  \item Requires Gumbel transformation of margins to have exponential upper tail, but this gives complex form for $a$ for negative dependence, so instead following \cite{Keef2013} Laplace margins are used which have doubly exponential tails and thus have the conceptually simple $a_{\mid i} = \alpha_{\mid i}Y_{\mid i} , b = Y_{\mid i}^{\beta_{\mid i}}$, which can be interpreted as the slope and spread parameters for our semi-parametric regression line (is there a reference I can use which makes this interpretation?). 
+  \item Extrapolation through MC algorithm as in \cite{Heffernan2004} (alternative in \cite{Keef2013}.
+  \item Talk about diagnostics through independence of residuals and tail exceedances in the limit. 
+  \item Uncertainty through bootstrap scheme,
+  \item Return levels $\ldots$ (improved over univariate, as shown in \cite{Winter2016})
+\end{itemize}
+
+Can also talk about (if time/space):
+\begin{itemize}
+  \item Additional constraints from \cite{Keef2013} on possible values of $\alpha$ and $\beta$ to ensure stochastic ordering of $Y_j \mid Y_i = y$ for large $y$ 
+  \item Can also talk about how \cite{Tawn2018} shows CE is an improvement over other methods like max-stable/Pareto processes (how much detail? Look at what other papers have done)
+  \item Spatial extension in \cite{Wadsworth2018}, which has $\alpha$ which slowly decays as distance between site and some reference site increases, several choices of $\beta$ to fit different tails, and the representation of the residuals as a Gaussian process with some constraints to ensure it's value is 0 when the site in question is the same as the reference site. 
+\end{itemize}
+
 \section{Clustering for extremes}\label{sec:clustering}
+
+Mainly lit review on clustering. 
+\begin{itemize}
+  \item Clustering on extremes done for two reasons: improved explainability and improved parameter estimation. 
+  \item First kind mainly focuses on deriving distance matrices for some metric (such as marginal GPD parameters, F-madogram, etc) and applying some classical clustering algorithm such as k-mediods. Can talk about different papers which have done this.
+  \item Second kind uses hierarchical modelling and generally produces latent, ``data-driven'' group structure, methods for estimating likelihood can be split between Frequentist methods which use some flavour of EM algorithm, and Bayesian which uses MCMC, in particular \cite{Bottolo2003} and  \cite{Rohrbeck2021}, which use RJMCMC. 
+  \item This kind particularly useful for extremes because of lack of data causing ``naive'' marginal $\xi$ values to have large variance (which in turn feeds into estimates of $\alpha$ and $\beta$ for CE model). 
+\end{itemize}
+
+
 
 \section{Motivating example}\label{sec:example}
 
 \begin{enumerate}
   \item \textbf{Introduction} to why we look at motivating example (to show how CE model works, and a simple, likely incorrect clustering procedure can be performed on the outputted parameters/regression lines) \todo{Fill in more}
-  \item \textbf{Data}: Weekly Winter precipitation sum and daily wind speed maxima for Ireland from 1990 to 2020 inclusive, ignoring weeks with no rain, as in \cite{Vignotto2021}. Include single exploratory plot to showcase data (left plot could have locations of weather sites, right could have rainfall plotted against wind speed for a given site).
-  \todo{Test removing weeks with no rain versus keeping them, does this result in larger thresholds through quantile regression being taken?}
+  \item \textbf{Data}: Weekly Winter precipitation sum and daily wind speed maxima for Ireland from 1990 to 2020 inclusive, 
+    % ignoring weeks with no rain, 
+    as in \cite{Vignotto2021}. Include single exploratory plot to showcase data (left plot could have locations of weather sites, right could have rainfall plotted against wind speed for a given site).
+  % \todo{Test removing weeks with no rain versus keeping them, does this result in larger thresholds through quantile regression being taken?}
   \begin{itemize}
     \item Precipitation data from Met Eireann, wind speed data from ERA5 reanalysis, reference accordingly (also map from 
   \end{itemize}
@@ -169,6 +219,7 @@ Prospective ordering of sections:
       \item Possibly show uncertainty in $\xi$ estimates
       \item \textbf{Dependence}:
         \begin{enumerate}
+          \item Show diagnostic and quantile plots for CE for some location(s),
           \item Show bootstrapped $\alpha$ and $\beta$ values for rain $\mid$ wind speed and wind speed $\mid$ rain for different thresholds, motivating choice of CE threshold at 70th quantile, and fixing $\beta$ at 0.1 so that all variability is in $\alpha$ (also makes interpretation easier). 
           \item Bootstrapped values for $\xi$ (under vanilla \texttt{texmex} marginal estimates, rather than \texttt{evgam}) and $\alpha$ show that uncertainty high in both, even when fixing $\beta$. 
           \item Maps of $\alpha$ values conditioning on rain and windspeed, possibly cross-hatch where bootstrapped $\alpha$ values have 95\% CI which intersects 0. 

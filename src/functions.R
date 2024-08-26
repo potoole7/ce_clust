@@ -1,3 +1,35 @@
+#### handy sf functions ####
+
+# convert df to sf
+st_to_sf <- function(dat, coords = c("lon", "lat"), crs = "WGS84", ...) {
+  out <- dat %>% 
+    st_as_sf(coords = coords, ...)
+  st_crs(out) <- crs
+  return(out)
+}
+
+# calculate distance to coast
+dist2coast <- \(dat, areas, convert_to_coastline = TRUE) {
+  coastline <- areas
+  # convert areas to coastline, if required
+  if (convert_to_coastline) {
+    coastline <- st_union(coastline)
+    coastline <- st_cast(coastline, "MULTILINESTRING")
+  } 
+   
+  # locations to find distance to coast for
+  locs <- data %>% 
+    distinct(name, lon, lat) %>% 
+    st_to_sf()
+
+  distances <- as.numeric(st_distance(locs, coastline))
+  
+  data %>% 
+    left_join(data.frame("name" = locs$name, "dist2coast" = distances)) %>% 
+    return()
+}
+
+
 #### Load netcdf data ####
 
 # load netcdf and return as data.table object

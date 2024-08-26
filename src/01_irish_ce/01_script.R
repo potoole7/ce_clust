@@ -111,30 +111,6 @@ data <- data %>%
 
 #### Calculate distance to coast for each site ####
 
-# TODO: replace calls to st_as_sf and st_crs with function
-st_to_sf <- function(dat, coords = c("lon", "lat"), crs = "WGS84", ...) {
-  out <- dat %>% 
-    st_as_sf(coords = coords, ...)
-  st_crs(out) <- crs
-  return(out)
-}
-
-dist2coast <- \(dat, areas) {
-  coastline <- st_union(areas)
-  coastline <- st_cast(coastline, "MULTILINESTRING")
-  
-  # locations to find distance to coast for
-  locs <- data %>% 
-    distinct(name, lon, lat) %>% 
-    st_to_sf()
-
-  distances <- as.numeric(st_distance(locs, coastline))
-  
-  data %>% 
-    left_join(data.frame("name" = locs$name, "dist2coast" = distances)) %>% 
-    return()
-}
-
 data <- dist2coast(data, areas)
 
 
@@ -162,13 +138,20 @@ data %>%
   geom_point() + 
   geom_vline(xintercept = 67.1)
 
+data %>% 
+  filter(name == data$name[[1]]) %>% 
+  ggplot(aes(x = rain, y = wind_speed)) + 
+  geom_point() + 
+  geom_vline(xintercept = 67.1)
+
+
 # 2.7% of data kept, in line with quantile chosen
 nrow(with(data, data[name == "Wexford (Newtown W.w.)" & rain > 67.1, ])) /
 nrow(with(data, data[name == "Wexford (Newtown W.w.)", ]))
 
 # as a test, remove rain over 100 for Wexford
 # data <- data %>% 
-#   filter(!(name == "Wexford (Newtown W.w.)" & rain > 100))
+#   filter(!(name == "Wexford (Newtown W.w.)" & rain > 90))
   
 
 # TODO: Plot chi for each location (texmex has function for this)
@@ -485,8 +468,15 @@ pp_qq_plot <- \(evgam_fit, data_map) {
 }
 
 # TODO: Add uncertainty bounds! (See ITT2)
-pp_qq_plot(evgam_rain, data_rain_map)
-pp_qq_plot(evgam_ws, data_ws_map)
+pp_qq_rain <- pp_qq_plot(evgam_rain, data_rain_map)
+pp_qq_ws <- pp_qq_plot(evgam_ws, data_ws_map)
+
+ggsave(
+  "plots/pp_qq_rain_winter.png", pp_qq_rain, width = 6.3, height = 6, units = "in"
+)
+ggsave(
+  "plots/pp_qq_wind_winter.png", pp_qq_ws, width = 6.3, height = 6, units = "in"
+)
 
 
 #### Return levels ####
@@ -571,6 +561,7 @@ marginal <- lapply(seq_len(nrow(data_gpd)), \(i) {
   return(spec_marg)
 })
 names(marginal) <- paste0(data_gpd$name, " - ", data_gpd$county)
+
 
 #### Compare to "out-of-box" texmex predictions ####
 
@@ -716,26 +707,51 @@ save_bootstrap_plot <- \(bootstrap_thresh_plots, file) {
 #### Fit CE model ####
 
 # fit CE dependence model for each site
-# Save profile likelihood plots as well
-# dependence <- lapply(marginal, \(x) {
-# pdf("plots/prof_lik_weekly_winter.pdf", onefile = TRUE)
+# constants
 vars <- c("rain", "wind_speed")
+start_vals <- c(0.01, 0.1)
+# start_vals <- c(0.01, 0.01)
+dqu = 0.7 # seems a reasonable choice of threshold given bootstrap plots
+fixed_b <- TRUE
+# fixed_b <- FALSE
+
+# Save profile likelihood plots as well
+# pdf("plots/prof_lik_weekly_winter.pdf", onefile = TRUE)
 dependence <- lapply(seq_along(marginal), \(i) {
-  # print(i)
   # fit for rain and wind speed
   ret <- lapply(vars, \(col) {
+    # print(col)
     # TODO: Can you supply threshold yourself? or match to thresholding value?
     # TODO: Plot prifle likelihood of dependence model parameters?
-    mexDependence(
+    mod <- mexDependence(
       # x, 
       marginal[[i]],
       which = col, 
       dqu = 0.7, # seems a reasonable choice of threshold given bootstrap plots
       nOptim = 2, 
+      fixed_b = fixed_b, 
+      start = start_vals
       # PlotLikDo = TRUE, 
       # PlotLikTitle = paste0("for ", col, " - ", names(marginal)[i])
-      fixed_b = TRUE
     )
+    
+    # if model didn't optimise with Keef 2013 constains, turn off & refit
+    ll <- mod$dependence$loglik
+    if (is.na(ll) || abs(mod$dependence$loglik) > 1e9) {
+      mod <- mexDependence(
+        # x, 
+        marginal[[i]],
+        which = col, 
+        dqu = 0.7, # seems a reasonable choice of threshold given bootstrap plots
+        nOptim = 2, 
+        fixed_b = TRUE, 
+        start = start_vals, 
+        constrain = FALSE
+        # PlotLikDo = TRUE, 
+        # PlotLikTitle = paste0("for ", col, " - ", names(marginal)[i])
+      )
+    }
+    return(mod)
   })
   names(ret) <- vars
   return(ret)
@@ -743,27 +759,37 @@ dependence <- lapply(seq_along(marginal), \(i) {
 names(dependence) <- names(marginal)
 # dev.off()
 
+# save object
+# saveRDS(dependence, file = "texmex_mexdep_obj.RDS")
+saveRDS(dependence, file = "data/texmex_mexdep_obj_fixed_b.RDS")
+
 
 #### Bootstrap parameter estimates and calculate quantiles ####
 
-# bootmex()
-# mymex <- mex(winter , mqu = .7, dqu = .7, which = "NO")
-# myboot <- bootmex(mymex)
-# myboot
-# plot(myboot,plots="gpd")
-# plot(myboot,plots="dependence")
+# spec_dep_var <- dependence[[i]][[1]]
 
-# fails for i <- 3!
-# final_bootstraps <- lapply(dependence, \(spec_loc) {
+fixed_b <- FALSE
 # final_bootstraps <- lapply(seq_along(dependence), \(i) {
 #   print(names(dependence)[[i]])
-#   spec_loc <- dependence[[i]]
-#   lapply(spec_loc, \(spec_loc_var) {
-#     boots <- suppressWarnings(suppressMessages(bootmex(spec_loc_var)))
+#   spec_dep <- dependence[[i]]
+#   print(i)
+#   lapply(spec_dep, \(spec_dep_var) {
+#     # boots <- suppressWarnings(suppressMessages(
+#     #   bootmex(spec_loc_var)
+#     # ))
+#     boots <- suppressWarnings(suppressMessages(bootmex(
+#       spec_dep_var, 
+#       nPass = 3,
+#       fixed_b = fixed_b # fix b value
+#     )))
+#     
+#     # Calculate credible interval on bootsrapped samples of a and b
 #     # pulled from texmex:::plot.bootmex
 #     d2 <- dim(boots$boot[[1]][[2]]) # "dependence"
 #     margins <- boots$margins
 #     x <- boots$boot
+#     which <- 2 # dependence rather than marginal parameters
+#     
 #     co <- unlist(lapply(x, function(z, wh) z[[wh]], wh = which))
 #     co <- array(co, dim = c(d2[1], d2[2], length(co)/prod(d2)))
 #     lco <- list(length = prod(d2))
@@ -772,50 +798,31 @@ names(dependence) <- names(marginal)
 #         lco[[j + d2[1] * (i - 1)]] <- co[j, i, ]
 #       }
 #     }
-#     
+# 
 #     # a and b values from bootstrap
 #     vals <- list(
-#       "a" = lco[[1]], 
+#       "a" = lco[[1]],
 #       "b" = lco[[2]]
 #     )
 #     # print(lapply(vals, head))
 #     # plot(a_vals, b_vals, main = "Test", xlab = "a", ylab = "b")
 #     # test if 0 in 95% CI (i.e. signs are different for 0.025, 0.975 quantiles)
 #     tests <- lapply(vals, \(x) {
-#       val <- prod(quantile(x, c(0.0025, 0.975), na.rm = TRUE))
-#       return(list(val, val < 0))
+#       quantiles <- quantile(x, c(0.025, 0.975), na.rm = TRUE)
+#       val <- prod(quantiles)
+#       return(list("quantiles" = quantiles, "prod" = val, "test" = val < 0))
 #     })
-#     return(list("values" = vals, "tests" = tests))
+#     names(tests) <- c("a", "b")
+#     return(list("boots" = boots, "values" = vals, "tests" = tests))
 #   })
 # })
+# names(final_bootstraps) <- names(dependence)
 
-# boots <- bootmex(dependence[[1]][[1]])
-# # pulled from texmex:::plot.bootmex
-# d2 <- dim(boots$boot[[1]][[2]]) # "dependence"
-# margins <- boots$margins
-# x <- boots$boot
-# co <- unlist(lapply(x, function(z, wh) z[[wh]], wh = which))
-# co <- array(co, dim = c(d2[1], d2[2], length(co)/prod(d2)))
-# lco <- list(length = prod(d2))
-# for (i in 1:d2[2]) {
-#   for (j in 1:d2[1]) {
-#     lco[[j + d2[1] * (i - 1)]] <- co[j, i, ]
-#   }
-# }
-# 
-# vals <- list(
-#   "a" = lco[[1]], 
-#   "b" = lco[[2]]
-# )
-# # plot(a_vals, b_vals, main = "Test", xlab = "a", ylab = "b")
-# # test if 0 in 95% CI (i.e. signs are different for 0.025, 0.975 quantiles)
-# tests <- lapply(vals, \(x) {
-#   val <- prod(quantile(x, c(0.0025, 0.975)))
-#   return(list(val, val < 0))
-# })
-# 
-# prod(quantile(a_vals, c(0.0025, 0.975)))
-# prod(quantile(b_vals, c(0.0025, 0.975)))
+# save object, takes agggges to make
+# saveRDS(final_bootstraps, "data/bootstraps.RDS")
+# final_bootstraps <- readRDS("data/bootstraps.RDS")
+
+# TODO: Save plots!
 
 
 #### Plots ####
@@ -855,6 +862,10 @@ ab_df <- ab_df %>%
     summarise(wind_dir = max_density(wind_dir), .groups = "drop")
   )
 
+# save for clustering
+# readr::write_csv(ab_df, "data/ab_vals.csv")
+readr::write_csv(ab_df, "data/ab_vals_fixed_b.csv")
+
 # plot a versus other variables 
 # TODO: Add wind direction here, could be interesting!
 # TODO: Colour points by county? Or coastal vs inland?
@@ -893,7 +904,7 @@ ab_df_wide <- ab_df %>%
 # TODO: Lots can be done here
 # Add county centroids to plot (done)
 # TODO: Add fitted line with and without windspeed high a values 
-ab_df_wide %>% 
+p_compare <- ab_df_wide %>% 
   # much more highly correlated when removing large wind speeds values for a!
   filter(windspeed < 0.99) %>% 
   # take county wide mean centroid
@@ -922,6 +933,8 @@ ab_df_wide %>%
   scale_y_continuous(limits = c(0, 0.8), expand = c(0, 0)) +
   # scale_y_continuous(limits = c(0, 0.6), expand = c(0, 0)) + # for counties
   theme
+
+ggsave("plots/p_compare_winter.png", p_compare, width = 6.3, height = 6, units = "in")
 
 # Wind rose and polar plots for plotting a vs wind direction
 # TODO: Functionalise to use with wind as well
@@ -982,8 +995,13 @@ circ_plot <- \(data, response) {
   return(list(p1, p2))
 }
 
-circ_plot(ab_w_dir, "rain")
-circ_plot(ab_w_dir, "windspeed")
+circ_p_rain <- circ_plot(ab_w_dir, "rain")
+circ_p_ws <- circ_plot(ab_w_dir, "windspeed")
+
+ggsave("plots/wind_rose_ws_winter.png", circ_p_rain[[1]], width = 6.3, height = 6, units = "in")
+ggsave("plots/wind_rose_rain_winter.png", circ_p_ws[[1]], width = 6.3, height = 6, units = "in")
+ggsave("plots/polar_rain_winter.png", circ_p_rain[[2]], width = 6.3, height = 6, units = "in")
+ggsave("plots/polar_ws_winter.png", circ_p_ws[[2]], width = 6.3, height = 6, units = "in")
 
 # join to previous data (not assigned?)
 # data_gpd %>% 
@@ -998,8 +1016,9 @@ circ_plot(ab_w_dir, "windspeed")
 #   )
 
 # change to sf
-ab_sf <- st_to_sf(ab_sf)
+ab_sf <- st_to_sf(ab_df)
 # check that b values aren't exceptionally negative (<-1)
+# also check that all values are equal to fixed value for b, if applying
 sort(ab_sf[ab_sf$parameter == "b", ]$value)[1:10]
 
 names <- c("a", "b")
@@ -1056,9 +1075,10 @@ p_lst <- lapply(seq_along(names), \(i) {
 })
 
 # p_lst[[1]] / p_lst[[2]]
+p_lst[[1]]
 
 # save
-# ggsave("plots/a_ce_ire.png", p_lst[[1]], width = 6.3, height = 6, units = "in")
+ggsave("plots/a_ce_ire_winter.png", p_lst[[1]], width = 6.3, height = 6, units = "in")
 # ggsave("plots/b_ce_ire.png", p_lst[[2]], width = 6.3, height = 6, units = "in")
 # ggsave("plots/a_b_ce_ire_weekly_winter.png", p_lst[[1]] / p_lst[[2]], width = 16, height = 12, units = "in")
 
@@ -1068,12 +1088,19 @@ p_lst <- lapply(seq_along(names), \(i) {
 
 # generate plots
 # Add county name to location, helps interpretation (done)
+# TODO: Investigate where a is NA in dependence!
 plots <- lapply(seq_along(dependence), \(i) { # each location
   lapply(seq_along(dependence[[i]]), \(j) { # rainfall and wind speed
+    # print(paste0(i, "-", j))
+    if (is.na(dependence[[i]][[j]]$dependence$coefficients[1])) {
+      return(NA)
+    }
     # generate plots, adding title to first one
     p <- ggplot(dependence[[i]][[j]], plot. = FALSE)
     p[[1]] <- p[[1]] + 
-      ggtitle(paste(names(dependence)[i], names(dependence[[i]])[j], sep = " - "))
+      ggtitle(
+        paste(names(dependence)[i], names(dependence[[i]])[j], sep = " - ")
+      )
     return(p)
   })
 })
@@ -1091,14 +1118,16 @@ plots <- lapply(seq_along(dependence), \(i) { # each location
 #   do.call("grid.arrange", ggplot(dependence[[i]][[2]]))  
 # }
 # dev.off()
-# pdf("plots/diag_plots_rain_weekly_winter.pdf", onefile = TRUE) 
-# for (i in seq(length(plots))) {
-#   do.call("grid.arrange", plots[[i]][[1]])
-# }
-# dev.off()
-# 
-# pdf("plots/diag_plots_windspeed_weekly_winter.pdf", onefile = TRUE) 
-# for (i in seq(length(plots))) {
-#   do.call("grid.arrange", plots[[i]][[2]])
-# }
-# dev.off()
+pdf("plots/diag_plots_rain_weekly_winter.pdf", onefile = TRUE) 
+for (i in seq(length(plots))) {
+  if (length(plots[[i]][[1]]) == 1 && is.na(plots[[i]][[1]])) next
+  do.call("grid.arrange", plots[[i]][[1]])
+}
+dev.off()
+
+pdf("plots/diag_plots_windspeed_weekly_winter.pdf", onefile = TRUE) 
+for (i in seq(length(plots))) {
+  if (length(plots[[i]][[2]]) == 1 && is.na(plots[[i]][[1]])) next
+  do.call("grid.arrange", plots[[i]][[2]])
+}
+dev.off()

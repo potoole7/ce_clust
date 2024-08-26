@@ -24,6 +24,7 @@
 \usepackage[colorlinks=true,citecolor=blue, linkcolor=blue]{hyperref}
 \usepackage{multirow}
 \usepackage{todonotes}
+\usepackage{natbib} % print author's name and year when citing
 \setlength{\tabcolsep}{5pt}
 %%\setlength{\parindent}{0pt}
 \usepackage[parfill]{parskip}
@@ -38,13 +39,20 @@
 % Define a custom note command for general notes
 \newcommand{\mynote}[1]{\todo[color=yellow!40,inline]{#1}}
 
-% Nature Bibliography style
-\usepackage[backend=biber,style=nature]{biblatex}
-\addbibresource{library.bib} 
+\DeclareMathOperator*{\argmin}{arg\,min}
+% \DeclareMathOperator*{\argmax}{arg\,max}
 
+% Nature Bibliography style
+% \usepackage[backend=biber,style=nature]{biblatex}
+% \addbibresource{library.bib} 
+\bibliographystyle{unsrtnat}
+
+% number equations by section
+\numberwithin{equation}{section}
 
 \title{Extreme Value Theory Notes}
-\author{Paddy O'Toole}
+\author{Patrick O'Toole}
+% \date{July - September 2024}
 \date{\today}
 
 \begin{document}
@@ -53,6 +61,7 @@
 
 \tableofcontents
 
+\newpage
 
 \todo{Limit number of warnings from chktex}
 \todo{Replace notes in text with calls to mynote}
@@ -66,8 +75,10 @@
 
 \section{Introduction}\label{sec:intro}
 
+\newpage
 \section{Univariate extremes}\label{sec:uni}
 
+\newpage
 \section{Conditional extremes model}\label{sec:ce}
 
 \todo{Look back into page 500 and equation 1.5, needed here?}
@@ -99,7 +110,7 @@ Description of model comes from \cite{Heffernan2004}, with the addition of using
     %   \mathbb{P}(X_i > x + u_{X_i} \mid X_i > u_{X_i}) = {(1 + \xi_ix/\sigma_i)}_{+}^{-1/\xi_i}, x > 0 \todo{Fix this!}
     % \]
     where $u_{X_i}$ is a high threshold, $\xi_i$ is the shape parameter, $\sigma_i$ is the scale parameter, and ${x}_{+} = \max(x, 0)$.
-  \item Require a model for complete marginal distribution $F_{X_i}$  of $X_i$, so need to describe all $X_j$ values that can occur with any large $X_i$ value, which leads to the following piecewise semiparameteric model:
+  \item Require a model for complete marginal distribution $F_{X_i}$  of $X_i$, so need to describe all $X_j$ values that can occur with any large $X_i$ value, which leads to the following piecewise semiparametric model:
     \[
       \hat{F}_{X_i}(x) = \begin{cases}
         1 - \{ 1 - \tilde{F}_{X_i}(u_{X_i})\} \left\{1 + \xi_i(x - u_{X_i})/\sigma_i\right\}_{+}^{-1/\xi_i} & \text{if } x > u_{X_i} \\
@@ -145,12 +156,13 @@ This greatly simplifies the normalising functions seen in section \ref{subsubsec
 \subsection{Asymptotic dependence}
 
 \begin{itemize}
-  \item $
+  \item 
+    \[
       \lim_{y \rightarrow \infty}\{\mathbb{P}(\bm{Y}_{-i} \mid Y_i > y)\} = \begin{cases}
       0 &\text{for asymptotic independence} \\
       \ne 0 &\text{for asymptotic dependence}, 
     \end{cases}
-    $ \\
+    \]
   where $\bm{Y}_{-i} = (Y_1, Y_2, \ldots, Y_{i-1}, Y_{i+1}, \ldots, Y_d)$. 
   \item Existing methods for multivariate extremes (e.g.\ max-stable processes, copulas) can only model $\mathbb{P}(\bm{X} \in C)$ under asymptotic dependence.\todo{revisit this and talk a bit more about it!}
 \end{itemize}
@@ -215,6 +227,14 @@ This greatly simplifies the normalising functions seen in section \ref{subsubsec
       \bm{Z}_{\mid i} = \frac{\bm{Y}_{-i} - \bm{\alpha}_{\mid i}(Y_i)}{(Y_i)^{\bm{\beta}_{\mid i}}}
     \]
   \item All $d$ different conditional distributions are estimated separately.
+
+  \item Our dependence model therefore is a multivariate semiparamettiv regression model of the form 
+  \begin{align} \label{eq:ce_model}
+    \bm{Y}_{-i} &= \bm{a}_{\mid i}(y_i) + \bm{b}_{\mid i}(y_i)\bm{Z}_{\mid i} \\
+                &= \bm{\alpha}_{\mid i}(y_i) + \bm{Z}_{\mid i}^{\bm{\beta}_{\mid i}}
+  \end{align}
+  with the use of Laplace margins and the definition of $a_{\mid i}$ and $b_{\mid i}$ from \cite{Keef2013}. 
+  \mynote{This is the Conditional Extremes dependence model, the most important thing to know about it!}
 \end{itemize}
 
 \todo{on page 508, do I need to talk about Z hat? How G hat is its empirical distribution?}
@@ -258,7 +278,7 @@ This greatly simplifies the normalising functions seen in section \ref{subsubsec
     \[
       \log\{L(\bm{\psi})\} = \sum_{i=1}^{d}{\sum_{j=1}^{n_{u_{X_i}}}{\log\{\hat{f}_{X_i}(x_{i \mid i, k})\}}}
     \]
-    $f_{X_i}$ is the density associated with semiparameteric marginal $\hat{F}_{X_i}$, and $n_{u_{X_i}}$ is the number of exceedances of $u_{X_i}$.
+    $f_{X_i}$ is the density associated with semiparametric marginal $\hat{F}_{X_i}$, and $n_{u_{X_i}}$ is the number of exceedances of $u_{X_i}$.
   \item Equivalent to fitting GPD for each margin to excesses over marginal threshold
   \item Can estimate GPD using more complicated methods, such as extreme value GAMs and spatiotemporal models which allow for covariates and information borrowing between marginals.
 \end{itemize}
@@ -299,7 +319,7 @@ This greatly simplifies the normalising functions seen in section \ref{subsubsec
 \subsection{Uncertainty estimation (bootstrap)}
 
 \begin{itemize}
-  \item Uncertainty comes from semiparameteric marginal models, normalising functions and distributions of residuals. 
+  \item Uncertainty comes from semiparametric marginal models, normalising functions and distributions of residuals. 
   \item Semiparametric bootstrap used to evaluate standard errors of model parameter estimates and other estimated parameters such as $\mathbb{P}(\bm{X} \in \bm{C})$. 
   \item Assume marginal and dependence thresholds are fixed, therefore uncertainty due to threshold selection not accounted for. 
   \item Three stages: data generation under fitted model, estimation of model parameters, and derivation of estimate of parameters linked to extrapolation. 
@@ -375,18 +395,43 @@ Some new constraints for the conditional extremes model were introduced in \cite
     \todo{Finish theorem! Actually painful to type out lol}
   % \end{theorem}
   \item We only impose constraints on extrapolation to give greatest flexibility $\implies$ take $v$ to be above the maximum observed $Y_i$. 
-  \item The constraints are built into the inference by having the profile likelihood for $(\alpha_{j \mid i}, \beta_{j \mid i})$ obtained by MLE equal 0 if Theorem 1 is not satisfied.
+  \item The constraints are built into the inference by having the profile likelihood for $(\alpha_{j \mid i}, \beta_{j \mid i})$ obtained by having the likelihood equal 0 if Theorem 1 is not satisfied.
   \item Also reduces variance of estimators by removing inconsistent estimates. 
 \end{itemize}
 
 \subsubsection{Application}
 
+\todo{Do this section}
+
 \subsection{Comparisons to other methods}
-\todo{cite Tawn paper comparing CE to max-stable and Gaussian processes}
-\todo{Do this section, try summarise, don't have to have too much detail}
+\todo{Do this section, try summarise, no need for too much detail can also use what other papers citing this one have said!}
 
-\section{Applications of conditional extremes model}
+In \cite{Tawn2018}, the conditional extremes model is compared with other commonly used multivariate extremes models, namely max-stable, Pareto and Gaussian processes $\ldots$
 
+\subsection{Spatial conditional extremes}
+
+\todo{Write this section!}
+In \cite{Wadsworth2018}, the conditional extremes model is extended to the spatial domain. 
+
+\todo{Also talk about spatio-temporal conditional extremes from Simpson INLA paper?}
+
+\newpage
+\section{Applications of conditional extremes model}\label{sec:ce_applications}
+
+There have been many papers which have used the Conditional Extremes model in the context of multivariate extremes. 
+
+\paragraph{Estimating the probability of widespread flood events}
+In \cite{Keef2012_flooding}, $\ldots$
+
+\paragraph{Joint modelling of extreme ocean environments incorporating covariate effects}
+
+\paragraph{Modelling the effect of the El Niño-Southern Oscillation on extreme spatial temperature events over Australia}
+
+\paragraph{High-dimensional modeling of spatial and spatio-temporal conditional extremes using INLA and Gaussian Markov random fields}
+
+\paragraph{Model-based inference of conditional extreme value distributions with hydrological applications}
+
+\newpage
 \section{Bayesian spatial clustering for extremes} 
 \todo{Make this a subsection of a clustering section!}
 
@@ -401,6 +446,7 @@ This algorithm for Bayesian spatial clustering of (hydrological) extremes is det
   \item The second often uses hierarchical modelling. Naturally in extreme analyses we have a lack of data, so pooling similar sites etc.\ for parameter estimation is highly advantageous. 
   \item Existing spatial clustering focuses on either the marginal distributions or the dependence structure. 
   \item This Bayesian clustering algorithm combines both ((1) GPD and (2) $\chi$) into likelihood, with reversible jump MCMC algorithm used to estimate cluster allocation and cluster specific marginal parameters. 
+\end{itemize}
 
 \subsection{Model}
 
@@ -432,6 +478,8 @@ This algorithm for Bayesian spatial clustering of (hydrological) extremes is det
 \end{itemize}
 
 \subsubsection{Dependence Model}
+
+\mynote{Here, we will replace the use of $\chi$ with the semiparametric conditional extremes model for dependence in equation \ref{eq:ce_model}}
 
 \begin{itemize}
   \item Rather than model full joint distribution over extreme events at sites, model $\chi_{k, k'}$ for pairwise extremal dependence ($\chi_{k, k'}$ defined above) \todo{Have section on multivariate extremes which has a definition for chi}
@@ -469,9 +517,9 @@ This algorithm for Bayesian spatial clustering of (hydrological) extremes is det
   \item Bayesian inference used to estimate $J, \bm{Z}, \bm{\theta}_m^{(J)}, \bm{\theta}_D^{(J)}$, using declustered data $\bm{D} = \{r_{k, 1}, \ldots, r_{k, t}\}; k = 1, \ldots, K$.
   \item For marginal, data is marginal exceedances over threshold while for dependence the ranks of variables are used. 
   \item Because of this \textcolor{red}{difference in data}, inference for both sets of parameters is largely independent, and we can approximate the joint likelihood using the independent decomposition:
-  \[
+  \begin{equation} \label{eq:joint_likelihood}
     L(\bm{\theta}_m^{(J)}, \bm{\theta}_D^{(J)} \mid \bm{D}, \bm{Z}) = L_m(\bm{\theta}_m^{(J)} \mid \bm{D}, \bm{Z}) L_D(\bm{\theta}_D^{(J)} \mid \bm{D}, \bm{Z}).
-  \]
+  \end{equation}
 \end{itemize}
 
 \subsubsection{Marginal component}
@@ -503,11 +551,242 @@ This algorithm for Bayesian spatial clustering of (hydrological) extremes is det
   \item Take $ L_m(\bm{\theta}_m^{(J)} \mid \bm{D}, \bm{Z}) =  L_m^{\text{adj}}(\bm{\theta}_m^{(J)} \mid \bm{D}, \bm{Z})$.
   \mynote{i.e.\ use the adjusted likelihood hereafter for the marginal component of the likelihood}
   
-  \subsubsection{Dependence component}
-  \todo{TODO!}
+\subsubsection{Dependence component}
+\begin{itemize*}
+  \item Assume $\exists \tilde{u} \in [0, 1) \text{ s.t.\ } \chi_{k, k'}(u) = \chi_{k, k'} \forall \tilde{u} < u< 1$, i.e.\ it's equal to it's limit form, for all pairs of sites $(k, k')$.
+  Let
+  \item \[
+      mathcal{Q}_{k, k'} = \{t: \hat{F}_k(r_{k', t} > \tilde{u}\}
+  \]
+  be the set of times when there is an exceedance of the \textcolor{red}{quantile threshold} at both sites $k$ and $k'$.
+  \item The cardinality of this set is $Q_{k, k'} = |\mathcal{Q}_{k, k'}|$.
+  \item Let $P_{k, k'} = #\{ t \in \mathcal{Q}_{k, k'} : \hat{F}_k(r_{k, t}) > \tilde{u}\}$ \todo{Ask Christian how P is different to Q?}
+  \item $\implies$ $P_{k, k'} \sim \text{Binomial}(Q_{k, k'}, \chi_{k, k'})$.
+  \item Estimate for $\chi_{k, k'}$ is $\hat{\chi}_{k, k'} = P_{k, k'} / Q_{k, k'}$, which is the proportion of exceedances of the $100\tilde{u}\%$ for site $k'$ that also exceed this quantile threshold for site $k$. 
+  \item Combining this and Beta model for $\chi_{k, k'} \mid Z$ in equation \ref{eq:beta_mod}, and then integrating over $\chi_{k, k'}$, we obtain that
+    \begin{equation} \label{eq:beta-binom}
+    P_{k, k'} \mid \bm{D}, \bm{Z} \sim \begin{cases}
+      \text{Beta-binomial}\left(Q_{k, k'}, \frac{\beta}{\exp{\gamma_j d_{k, k'}}}, \beta\right) &\text{if } Z_k = Z_{k'} = j \\
+      \text{Beta-binomial}\left(Q_{k, k'}, \frac{\beta}{\exp{\gamma_0 d_{k, k'}}}, \beta\right) &\text{if } Z_k \ne Z_{k'} \\
+    \end{cases}
+  \end{equation}
+  \item This model to hold only for pairs of adjacent sites.
+  \item Denote the density function in \ref{eq:beta-binom} by $g$, then for a pair of adjacent sites $(k, k')$ the likelihood contribution to $L_D(\bm{\theta}_D^{(J)} \mid \bm{D}, \bm{Z})$ is
+    \[
+      L_D\left(\bm{\theta}_D^{\left(J\right)} \mid \bm{D}, \bm{Z}\right) = \left[g\left(P_{k, k'} \mid Q_{k, k'}, \bm{Z}, \bm{\theta}_D^{\left(J\right)}\right) \times g\left(P_{k', k} \mid Q_{k', k}, \bm{Z}, \bm{\theta}_D^{\left(J\right)}\right)\right]^{0.5},
+    \]
+    as we have two estimates for $\chi_{k, k'}$ which contain almost exactly the same information. 
+  \item Under the assumption of independence for distinct pairs,
+    \[
+      L_D(\bm{\theta}_D^{(J)} \mid \bm{D}, \bm{Z}) = \prod_{k \sim k'}{L_D^{k, k'}}
+    \]
+  \item Likelihood is misspecified, $\ldots$ \todo{Complete}
+\end{itemize*}
+
+\subsection{Priors}\label{subsec:priors}
+\begin{itemize}
+  \item Priors required for $J, \bm{Z} \mid J, \bm{\theta}_m^{(J)}, \bm{\theta}_D^{(J)}$.
+  \item $J \ge 1 \implies J -1 \sim \text{Poisson}(\kappa), \kappa \sim \text{Gamma}(1, 0.001)$ (weakly informative). 
+  \item Clusters must be contiguous over space $\imples$ only give positive mass in prior to contiguous clusters. 
+  \item $\bm{C}^{(J)} = \{C_1, \ldots, C_J\} \in \{1, \ldots, K\}, C_i \ne C_j \text{ if } i \ne j$ are centres of $J$ clusters, with each $k$ assigned to the closest cluster centre in terms of distance:
+  \begin{equation} \label{eq:distance}
+    Z_k \mid \bm{C}^{(J)} = \argmin_{j \in \{1, \ldots, J\}}{d_{k, C_j}}
+  \end{equation}
+  \item site $k$ assigned to cluster with lowest index if multiple centres minimise distance to the site (not well-defined otherwise). 
+  \item Can assign prior to $\bm{Z} \mid J$ via $C^{(J)}$, which is given a uniform prior with 
+    \[
+      \mathbb{P}(C^{(J)} \mid J) = \frac{(K-J)!}{K!}
+    \]
+  \item With independent conjugate priors for the hyperparameters of both, we have that for $\bm{\theta}_m^{(J)}$:
+    \begin{itemize}
+      \item $\sigma_j \sim \text{LogNormal}(\mu^{\sigma}, \theta^{\sigma}), \mu^{\sigma} \sim \text{Normal}(0, 1), \theta^{\sigma} \sim \text{Inverse-Gamma}(1, 0.1)$.
+      \item $\xi_j \sim N(\mu^{\xi}, \theta^{\xi}), \mu^{\xi} \sim \text{Normal}(0, 0.2), \theta^{\xi} \sim \text{Inverse-Gamma}(1, 0.1)$,
+      \mynote{Could use penalised complexity prior for $\xi$, which would penalise the likelihood of having values differing greatly from 0 (implemented in INLA)}
+    \end{itemize}
+    and for $\bm{\theta}_D^{(J)}$:
+    \begin{itemize}
+      \item $\epsilon_j \sim \text{Exp}(\theta^{\epsilon}), \gamma_0 \sim \text{Exp}(0.001), \beta \sim \text{Exp}(0.001), \theta^{\epsilon} \sim \text{Gamma}(5, 2)$.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Reversible jump MCMC Algorithm}
+\todo{Do this section!}
+
+\begin{itemize}
+  \item Want to sample from posterior distribution defined by the likelihood in \ref{eq:joint_likelihood} and the priors in \ref{subsec:priors}.
+  \item The dimension of the parameter space changes with $J$, so use a reversible jump MCMC algorithm. 
+  \item Given a current sample with $J$ clusters, propose one of the following seven moves:
+    \begin{enumerate}
+      \item \textbf{Birth}: Introduce a new cluster centre $C^*$ with parameters $\epsilon^*, sigma^* \text{ and } \xi^*$.
+      \item \textbf{Death} Remove one of the existing cluster centres $C_1, \ldots, \C_J$. Sites previously allocated to the removed cluster are assigned to the other $J-1$ clusters according to the distance criterion in equation \ref{eq:distance}.
+      \item \textbf{Shift} Move one cluster centre to nearby site which is not a cluster centre, update cluster labels $\bm{Z} \mid J$ according to equation \ref{eq:distance}. 
+      \item \textbf{Sigma} Update $\bm{\sigma}^{(J)}$ for all clusters.
+      \item \textbf{Xi} Update $\bm{\xi}^{(J)}$ for all clusters.
+      \item \textbf{Chi} Update $\bm{\epsilon}^{(J)}, \gamma_0, \beta$.
+      \item \textbf{Hyper} Update hyperparameters $\kappa, (\mu^{\sigma}, \theta^{\sigma}), \left(\mu^{\xi}, \theta^{\xi}, \theta^{\epsilon}\right)$.
+    \end{enumerate}
+
+  \item For a birth move, a new cluster centre $C^*$ is uniformly sampled from one of the $K - J$ sites which are not currently cluster centres. \mynote{Cluster centres are therefore ``mediods'' in some sense, in that they are actually observed sites, rather than some aggregation between sites}
+  \item Index at which to insert $C^*$ is also uniformly sampled.
+  \todo{Finish!}
+\end{itemize}
+
+\newpage
+\section{Other methods for extremal clustering}
+
+Similar to section \ref{sec:ce_applications}, this section will detail other methods for clustering of extremes. 
+
+% Clustering falls into two categories, clustering to aid qualitative inference and clustering for improved parameter estimation. \\
+% The first category usually uses some distance or divergence metric/measure, such as $\chi$, KL divergence or F-madogram to cluster sites based on a distance matrix. \\
+% The second category usually uses hierarchical modelling to pool information over similarly distributed variables. \todo{Or otherwise?}
+
+\paragraph{Clustering of maxima: Spatial dependencies among heavy rainfall in France}
+
+In \cite{Bernard2013}, a clustering algorithm for (weekly precipitation) maxima is proposed which uses (an empirical/nonparametric estimator for) the F-madogram, a type of variogram (estimates spatial correlation of spatial random field) for extremes, and PAM (partitioning around mediods). \\
+Summary:
+\begin{itemize}
+  \item bivariate vector $(M_i, M_j)^T$ assumed to follow a bivariate EVT distribution.
+  \item A variogram of order $p$ is defined as the moment of order $p$ of the difference between maxima $M_i$ and $M_j$, $\matbb{E}|M_i - M_j|^p$.
+  \item The F-madogram $d_{ij}$ is, amongst other things:
+    \begin{enumerate}
+      \item an interpretable distance, thus forming a distance matrix over which to cluster,
+      \item expressed in terms of the scalar "extremal coefficient" $V_{ij}(1, 1)$, which gives information about the degree of dependence between $M_i$ and $M_j$. 
+      \item forms a copula, and so is completely decoupled from marginal estimates, meaning there is no need to re-estimate a GEV distribution at each site, and it is not required to assume these maxima come from a GEV, but only that they lie in the domain of attraction of max-stable distribution. 
+    \end{enumerate}
+  \item PAM preferred to k-means, for the following reasons:
+    \begin{enumerate}
+      \item K-means averages over all cluster members. 
+      The average of normally distributed obs remain Gaussian, but this is not the case for maxima following an extremal distribution.
+      \item Taking mediods ensures that the cluster centre is an actual observation, which allows the maxima to remain maxima and does not apply any averaging or smoothing. 
+    \end{enumerate}
+  \item Interestingly, PAM not given geographical information, but still produces spatially coherent clusters. 
+  \item Choice of K (number of clusters) and assessment of clustering quality made through analysis of silhouette coefficient, which compares cluster tightness (small distance within cluster) with cluster dissociation/separation (clusters should be adequately distinct).
+\end{itemize}
+
+\paragraph{Partitioning into hazard subregions for regional peaks-over-threshold modeling of heavy precipitation}
+
+\todo{Read paper!}
+
+\cite{Carreau2017} derives a model which uses covariates to estimate $\sigma(\bm{x})$ and conditional mixture of GPDs with subregions defined by constant shape parameters $\xi_j$, estimated through EM algorithm and partitioned into subregions, the number of which was determined via out-of-sample cross validation. \\
+Summary:
+\begin{itemize}
+  \item As $T \uparrow$, $\xi$ becomes determining factor in return/hazard level estimates, particularly in how it determines the tail behaviour of the distribution.
+  \item $\xi$ estimation is difficult, as it is highly variable and can be influenced by many factors, such as the choice of threshold, the number of observations, etc.
+  \item Approach here is to treat hazard level as piecewise constant, and partition region of interest into subregions over which to fit a conditional mixture of GPDs (can be seen as extension of \cite{Cooley2007} which uses two subregions).
+  \item \# regions sees bias-variance tradeoff; more regions means more $\xi$ to estimate with less data (more variance), while less regions means greater bias as each subregion will represent the local characteristics of more locations (more groups often also harder to interpret). 
+  \item $\sigma$ doesn't have same issue, so just estimated with $\sigma(\bm{x})$, i.e.\ a function of covariates. 
+  \item EM algorithm: \\
+  \begin{itemize}
+    \item \textbf{E-step} estimates partition $C$, uses probability weighted moment estimators, U-statistics, kernel regression and k-means (complex, see paper)
+    \item \textbf{M-step} estimates $\mathbb{P}(C = j \mid \bm{x}) \text{ probability of subregion membership used in mixture GPD}, \sigma(\bm{x}), \xi_j$ for each subregion $j$.
+  \end{itemize}
+  \item Number of subregions chosen by out-of-sample CV using three different loss fuctions, including Anderson-Darling statistic (more sensitive to changes in the tails)
+\end{itemize}
 
 
+\paragraph{Clustering bivariate dependencies of compound precipitation and wind extremes over Great Britain and Ireland}
 
-\printbibliography
+\cite{Vignotto2021} k-mediods algorithm of KL divergence between events characterised by risk function (sum/max) for Pareto transformed extreme wind and precipitation observations over Great Britian and Ireland. \\ 
+Summary:
+\begin{itemize}
+  \item \textbf{Data}: Weekly sum of precipitation and average of daily wind speed maxima used, as precipitation and wind speed extremes can be linked through storms with a lag of several days due to persistent weather patterns. 
+  \item \textbf{Mapping from bivariate to univariate space}: \todo{Word better}
+  \begin{itemize}
+    \item Marginal distributions (i.e.\ rain and wind speed at a single site) are transformed to standard Pareto distributions. 
+    \item Risk function computed on Pareto scale $r:\mathbb{R}^2 \rightarrow \mathbb{R}$ used to define which points are extreme, where $r(x, y) = x + y$ or $r(x, y) = \max(x, y)$, mapping from bivariate to univariate space (taking (Pareto transformed) wind and precipitation estimates at each site and giving us a single estimate for each)   \end{itemize}
+  \todo{is the Risk function only used to determine which points are extreme, with the original data bivariate data used to calculate KL divergence???}
+  \textbf{Distance metric}:
+  \begin{itemize}
+    \item coefficient of tail dependence $\chi/\bar{\chi}$ cannot directly measure similarity of extremal behaviour of two bivariate random variables $\bm{X}^{(1)} = (X_1^{(1)}, X_2^{(1)})$ and $\bm{X}^{(2)} = (X_1^{(2)}, X_2^{(2)})$, i.e.\ rain and wind speeds at two different locations.
+    \item Instead, use the Kullback-Leibler divergence, which measures the difference between two probability distributions $P$ and $Q$, and is defined as 
+    \[
+      D_{KL}(P \mid Q) = \int{p(x) \log\left(\frac{p(x)}{q(x)}\right)dx}.
+    \]
+    KL divergence is shown to generalise the concept of $\chi$, since $\ldots$ \todo{Finish}
+  \item Extreme points $\{R^{(j)} > q_u^{(j)}\}$ partitioned into $W = 3$ sets, one for co-occurring extremes and two for where data is extreme for only one variable (easily extended to multivariate case from bivariate).
+  \item Empirical proportions of data points belonging to each set used to estimate KL divergence between any two sites (i.e.\ how similar occurrence of extremes are at two sites), this giving distance/dissimilarity matrix over which to cluster.
+  \end{itemize}
+  \item K-mediods algorithm clusters sites over KL divergences. 
+  \item Silhouette coefficient used to choose number of cluster and assess solution. 
+  \item Makes interesting conclusions about bivariate extremal behaviour of Ireland which will be useful for TFR report, but is different in it's use of gridded data, which underestimates extremal precipitation and wind speeds. 
+\end{itemize}
+
+\paragraph{Modelling panels of extremes}
+
+\cite{Dupuis2023} derives EM (really MM) algorithm for identifying group structure and group-specific model parameters for GEV distributed panel data. \\
+Summary:
+\begin{itemize}
+  \item \textbf{Data}: data for individuals/locations $i$, time $t$ (known as panel data, i.e.\ $X_{i t}$) which are GEV distributed. 
+  \item Because of the nature of extremes, both complete and no pooling results in poor parameter estimates, so some/"partial" pooling over similar/homogeneous locations desired.
+  \item Use EM/EE algorithm and QML (where variance-covariance matrix may be misspecified) to iteratively estimate (i.e.\ estimation is disentangled for simplicity) group structure/assignment $\bm{\tau}$ and group-specific parameters $\bm{\theta}$ related to parameters of GEV through individual regression equations (so each GEV parameter estimated separately). 
+  The consistency of this algorithm is also proven.
+  \item grouping is latent and ``data-driven'', rather than based on domain knowledge, and is done mainly for improved parameter estimation, as opposed to methods which derive distance matrices over which to perform e.g.\ k-mediods clustering. 
+  \item Stronger dependence in data helps group identification because it reduces the variance among individuals in the same group, but it gives worse quantile estimates (i.e.\ stronger dependence gives lower effective sample size $\implies$ less information $\implies$ greater variance in QML estimator).
+  \item Simulation study performed, and applications to financial risk, extreme temperature and flood risk data shown to be effective (and better than when using groupings based on domain knowledge). 
+\end{itemize}
+
+\paragraph{Similarity-based clustering for patterns of extreme values}
+
+\cite{deCarvalho2023} uses k-means to cluster over bivariate cluster centroid of the extremal index and the heteroskedastic function, interpreted as the magnitude and frequency of extreme events, respectively. 
+Summary (from reading course report):
+\begin{itemize}
+  \item Heteroskedastic extremes violate assumption of IID observations, and may exhibit serial dependence or be drawn from different distributions. 
+  \item The \textbf{heteroskedastic function} $c$ gives the frequency of extremes, with $c = 1$ defining "homoskedastic extremes". 
+  Defined as a limit which compares only the distribution tails, not imposing any assumption on centre of distributions. 
+  \item \textbf{Extremal index} $\gamma$ (\textbf{the same as the shape parameter!}) is a scalar which controls the behaviour of a CDF in its right tail (i.e.\ it's rate of tail decay), and is often thought of as the inverse of the limiting mean cluster size).
+  \item Nonparametric kernel-based estimator and Hill function provide respective estimates $\hat{c}, \hat{\gamma}$.
+  \item Two quantities are jointly thresholded such that a specific quantile of observations is preserved. 
+  \item The level of bias towards one of these metrics is parameterised in this procedure, so that one can be favoured over the other in an analysis, as deemed necessary. 
+  \item Standard k-means clustering performed on bivariate cluster centroid $(\hat{c}, \hat{\gamma})$.
+\end{itemize}
+
+\newpage
+\section{Bayesian extremes}
+
+Bayesian statistics has seen widespread adoption in the context of Extreme Value Theory. 
+Naturally, as parameter and estimation uncertainty is high, the use of priors to incorporate expert knowledge, as well as hierarchical modelling to share information, is highly advantageous.
+Here, we will detail some of the methods used in Bayesian extremes.
+
+\paragraph{Bayesian analysis of extreme values by mixture modeling}
+
+% \cite{Bottolo2003} derives a mixture model of Poisson processes $PP(\mu, \sigma, \xi)$ with priors on PP parameters which have parameter-specific group structuring, allowing for high flexibility
+\cite{Bottolo2003} defines exceedances over a given threshold as generated by a model characterised by a Poisson process $PP(\mu, \sigma, \xi)$, and derives a hierarchical mixture prior for each of these parameters which has (unknown, latent) parameter-specific group structuring (allowing for great flexibility) estimated through a Reversible Jump MCMC (RJMCMC) scheme similar to that of \cite{Rohrbeck2021}. 
+\begin{itemize}
+  \item Data is exceedances over a threshold, which are modelled as a (Poisson) point process with parameters $\mu, \sigma, \xi$.
+  \item incorporating prior knowledge in context of extremes useful due to rarity of extremal data.
+  \item Proposed Bayesian hierarchical model with (parameter-specific) grouping of type-effects, where grouping is latent and ``data-driven'', as in \cite{Dupuis2023}. 
+  \item RJMCMC algorithm used to estimate group structure and group-specific parameters.
+  \item Previous models assumed exchangeability of parameters meaning that types were treated symmetrically and correspondingly parameter estimates were shrunk towards common points. 
+  \item Under mixture priors, parameters are assumed to be i.i.d.\ according to some finite-mixture distribution with number of components $w$, corresponding weights $k$ hyperparameters $\delta$, and latent variable $Z_i$ indicating the mixture component to which the parameter belongs.
+  \item Hyperpriors perform partial-pooling between groups, with $k \sim \mathbb{P}(k^{\eta} = k)$ (can be uniform, fully specified or somewhere in between) for a PP parameter $\eta$ and Dirichlet prior on $w^{\eta} \mid k^{\eta}$ (nice DAG for these in paper). 
+\end{itemize}
+
+\paragraph{Bayesian spatial modeling of extreme precipitation return levels}
+
+\begin{itemize}
+  \item Abstract/summary:
+    \begin{itemize}
+      \item \cite{Cooley2007} models \textbf{r-year return levels} (with uncertainty) for extreme precipitation in Colorado.
+      \item Separately hierarchical models for intensity $\mathbb{P}(Z(\bm{x}) > z + u \mid Z(\bm{x}) > u)$ and frequency $P(Z(\bm{x}) > u$) at location $\bm{x}$ under GPD and binomial distributions, respectively, as in chapter 5 of \cite{Coles2001}. 
+      \item Both models incorporate latent spatial process characterised by geographical and climatological covariates using a Gaussian process. 
+      \item MCMC and spatial interpolation used for inference. 
+    \end{itemize}
+    \item temporal dependence reduced by declustering (keeping only highest of consecutive days exceeding threshold). 
+    \item Work in a ``climate space'' (rather than longitude/latitude), where the coordinates of $\bm{x}$ are defined by orographic and climatological measures. 
+    \item Both models are described by the three layer hierarchical model
+      \[
+        p(\bm{\theta} | \bm{Z}(\bm{x})) \propto p_1(\bm{Z}(\bm{x}) | \bm{\theta}_1) p_2(\bm{\theta}_1 | \bm{\theta}_2) p_3(\bm{\theta}_2),
+      \]
+      where the first layer models the data (with a GPD or Binomial), the second layer models the latent process (with a Gaussian process) and the third layer consists of the hyperparameters for the parameters $\theta_2$ that drive the latent process (with $\theta_1$ being the parameters of the GPD/binomial likelihoods). 
+    \item Best model amongst different covariate forms for $\phi = log(\sigma) and \xi$ were compared via DIC (also using long/lat vs climate space), $\xi$ taken to be different for ``mountainous'' and ``planes'' regions, so fit for just \textbf{two separate regions} (with shared information) rather than estimated for each site (important as this is quite like clustering/grouping for parameter estimation improvement, although the clustering is via domain knowledge rather than data-driven). 
+\end{itemize}
+
+\paragraph{A hierarchical max-stable spatial model for extreme precipitation}
+
+\paragraph{Leveraging Extremal Dependence to Better Characterize the 2021 Pacific Northwest Heatwave}
+
+
+% \printbibliography
+\bibliography{library}
 
 \end{document}

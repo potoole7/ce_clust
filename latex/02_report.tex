@@ -1,0 +1,112 @@
+\documentclass{article}
+
+\usepackage[top=3cm, bottom=3cm, left=3cm,right=3cm]{geometry}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage{graphicx}
+\usepackage{bm}
+\usepackage{titlesec}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{natbib} % print author's name and year when citing
+\usepackage{bbm}
+\usepackage{todonotes}
+\usepackage{pdflscape}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{authblk}
+\usepackage{pdfpages}
+\usepackage{setspace} 
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{tikz}
+\usepackage[colorlinks=true,citecolor=blue, linkcolor=blue]{hyperref}
+\usepackage{multirow}
+\usepackage{todonotes}
+\setlength{\tabcolsep}{5pt}
+%%\setlength{\parindent}{0pt}
+\usepackage[parfill]{parskip}
+\renewcommand{\arraystretch}{1.5}
+
+% \renewcommand\Affilfont{\itshape\footnotesize}
+% \def\ci{\perp\!\!\!\perp}
+
+% \renewcommand\Affilfont{\itshape\footnotesize}
+% \linespread{1.5}
+
+% Define a custom note command for general notes
+\newcommand{\mynote}[1]{\todo[color=yellow!40,inline]{#1}}
+
+\DeclareMathOperator*{\argmin}{arg\,min}
+% \DeclareMathOperator*{\argmax}{arg\,max}
+
+% Nature Bibliography style
+% \usepackage[backend=biber,style=nature]{biblatex}
+% \addbibresource{library.bib} 
+\bibliographystyle{unsrtnat}
+
+% number equations by section
+\numberwithin{equation}{section}
+
+\title{Developing clustering algorithms for conditional extremes models}
+\thispagestyle{empty}
+\author{Patrick O'Toole \\ SN: 239261652 \\ Supervised by Christian Rohrbeck and Jordan Richards}
+% \date{July - September 2024}
+\date{\today}
+
+\begin{document}
+
+\begin{center}
+    \huge
+    \vspace{1.5cm}
+    \textbf{Thesis Formulation Report}
+
+    \vspace{0.4cm}
+    \huge
+    Developing clustering algorithms for conditional extremes models
+    
+    \Large    
+    \vspace{0.8cm}
+    \textbf{Patrick O'Toole} \\
+    Supervised by: Christian Rohrbeck and Jordan Richards \\
+    % July-September 2024
+    \today
+    \vfill
+    \includegraphics[width=7cm]{images/samba.jpg}\\
+    \vspace{0.5cm}
+    \includegraphics[width=5cm]{images/university-of-bath-logo.png}
+    \hspace{1cm}
+    \includegraphics[width=5cm]{images/UKRIlogo.png}
+    \large   
+    \vspace{1.5cm}
+    \end{center}
+ 
+\newpage
+
+\todo{edit TFR contract text to make abstract}
+\begin{abstract}
+  Conditional extreme value models have proven useful for analysing the joint tail behaviour of random vectors. 
+  While an extensive amount of work to estimate conditional extremes models exists in multivariate and spatial applications, the prospect of clustering for models of this type has not yet been explored. 
+  This project will review existing methods in the area of conditional extremes models, and develop and research ideas on how some of these models can be embedded into a clustering framework. 
+  It will also involve the review of existing state-of-the-art clustering methods within extreme value analysis. 
+\end{abstract}
+
+\tableofcontents
+
+\newpage
+
+
+\section{Introduction}\label{sec:intro}
+
+\section{Literature Review}\label{sec:lit_review}
+
+\section{Conditional Extremes Model}\label{sec:lit_review}
+
+\section{Motivating Example}\label{sec:example}
+
+% \printbibliography
+\bibliography{library}
+
+\end{document}

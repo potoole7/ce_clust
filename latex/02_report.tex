@@ -82,10 +82,9 @@
     \large   
     \vspace{1.5cm}
     \end{center}
- 
 \newpage
 
-\todo{edit TFR contract text to make abstract}
+\todo{Taken from contract, edit to form proper abstract}
 \begin{abstract}
   Conditional extreme value models have proven useful for analysing the joint tail behaviour of random vectors. 
   While an extensive amount of work to estimate conditional extremes models exists in multivariate and spatial applications, the prospect of clustering for models of this type has not yet been explored. 
@@ -93,20 +92,204 @@
   It will also involve the review of existing state-of-the-art clustering methods within extreme value analysis. 
 \end{abstract}
 
+
+\begin{center}
+\paragraph{Responsible Research and Innovation} ~\linebreak
+\todo{Make linebreak the same as abstract}
+\todo{Add Responsible Research and Innovation statement}
+Fill in!
+
+\end{center}
+
+\newpage
+
 \tableofcontents
 
 \newpage
 
+Prospective ordering of sections:
+\begin{enumerate}
+  \item Introduction
+  \item Motivating example
+  \item Peaks-over-threshold method for univariate extremes
+  \item Conditional extremes model
+  \item Clustering for extremes
+  \item Discussion and future work
+\end{enumerate}
 
 \section{Introduction}\label{sec:intro}
 
-\section{Literature Review}\label{sec:lit_review}
+\todo{Do this section!}
 
-\section{Conditional Extremes Model}\label{sec:lit_review}
+\begin{itemize}
+  \item What are extremes (modelling tails of distributions where underlying stochastic process is assumed), why they are used (anywhere where we are more interested in tails of distributions). 
+  \item Examples of uses of extreme value theory (see reading course, Conor Murphy and Matthew Speers review papers).
+  \item Paragraph on key focus of report (dependence modelling through conditional extremes). Could talk about other dependence models, referencing how they are more restrictive and more computationally intensive, citing \cite{Tawn2018} and \cite{Huser2024}. 
+  \item "This proposal suggests combining conditional extremes and clustering", to improve parameter estimation for the model. 
+  % \item Modelling of dependence between marginals required to improve return
+    % level estimation (see \cite{Zhang2024}), with one such model being the conditional extremes model of \cite{Heffernan2004}. 
+  % \item Extremal models are notoriously difficult to fit, largely due to shape parameter, and this propagates into CE model parameters,
+  % \item There is a wealth of literature on clustering in extremes. However, clustering on the CE model has never been done before. 
+  % \todo{Want to do as future research, keep vague}
+  % \item In particular, hierarchical clustering would be useful for improved parameter estimation, with a Bayesian framework further introducing priors for our parameters which are useful in extremes where there is a lack of available data. 
+  \item Summarise what will be talked about in the rest of the report.
+\end{itemize}
+\mynote{Key challenges should be left until the end to aid narrative}
+\mynote{Keep vague, just mention that clustering for extremes has been done before, but not in the context of conditional extremes}
 
-\section{Motivating Example}\label{sec:example}
+\section{Motivating example}
 
-% \printbibliography
+\begin{itemize}
+  \item Introduce Ireland dataset, which will serve as a motivating example to elucidate how both marginal extreme value models and the conditional extremes can be fit to data. 
+  \item Precipitation data from Met Eireann, wind speed data from ERA5 reanalysis, reference accordingly (also map from 
+  \item This dataset is interesting in that it has two variables (wind speed, rain), recorded at each site, and this bivariate setting is unusual in the extremal clustering literature, which often focuses on univariate extremes across space (with one notable exception of \cite{Vignotto2021}). 
+  \item Introduction to dataset (rows, locations, years, etc), weekly Winter precipitation sum and daily wind speed maxima for Ireland from 1990 to 2020 inclusive, following \cite{Vignotto2021}. 
+    Include single exploratory plot to showcase data (left plot could have locations of weather sites, right could have rainfall plotted against wind speed for a given site).
+    \todo{Fill in with points to make about data (see past reports)}
+    % \begin{enumerate}
+    % \end{enumerate}
+    \item Will now show how marginal models can be fit to this data.
+\end{itemize}
+
+\section{Peaks-over-threshold method for univariate extremes}\label{sec:uni}
+
+Follow other papers using GPD, like \cite{Carreau2017}. 
+\begin{itemize}
+  \item Peaks over threshold (reference Halkema and de Haan 1974, Pickands 1975, see Carreau 2017 for example) definition for extremes (including reference to limiting extreme value distribution $G$ from Coles 2001)
+  \item Conditional CDF of GPD distribution
+  \item Different tails of GPD for different signs of shape parameter
+  \item Talk about different threshold selection methods, e.g.\ stability plots, including quantile regression method used in \cite{Youngman2019}.
+  \item IID assumption in GPD as defined above, can model parameters as covariates, numerous methods to do this, such as using \texttt{evgam} as first introduced in \cite{Youngman2019}, and also Gaussian processes and INLA in \cite{Opitz2018} and Gaussian processes \todo{need reference}.
+  \item Return levels (m-observations, n-year, from \cite{Coles2001}) can be estimated from GPD parameters (derived from conditional probability and exceedance probability, as in \cite{Cooley2007} and \cite{Coles2001}). 
+  \item Reference difficulty in estimating GPD and particularly $\xi$ due to lack of data and strange likelihood (following \cite{Coles2001}). 
+  \item Also mention inadequacy of return level estimates with univariate methods when dependence is seen, as seen in Pacific Northwest in \cite{Zhang2024}, motivating use of dependence models. Also, interest in situations where we have both extreme wind speed and rain, as in \cite{Heffernan2004}, motivating dependence modelling. 
+  \item (See \cite{Huser2024} for details) Although max-stable naturally follow theory as dependence model, practically they are unwieldy and CE appears to be preferred now in literature. 
+\end{itemize}
+
+Section 2, application to motivating example
+\subsection{Application to motivating example}
+\begin{itemize}
+  \item uses \texttt{evgam} to estimate $\sigma, \xi$ at each location smoothing both over space (can take from ITT2 report) for GPDs fitted to precipitation and wind speed, respectively.
+  \item Also uses method from \cite{Youngman2019} whereby location-specific thresholds are defined as fixed quantiles and estimated by quantile regression.
+  \item Show maps of $\sigma$ and $\xi$ for both rain and wind speed, $\ldots$ (what else?)
+  \item Possibly show uncertainty in $\xi$ estimates from vanilla \texttt{texmex}, or can I get uncertainty in \textbf{evgam} estimates for $\xi$ (see \cite{Youngman2023})?
+  \item QQ plots for GPD fits, showing how well the model fits the data \todo{Add uncertainty to plots! From ITT2}
+\end{itemize}
+
+\section{Conditional extremes model}\label{sec:ce}
+
+Below narrative is a bit jumbled, can order better by looking at \cite{Heffernan2004}, \cite{Keef2013} and applied conditional extremes papers again. 
+\todo{Anything else to add?}
+\todo{Where to include applications? At the start?}
+
+\subsection{Dependence Modelling}
+\begin{itemize}
+  \item Modelling dependence give improved return levels and allows for estimation of joint probability of extremes, whether at multiple sites for the same variable or across multiple variables at the same site.
+  \item Define asymptotic dependence/independence, possibly mention $\chi$ statistic. 
+  \item Models include max-stable processes, Pareto processes, Gaussian processes, copulas, and conditional extremes model.
+  \item Former four models limited in both their ability to model dependence and their computational feasibility, CE model is more flexible.
+  \item Can mention \cite{Tawn2018} and \cite{Huser2024} for more information on this.
+\end{itemize}
+
+\subsection{Conditional extremes model}
+\begin{itemize}
+  \item Introduction to dependence modelling for extremes, following \cite{Heffernan2004} for modelling $\mathbb{P}(\bm{X} \in \bm{C})$, i.e.\ an observation which is extreme in more than one dimension, be that for multiple variables at a single location (e.g.\ rain and wind speed) or across multiple locations and/or times. 
+  \item Following \cite{Tawn2018} and \cite{Heffernan2004}, introduce other methods for modelling dependence in extremes, such as max-stable, Pareto and Gaussian processes, and copulas, and their limitations, both in the restrictiveness of the type of dependence these methods can model, and their computational feasibility.
+  \item Something on marginal model as piecewise ECDF and GPD, which can be fitted using any method mentioned in \ref{sec:uni}. 
+  \item Starting from asymptotic motivation, define conditional extremes model as in \cite{Heffernan2004} and in applied paper as the non-parametric regression equation $Y_{-i} = a_{\mid i}(Y_{\mid i}) + \b_{\mid i}(Y_{\mid i}) Z_{\mid i}$
+  \item Requires Gumbel transformation of margins to have exponential upper tail, but this gives complex form for $a$ for negative dependence, so instead following \cite{Keef2013} Laplace margins are used which have doubly exponential tails and thus have the conceptually simple $a_{\mid i} = \alpha_{\mid i}Y_{\mid i} , b = Y_{\mid i}^{\beta_{\mid i}}$, which can be interpreted as the slope and spread parameters for our semi-parametric regression line (is there a reference I can use which makes this interpretation?). 
+  \item Extrapolation through MC algorithm as in \cite{Heffernan2004} (alternative in \cite{Keef2013}.
+  \item Talk about diagnostics through independence of residuals and tail exceedances in the limit. 
+  \item Uncertainty through bootstrap scheme,
+  \item Return levels $\ldots$ (improved over univariate, as shown in \cite{Zhang2024})
+  \item Additional constraints from \cite{Keef2013} on possible values of $\alpha$ and $\beta$ to ensure stochastic ordering of $Y_j \mid Y_i = y$ for large $y$ 
+\end{itemize}
+
+\subsection{Extensions}
+\begin{itemize}
+  \item Spatial extension in \cite{Wadsworth2018}, which has $\alpha$ which slowly decays as distance between site and some reference site increases, several choices of $\beta$ to fit different tails, and the representation of the residuals as a Gaussian process with some constraints to ensure it's value is 0 when the site in question is the same as the reference site. 
+  \item Modified in \cite{Simpson2023} to be part of latent Gaussian class of models, meaning it can be fitted to 1000s of sites, and can be used in geostatistical context.
+\end{itemize}
+
+\subsection{Application to motivating example}
+
+(Not necessarily in correct order)
+\begin{itemize}
+  \item used \texttt{texmex} to fit conditional extremes model on top of marginal models to estimate $\alpha, \beta$ for rain $\mid$ wind speed and vice versa for each location. 
+        Vanilla CE used for simplicity of implementation for this motivating example. 
+   \begin{enumerate}
+     \item Show diagnostic and quantile plots for CE for some location(s),
+     \item Show bootstrapped $\alpha$ and $\beta$ values for rain $\mid$ wind speed and wind speed $\mid$ rain for different thresholds, motivating choice of CE threshold at 70th quantile, and fixing $\beta$ at 0.1 so that all variability is in $\alpha$ (also makes interpretation easier, and need for this further highlights need for better parameter estimation through grouping and/or some hierarchical model). 
+     \item Bootstrapped values for $\xi$ (under vanilla \texttt{texmex} marginal estimates, rather than \texttt{evgam}) and $\alpha$ show that uncertainty high in both, even when fixing $\beta$. 
+     \item Maps of $\alpha$ values conditioning on rain and windspeed, possibly cross-hatch where bootstrapped $\alpha$ values have 95\% CI which intersects 0. 
+     \item Plot of $\alpha$ values versus longitude and latitude (possibly coloured by distance to coast), showing how space is main driver in difference (unsurprising as used as only covariate in marginal \texttt{evgam} model). 
+   \end{enumerate}
+\end{itemize}
+
+
+\section{Clustering for extremes}\label{sec:clustering}
+
+Mainly lit review on clustering. 
+\begin{itemize}
+  \item Clustering generally done for two reasons: improved explainability and improved parameter estimation. 
+  \item Wealth of literature on clustering for extremes for both of these types. 
+\end{itemize}
+
+\subsection{Explanatory clustering}
+
+\begin{itemize}
+  \item First kind mainly focuses on deriving distance matrices for some metric (such as marginal GPD parameters, F-madogram, etc) and applying some classical clustering algorithm such as k-mediods. Can talk about different papers which have done this (multiple references to make here).
+  \item In particular \cite{Vignotto2021} paper matches our application here, would be a promising method to try on the conditional extremes model. In particular, is really simple to implement, but perhaps won't help so much with parameter estimation problem. 
+\end{itemize}
+
+\subsection{Clustering for improved parameter estimation}
+
+\begin{itemize}
+  \item Second kind uses hierarchical modelling and generally produces latent, ``data-driven'' group structure, methods for estimating likelihood can be split between Frequentist methods which use some flavour of EM algorithm, and Bayesian which uses MCMC, in particular \cite{Bottolo2003} and  \cite{Rohrbeck2021}, which use RJMCMC (other methods (possibly from outside extrems) include use of ``stick-breaking prior'' and latent Dirichlet allocation, reference).
+  \item This kind particularly useful for extremes because of lack of data causing ``naive'' marginal $\xi$ values to have large variance (which in turn feeds into estimates of $\alpha$ and $\beta$ for CE model). 
+  \item Earlier paper in this vein is \cite{Cooley2007}, but this only used domain-knowledge to fit two seperate $\xi$ values for different regions (mountainous and plains).
+  \item Talk about Frequentist EM papers for GEV (\cite{Dupuis2023}) and GPD (\cite{Carreau2017}), use variants of EM algorithm. 
+  \item Talk about \cite{Rohrbeck2021}, how it changes RJMCMC algorithm from \cite{Bottolo2003} and uses GPD rather than PP (review both papers), some reasons why it may be an improvement on Frequentist methods:
+    \begin{enumerate}
+      \item Use of priors desirable where data is naturally lacking for extremal context (but may also be shunned for being opinionated?), mention use of Penalised complexity prior for $\xi$ in INLA implementation of GPD. 
+      \item Inference for the \cite{Carreau2017} is quite conceptually difficult, making use of U-statistics for probability weighted moment estimators and in the GEV paper required a  consistency analysis of the QML methods used
+      \item In contrast, inference for Bayesian problem could be seen as somewhat simpler, can be simply expressed through DAG with hyperpriors to enable partial pooling, can more easily limit e.g.\ $\xi$ to more reasonable values, spatial interpolation is easy (but can be made more complex), number of regions/clusters to use can be estimated with within MCMC scheme rather than e.g. cross-validation as in \cite{Carreau2017}.
+      \item Any improvements in computational speed? Can talk about INLA implementation of CE and how it allows for modelling of many regions, opens up use in geostatistical context,
+      \item Probabilistically defines uncertainty around parameter estimates, which is nice, compared to having to define complicated bootstrapping schemes or other methods to quantify uncertainty in Frequentist setting. 
+      \item Also reference context of conditional extremes model, rather than GPD or GEV explicitely (although GPD must be estimated to then estimate CE parameters), probably more easily formulated in hierarchical Bayesian model (how?)
+    \end{enumerate}
+  \item However, Frequentist method doesn't require specification of priors, which is a controversial subject and can be quite laborious.  
+\end{itemize}
+
+\section{Discussion} \label{sec:discussion}
+
+Summary of report:
+\begin{itemize}
+  \begin{enumerate}
+    \item Introduced extremes, why they are important, why dependence modelling is important,
+    \item Introduced motivating example of extreme wind speed and rain in Ireland,
+    \item Showed how univariate extremes can be modelled using GPD, and how parameter estimates can include covariates, and how GPD can be applied to Ireland dataset. 
+    \item Introduced dependence modelling and the conditional extremes model, why it's an improvement over previous models, where it may be susceptible to uncertainty in $\xi$ estimates and some previous applications of the model.
+    \item Reviewed clustering methods for extremes, shown examples of both types of clustering, highlighted some papers where there is potential to use these methods on the conditional extremes model.
+  \end{enumerate}
+\end{itemize}
+
+Future work:
+\begin{itemize}
+  \item Try general clustering (k-means, k-medoids) on conditional extremes modes, in particular trying to implement \cite{Vignotto2021} paper method on Ireland dataset for conditional extremes model, using estimates \todo{Should I elaborate?}
+  \item This model has obvious limitations in that it may not be extended past bivariate case \todo{See discussion in paper to see what they had to say about this}.
+  \item Potential to try Bayesian clustering approach similar to \cite{Rohrbeck2021}, will involve deriving likelihood for CE model and priors for parameter values. 
+  \item Later, can extend clustering to spatial and spatio-temporal CE from \cite{Tawn2018}.
+\end{itemize}
+
+\section{Code availability}
+
+\begin{itemize}
+  \item Code for analysis available at \url{https://github.com/potoole7/TFR}. \todo{Make sure this is public while TFR report is being reviewed!}
+  \item Fork of \texttt{texmex} package available at \url{http://github.com/potoole7/texmex}, adds functionality to fix $\beta$ values and only estimate $\alpha$. \todo{any other functionality added?}
+\end{itemize}
+
+\newpage
 \bibliography{library}
 
 \end{document}

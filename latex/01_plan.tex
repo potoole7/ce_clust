@@ -124,9 +124,12 @@ Prospective ordering of sections:
 \todo{Do this section!}
 
 \begin{itemize}
-  \item Why extremes (modelling tails of distributions where underlying stochastic process is assumed).
+  \item What are extremes (modelling tails of distributions where underlying stochastic process is assumed), why they are used (anywhere where we are more interested in tails of distributions). 
   \item Some simple, examples of uses in marginal estimation (and more complicated examples from reading course).
-  \item $\ldots$
+  \item Modelling of dependence between marginals required to improve return level estimation (see \cite{Winter2016}), with one such model being the conditional extremes model of \cite{Heffernan2004}. 
+  \item Extremal models are notoriously difficult to fit, largely due to shape parameter, and this propagates into CE model parameters,
+  \item There is a wealth of literature on clustering in extremes. However, clustering on the CE model has never been done before. 
+  \item In particular, hierarchical clustering would be useful for improved parameter estimation, with a Bayesian framework further introducing priors for our parameters which are useful in extremes where there is a lack of available data. 
   \item Summarise what will be talked about in the rest of the report.
 \end{itemize}
 
@@ -167,6 +170,8 @@ Can also talk about (if time/space):
   \item Can also talk about how \cite{Tawn2018} shows CE is an improvement over other methods like max-stable/Pareto processes (how much detail? Look at what other papers have done)
   \item Spatial extension in \cite{Wadsworth2018}, which has $\alpha$ which slowly decays as distance between site and some reference site increases, several choices of $\beta$ to fit different tails, and the representation of the residuals as a Gaussian process with some constraints to ensure it's value is 0 when the site in question is the same as the reference site. 
 \end{itemize}
+
+\texbf{Also have section on applications of CE model!}
 
 \section{Clustering for extremes}\label{sec:clustering}
 
@@ -254,6 +259,23 @@ Mainly lit review on clustering.
     \end{itemize}
 \end{enumerate}
 \section{Discussion and future work}\label{sec:discussion}
+
+Summary of report:
+\begin{itemize}
+  \begin{enumerate}
+    \item Introduced extremes, why they are important, why dependence modelling is important,
+    \item Showed how univariate extremes can be modelled using GPD,
+    \item Introduced dependence modelling and the conditional extremes model, why it's an improvement over previous models, where it may be susceptible to uncertainty in $\xi$ estimates and some previous applications of the model.
+    \item Reviewed clustering methods for extremes, shown examples of both types of clustering, explanatory clustering likely not applicable in this context, but hierarchical Bayesian clustering methods likely to be useful,
+    \item Presented a motivating example which shows how the conditional extremes model can be fit, how parameter estimates can have very large variance, how clustering could be done on these parameters, and how simple methods are inadequate, leading to the need for more involved research into this topic. 
+  \end{enumerate}
+\end{itemize}
+
+Future work:
+\begin{itemize}
+  \item Try Bayesian clustering approach similar to \cite{Rohrbeck2021}, will involve deriving likelihood for CE model and priors for parameter values. 
+  \item Later, can extend the model to spatial CE from \cite{Tawn2018}.
+\end{itemize}
 
 \section{Code availability}
 

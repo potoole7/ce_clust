@@ -13,6 +13,97 @@
   language  = "en"
 }
 
+# Block maxima definition
+@article{Fisher1928,
+  title     = "Limiting forms of the frequency distribution of the largest or
+               smallest member of a sample",
+  author    = "Fisher, R A and Tippett, L H C",
+  journal   = "Math. Proc. Camb. Philos. Soc.",
+  publisher = "Cambridge University Press (CUP)",
+  volume    =  24,
+  number    =  2,
+  pages     = "180--190",
+  month     =  apr,
+  year      =  1928,
+  language  = "en"
+}
+
+# Peaks-over-threshold
+@article{Pickands1975,
+  title     = "Statistical inference using extreme order statistics",
+  author    = "Iii, James Pickands",
+  journal   = "Ann. Stat.",
+  publisher = "Institute of Mathematical Statistics",
+  volume    =  3,
+  number    =  1,
+  pages     = "119--131",
+  month     =  jan,
+  year      =  1975
+}
+
+@article{Balkema1974,
+  title     = "Residual life time at great age",
+  author    = "Balkema, A A and de Haan, L",
+  journal   = "Ann. Probab.",
+  publisher = "Institute of Mathematical Statistics",
+  volume    =  2,
+  number    =  5,
+  pages     = "792--804",
+  month     =  oct,
+  year      =  1974
+}
+
+@article{Gnedenko1943,
+  title     = "Sur La Distribution Limite Du Terme Maximum {D'Une} Serie
+               Aleatoire",
+  author    = "Gnedenko, B",
+  journal   = "Ann. Math.",
+  publisher = "JSTOR",
+  volume    =  44,
+  number    =  3,
+  pages     = "423",
+  month     =  jul,
+  year      =  1943
+}
+
+% Threshold selection
+@misc{Murphy2024,
+      title={Automated threshold selection and associated inference uncertainty for univariate extremes}, 
+      author={Conor Murphy and Jonathan A. Tawn and Zak Varty},
+      year={2024},
+      eprint={2310.17999},
+      archivePrefix={arXiv},
+      primaryClass={stat.ME}
+}
+
+# Bayesian Quantile Regression
+@article{Yu2001,
+title = {Bayesian quantile regression},
+journal = {Statistics & Probability Letters},
+volume = {54},
+number = {4},
+pages = {437-447},
+year = {2001},
+issn = {0167-7152},
+doi = {https://doi.org/10.1016/S0167-7152(01)00124-9},
+url = {https://www.sciencedirect.com/science/article/pii/S0167715201001249},
+author = {Keming Yu and Rana A. Moyeed}
+}
+
+# evgam paper
+@article{Youngman2022,
+ title={evgam: An R Package for Generalized Additive Extreme Value Models},
+ volume={103},
+ url={https://www.jstatsoft.org/index.php/jss/article/view/v103i03},
+ doi={10.18637/jss.v103.i03},
+ number={3},
+ journal={Journal of Statistical Software},
+ author={Youngman, Benjamin D.},
+ year={2022},
+ pages={1–26}
+}
+
+
 # evgam for sigma, xi, also quantile regression used for location-specific thresholds
 @article{Youngman2019,
   author = {Benjamin D. Youngman},
@@ -26,6 +117,29 @@
   doi = {10.1080/01621459.2018.1529596},
   URL = {https://doi.org/10.1080/01621459.2018.1529596},
   eprint = {https://doi.org/10.1080/01621459.2018.1529596}
+}
+
+# Why not to use max-stable processes (and use spatial conditional extremes as well)
+@misc{Huser2024,
+      title={Modeling of spatial extremes in environmental data science: Time to move away from max-stable processes}, 
+      author={Raphaël Huser and Thomas Opitz and Jennifer Wadsworth},
+      year={2024},
+      eprint={2401.17430},
+      archivePrefix={arXiv},
+      primaryClass={stat.ME},
+      url={https://arxiv.org/abs/2401.17430}, 
+}
+
+
+# INLA 
+@misc{Opitz2018,
+      title={INLA goes extreme: Bayesian tail regression for the estimation of high spatio-temporal quantiles}, 
+      author={Thomas Opitz and Raphaël Huser and Haakon Bakka and Håvard Rue},
+      year={2018},
+      eprint={1802.01085},
+      archivePrefix={arXiv},
+      primaryClass={stat.ME},
+      url={https://arxiv.org/abs/1802.01085}, 
 }
 
 ## Conditional Extremes ##
@@ -120,17 +234,6 @@ author = {Jonathan Tawn and Rob Shooter and Ross Towe and Rob Lamb}
   year={2018}
 }
 
-@article{Simpson2023,
-  title={High-dimensional modeling of spatial and spatio-temporal conditional extremes using INLA and Gaussian Markov random fields},
-  author={Simpson, Emma S and Opitz, Thomas and Wadsworth, Jennifer L},
-  journal={Extremes},
-  volume={26},
-  number={4},
-  pages={669--713},
-  year={2023},
-  publisher={Springer}
-}
-
 @article{Towe2019,
   title={Model-based inference of conditional extreme value distributions with hydrological applications},
   author={Towe, RP and Tawn, JA and Lamb, Rob and Sherlock, CG},
@@ -141,6 +244,19 @@ author = {Jonathan Tawn and Rob Shooter and Ross Towe and Rob Lamb}
   year={2019},
   publisher={Wiley Online Library}
 }
+
+@article{Simpson2023,
+   title={High-dimensional modeling of spatial and spatio-temporal conditional extremes using INLA and Gaussian Markov random fields},
+   volume={26},
+   ISSN={1572-915X},
+   url={http://dx.doi.org/10.1007/s10687-023-00468-8},
+   DOI={10.1007/s10687-023-00468-8},
+   number={4},
+   journal={Extremes},
+   publisher={Springer Science and Business Media LLC},
+   author={Simpson, Emma S. and Opitz, Thomas and Wadsworth, Jennifer L.},
+   year={2023},
+   month=jul, pages={669–713} }
 
 ## Clustering ##
 

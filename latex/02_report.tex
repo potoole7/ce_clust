@@ -59,29 +59,30 @@
 \begin{document}
 
 \begin{center}
-    \huge
-    \vspace{1.5cm}
-    \textbf{Thesis Formulation Report}
+  \huge
+  \vspace{1.5cm}
+  \textbf{Thesis Formulation Report}
 
-    \vspace{0.4cm}
-    \huge
-    Developing clustering algorithms for conditional extremes models
-    
-    \Large    
-    \vspace{0.8cm}
-    \textbf{Patrick O'Toole} \\
-    Supervised by: Christian Rohrbeck and Jordan Richards \\
-    % July-September 2024
-    \today
-    \vfill
-    \includegraphics[width=7cm]{images/samba.jpg}\\
-    \vspace{0.5cm}
-    \includegraphics[width=5cm]{images/university-of-bath-logo.png}
-    \hspace{1cm}
-    \includegraphics[width=5cm]{images/UKRIlogo.png}
-    \large   
-    \vspace{1.5cm}
-    \end{center}
+  \vspace{0.4cm}
+  \huge
+  Developing clustering algorithms for conditional extremes models
+  
+  \Large    
+  \vspace{0.8cm}
+  \textbf{Patrick O'Toole} \\
+  Supervised by: Christian Rohrbeck and Jordan Richards \\
+  % July-September 2024
+  \today
+  \vfill
+  \includegraphics[width=7cm]{images/samba.jpg}\\
+  \vspace{0.5cm}
+  \includegraphics[width=5cm]{images/university-of-bath-logo.png}
+  \hspace{1cm}
+  \includegraphics[width=5cm]{images/UKRIlogo.png}
+  \large   
+  \vspace{1.5cm}
+\end{center}
+
 \newpage
 
 \todo{Taken from contract, edit to form proper abstract}
@@ -92,16 +93,16 @@
   It will also involve the review of existing state-of-the-art clustering methods within extreme value analysis. 
 \end{abstract}
 
-\begin{center}
-\paragraph{Responsible Research and Innovation}\linebreak
+% \begin{center}
+% \paragraph{Responsible Research and Innovation}\linebreak
+% Fill in!
+% 
+% \end{center}
 
 \todo{Make linebreak the same as abstract}
 \todo{Add Responsible Research and Innovation statement}
 \todo{Ensure acronyms are defined properly}
 \todo{Only have TOC show as far as subsections}
-Fill in!
-
-\end{center}
 
 \newpage
 
@@ -242,11 +243,11 @@ This degeneration can be avoided by a linear normalisation of $M_n$:
 \end{equation}
 for some sequences of normalising constants $a_n > 0$ and $b_n$.
 
-The Fisher-Tippet-Gnedenko theorem (\cite{Fisher1928}, \cite{Gnedenko1943}) states that the limiting or distribution of these non-degenerate maxima,
+The Fisher-Tippet-Gnedenko theorem (\cite{}, \cite{Gnedenko1943}) states that the limiting or distribution of these non-degenerate maxima,
 \begin{equation} 
-  \lim_{n \to \infty}\left{\frac{M_n - b_n}{a_n}\right} = G(z),
+  \lim_{n \to \infty}\left\{\frac{M_n - b_n}{a_n}\right\} = G(z),
 \end{equation}
-\todo{Talk about how G(z) is referred to as an extreme value distribution?}
+\todo{Talk about how Gz is referred to as an extreme value distribution}
 is in the max-domain of attraction, i.e.\ belongs to, the Generalised Extreme Value (GEV) distribution. \todo{word better}
 We will not define the GEV distribution here for the sake of brevity. 
 \todo{Refer to an, bn needing to exist?}
@@ -443,10 +444,13 @@ Section \ref{sec:uni} introduced how marginal models can be fit to data in a uni
 However, may want to estimate joint probability of extremes.
 The second part of this equation requires a marginal extremes model, but the first requires a model for the dependence structure. \todo{Rewrite from notes and Heffernan2004}
 \begin{equation} \label{eq:joint_prob}
-  \mathbb{P}(\bm{X} \in \bm{C}) = \sum_{i=1}^{d}{\mathbb{P}(\bm{X} \in C_i)} = \sum_{i=1}^{d}\mathbb{P}(\bm{X} \in C_i\mid X_i > \u_{X_i}) \mathbb{P}(X_i> \u_{X_i})
+  %\mathbb{P}(\bm{X} \in \bm{C}) = \sum_{i=1}^{d}{\mathbb{P}(\bm{X} \in C_i)} = \sum_{i=1}^{d}\mathbb{P}(\bm{X} \in C_i \mid X_i > u_{X_i}) \mathbb{P}(X_i> u_{X_i})
+  \mathbb{P}(\bm{X} \in \bm{C}) = \sum_{i=1}^{d}{\mathbb{P}(\bm{X} \in C_i} = 
+  \sum_{i=1}^{d}{\mathbb{P}(\bm{X} \in C_i \mid X_i > u_{X_i}) \mathbb{P}(X_i > u_{X_i}}
 \end{equation}
-where $\bm{X}$ is a $d$-dimensional random vector, and $C_i$ is the set of extreme values for the $i$th component of $\bm{X}$, and $\u_{X_i}$ is the threshold for the $i$th component of $\bm{X}$.
-This dependence can be for the same variable over space, or for different variables at the same location.
+% where $\bm{X}$ is a $d$-dimensional random vector, and $C_i$ is the set of extreme values for the $i^{th}$ component of $\bm{X}$, and $\u_{X_i}$ is the threshold for the $i^{th}$ component of $\bm{X}$.
+\todo{Fix above line, how is it producing a missing dollar error??}
+This dependence can be for the same variable over space, or different variables at the same location.
 
 Extremal dependence can come in two forms, asymptotic independence and asymptotic dependence
 \todo{define, talk about chi statistics}
@@ -515,13 +519,7 @@ In \cite{Heffernan2004}, the marginal
 where $\phi_i = (\sigma_i, \xi_i)$ are marginal parameters. \\
 This gives $\mathbb{P}(Y_i \le y) = \exp(-\exp(-y)) \implies \mathbb{P}(Y_i > y) \sim \exp(-y) \text{ as } y \rightarrow \infty$, so $Y_i$ has an exponential upper tail. 
 
-
-
-
-
 \subsubsection{Dependence model}
-
-\subsubsection{
 
 \subsection{Extensions}
 \begin{itemize}
@@ -582,15 +580,13 @@ Mainly lit review on clustering.
 \section{Discussion} \label{sec:discussion}
 
 Summary of report:
-\begin{itemize}
-  \begin{enumerate}
-    \item Introduced extremes, why they are important, why dependence modelling is important,
-    \item Introduced motivating example of extreme wind speed and rain in Ireland,
-    \item Showed how univariate extremes can be modelled using GPD, and how parameter estimates can include covariates, and how GPD can be applied to Ireland dataset. 
-    \item Introduced dependence modelling and the conditional extremes model, why it's an improvement over previous models, where it may be susceptible to uncertainty in $\xi$ estimates and some previous applications of the model.
-    \item Reviewed clustering methods for extremes, shown examples of both types of clustering, highlighted some papers where there is potential to use these methods on the conditional extremes model.
-  \end{enumerate}
-\end{itemize}
+\begin{enumerate}
+  \item Introduced extremes, why they are important, why dependence modelling is important,
+  \item Introduced motivating example of extreme wind speed and rain in Ireland,
+  \item Showed how univariate extremes can be modelled using GPD, and how parameter estimates can include covariates, and how GPD can be applied to Ireland dataset. 
+  \item Introduced dependence modelling and the conditional extremes model, why it's an improvement over previous models, where it may be susceptible to uncertainty in $\xi$ estimates and some previous applications of the model.
+  \item Reviewed clustering methods for extremes, shown examples of both types of clustering, highlighted some papers where there is potential to use these methods on the conditional extremes model.
+\end{enumerate}
 
 Future work:
 \begin{itemize}

@@ -97,6 +97,8 @@
 
 \todo{Make linebreak the same as abstract}
 \todo{Add Responsible Research and Innovation statement}
+\todo{Ensure acronyms are defined properly}
+\todo{Only have TOC show as far as subsections}
 Fill in!
 
 \end{center}
@@ -110,6 +112,7 @@ Fill in!
 \section{Introduction}\label{sec:intro}
 
 \todo{Look at Coles for more motivation for extremes!}
+\todo{Need to define all these equations? Can leave many unumbered}
 
 % \begin{itemize}
 %   \item What are extremes (modelling tails of distributions where underlying stochastic process is assumed), why they are used (anywhere where we are more interested in tails of distributions). 
@@ -160,7 +163,7 @@ Section \ref{sec:clustering} will review clustering methods for extremes.
 Finally, section \ref{sec:discussion} will summarise the report and suggest future work.
 \todo{Flow and wording can be improved a lot!}
 
-\section{Motivating example}\label{sec:motivating}
+\section{Motivating example} \label{sec:motivating}
 
 % \begin{itemize}
   % \item Introduce Ireland dataset, which will serve as a motivating example to elucidate how both marginal extreme value models and the conditional extremes can be fit to data. 
@@ -194,7 +197,12 @@ Will now explain univariate extremes show how marginal models can be fit to this
 %   \item IID assumption in GPD as defined above, can model parameters as covariates, numerous methods to do this, such as using \texttt{evgam} as first introduced in \cite{Youngman2019}, and also Gaussian processes and INLA in \cite{Opitz2018} and Gaussian processes \todo{need reference}.
 %   \item Return levels (m-observations, n-year, from \cite{Coles2001}) can be estimated from GPD parameters (derived from conditional probability and exceedance probability, as in \cite{Cooley2007} and \cite{Coles2001}). 
 %   \item Reference difficulty in estimating GPD and particularly $\xi$ due to lack of data and strange likelihood (following \cite{Coles2001}). 
-%   \item Also mention inadequacy of return level estimates with univariate methods when dependence is seen, as seen in Pacific Northwest in \cite{Zhang2024}, motivating use of dependence models. Also, interest in situations where we have both extreme wind speed and rain, as in \cite{Heffernan2004}, motivating dependence modelling. 
+%   \item Also mention inadequacy of return level estimates with univariate
+%   methods when dependence is seen, as seen in Pacific Northwest in
+%   \cite{Zhang2024}, motivating use of dependence models. Also, interest in
+%   situations where we have both extreme wind speed and rain, as in
+%   \cite{Heffernan2004}, motivating dependence modelling. (Leave for dependence
+%   modelling section!)
 %   \item (See \cite{Huser2024} for details) Although max-stable naturally follow theory as dependence model, practically they are unwieldy and CE appears to be preferred now in literature. 
 % \end{itemize}
 
@@ -203,13 +211,21 @@ Will now explain univariate extremes show how marginal models can be fit to this
 %   \item Peaks over threshold definition (see Coles, Carraeu, anything else? Zhang)
 % \end{itemize}
 
+\subsection{Theory}
+
+Here we will asymptotically motivate the use of EVT and the GPD \todo{return and write something about this}
+
+
+\todo{Use Z or X? Z used here to avoid confusion with X later}
+% \todo{Split into subsections!?}
+
+\subsubsection{Block maxima asymptotic justification} \label{subsubsec:asymptotic}
+
 \todo{Completely copied from Coles 2001, change to own words, perhaps simplify}
 \todo{Dupuis2023 has another good example of this, add reference}
-\todo{Use Z or X? Z used here to avoid confusion with X later}
-\todo{Split into subsections!}
 
 Extreme Value Theory is justified and motivated by the asymptotic basis upon which it relies.
-Following the illustration given in \cite{Coles2001}, suppose we have a sequence of independent and identically distributed (IID) random variables samples $Z_1, Z_2, \ldots$ a distribution function $F$. 
+Following the illustration given in \cite{Coles2001}, suppose we have a sequence of independent and identically distributed (IID) random variables $Z_1, Z_2, \ldots$ a distribution function $F$. 
 Let $M_n = \max(Z_1, \ldots, Z_n)$ be the maximum of the first $n$ observations. % use Z to not confuse with X later
 Then the distribution function of $M_n$ is given by 
 \[
@@ -228,56 +244,151 @@ for some sequences of normalising constants $a_n > 0$ and $b_n$.
 
 The Fisher-Tippet-Gnedenko theorem (\cite{Fisher1928}, \cite{Gnedenko1943}) states that the limiting or distribution of these non-degenerate maxima,
 \begin{equation} 
-  \lim_{n \to \infty}{\frac{M_n - b_n}{a_n}} = G(z),
+  \lim_{n \to \infty}\left{\frac{M_n - b_n}{a_n}\right} = G(z),
 \end{equation}
 \todo{Talk about how G(z) is referred to as an extreme value distribution?}
 is in the max-domain of attraction, i.e.\ belongs to, the Generalised Extreme Value (GEV) distribution. \todo{word better}
 We will not define the GEV distribution here for the sake of brevity. 
-\todo{Refer to a_n, b_n needing to exist?}
+\todo{Refer to an, bn needing to exist?}
 This asymptotic argument is known as the ``block-maxima'' definition of extremes and forms the basis on which the field has developed.
+
+\subsubsection{Peaks-over-threshold method}
+\todo{Change title to include GPD?}
 
 % In constrast, GPD for excesses over threshold (Fisher, Tippet, Gnedenko)
 From this block-maxima definition, another approach to EVT, which we will be focusing more on, can be derived. 
 % Specifically, it rather than taking a block maxima over some sequence, we ca
-The Pickands-Balkema-de-Haan theorem (\cite{Pickands1975}, \cite{Balkema1974}) states that should $M_n$ satisfy the above \todo{reference equations} and convergence in distribution to $G(z)$, then for any $Z = Z_i$ in our sequence, the distribution of exceedances $z > 0$ over a high threshold $u$ are approximated by the Generalised Pareto Distribution (GPD), defined as:
-\begin{equation} \ref{eq:gpd}
+The Pickands-Balkema-de-Haan theorem (\cite{Pickands1975}, \cite{Balkema1974}) states that should $M_n$ satisfy the above \todo{reference equations} and convergence in distribution to $G(z)$, then for any $Z = Z_i$ in our sequence, the distribution of exceedances $z > 0$ over a high threshold $u$ are approximated by the Generalised Pareto Distribution (GPD), defined as
+\begin{equation} \label{eq:gpd}
+  % \mathbb{P}(Z > z + u \mid Z > u) = \left(1 + \xi \frac{z}{\sigma} \right)_{+}^{-1/\xi},
   \mathbb{P}(Z > z + u \mid Z > u) = \left(1 + \xi \frac{z}{\sigma} \right)_{+}^{-1/\xi},
-\todo{Check if right! May be definition of Z < z + u, rather than the one I want!}
 \end{equation}
-where $\xi \ne 0$ and $\sigma > 0$ are shape and scale parameters, respectively.
+\todo{Check if right! May be definition of Z < z + u, rather than the one I want!}
+where $\xi \ne 0$ and $\sigma > 0$ are shape and scale parameters, respectively. \todo{Define y+, ensure it doesn't mess with definition of supremum above}.
 The GPD can be derived from the definition of the GEV quite simply, and is covered in detail in section 4.2.2 of \cite{Coles2001}. 
 This is known as the ``peaks-over-threshold'' method for modelling extremes. 
 In many applications, it is preferable to the block-maxima method, as logically there may be many observations within a single block which exceed so-called ``maxima'' in other blocks \todo{go into more detail here}
 
-The shape parameter in particular describes the upper tail behaviour of this distribution, and indeed the form of the distribution itself, with the Generalised Pareto distribution actually defining a ``family'' of distributions. 
+\subsubsection{Shape parameter}
 
+% The shape parameter in particular describes the upper tail behaviour of this distribution, and indeed the form of the distribution itself, with the Generalised Pareto distribution actually defining a ``family'' of distributions. 
+The upper tail behaviour of this distribution is largely determined by shape parameter. 
+Indeed, it determines the form of the distribution itself, with the Generalised Pareto distribution actually defining a ``family'' of distributions. 
+Higher values for the shape parameter give higher probabilities of extreme events of greater magnitude. 
+When $\xi < 0$, the upper tail is said to follow theWeibull distribution, which is short-tailed and has a finite maximum bounded by the point $u - \sigma/\xi$. 
+In the limit $\xi \to 0$, the GPD converges to the exponential distribution, and the distribution is said to be ``light-tailed'' with the right hand side of \ref{eq:gpd} being $ \approx 1/exp(-z)$ for large $z$, with no upper bound on the maximum.
+Finally, where $\xi > 0$, the upper tail is said to be follow a Pareto or heavy-tailed distribution, and the distribution function of the GPD is $\approx 1/z^{1/\xi}$ for large $z$, a power-law tail decay. \cite{Rohrbeck2021} \cite{Carreau2017}.
 
-% Different tails of GPD for different shape
-\todo{Rewrite from Carreau2017}
-\begin{itemize}
-  \item shape parameter describes the upper tail behavior and can be thought of as a way to associate a hazard level to Y. 
-  \item Larger the shape parameter is, higher the probability of extreme events. 
-  \item If $\xi > 0$, $X$ is said to have a heavy or Pareto-type upper tail, and the left side of equation \ref{eq:gpd_cdf} is approximately $1/x^{1/\xi}$, as \todo{Check that this isn't x + u, instead of x}
-\end{itemize}
-% Different tails give drastically different 
-% See Rohrbeck 2021
-
+\subsubsection{Threshold selection} \label{subsubsec:threshold}
 % Threshold selection methods (stability plots, automatic selection, quantile regression)
 % Bias-variance tradeoff in threshold selection
 % Can also work with extremal mixture models with so called "Bulk" distributions
 % (see Rohrbeck2021)
-\todo{Rewrite from Murphy2021}
-\begin{itemize}
-  \item 
-\end{itemize}
+\todo{Rewrite, largely taken from IRP report}
+The threshold $u$ can also be thought of as a location parameter for this pdf, as for fixed $\sigma, \xi$, a change in $u$ will simply shift the distribution. \cite{Coles2001}
+The problem of threshold selection for the GPD is a difficult one, as the choice of threshold can have a large impact on the parameter estimates of the GPD, and presents a classic bias-variance trade-off. 
+A choice of $u$ which is too small can violate the asymptotic properties on which the GPD relies, and introduce significant bias. \todo{Refer to above}
+On the other hand, we require sufficient data to estimate the distribution. 
+Hence, too large a choice of $u$ will leave us with little data to estimate our distribution with and result in high uncertainty in our parameters. 
+In practice, the choice of $u$ comes down to choosing a value large enough to give stable estimates for $\sigma$ and $\xi$, while still leaving enough data to fit the distribution to. 
+Two commonly used diagnostic tools to aid in the choice of $u$ are the so-called mean residual life and threshold choice plots \cite{Coles2001}.
 
-% $u$ can also be thought of as a location parameter for this pdf, as for fixed $\sigma, \xi$, a change in $u$ will simply shift the distribution. \cite{Coles2011-xu}
+The mean residual life plot plots the mean excesses over a series of thresholds.
+In mathematical notation, we plot the points
+\todo{Check if notation matches that of rest of section}
+\todo{Even required if we're not using it?}
+\[
+  \left\{\left( u, \frac{1}{n_u} \sum_{i=1}^{n_u}{\left(z_i - u\right)}: u < z_{+} \right) \right\} 
+\]
+\todo{Check with supremum above}
+The mean excesses should depend linearly on $u$ for choices of $u$ which produce a stable GPD. \cite{Coles2011-xu} 
+The threshold choice plot shows the values of $\xi$ and a modified $\sigma$ for various choices of $u$. 
+The choice of $u$ follows as the smallest value which appears to result in stable estimates of these parameters, i.e.\ they should be linear in $u$. 
+Both of these methods, however, are rather subjective, and entirely manual, and so are quite laborious in the context of fitting multiple marginal models to, for example, different spatial locations or seasons of the year. 
+There are several methods for automatic and ``semi-automatic'' threshold selection. 
+One such method is that described in \cite{murphy2024automated}, which repeatedly fits the GPD over various choices of $u$ based on the quantiles of the data, and takes the optimal choice to be the threshold which minimises the so-called expected quantile discrepancy (EQD).
+This method has been shown to be robust in the face of this bias-variance trade-off problem, when compared to other means of automatic threshold selection, and is less subjective than the plotting methods described above. 
+
+Yet another method for threshold selection is via quantile regression, as outlined in \cite{Youngman2019} in the context of extremes, and more generally developed in \cite{Yu2001}. 
+% This is useful where we want to estimate a separate threshold for a number of
+% marginal fits, such as to GPDs fitted to different locations. \todo{Can word
+% better} (add back in ?)
+% Quantile regression estimates $u$ as a function of some covariates, $\bm{x}$, which could include spatial location and/or time, as a prespecified quantile of the data $\tau$. \todo{Need to define x more clearly}
+Quantile regression for extremes estimates $u$ as a prespecified quantile $\tau$ of the data. \todo{Rewrite from Youngman}
+\todo{May require reference to covariates for this to make sense!}
+The random variable $Z$ can be modelled with an asymmetric Laplace distribution,
+\begin{equation} \label{eq:asymmetric_laplace}
+  Z \mid u, \sigma \sim ALD(u, \psi),
+\end{equation}
+% \todo{Used sigma already for GPD!}
+where $u$ is the quantile $0 < \tau < 1$ of the data, and $\psi > 0$. 
+Likelihood methods allow us to estimate $u$ from this model, giving us a threshold above which to define extreme values of $Z$.
+This method is very useful when we want to ``semi-automatically'' estimate thresholds across different times and/or spatial locations, which is addressed in greater detail in \ref{subsubsec:non_stationary}.
+
+\todo{expand on this, requires more details}
+\todo{Mightn't even make sense without predictors? Wouldn't u just}
+% This is the method used in the motivating example for this report.
+
+% Return levels (m-observations, n-year, from Coles)
+\subsubsection{Return levels}
+
+\todo{Possibly move this motivation to intro}
+One of the principle and indeed unique uses of EVT is in the estimation of return levels, as outlined in \cite{Coles2001}. 
+Return levels are immensely useful as they give the expected value of the maximum observation of a random variable $Z$ over a number of observations or block of time, which may be an extrapolation over observed values. \todo{Word better!}
+For example, the 100-year return level for precipitation is the value which we expect to be exceeded on average once every 100 years. 
+\todo{Talk about how this is useful in applications, or should I do that in intro?}
+
+% m-observation return level
+We begin my noting that the probability of $Z$ exceeding some value $z > u$ is given by 
+\[
+  \mathbb{P}(Z > z) = \mathbb{P}(Z > z \mid Z > u) \mathbb{P}(Z > u)
+\]
+
+The $m$-observation return level is the value of $Z$ which is expected to be exceeded on average once every $m$ observations.
+
+The $n$-year return level is the value of $Z$ which is expected to be exceeded on average once every $n$ years.
+
+\todo{Come back to this!}
 
 % Including covariates, using evgam, Gaussian processes, INLA in spatial context
 % to reflect non-linearity of spatial effects
+\subsubsection{Non-stationary modelling} \label{subsubsec:non_stationary}
 
-% Return levels (m-observations, n-year, from Coles)
+\todo{See Rohrbeck2021 for nice write up about this}
+Recall that the asymptotic motivations for EVT from \ref{subsubsec:asymptotic} assumes that the distribution of the random variables $Z_1, Z_2, \ldots$ are I.I.D stationary.
+In practice, this is often not a realistic assumption, since their values may be influenced by some covariates, such as spatial location or time.
+For simplicity, we define these covariates as the spatial location $s \in S$, and $Z(s)$ as the process sampled at $s$, since this is what is used in our motivating example. 
 
+There are many methods for handling this non-stationarity. 
+One method is to split the data into separate time series over which we deem the data to be stationary, and fit separate GPDs to each of these series.
+However, a more intuitive method which makes better use of the available data is to model the parameters of the GPD.
+Firstly, the threshold $u$ can optionally be modelled as a function of covariates $bm{x}$, using the quantile regression method outlined in \ref{subsubsec:threshold}, with equation \ref{eq:asymmetric_laplace} becoming:
+\[
+  Z(s) \mid u(s), \sigma \sim ALD(u(s), \psi(s)).
+\]
+This allows us to ``semi-automatically'' select our threshold for different spatial locations.
+% \todo{Need to define spatial location as s and use it everywhere! Much simpler}
+\todo{Expand on this, mention how its much easier/more objective than stability plots}
+
+Furthermore, we can also model the parameters of the GPD as functions of covariates such as $s$.
+Under this model, equation \ref{eq:gpd} becomes
+\begin{equation} \label{eq:gpd_cov}
+  \mathbb{P}(Z((s)) > z + u(\bm(x)) \mid Z > u, s) = \left(1 + \xi(s) \frac{z}{\sigma(s)} \right)_{+}^{-1/\xi(s)}.
+\end{equation}
+This allows for much more flexibility in our models, and reduces the bias associated with assuming a constant shape and scale parameter across all locations.
+\todo{Also need to revisit return levels, right?}
+
+There are several methods for estimating these models, which in this spatial context are derived from spatio-temporal statistics. \todo{Look in chapter 4 of Coles}
+One is to perform regression on the parameters of the GPD, giving the 
+% Gaussian processes
+% INLA
+\todo{Write about INLA and Gaussian processes(?)(?)(?)(?)(?)(?)(?)(?)(?)}
+
+% evgam
+\todo{Take from ITT2 report}
+Another method which 
+
+\subsubsection{Model diagnostics}
 % Difficulty in estimating xi, natural lack of data in extremes
 % Instability for certain values (see help page for texmex:evm)
 % Uncertainty in parameter estimates from bootstrapping/resampling algorithms in
@@ -312,36 +423,105 @@ The shape parameter in particular describes the upper tail behaviour of this dis
 
 \section{Conditional extremes model}\label{sec:ce}
 
-Below narrative is a bit jumbled, can order better by looking at \cite{Heffernan2004}, \cite{Keef2013} and applied conditional extremes papers again. 
-\todo{Anything else to add?}
-\todo{Where to include applications? At the start?}
+% Below narrative is a bit jumbled, can order better by looking at \cite{Heffernan2004}, \cite{Keef2013} and applied conditional extremes papers again. 
+% \todo{Anything else to add?}
+% \todo{Where to include applications? At the start?}
 
 \subsection{Dependence Modelling}
 \begin{itemize}
+  \item Define asymptotic dependence/independence, possibly mention $\chi$ statistic. 
   \item Something on $\chi$, follow narrative elsewhere
   \item Modelling dependence give improved return levels and allows for estimation of joint probability of extremes, whether at multiple sites for the same variable or across multiple variables at the same site.
-  \item Define asymptotic dependence/independence, possibly mention $\chi$ statistic. 
   \item Models include max-stable processes, Pareto processes, Gaussian processes, copulas, and conditional extremes model.
   \item Former four models limited in both their ability to model dependence and their computational feasibility, CE model is more flexible.
   \item Can mention \cite{Tawn2018} and \cite{Huser2024} for more information on this.
 \end{itemize}
 
+Section \ref{sec:uni} introduced how marginal models can be fit to data in a univariate extermal context.
 
+\todo{Flesh out, define }
+However, may want to estimate joint probability of extremes.
+The second part of this equation requires a marginal extremes model, but the first requires a model for the dependence structure. \todo{Rewrite from notes and Heffernan2004}
+\begin{equation} \label{eq:joint_prob}
+  \mathbb{P}(\bm{X} \in \bm{C}) = \sum_{i=1}^{d}{\mathbb{P}(\bm{X} \in C_i)} = \sum_{i=1}^{d}\mathbb{P}(\bm{X} \in C_i\mid X_i > \u_{X_i}) \mathbb{P}(X_i> \u_{X_i})
+\end{equation}
+where $\bm{X}$ is a $d$-dimensional random vector, and $C_i$ is the set of extreme values for the $i$th component of $\bm{X}$, and $\u_{X_i}$ is the threshold for the $i$th component of $\bm{X}$.
+This dependence can be for the same variable over space, or for different variables at the same location.
+
+Extremal dependence can come in two forms, asymptotic independence and asymptotic dependence
+\todo{define, talk about chi statistics}
+\todo{Perhaps see Vignotto2021 or Keef2013 for this}
+% \begin{itemize}
+%   \item 
+%     \[
+%       \lim_{y \rightarrow \infty}\{\mathbb{P}(\bm{Y}_{-i} \mid Y_i > y)\} = \begin{cases}
+%       0 &\text{for asymptotic independence} \\
+%       \ne 0 &\text{for asymptotic dependence}, 
+%     \end{cases}
+%     \]
+%   where $\bm{Y}_{-i} = (Y_1, Y_2, \ldots, Y_{i-1}, Y_{i+1}, \ldots, Y_d)$. 
+%   \item Existing methods for multivariate extremes (e.g.\ max-stable processes, copulas) can only model $\mathbb{P}(\bm{X} \in C)$ under asymptotic dependence.\todo{revisit this and talk a bit more about it!}
+% \end{itemize}
+
+\todo{Also talk about how return levels are better when incorporating dependence information}
 
 \subsection{Conditional extremes model}
-\begin{itemize}
-  \item Introduction to dependence modelling for extremes, following \cite{Heffernan2004} for modelling $\mathbb{P}(\bm{X} \in \bm{C})$, i.e.\ an observation which is extreme in more than one dimension, be that for multiple variables at a single location (e.g.\ rain and wind speed) or across multiple locations and/or times. 
-  Note that CDF must be reversed (see equation 1.2 in \cite{Heffernan2004}).
-  \item Following \cite{Tawn2018} and \cite{Heffernan2004}, introduce other methods for modelling dependence in extremes, such as max-stable, Pareto and Gaussian processes, and copulas, and their limitations, both in the restrictiveness of the type of dependence these methods can model, and their computational feasibility.
-  \item Something on marginal model as piecewise ECDF and GPD, which can be fitted using any method mentioned in \ref{sec:uni}. 
-  \item Starting from asymptotic motivation, define conditional extremes model as in \cite{Heffernan2004} and in applied paper as the non-parametric regression equation $Y_{-i} = a_{\mid i}(Y_{\mid i}) + \b_{\mid i}(Y_{\mid i}) Z_{\mid i}$
-  \item Requires Gumbel transformation of margins to have exponential upper tail, but this gives complex form for $a$ for negative dependence, so instead following \cite{Keef2013} Laplace margins are used which have doubly exponential tails and thus have the conceptually simple $a_{\mid i} = \alpha_{\mid i}Y_{\mid i} , b = Y_{\mid i}^{\beta_{\mid i}}$, which can be interpreted as the slope and spread parameters for our semi-parametric regression line (is there a reference I can use which makes this interpretation?). 
-  \item Extrapolation through MC algorithm as in \cite{Heffernan2004} (alternative in \cite{Keef2013}.
-  \item Talk about diagnostics through independence of residuals and tail exceedances in the limit. 
-  \item Uncertainty through bootstrap scheme,
-  \item Return levels $\ldots$ (improved over univariate, as shown in \cite{Zhang2024})
-  \item Additional constraints from \cite{Keef2013} on possible values of $\alpha$ and $\beta$ to ensure stochastic ordering of $Y_j \mid Y_i = y$ for large $y$ 
-\end{itemize}
+% \begin{itemize}
+%   \item Introduction to dependence modelling for extremes, following \cite{Heffernan2004} for modelling $\mathbb{P}(\bm{X} \in \bm{C})$, i.e.\ an observation which is extreme in more than one dimension, be that for multiple variables at a single location (e.g.\ rain and wind speed) or across multiple locations and/or times. 
+%   Note that CDF must be reversed (see equation 1.2 in \cite{Heffernan2004}).
+%   \item Following \cite{Tawn2018} and \cite{Heffernan2004}, introduce other methods for modelling dependence in extremes, such as max-stable, Pareto and Gaussian processes, and copulas, and their limitations, both in the restrictiveness of the type of dependence these methods can model, and their computational feasibility.
+%   \item Something on marginal model as piecewise ECDF and GPD, which can be fitted using any method mentioned in \ref{sec:uni}. 
+%   \item Starting from asymptotic motivation, define conditional extremes model as in \cite{Heffernan2004} and in applied paper as the non-parametric regression equation $Y_{-i} = a_{\mid i}(Y_{\mid i}) + \b_{\mid i}(Y_{\mid i}) Z_{\mid i}$
+%   \item Requires Gumbel transformation of margins to have exponential upper tail, but this gives complex form for $a$ for negative dependence, so instead following \cite{Keef2013} Laplace margins are used which have doubly exponential tails and thus have the conceptually simple $a_{\mid i} = \alpha_{\mid i}Y_{\mid i} , b = Y_{\mid i}^{\beta_{\mid i}}$, which can be interpreted as the slope and spread parameters for our semi-parametric regression line (is there a reference I can use which makes this interpretation?). 
+%   \item Extrapolation through MC algorithm as in \cite{Heffernan2004} (alternative in \cite{Keef2013}.
+%   \item Talk about diagnostics through independence of residuals and tail exceedances in the limit. 
+%   \item Uncertainty through bootstrap scheme,
+%   \item Return levels $\ldots$ (improved over univariate, as shown in \cite{Zhang2024})
+%   \item Additional constraints from \cite{Keef2013} on possible values of $\alpha$ and $\beta$ to ensure stochastic ordering of $Y_j \mid Y_i = y$ for large $y$ 
+% \end{itemize}
+
+The conditional extremes model combines a piecewise semiparametric marginal extremes model with a semiparametric regression model for the dependence structure. \todo{Write better}
+
+\todo{Flesh out more!}
+
+The \texttt{texmex} R package provides a ``vanilla'' implementation of the conditional extremes model. \todo{Move to motivating example}
+
+\subsubsection{Marginal model}
+
+The conditional extremes model requires a marginal model for the complete marginal distribution of a random variable $X_i$.
+Therefore, realisations above a high threshold $u_{X_i}$ are modelled using a GPD, while the empirical distribution function is used for observations below this threshold.
+For simplicity, we leave out the space covariate $s$ in this section, although in practice we model our GPD as in equation \ref{eq:gpd_cov}.
+The marginal distribution of $X_i$ under the conditional extremes model is therefore characterised by the piecewise semiparametric model
+\begin{equation} \label{eq:piecewise_marg}
+  \hat{F}_{X_i}(x) = \begin{cases}
+    1 - \{ 1 - \tilde{F}_{X_i}(u_{X_i})\} \left\{1 + \xi_{i}(x - u_{X_i})/\sigma_i\right\}_{+}^{-1/\xi_{i}} & \text{if } x > u_{X_i} \\
+    \tilde{F}_{X_i}(x) & \text{if } x \le u_{X_i},
+  \end{cases}
+\end{equation}
+where $\tilde{F}_{X_i}$ is the empirical distribution function of $X_i$.
+It is important to note that this marginal model can be fit using any of the methods outlined in section \ref{sec:uni}, including with the use of covariates to model the parameters of the GPD, as in section \ref{subsubsec:non_stationary}.
+\todo{Define gam funciton above, say how we've used it to estimate this model}
+From equation \ref{eq:piecewise_marg}, we can estimate the probability of $X_i$ exceeding the threshold $u_{X_i}$, handling the second part of equation \ref{eq:joint_prob}.
+
+\subsubsection{Marginal transformation}
+
+In \cite{Heffernan2004}, the marginal
+
+\begin{align*}
+  Y_i &= -\log[-\log\{\hat{F}_{X_i}(X_i)\}], i = 1, \ldots, d \\
+      &= t_i(X_i; \phi_i, \tilde{F}_{X_i}(X_i)) \\
+      &= t_i(X_i),
+\end{align*}
+where $\phi_i = (\sigma_i, \xi_i)$ are marginal parameters. \\
+This gives $\mathbb{P}(Y_i \le y) = \exp(-\exp(-y)) \implies \mathbb{P}(Y_i > y) \sim \exp(-y) \text{ as } y \rightarrow \infty$, so $Y_i$ has an exponential upper tail. 
+
+
+
+
+
+\subsubsection{Dependence model}
+
+\subsubsection{
 
 \subsection{Extensions}
 \begin{itemize}

@@ -113,7 +113,6 @@
 \section{Introduction}\label{sec:intro}
 
 \todo{Look at Coles for more motivation for extremes!}
-\todo{Need to define all these equations? Can leave many unumbered}
 
 % \begin{itemize}
 %   \item What are extremes (modelling tails of distributions where underlying stochastic process is assumed), why they are used (anywhere where we are more interested in tails of distributions). 
@@ -127,18 +126,18 @@
 
 % Motivating extremes
 \todo{Needs some references!}
-Often, statistics is concerned with generating models for the mean behaviour of a $\ldots$ \todo{Finish}
-% 
-For example, being able to predict the expected daily precipitation over the course of a year are essential for both small and large-scale agriculture, and more generally, weather forecasts are key for $\ldots$ the ? of society. \todo{Rewrite, finish}
-However, there are situations where we are more interested in only ...
+Often, statistics is concerned with generating models for the mean or ``bulk'' behaviour of a random variable.
+For example, models for the expected daily precipitation over the course of a year are essential for both small and large-scale agriculture, and more generally, weather forecasts are key in the proper functioning of society. \todo{Rewrite, finish, citations!}
+
+However, there are situations where we are more interested in only the greatest observations for a given variable, and the mean behaviour of that variable is of little interest.
 Natural disaster prediction, for example, does not concern itself with the mean behaviour of environmental processes such as precipitation (at least as an outcome), and instead is solely interested in the heaviest precipitation which may cause large scale flooding, and together with very fast wind speeds can lead to storms, and separately for extremely high temperatures can lead to wildfires \todo{Expand on this more}.
 This is useful for countries disaster modelling and planning. \todo{Word better, see other papers}.
-For example, rivers that are expected to raise to a certain level in the Winter can be lined with sand bags and other flood defences, and the same for areas which are expected to have high winds, such as the coast of Ireland, which can be prepared for with storm barriers and other defences. \todo{Word better}
+For example, rivers that are expected to raise to a certain level in the Winter can be lined with sand bags and other flood defences, and the same for areas which are expected to have high winds, such as the coast of Ireland, which can be prepared for with storm barriers and other defences. \todo{Word better, make reference to sea walls from Coles 2001?}
 It is also of use in the insurance industry, where insurance premiums are calculated based on the likelihood of a claim being made, and the size of that claim, and so being able to predict the size of the largest claims, such as the result of flooding, is essential for the industry.
 On the other end of the scale, engineers designing and testing a product, such as home utility machines like a washing machine and dishwasher, must keep in mind and identify the components of that product which have the shortest lifespans, as opposed to the mean component lifespan, as this will determine when it will next require fixing, and its ultimate lifespan.
 For these applications, a branch of statistics called Extreme Value Theory (EVT) is uniquely suited.
-\todo{Talk more about return levels, most common predictions made in EVT}
-\todo{Talk about wanting to predict 100 year return levels given only 10 years of data, extrapolating from data we have, you've seen all this before!!}
+\todo{Talk more about return levels, most common predictions made in EVT (but also perhaps downplay, as we don't calculate any below)}
+\todo{Talk about wanting to predict 100 year return levels given only 10 years of data, extrapolating from data we have, you've seen all this before!}
 
 % What is EVT, examples
 EVT focuses on modelling the extreme tails of distributions.
@@ -146,9 +145,19 @@ EVT focuses on modelling the extreme tails of distributions.
 It uses asymptotically motivated distributions to model either the maximum observations of a dataset over specified blocks of time, or the observations which exceed a certain threshold. \todo{Read other paper introductions to improve on this!}
 More specifically, the Generalised Pareto Distribution (GPD) is used to model exceedances over a certain threshold, and the Generalised Extreme Value (GEV) distribution is used to model the maximum observations over blocks of time.
 
-
 % Examples
 \todo{See Coles intro for examples of uses}
+\todo{Also see reading course}
+\todo{some environmental stuff + insurance}
+\todo{Finance papers}
+\todo{Bird arrival dates paper by Koh, Opitz seems cool and interesting}
+\todo{Brain connectivity in eplilectic seizures}
+
+There are many examples of the use of EVT across a wide variety of contexts. 
+An obvious choice is in environmental science, with EVT being used to model precipitation \todo{citations}, flooding \todo{citations}, cyclones and storms \todo{citations from ITT2} and extreme heat and wildfires \todo{citations}. 
+insurance $\ldots$
+finance $\ldots$
+EVT has also been used in what might be considered more niche applications, such as in the study of trpoical bird arrival dates \todo{citations}, and in the study of high frequencies in brain signals associated with the onset of epileptic seizures \todo{citations}. \todo{Anything else? Anything on left tail?}
 
 % Dependence 
 
@@ -220,7 +229,7 @@ Here we will asymptotically motivate the use of EVT and the GPD \todo{return and
 \todo{Use Z or X? Z used here to avoid confusion with X later}
 % \todo{Split into subsections!?}
 
-\subsubsection{Block maxima asymptotic justification} \label{subsubsec:asymptotic}
+\subsubsection{Block maxima asymptotic motivation} \label{subsubsec:asymptotic}
 
 \todo{Completely copied from Coles 2001, change to own words, perhaps simplify}
 \todo{Dupuis2023 has another good example of this, add reference}
@@ -235,7 +244,7 @@ Then the distribution function of $M_n$ is given by
 \]
 Clearly, even slight inaccuracies in the estimate of $F$ can result in significant differences for $F^n$.
 Instead, we want to model $F^n$ directly by looking at its limiting behaviour as $n \to \infty$.
-Define the upper end-point of F as $z_+ = \sup(F)$.
+Define the upper end-point of F as $z_+ = \sup(F)$. \todo{Define as z up F as in Shooter2020 so we can use + below for GPD}
 Then, for any $z < z_+$, $M_n$ will tend to degenerate to point mass on $z_+$ as $n \to \infty$.
 This degeneration can be avoided by a linear normalisation of $M_n$:
 \begin{equation}
@@ -243,12 +252,13 @@ This degeneration can be avoided by a linear normalisation of $M_n$:
 \end{equation}
 for some sequences of normalising constants $a_n > 0$ and $b_n$.
 
-The Fisher-Tippet-Gnedenko theorem (\cite{Fisher1928}, \cite{Gnedenko1943}) states that the limiting or distribution of these non-degenerate maxima,
-\begin{equation} 
+The Fisher-Tippet-Gnedenko theorem (\cite{Fisher1928}, \cite{Gnedenko1943}) states that the limiting distribution of these non-degenerate maxima,
+\begin{equation} \label{eq:uni_limiting_dist}
   \lim_{n \to \infty}\left\{\frac{M_n - b_n}{a_n}\right\} = G(z),
 \end{equation}
+\todo{Why do we not have to estimate a and b here? Look at Coles 2001}
 \todo{Talk about how Gz is referred to as an extreme value distribution}
-is in the max-domain of attraction, i.e.\ belongs to, the Generalised Extreme Value (GEV) distribution. \todo{word better}
+is in the max-domain of attraction, or less formally converges to, the Generalised Extreme Value (GEV) distribution. \todo{word better}
 We will not define the GEV distribution here for the sake of brevity. 
 \todo{Refer to an, bn needing to exist?}
 This asymptotic argument is known as the ``block-maxima'' definition of extremes and forms the basis on which the field has developed.
@@ -324,7 +334,7 @@ The random variable $Z$ can be modelled with an asymmetric Laplace distribution,
 % \todo{Used sigma already for GPD!}
 where $u$ is the quantile $0 < \tau < 1$ of the data, and $\psi > 0$. 
 Likelihood methods allow us to estimate $u$ from this model, giving us a threshold above which to define extreme values of $Z$.
-This method is very useful when we want to ``semi-automatically'' estimate thresholds across different times and/or spatial locations, which is addressed in greater detail in \ref{subsubsec:non_stationary}.
+This method is useful when we want to ``semi-automatically'' estimate thresholds across different times and/or spatial locations, which is addressed in greater detail in \ref{subsubsec:non_stationary}.
 
 \todo{expand on this, requires more details}
 \todo{Mightn't even make sense without predictors? Wouldn't u just}
@@ -351,9 +361,10 @@ The $n$-year return level is the value of $Z$ which is expected to be exceeded o
 
 \todo{Come back to this!}
 
+\subsubsection{Non-stationary modelling} \label{subsubsec:non_stationary}
 % Including covariates, using evgam, Gaussian processes, INLA in spatial context
 % to reflect non-linearity of spatial effects
-\subsubsection{Non-stationary modelling} \label{subsubsec:non_stationary}
+\todo{Cooley2007 uses Gaussian process}
 
 \todo{See Rohrbeck2021 for nice write up about this}
 Recall that the asymptotic motivations for EVT from \ref{subsubsec:asymptotic} assumes that the distribution of the random variables $Z_1, Z_2, \ldots$ are I.I.D stationary.
@@ -389,7 +400,7 @@ One is to perform regression on the parameters of the GPD, giving the
 \todo{Take from ITT2 report}
 Another method which 
 
-\subsubsection{Model diagnostics}
+\subsubsection{Model diagnostics} \label{subsubsec:uni_diagnostics}
 % Difficulty in estimating xi, natural lack of data in extremes
 % Instability for certain values (see help page for texmex:evm)
 % Uncertainty in parameter estimates from bootstrapping/resampling algorithms in
@@ -429,10 +440,11 @@ Another method which
 % \todo{Where to include applications? At the start?}
 
 \subsection{Dependence Modelling}
+\todo{See Shooter2020 for this}
 \begin{itemize}
-  \item Define asymptotic dependence/independence, possibly mention $\chi$ statistic. 
-  \item Something on $\chi$, follow narrative elsewhere
-  \item Modelling dependence give improved return levels and allows for estimation of joint probability of extremes, whether at multiple sites for the same variable or across multiple variables at the same site.
+  \item Define asymptotic dependence/independence, mentioning $\chi$ statistic (look at narrative elsewhere)
+  \item Introduction to dependence modelling for extremes, following \cite{Heffernan2004} for modelling $\mathbb{P}(\bm{X} \in \bm{C})$, i.e.\ an observation which is extreme in more than one dimension, be that for multiple variables at a single location (e.g.\ rain and wind speed) or across multiple locations and/or times. 
+  \item Motivation: modelling dependence give improved return levels and allows for estimation of joint probability of extremes, whether at multiple sites for the same variable or across multiple variables at the same site.
   \item Models include max-stable processes, Pareto processes, Gaussian processes, copulas, and conditional extremes model.
   \item Former four models limited in both their ability to model dependence and their computational feasibility, CE model is more flexible.
   \item Can mention \cite{Tawn2018} and \cite{Huser2024} for more information on this.
@@ -445,15 +457,15 @@ However, may want to estimate joint probability of extremes.
 The second part of this equation requires a marginal extremes model, but the first requires a model for the dependence structure. \todo{Rewrite from notes and Heffernan2004}
 \begin{equation} \label{eq:joint_prob}
   %\mathbb{P}(\bm{X} \in \bm{C}) = \sum_{i=1}^{d}{\mathbb{P}(\bm{X} \in C_i)} = \sum_{i=1}^{d}\mathbb{P}(\bm{X} \in C_i \mid X_i > u_{X_i}) \mathbb{P}(X_i> u_{X_i})
-  \mathbb{P}(\bm{X} \in \bm{C}) = \sum_{i=1}^{d}{\mathbb{P}(\bm{X} \in C_i} = 
-  \sum_{i=1}^{d}{\mathbb{P}(\bm{X} \in C_i \mid X_i > u_{X_i}) \mathbb{P}(X_i > u_{X_i}}
+  \mathbb{P}(\bm{X} \in \bm{C}) = \sum_{i=1}^{d}{\mathbb{P}\left(\bm{X} \in C_i\right)} = 
+  \sum_{i=1}^{d}{\mathbb{P}\left(\bm{X} \in C_i \mid X_i > u_{X_i}\right) \mathbb{P}\left(X_i > u_{X_i}\right)}
 \end{equation}
 % where $\bm{X}$ is a $d$-dimensional random vector, and $C_i$ is the set of extreme values for the $i^{th}$ component of $\bm{X}$, and $\u_{X_i}$ is the threshold for the $i^{th}$ component of $\bm{X}$.
 \todo{Fix above line, how is it producing a missing dollar error??}
 This dependence can be for the same variable over space, or different variables at the same location.
 
 Extremal dependence can come in two forms, asymptotic independence and asymptotic dependence
-\todo{define, talk about chi statistics}
+\todo{define and talk about chi statistics}
 \todo{Perhaps see Vignotto2021 or Keef2013 for this}
 % \begin{itemize}
 %   \item 
@@ -470,27 +482,17 @@ Extremal dependence can come in two forms, asymptotic independence and asymptoti
 \todo{Also talk about how return levels are better when incorporating dependence information}
 
 \subsection{Conditional extremes model}
-% \begin{itemize}
-%   \item Introduction to dependence modelling for extremes, following \cite{Heffernan2004} for modelling $\mathbb{P}(\bm{X} \in \bm{C})$, i.e.\ an observation which is extreme in more than one dimension, be that for multiple variables at a single location (e.g.\ rain and wind speed) or across multiple locations and/or times. 
-%   Note that CDF must be reversed (see equation 1.2 in \cite{Heffernan2004}).
-%   \item Following \cite{Tawn2018} and \cite{Heffernan2004}, introduce other methods for modelling dependence in extremes, such as max-stable, Pareto and Gaussian processes, and copulas, and their limitations, both in the restrictiveness of the type of dependence these methods can model, and their computational feasibility.
-%   \item Something on marginal model as piecewise ECDF and GPD, which can be fitted using any method mentioned in \ref{sec:uni}. 
-%   \item Starting from asymptotic motivation, define conditional extremes model as in \cite{Heffernan2004} and in applied paper as the non-parametric regression equation $Y_{-i} = a_{\mid i}(Y_{\mid i}) + \b_{\mid i}(Y_{\mid i}) Z_{\mid i}$
-%   \item Requires Gumbel transformation of margins to have exponential upper tail, but this gives complex form for $a$ for negative dependence, so instead following \cite{Keef2013} Laplace margins are used which have doubly exponential tails and thus have the conceptually simple $a_{\mid i} = \alpha_{\mid i}Y_{\mid i} , b = Y_{\mid i}^{\beta_{\mid i}}$, which can be interpreted as the slope and spread parameters for our semi-parametric regression line (is there a reference I can use which makes this interpretation?). 
-%   \item Extrapolation through MC algorithm as in \cite{Heffernan2004} (alternative in \cite{Keef2013}.
-%   \item Talk about diagnostics through independence of residuals and tail exceedances in the limit. 
-%   \item Uncertainty through bootstrap scheme,
-%   \item Return levels $\ldots$ (improved over univariate, as shown in \cite{Zhang2024})
-%   \item Additional constraints from \cite{Keef2013} on possible values of $\alpha$ and $\beta$ to ensure stochastic ordering of $Y_j \mid Y_i = y$ for large $y$ 
-% \end{itemize}
-
 The conditional extremes model combines a piecewise semiparametric marginal extremes model with a semiparametric regression model for the dependence structure. \todo{Write better}
 
 \todo{Flesh out more!}
+\todo{Might be useful to include explanation of notation used in this section}
+\todo{Relate different sections to motivating example and previous section to make it more coherent}
+\todo{Also include brief lit review of uses of CE model in various papers}
 
 The \texttt{texmex} R package provides a ``vanilla'' implementation of the conditional extremes model. \todo{Move to motivating example}
 
 \subsubsection{Marginal model}
+%   marginal model is piecewise ECDF and GPD, which can be fitted using any method mentioned in \ref{sec:uni}. 
 
 The conditional extremes model requires a marginal model for the complete marginal distribution of a random variable $X_i$.
 Therefore, realisations above a high threshold $u_{X_i}$ are modelled using a GPD, while the empirical distribution function is used for observations below this threshold.
@@ -504,28 +506,226 @@ The marginal distribution of $X_i$ under the conditional extremes model is there
 \end{equation}
 where $\tilde{F}_{X_i}$ is the empirical distribution function of $X_i$.
 It is important to note that this marginal model can be fit using any of the methods outlined in section \ref{sec:uni}, including with the use of covariates to model the parameters of the GPD, as in section \ref{subsubsec:non_stationary}.
-\todo{Define gam funciton above, say how we've used it to estimate this model}
+\todo{Define gam function above, say how we've used it to estimate this model}
 From equation \ref{eq:piecewise_marg}, we can estimate the probability of $X_i$ exceeding the threshold $u_{X_i}$, handling the second part of equation \ref{eq:joint_prob}.
 
 \subsubsection{Marginal transformation}
+% Requires Gumbel transformation of margins to have exponential upper tail, but this gives complex form for $a$ for negative dependence, so instead following \cite{Keef2013} Laplace margins are used which have doubly exponential tails and thus have the conceptually simple $a_{\mid i} = \alpha_{\mid i}Y_{\mid i} , b = Y_{\mid i}^{\beta_{\mid i}}$, which can be interpreted as the slope and spread parameters for our semi-parametric regression line (is there a reference I can use which makes this interpretation?). 
 
-In \cite{Heffernan2004}, the marginal
+The conditional extremes model requires the marginal distributions $\bm{X}_i$ to have an exponential upper tail.
+\todo{Go through and check bm X vs X!}
+This greatly simplifies the estimation procedure for \todo{Finish}
+Furthermore, this is useful to have common marginal distributions, as we are interested in rare events in our margins regardless of their original scales, as in our example where we compare extremal wind speed, measured in metres per second, and precipitation, measured in mm \cite{Winter2016}.
+In \cite{Heffernan2004}, this is achieved by transforming the marginal distribution to a Gumbel distribution, which has an exponential upper tail.
+This transformation, for which we denote the transformed marginal variable as $Y_i$, is given by
+\begin{equation} \label{eq:gumbel}
+  Y_i &= -\log[-\log\{\hat{F}_{X_i}(X_i)\}], i = 1, \ldots, d. \\
+\end{equation}
+This results in $\mathbb{P}(Y_i \le y) = \exp(-\exp(-y))$ and hence $\mathbb{P}(Y_i > y) \sim \exp(-y) \text{ as } y \rightarrow \infty$, so $Y_i$ has an exponential upper tail. 
 
-\begin{align*}
-  Y_i &= -\log[-\log\{\hat{F}_{X_i}(X_i)\}], i = 1, \ldots, d \\
-      &= t_i(X_i; \phi_i, \tilde{F}_{X_i}(X_i)) \\
-      &= t_i(X_i),
-\end{align*}
-where $\phi_i = (\sigma_i, \xi_i)$ are marginal parameters. \\
-This gives $\mathbb{P}(Y_i \le y) = \exp(-\exp(-y)) \implies \mathbb{P}(Y_i > y) \sim \exp(-y) \text{ as } y \rightarrow \infty$, so $Y_i$ has an exponential upper tail. 
+However, this results in a relatively complex form for the normalising functions in the semiparametric regression model for the dependence structure in the case of negative dependence, since the lower tail of the Gumbel distribution is not exponential.
+This topic is treated in more detail in section \ref{subsubsec:ce_normalisation}.
 
-\subsubsection{Dependence model}
+A much more common approach, first proposed in \cite{Keef2013}, is to instead use a Laplace transformation, which has a doubly exponential tails.
+This transformation is given by
+\begin{equation} \label{eq:laplace}
+  \mathbb{P}(Y_i \le y) = \begin{cases}
+    \exp(y)/2 &\text{ for } y < 0 \\
+    1-\exp(-y)/2 &\text{ for } y \ge 0. \\
+  \end{cases}
+\end{equation}
+Both tails of $Y_i$ are exponential, and for any $u > 0$, the distribution of $Y_i - u \mid Y_i > u$ and $(-Y_i + u) \mid Y_i \le -u$ are exponential with mean 1. 
+This greatly simplifies the normalising functions, as the form of $a_{\mid i}$ is the same for both positive and negative dependence. 
+
+After this transformation, we are left with a vector of transformed variables $\bm{Y}$ with common Laplace margins. 
+
+\subsubsection{Asymptotic motivation}
+% Starting from asymptotic motivation, define conditional extremes model as in \cite{Heffernan2004} and in applied paper as the non-parametric regression equation $Y_{-i} = a_{\mid i}(Y_{\mid i}) + \b_{\mid i}(Y_{\mid i}) Z_{\mid i}$
+
+Vector algebra in this section and throughout is to be interpreted as componentwise.
+Here and below, we use $Y_{-i} = {\bm{Y}_1, \ldots, \bm{Y}_{i-1}, \bm{Y}_{i+1}, \ldots, \bm{Y}_d}$ to denote the vector $\bm{Y}$ with the $i^{th}$ component removed. \todo{never mentioned d? or defined how many vectors I will have?}
+Furthermore, we use the notation $\bm{a}_{\mid i}$ to denote the vector normalising function conditional on $Y_i$, and $a_{j \mid i}$ to denote the value of $\bm{a}_{\mid i}$ associated with $Y_j$, for some $j \ne i$. 
+\todo{Word better}
+\todo{May need to move this to the start of the section? Or have a glossary at the start of the report?}
+\todo{relate to motivating example?}
+
+\todo{Need to mention how this is an assumption}
+\todo{Rewrite more in own words}
+Following a similar line of reasoning to the univariate asymptotic motivation detailed in section \ref{subsubsec:asymptotic}, for each $Y_i$, we want to estimate $\lim_{y \to \infty}\{\mathbb{P}(\bm{Y}_{-i} \le \bm{y}_{-i} \mid Y_i = y_i)\}$. 
+Therefore, we require the limiting distribution to be non-degenerate for all margins.
+This is achieved by the principal assumption of the conditional extremes model, mirroring that in equation \ref{eq:uni_limiting_dist} for univariate extremes, which is that for each $i$, there exists vector normalising functions $\bm{a}_{\mid i}(y_i),\bm{b}_{\mid i}(y_i), \in \mathbb{R} \rightarrow \mathbb{R}^{(d-1)}$ such that for fixed $\bm{z}_{\mid i}$,
+\begin{equation} \label{eq:ce_limiting_dist}
+      \lim_{y_i \rightarrow \infty}\{\mathbb{P}(\bm{Y}_{-i} \le \bm{a}_{\mid i}(y_i) + \bm{b}_{\mid i}(y_i)\bm{z}_{\mid i} \mid Y_i = y_i)\} = \bm{G}_{\mid i}(\bm{z}_{\mid i}),
+\end{equation}
+where $G_{j \mid i}$ is non-degenerate for all $j \ne i$. 
+\todo{Ensure we have bm G throughout}
+Furthermore, to ensure $\bm{G}_{\mid i}$ is well-defined, we must have the constraint that 
+\[
+  \lim_{z \rightarrow \infty}{\bm{G}_{j \mid i}(\bm{z})} = 1, \forall j \ne i,
+\]
+ensuring that there is no mass at $+\infty$ for any margin, but allowing for some mass to be at $-\infty$ \cite{Keef2013}. \todo{Why is this}
+
+An alternative formulation of the assumption in equation \ref{eq:ce_limiting_dist} which can be more readily adapted into our dependence model in section \ref{subsubsec:dep_model} is
+\begin{equation} \label{eq:standardised_residuals}
+  \bm{Z}_{\mid i} = \frac{\bm{Y}_{-i} - \bm{a}_{\mid i}(y_i)} {\bm{b}_{\mid i}(y_i)},
+\end{equation}
+where $\bm{Z}_{\mid i}$ is the vector of standardised residuals for our model, and again following our univariate argument in section \ref{subsubsec:asymptotic}, we have that
+\[
+      \lim_{y_i \rightarrow \infty}\{\mathbb{P}(\bm{Z}_{\mid i} \le \bm{z}_{\mid i} \mid Y_i = y_i)\} = \bm{G}_{\mid i}(\bm{z}_{\mid i})
+\]
+
+An important consequence of this formulation is that we have made the weak assumption that
+\begin{equation} \label{eq:limit_independence}
+\mathbb{P}(\bm{Z}_{\mid i} \le \bm{z}_{\mid i}, Y_i - u_i = y_i \mid Y_i > u_i) \rightarrow G_{\mid i}(\bm{z}_i) \exp(-y) \text{ as } u_i \rightarrow \infty,
+\end{equation}
+i.e.\ in the limit as $u_i \to \infty$, the extremal exceedances $Y_i - u_i$ and $\bm{Z}_{\mid i}$ are independent.
+We look at methods for assessing the validity of this assumption in section \ref{subsubsec:ce_diagnostics},
+\todo{Maybe say how high threshold for dependence model does not have to be the same as for marginals!}
+
+\subsubsection{Normalisation} \label{subsubsec:ce_normalisation}
+
+Under Gumbel margins, the normalising functions are given by:
+\begin{align} \label{eq:gumbel_normalisation}
+  \begin{split}
+    \bm{a}_{\mid i}(y) &= \bm{\alpha}_i y + I_{\{\bm{\alpha}_{\mid i} = 0, \bm{\beta}_{\mid i} < 0\}} \{\bm{\gamma}_{\mid i} - \bm{\delta}_{\mid i}\log(y)\}, \\
+    \bm{b}_{\mid i}(y) &= y^{\bm{\beta}_{\mid i}}, 
+  \end{split}
+ \end{align}
+where $\ldots$ \todo{Define constants above, say how alpha and beta in indicator function refer to negative dependence}
+Hence, they have quite a simple form for the class of positively associated variables, as the Gumbel margins have exponential upper tails for which the indicator function will equal zero, but a more complex and difficult to interpret formulation for negatively associated variables, as no such thing can be said about their lower tails. 
+
+Under the Laplace marginal transformation in \cite{Keef2013}, we have doubly exponential tails, and thus there is no need for the indicator function, so \ref{eq:gumbel_normalisation} simplifies to
+\begin{align} \label{eq:laplace_normalisation}
+  \begin{split}
+    \bm{a}_{\mid i}(y) &= \bm{\alpha}_i(y), \\
+    \bm{b}_{\mid i}(y) &= y^{\bm{\beta}_{\mid i}}, 
+  \end{split}
+\end{align}
+% where $\bm{\alpha}_{\mid i} \in [-1, 1], \bm{\beta}_{\mid i} \in \(-\infty, 1)$. 
+where $(\bm{\alpha}_{\mid i}, \bm{\beta}_{\mid i}) \in [-1, 1]^{d-1} \times (-\infty, 1)^{d-1}$ \cite{Keef2013}. \todo{Go back over citations throughout!}
+$\alpha_{j \mid i}$ controls the level of association between $Y_j$ and large $Y_i$, with positive and negative values indicating positive and negative asymptotic dependence, respectively, and values closer to 0 indicating stronger asymptotic independence. 
+$\beta_{j \mid i}$ controls the spread $\ldots$ \todo{Fill in more formally, can I get a reference which says this?}
+\todo{Need to reference Beta values in the above paragraph! See Keef 2013}
+
+\subsubsection{Dependence model} \label{subsubsec:dep_model}
+
+\todo{Perhaps (here or below) mention how G estimated nonparametrically, for Z hat on page 508?}
+\todo{Also, is there a need to explicitely define the model for Z j mid i (page 504)?}
+\todo{Need to say somewhere how in practice, Z is first sampled from a normal distribution and thereafter empirically estimated, see inference section in Keef}
+
+Finally, rearranging equation \ref{eq:standardised_residuals} for our standardised residuals, and imputing the values for the vector normalising functions $\bm{a}_{\mid i}$ and $\bm{b}_{\mid i}$ from equation \ref{eq:laplace_normalisation}, we can define the dependence model used in the conditional extremes model, which takes the form of the multivariate semiparametric regression equation
+\todo{Word better}
+\begin{align} \label{eq:ce_model}
+  \begin{split}
+    \bm{Y}_{-i} &= \bm{a}_{\mid i}(\bm{y}_i) + \bm{b}_{\mid i}(\bm{y}_i)\bm{Z}_{\mid i} \\
+                &= \bm{\alpha}_{\mid i}\bm{y}_i + \bm{y}_i^{\bm{\beta}_{\mid i}}\bm{Z}_{\mid i}, \text{ for } Y_i = y_i > u_{Y_i}.
+  \end{split}
+\end{align}
+\todo{Write something about this! Most important equation}
+\todo{Write second line as standalone, since it is so important?}
+
+\subsubsection{Estimation} \label{subsubsec:estimation}
+% How model is estimated, assuming normal dist for Z, then empirical dist
+\todo{See Winter2016 for good description}
+
+\subsubsection{Extrapolation} \label{subsubsec:extrapolation}
+% Extrapolation through MC algorithm as in \cite{Heffernan2004} (alternative in \cite{Keef2013}.
+
+\todo{Change this algorithm from Heffernan to Keef}
+\todo{Also look at other Keef apper on flood events, seems to be most recent in that series}
+\todo{How do nu and u differ? Is it for thresholding X vs Y?}
+\begin{itemize}
+  \item Can simulate from $\bm{X}|\bm{X}_i > \nu_{X_i}$ by simulating from $\bm{Y}|\bm{Y}_i > y_i$ and transforming back to $\bm{X}$ space, using the following algorithm:
+    \begin{enumerate}
+      \item Simulate $Y_i$ from the transformed marginal distribution conditional on exceeding $t_i(\nu_{X_i})$.
+      \item Sample $\bm{Z}_{\mid i}$ from $\hat{G}_{\mid i}$, independently of $Y_i$. 
+      \item Obtain $\bm{Y}_{-i} = \bm{\alpha}_{\mid i}(Y_i) + (Y_i)^{\bm{\beta}_{\mid i}}\bm{Z}_{\mid i}$.
+      \item Transform $\bm{Y} = (\bm{Y}_{-i}, Y_i)$ back to the original scale by using the inverse of the marginal transformation. 
+      \item the resulting vector $\bm{X}$ is a simulated value from $\bm{X} \mid X_i > \nu_{X_i}$.
+    \end{enumerate}
+  \item This algorithm can be used to estimate $\mathbb{P}(\bm{X} \in C_i \mid X_i > \nu_{X_i})$ by evaluating it as the long run proportion of the generated sample that falls in $C_i$. 
+\end{itemize}
+
+\subsubsection{Return levels} \label{subsubsec:ce_return_levels}
+
+\todo{Find reference outside of H and T for return levels}
+
+When multivariate set $\bm{C}$ is described by single parameter $nu$ (i.e.\ $C = C(\nu)$), the return level $\nu_p$ for event with probability $p$ is defined as 
+\[
+  \mathbb{P}(\bm{Y} \in C(\nu_p)) = p
+\]
+
+\todo{How are these estimated? How are they an improvement from marginal return levels?}
+\todo{Is it just through Monte Carlo simulations of quantiles?}
+
+\subsubsection{Diagnostics} \label{subsubsec:ce_diagnostics}
+% Talk about diagnostics through independence of residuals and tail exceedances in the limit. 
+
+
+The marginal model is diagnosed as in univariate EVT, with threshold selection and model fit assessed through probability and quantile plots, as described in section \ref{subsubsec:uni_diagnostics}.
+
+\todo{Need to reference texmex vignette for this?}
+\todo{Talk about texmex here anyway, to make this theory more relative to its applications}
+\todo{Check use of apostrophes}
+For diagnosing the dependence model, we return to the weak assumption in equation \ref{eq:limit_independence} of asymptotic independence between the standardised residuals $\bm{Z}_{\mid i}$ and the exceedances $Y_i - u_i$, as $u_i \to \infty$.
+The normalised residuals $\bm{Z}_{\mid i}$ must be stable across the range of $Y_i$ values over which they were estimated. 
+Therefore, a plot of $Z_{\mid i}$ against $\hat{F}(Y_i)$ should show no trend, and the residuals should be approximately constant over the range of $Y_i$ values used for estimation.
+\todo{F Y or F X? Does it matter?}
+\todo{Should this be Z j mid i?}
+A number of statistical tests for independence can also be used. \todo{Define some?}
+
+
+\subsubsection{Uncertainty} \label{subsubsec:ce_uncertainty}
+
+There are numerous sources of uncertainty intrinsic to the estimation of the conditional extremes model.
+These include the shape and scale parameters of the marginal GPDs, the normalising functions in the dependence model and the standardised residuals. 
+The uncertainty in each of these sources can be estimated using bootstrapping.
+For fixed marginal and dependence thresholds, we can perform bootstrapping by resampling the residuals and the exceedances, and then refitting the marginal and dependence models to the resampled data.
+We can also perform bootstrapping for different dependence thresholds as a means of choosing a threshold which gives the least uncertainty in its estimates of $\bm{\alpha}_{\mid i}$ and $\bm{\beta}_{\mid i}$.
+\todo{Describe bootstrapping algorithm in more (mathematical) detail?}
+
+\subsubsection{Additional constraints}
+%  Additional constraints from \cite{Keef2013} on possible values of $\alpha$ and $\beta$ to ensure stochastic ordering of $Y_j \mid Y_i = y$ for large $y$ 
 
 \subsection{Extensions}
+
+There have been several extensions to the original conditional extremes model of \cite{Heffernan2004} and the additions of \cite{Keef2013}, particularly for the modelling of spatial and/or temporal extremes, which we will briefly cover below. 
+
+\todo{Richards2023 (EVA challenge) has good summary of this}
+\todo{Should I adopt minus notation for all CE models rather than mid i?}
+In \cite{Winter2016}, the conditional extremes model is extended to include time-varying covariates for the normalising functions in the dependence model, treating them as non stationary. 
+
+% the parameters of the dependence model in equation \ref{eq:ce_model} at some location $s$ and time $t$ are modelled as functions of some time-varying covariates $g_t$ using the generalised linear models
+\begin{align} \label{eq:ce_winter}
+  % \bm{\alpha}_{\mid i}(s, t) &= \bm{\alpha}_{\mid i}(s) + \bm{\gamma}_{\mid i}g_t, \\
+  \tanh^{-1}(\bm{\alpha}_{\mid \{s, t\}}) &= \bm{\alpha}^{(0)}_{\mid i} + \bm{\alpha}^{(1)}_{\mid i}g_t, \\
+  \tanh^{-1}(\bm{\beta}_{\mid \{s, t\}}) &= \bm{\beta}^{(0)}_{\mid i} + \bm{\beta}^{(1)}_{\mid i}g_t, \\
+\end{align}
+\todo{Check that this is expressed correctly}
+\todo{change beta}
+\todo{Check superscript d-1, need to define!}
+\todo{Change capitalised Conditional Extremes to conditional extremes}
+with intercept and slope parameters $\bm{\alpha}^{(0)}_{\mid i}, \bm{\alpha}^{(1)}_{\mid i}, \bm{\beta}^{(0)}_{\mid i}, \bm{\beta}^{(1)}_{\mid i} \in \mathbb{R}^{d-1}$. 
+The inverse hyperbolic tangent function $\tanh^{-1}$ is used as a link function as it restricts the parameters to the range $[-1, 1]$. 
+While $\beta$ within the conditional extremes model can range from $-\infty$ to 1, in practice $\beta$ is rarely seen to be less than $-1$, as this would result in $X_{-s, t}$ being almost deterministic given large $X_{s, t}$, which is rarely realistic, so this link function is appropriate. 
+
+\cite{Wadsworth2018} extends the conditional extremes model to a spatial context, where the dependence model is extended to include a spatially varying dependence structure within the normalising functions. 
+\todo{Write this section!}
+
+\cite{Simpsons2023} further extends the feasibility of this model for large datasets with thousands of locations. 
+By reformulating the spatial conditional extremes model slightly to fit into the class of latent Gaussian models, the spatial conditional extremes model can be fit using INLA.
+The use of the Laplace approximation and Gaussian Markov random fields to represent a sparse precision matrix allows for the model to be fitted to large datasets, and the stochastic partial differential equation (SPDE) approach in INLA allows for the model to be used in a geostatistical context, where previously the model was shown to only be feasible for a few hundred locations. \todo{Use citation in Simpson2023}
+\todo{Cite Lindgren}
+\todo{Check and write this! Needs to be fleshed out considerably}
+\todo{INLA should be defined above}
+
 \begin{itemize}
-  \item Spatial extension in \cite{Wadsworth2018}, which has $\alpha$ which slowly decays as distance between site and some reference site increases, several choices of $\beta$ to fit different tails, and the representation of the residuals as a Gaussian process with some constraints to ensure it's value is 0 when the site in question is the same as the reference site. 
+  \item \cite{Winter2016} shows how time varying covariate can be added to normalising functions
+  \item Spatial extension in \cite{Wadsworth2018}, which has $\alpha$ which slowly decays as distance between site and some reference site increases, several choices of $\beta$ to fit different tails, and the representation of the residuals as a Gaussian process with some constraints to ensure its value is 0 when the site in question is the same as the reference site. 
   \item Modified in \cite{Simpson2023} to be part of latent Gaussian class of models, meaning it can be fitted to 1000s of sites, and can be used in geostatistical context.
 \end{itemize}
+
+
 
 \subsection{Application to motivating example}
 
@@ -558,23 +758,149 @@ Mainly lit review on clustering.
   \item In particular \cite{Vignotto2021} paper matches our application here, would be a promising method to try on the conditional extremes model. In particular, is really simple to implement, but perhaps won't help so much with parameter estimation problem. 
 \end{itemize}
 
-\subsection{Clustering for improved parameter estimation}
-
+In \cite{Bernard2013}, a clustering algorithm for (weekly precipitation) maxima is proposed which uses (an empirical/nonparametric estimator for) the F-madogram, a type of variogram (estimates spatial correlation of spatial random field) for extremes, and PAM (partitioning around mediods). \\
+Summary:
 \begin{itemize}
-  \item Second kind uses hierarchical modelling and generally produces latent, ``data-driven'' group structure, methods for estimating likelihood can be split between Frequentist methods which use some flavour of EM algorithm, and Bayesian which uses MCMC, in particular \cite{Bottolo2003} and  \cite{Rohrbeck2021}, which use RJMCMC (other methods (possibly from outside extrems) include use of ``stick-breaking prior'' and latent Dirichlet allocation, reference).
-  \item This kind particularly useful for extremes because of lack of data causing ``naive'' marginal $\xi$ values to have large variance (which in turn feeds into estimates of $\alpha$ and $\beta$ for CE model). 
-  \item Earlier paper in this vein is \cite{Cooley2007}, but this only used domain-knowledge to fit two seperate $\xi$ values for different regions (mountainous and plains).
-  \item Talk about Frequentist EM papers for GEV (\cite{Dupuis2023}) and GPD (\cite{Carreau2017}), use variants of EM algorithm. 
-  \item Talk about \cite{Rohrbeck2021}, how it changes RJMCMC algorithm from \cite{Bottolo2003} and uses GPD rather than PP (review both papers), some reasons why it may be an improvement on Frequentist methods:
+  \item bivariate vector $(M_i, M_j)^T$ assumed to follow a bivariate EVT distribution.
+  \item A variogram of order $p$ is defined as the moment of order $p$ of the difference between maxima $M_i$ and $M_j$, $\matbb{E}|M_i - M_j|^p$.
+  \item The F-madogram $d_{ij}$ is, amongst other things:
     \begin{enumerate}
-      \item Use of priors desirable where data is naturally lacking for extremal context (but may also be shunned for being opinionated?), mention use of Penalised complexity prior for $\xi$ in INLA implementation of GPD. 
-      \item Inference for the \cite{Carreau2017} is quite conceptually difficult, making use of U-statistics for probability weighted moment estimators and in the GEV paper required a  consistency analysis of the QML methods used
-      \item In contrast, inference for Bayesian problem could be seen as somewhat simpler, can be simply expressed through DAG with hyperpriors to enable partial pooling, can more easily limit e.g.\ $\xi$ to more reasonable values, spatial interpolation is easy (but can be made more complex), number of regions/clusters to use can be estimated with within MCMC scheme rather than e.g. cross-validation as in \cite{Carreau2017}.
-      \item Any improvements in computational speed? Can talk about INLA implementation of CE and how it allows for modelling of many regions, opens up use in geostatistical context,
-      \item Probabilistically defines uncertainty around parameter estimates, which is nice, compared to having to define complicated bootstrapping schemes or other methods to quantify uncertainty in Frequentist setting. 
-      \item Also reference context of conditional extremes model, rather than GPD or GEV explicitely (although GPD must be estimated to then estimate CE parameters), probably more easily formulated in hierarchical Bayesian model (how?)
+      \item an interpretable distance, thus forming a distance matrix over which to cluster,
+      \item expressed in terms of the scalar "extremal coefficient" $V_{ij}(1, 1)$, which gives information about the degree of dependence between $M_i$ and $M_j$. 
+      \item forms a copula, and so is completely decoupled from marginal estimates, meaning there is no need to re-estimate a GEV distribution at each site, and it is not required to assume these maxima come from a GEV, but only that they lie in the domain of attraction of max-stable distribution. 
     \end{enumerate}
-  \item However, Frequentist method doesn't require specification of priors, which is a controversial subject and can be quite laborious.  
+  \item PAM preferred to k-means, for the following reasons:
+    \begin{enumerate}
+      \item K-means averages over all cluster members. 
+      The average of normally distributed obs remain Gaussian, but this is not the case for maxima following an extremal distribution.
+      \item Taking mediods ensures that the cluster centre is an actual observation, which allows the maxima to remain maxima and does not apply any averaging or smoothing. 
+    \end{enumerate}
+  \item Interestingly, PAM not given geographical information, but still produces spatially coherent clusters. 
+  \item Choice of K (number of clusters) and assessment of clustering quality made through analysis of silhouette coefficient, which compares cluster tightness (small distance within cluster) with cluster dissociation/separation (clusters should be adequately distinct).
+\end{itemize}
+
+\cite{Vignotto2021} k-mediods algorithm of KL divergence between events characterised by risk function (sum/max) for Pareto transformed extreme wind and precipitation observations over Great Britian and Ireland. \\ 
+Summary:
+\begin{itemize}
+  \item \textbf{Data}: Weekly sum of precipitation and average of daily wind speed maxima used, as precipitation and wind speed extremes can be linked through storms with a lag of several days due to persistent weather patterns. 
+  \item \textbf{Mapping from bivariate to univariate space}: \todo{Word better}
+  \begin{itemize}
+    \item Marginal distributions (i.e.\ rain and wind speed at a single site) are transformed to standard Pareto distributions. 
+    \item Risk function computed on Pareto scale $r:\mathbb{R}^2 \rightarrow \mathbb{R}$ used to define which points are extreme, where $r(x, y) = x + y$ or $r(x, y) = \max(x, y)$, mapping from bivariate to univariate space (taking (Pareto transformed) wind and precipitation estimates at each site and giving us a single estimate for each)   \end{itemize}
+  \todo{is the Risk function only used to determine which points are extreme, with the original data bivariate data used to calculate KL divergence???}
+  \textbf{Distance metric}:
+  \begin{itemize}
+    \item coefficient of tail dependence $\chi/\bar{\chi}$ cannot directly measure similarity of extremal behaviour of two bivariate random variables $\bm{X}^{(1)} = (X_1^{(1)}, X_2^{(1)})$ and $\bm{X}^{(2)} = (X_1^{(2)}, X_2^{(2)})$, i.e.\ rain and wind speeds at two different locations.
+    \item Instead, use the Kullback-Leibler divergence, which measures the difference between two probability distributions $P$ and $Q$, and is defined as 
+    \[
+      D_{KL}(P \mid Q) = \int{p(x) \log\left(\frac{p(x)}{q(x)}\right)dx}.
+    \]
+    KL divergence is shown to generalise the concept of $\chi$, since $\ldots$ \todo{Finish}
+  \item Extreme points $\{R^{(j)} > q_u^{(j)}\}$ partitioned into $W = 3$ sets, one for co-occurring extremes and two for where data is extreme for only one variable (easily extended to multivariate case from bivariate).
+  \item Empirical proportions of data points belonging to each set used to estimate KL divergence between any two sites (i.e.\ how similar occurrence of extremes are at two sites), this giving distance/dissimilarity matrix over which to cluster.
+  \end{itemize}
+  \item K-mediods algorithm clusters sites over KL divergences. 
+  \item Silhouette coefficient used to choose number of cluster and assess solution. 
+  \item Makes interesting conclusions about bivariate extremal behaviour of Ireland which will be useful for TFR report, but is different in its use of gridded data, which underestimates extremal precipitation and wind speeds. 
+\end{itemize}
+
+\cite{deCarvalho2023} uses k-means to cluster over bivariate cluster centroid of the extremal index and the heteroskedastic function, interpreted as the magnitude and frequency of extreme events, respectively. 
+Summary (from reading course report):
+\begin{itemize}
+  \item Heteroskedastic extremes violate assumption of IID observations, and may exhibit serial dependence or be drawn from different distributions. 
+  \item The \textbf{heteroskedastic function} $c$ gives the frequency of extremes, with $c = 1$ defining "homoskedastic extremes". 
+  Defined as a limit which compares only the distribution tails, not imposing any assumption on centre of distributions. 
+  \item \textbf{Extremal index} $\gamma$ (\textbf{the same as the shape parameter!}) is a scalar which controls the behaviour of a CDF in its right tail (i.e.\ its rate of tail decay), and is often thought of as the inverse of the limiting mean cluster size).
+  \item Nonparametric kernel-based estimator and Hill function provide respective estimates $\hat{c}, \hat{\gamma}$.
+  \item Two quantities are jointly thresholded such that a specific quantile of observations is preserved. 
+  \item The level of bias towards one of these metrics is parameterised in this procedure, so that one can be favoured over the other in an analysis, as deemed necessary. 
+  \item Standard k-means clustering performed on bivariate cluster centroid $(\hat{c}, \hat{\gamma})$.
+\end{itemize}
+
+
+% \subsection{Clustering for improved parameter estimation}
+\subsection{Hierarchical clustering}
+\todo{Better subsection name}
+\todo{introduction}
+
+% \begin{itemize}
+%   \item Second kind uses hierarchical modelling and generally produces latent, ``data-driven'' group structure, methods for estimating likelihood can be split between Frequentist methods which use some flavour of EM algorithm, and Bayesian which uses MCMC, in particular \cite{Bottolo2003} and  \cite{Rohrbeck2021}, which use RJMCMC (other methods (possibly from outside extrems) include use of ``stick-breaking prior'' and latent Dirichlet allocation, reference).
+%   \item This kind particularly useful for extremes because of lack of data causing ``naive'' marginal $\xi$ values to have large variance (which in turn feeds into estimates of $\alpha$ and $\beta$ for CE model). 
+%   \item Earlier paper in this vein is \cite{Cooley2007}, but this only used domain-knowledge to fit two seperate $\xi$ values for different regions (mountainous and plains).
+%   \item Talk about Frequentist EM papers for GEV (\cite{Dupuis2023}) and GPD (\cite{Carreau2017}), use variants of EM algorithm. 
+%   \item Talk about \cite{Rohrbeck2021}, how it changes RJMCMC algorithm from \cite{Bottolo2003} and uses GPD rather than PP (review both papers), some reasons why it may be an improvement on Frequentist methods:
+%     \begin{enumerate}
+%       \item Use of priors desirable where data is naturally lacking for extremal context (but may also be shunned for being opinionated?), mention use of Penalised complexity prior for $\xi$ in INLA implementation of GPD. 
+%       \item However, specification of priors is sometimes laborious and controversial, and can be difficult to justify. 
+%       \item Inference for the \cite{Carreau2017} is quite conceptually difficult, making use of U-statistics for probability weighted moment estimators and in the GEV paper required a  consistency analysis of the QML methods used
+%       \item In contrast, inference for Bayesian problem could be seen as somewhat simpler, can be simply expressed through DAG with hyperpriors to enable partial pooling, can more easily limit e.g.\ $\xi$ to more reasonable values, spatial interpolation is easy (but can be made more complex), number of regions/clusters to use can be estimated with within MCMC scheme rather than e.g. cross-validation as in \cite{Carreau2017}.
+%       \item Any improvements in computational speed? Can talk about INLA implementation of CE and how it allows for modelling of many regions, opens up use in geostatistical context,
+%       \item Probabilistically defines uncertainty around parameter estimates, which is nice, compared to having to define complicated bootstrapping schemes or other methods to quantify uncertainty in Frequentist setting. 
+%       \item Also reference context of conditional extremes model, rather than GPD or GEV explicitely (although GPD must be estimated to then estimate CE parameters), probably more easily formulated in hierarchical Bayesian model (how?)
+%     \end{enumerate}
+%   \item However, Frequentist method doesn't require specification of priors, which is a controversial subject and can be quite laborious.  
+% \end{itemize}
+
+\cite{Bottolo2003} defines exceedances over a given threshold as generated by a model characterised by a Poisson process $PP(\mu, \sigma, \xi)$, and derives a hierarchical mixture prior for each of these parameters which has (unknown, latent) parameter-specific group structuring (allowing for great flexibility) estimated through a Reversible Jump MCMC (RJMCMC) scheme similar to that of \cite{Rohrbeck2021}. 
+\begin{itemize}
+  \item Data is exceedances over a threshold, which are modelled as a (Poisson) point process with parameters $\mu, \sigma, \xi$.
+  \item incorporating prior knowledge in context of extremes useful due to rarity of extremal data.
+  \item Proposed Bayesian hierarchical model with (parameter-specific) grouping of type-effects, where grouping is latent and ``data-driven'', as in \cite{Dupuis2023}. 
+  \item RJMCMC algorithm used to estimate group structure and group-specific parameters.
+  \item Previous models assumed exchangeability of parameters meaning that types were treated symmetrically and correspondingly parameter estimates were shrunk towards common points. 
+  \item Under mixture priors, parameters are assumed to be i.i.d.\ according to some finite-mixture distribution with number of components $w$, corresponding weights $k$ hyperparameters $\delta$, and latent variable $Z_i$ indicating the mixture component to which the parameter belongs.
+  \item Hyperpriors perform partial-pooling between groups, with $k \sim \mathbb{P}(k^{\eta} = k)$ (can be uniform, fully specified or somewhere in between) for a PP parameter $\eta$ and Dirichlet prior on $w^{\eta} \mid k^{\eta}$ (nice DAG for these in paper). 
+\end{itemize}
+
+\todo{Look at where Cooley has been cited elsewhere}
+\begin{itemize}
+  \item Abstract/summary:
+    \begin{itemize}
+      \item \cite{Cooley2007} models \textbf{r-year return levels} (with uncertainty) for extreme precipitation in Colorado.
+      \item Separately hierarchical models for intensity $\mathbb{P}(Z(\bm{x}) > z + u \mid Z(\bm{x}) > u)$ and frequency $P(Z(\bm{x}) > u$) at location $\bm{x}$ under GPD and binomial distributions, respectively, as in chapter 5 of \cite{Coles2001}. 
+      \item Both models incorporate latent spatial process characterised by geographical and climatological covariates using a Gaussian process. 
+      \item MCMC and spatial interpolation used for inference. 
+    \end{itemize}
+    \item temporal dependence reduced by declustering (keeping only highest of consecutive days exceeding threshold). 
+    \item Work in a ``climate space'' (rather than longitude/latitude), where the coordinates of $\bm{x}$ are defined by orographic and climatological measures. 
+    \item Both models are described by the three layer hierarchical model
+      \[
+        p(\bm{\theta} | \bm{Z}(\bm{x})) \propto p_1(\bm{Z}(\bm{x}) | \bm{\theta}_1) p_2(\bm{\theta}_1 | \bm{\theta}_2) p_3(\bm{\theta}_2),
+      \]
+      where the first layer models the data (with a GPD or Binomial), the second layer models the latent process (with a Gaussian process) and the third layer consists of the hyperparameters for the parameters $\theta_2$ that drive the latent process (with $\theta_1$ being the parameters of the GPD/binomial likelihoods). 
+    \item Best model amongst different covariate forms for $\phi = log(\sigma) and \xi$ were compared via DIC (also using long/lat vs climate space), $\xi$ taken to be different for ``mountainous'' and ``planes'' regions, so fit for just \textbf{two separate regions} (with shared information) rather than estimated for each site (important as this is quite like clustering/grouping for parameter estimation improvement, although the clustering is via domain knowledge rather than data-driven). 
+\end{itemize}
+
+
+
+
+
+\cite{Carreau2017} derives a model which uses covariates to estimate $\sigma(\bm{x})$ and conditional mixture of GPDs with subregions defined by constant shape parameters $\xi_j$, estimated through EM algorithm and partitioned into subregions, the number of which was determined via out-of-sample cross validation. \\
+Summary:
+\begin{itemize}
+  \item As $T \uparrow$, $\xi$ becomes determining factor in return/hazard level estimates, particularly in how it determines the tail behaviour of the distribution.
+  \item $\xi$ estimation is difficult, as it is highly variable and can be influenced by many factors, such as the choice of threshold, the number of observations, etc.
+  \item Approach here is to treat hazard level as piecewise constant, and partition region of interest into subregions over which to fit a conditional mixture of GPDs (can be seen as extension of \cite{Cooley2007} which uses two subregions).
+  \item \# regions sees bias-variance tradeoff; more regions means more $\xi$ to estimate with less data (more variance), while less regions means greater bias as each subregion will represent the local characteristics of more locations (more groups often also harder to interpret). 
+  \item $\sigma$ doesn't have same issue, so just estimated with $\sigma(\bm{x})$, i.e.\ a function of covariates. 
+  \item EM algorithm: \\
+  \begin{itemize}
+    \item \textbf{E-step} estimates partition $C$, uses probability weighted moment estimators, U-statistics, kernel regression and k-means (complex, see paper)
+    \item \textbf{M-step} estimates $\mathbb{P}(C = j \mid \bm{x}) \text{ probability of subregion membership used in mixture GPD}, \sigma(\bm{x}), \xi_j$ for each subregion $j$.
+  \end{itemize}
+  \item Number of subregions chosen by out-of-sample CV using three different loss fuctions, including Anderson-Darling statistic (more sensitive to changes in the tails)
+\end{itemize}
+
+\cite{Dupuis2023} derives EM (really MM) algorithm for identifying group structure and group-specific model parameters for GEV distributed panel data. \\
+Summary:
+\begin{itemize}
+  \item \textbf{Data}: data for individuals/locations $i$, time $t$ (known as panel data, i.e.\ $X_{i t}$) which are GEV distributed. 
+  \item Because of the nature of extremes, both complete and no pooling results in poor parameter estimates, so some/"partial" pooling over similar/homogeneous locations desired.
+  \item Use EM/EE algorithm and QML (where variance-covariance matrix may be misspecified) to iteratively estimate (i.e.\ estimation is disentangled for simplicity) group structure/assignment $\bm{\tau}$ and group-specific parameters $\bm{\theta}$ related to parameters of GEV through individual regression equations (so each GEV parameter estimated separately). 
+  The consistency of this algorithm is also proven.
+  \item grouping is latent and ``data-driven'', rather than based on domain knowledge, and is done mainly for improved parameter estimation, as opposed to methods which derive distance matrices over which to perform e.g.\ k-mediods clustering. 
+  \item Stronger dependence in data helps group identification because it reduces the variance among individuals in the same group, but it gives worse quantile estimates (i.e.\ stronger dependence gives lower effective sample size $\implies$ less information $\implies$ greater variance in QML estimator).
+  \item Simulation study performed, and applications to financial risk, extreme temperature and flood risk data shown to be effective (and better than when using groupings based on domain knowledge). 
 \end{itemize}
 
 \section{Discussion} \label{sec:discussion}
@@ -584,13 +910,14 @@ Summary of report:
   \item Introduced extremes, why they are important, why dependence modelling is important,
   \item Introduced motivating example of extreme wind speed and rain in Ireland,
   \item Showed how univariate extremes can be modelled using GPD, and how parameter estimates can include covariates, and how GPD can be applied to Ireland dataset. 
-  \item Introduced dependence modelling and the conditional extremes model, why it's an improvement over previous models, where it may be susceptible to uncertainty in $\xi$ estimates and some previous applications of the model.
-  \item Reviewed clustering methods for extremes, shown examples of both types of clustering, highlighted some papers where there is potential to use these methods on the conditional extremes model.
+  \item Introduced dependence modelling and the conditional extremes model, why its an improvement over previous models, some applications, where it has some limitations in its non-spatial limitation may be susceptible to uncertainty in $\xi$ estimates and some previous applications of the model.
+  \item Reviewed clustering methods for extremes, examples of both types of clustering, highlighted some papers where there is potential to use these methods on the conditional extremes model.
 \end{enumerate}
 
 Future work:
 \begin{itemize}
-  \item Try general clustering (k-means, k-medoids) on conditional extremes modes, in particular trying to implement \cite{Vignotto2021} paper method on Ireland dataset for conditional extremes model, using estimates \todo{Should I elaborate?}
+  \item Try general clustering (k-means, k-medoids) on conditional extremes models
+  \item Another more sophisticated but also quite simple area of future work would be to try to implement \cite{Vignotto2021} paper method on Ireland dataset for conditional extremes model, as contexts of wind speed and precipitation at different locations is quite similar to the context of the paper.
   \item This model has obvious limitations in that it may not be extended past bivariate case \todo{See discussion in paper to see what they had to say about this}.
   \item Potential to try Bayesian clustering approach similar to \cite{Rohrbeck2021}, will involve deriving likelihood for CE model and priors for parameter values. 
   \item Later, can extend clustering to spatial and spatio-temporal CE from \cite{Tawn2018}.
@@ -602,6 +929,10 @@ Future work:
   \item Code for analysis available at \url{https://github.com/potoole7/TFR}. \todo{Make sure this is public while TFR report is being reviewed!}
   \item Fork of \texttt{texmex} package available at \url{http://github.com/potoole7/texmex}, adds functionality to fix $\beta$ values and only estimate $\alpha$. \todo{any other functionality added? Also used marginal fits from evgam rather than naive marginal in texmex}
 \end{itemize}
+
+\todo{Number references!}
+\todo{Add links for references, if not already present}
+\todo{Triple check!! Why are some titles in italics?}
 
 \newpage
 \bibliography{library}

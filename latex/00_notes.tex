@@ -106,9 +106,9 @@ Description of model comes from \cite{Heffernan2004}, with the addition of using
 
 \begin{itemize}
   \item Model marginal tail of $X_i$ with Generalised Pareto Distribution (GPD):
-    % \[
-    %   \mathbb{P}(X_i > x + u_{X_i} \mid X_i > u_{X_i}) = {(1 + \xi_ix/\sigma_i)}_{+}^{-1/\xi_i}, x > 0 \todo{Fix this!}
-    % \]
+    \[
+      \mathbb{P}(X_i > x + u_{X_i} \mid X_i > u_{X_i}) = {(1 + \xi_{i} x/\sigma_i)}_{+}^{-1/\xi_i}, x > 0 
+    \]
     where $u_{X_i}$ is a high threshold, $\xi_i$ is the shape parameter, $\sigma_i$ is the scale parameter, and ${x}_{+} = \max(x, 0)$.
   \item Require a model for complete marginal distribution $F_{X_i}$  of $X_i$, so need to describe all $X_j$ values that can occur with any large $X_i$ value, which leads to the following piecewise semiparametric model:
     \[
@@ -123,7 +123,8 @@ Description of model comes from \cite{Heffernan2004}, with the addition of using
 
 \subsection{Marginal transformation}
 
-\todo{Describe need for marginal transformation to estimate dependence model}
+The conditional extremes model relies on a transformation of the marginal distributions to common margins in order to have an exponential upper tail.
+These transformations are detailed below:
 
 \subsubsection{Gumbel transformation}
 
@@ -170,7 +171,7 @@ This greatly simplifies the normalising functions seen in section \ref{subsubsec
 \subsubsection{Limit assumption}
 
 \begin{itemize}
-  \item For each $Y_i$, want to estimate $\mathbb{P}(Y_{-i} \le y_{-i} \mid Y_i = y_i)$ as $y \rightarrow \infty$. 
+  \item For each $Y_i$, want to estimate $\mathbb{P}(\bm{Y}_{-i} \le \bm{y}_{-i} \mid Y_i = y_i)$ as $y \rightarrow \infty$. 
   \item We require the limiting distribution to be non-degenerate for all margins (see section\ref{sec:uni})
   \item Therefore, assume for every $i$ that there are vector normalising functions $\bm{a}_{\mid i}(y_i),\bm{b}_{\mid i}(y_i), \in \mathbb{R} \rightarrow \mathbb{R}^{(d-1)}$ such that for fixed $\bm{z}_{\mid i}$, 
     \[
@@ -204,10 +205,10 @@ This greatly simplifies the normalising functions seen in section \ref{subsubsec
 \begin{itemize}
   \item Under Gumbel margins, normalising functions have simple form for class of positively associated variable, but more complex for negatively associated variables:
     \todo{Fix, missing curly bracket}
-    % \begin{align*}
-    %   \bm{a}_{\mid i}(y) &= \bm{\alpha}_i y + I_{\{\bm{\alpha}_{\mid i} = 0, \bm{\beta}_{\mid i} < 0\}}\{_\bm{\gamma}_{\mid i} - \bm{\delta}_{\mid i}\log(y)\}, \\
-    %   \bm{b}_{\mid i}(y) &= y^{\bm{\beta}_{\mid i}}, 
-    % \end{align*}
+    \begin{align*}
+      \bm{a}_{\mid i}(y) &= \bm{\alpha}_i y + I_{\{\bm{\alpha}_{\mid i} = 0, \bm{\beta}_{\mid i} < 0\}}\{\bm{\gamma}_{\mid i} - \bm{\delta}_{\mid i}\log(y)\}, \\
+      \bm{b}_{\mid i}(y) &= y^{\bm{\beta}_{\mid i}}, 
+    \end{align*}
     where $\bm{\alpha}_{\mid i}, \bm{\beta}_{\mid i}, \bm{\gamma}_{\mid i}, \bm{\delta}_{\mid i}$ are vector constants, $\bm{\alpha}_{\mid i} \in [0, 1], \bm{\beta}_{\mid i} \in (-\infty, 1], \bm{\gamma}_{\mid i} \in (-\infty, \infty) , \bm{\delta}_{\mid i} \in [0, 1]$. 
   \item Under Laplace marginals, as in \cite{Keef2013}, the indicator term disappears, and we have that $\bm{\alpha}_{\mid i} \in [-1, 1]$. 
   \item $\alpha_{j \mid i}$ controls the level of association between $Y_j$ and large $Y_i$, with positive and negative values indicating positive and negative asymptotic dependence, respectively, and values closer to 0 indicating stronger asymptotic independence. 
@@ -228,11 +229,14 @@ This greatly simplifies the normalising functions seen in section \ref{subsubsec
     \]
   \item All $d$ different conditional distributions are estimated separately.
 
-  \item Our dependence model therefore is a multivariate semiparamettiv regression model of the form 
-  \begin{align} \label{eq:ce_model}
-    \bm{Y}_{-i} &= \bm{a}_{\mid i}(y_i) + \bm{b}_{\mid i}(y_i)\bm{Z}_{\mid i} \\
-                &= \bm{\alpha}_{\mid i}(y_i) + \bm{Z}_{\mid i}^{\bm{\beta}_{\mid i}}
-  \end{align}
+  \item Our dependence model therefore is a multivariate semiparametric regression model of the form 
+\begin{align} \label{eq:ce_model}
+  \begin{split}
+    \bm{Y}_{-i} &= \bm{a}_{\mid i}(\bm{y}_i) + \bm{b}_{\mid i}(\bm{y}_i)\bm{Z}_{\mid i} \\
+                &= \bm{\alpha}_{\mid i}\bm{y}_i + \bm{y}_i^{\bm{\beta}_{\mid i}}\bm{Z}_{\mid i}, \text{ for } Y_i = y_i > u_{Y_i}.
+  \end{split}
+\end{align}
+
   with the use of Laplace margins and the definition of $a_{\mid i}$ and $b_{\mid i}$ from \cite{Keef2013}. 
   \mynote{This is the Conditional Extremes dependence model, the most important thing to know about it!}
 \end{itemize}
@@ -241,6 +245,7 @@ This greatly simplifies the normalising functions seen in section \ref{subsubsec
 
 \subsection{Extrapolation}
 
+\todo{Change algorithm from Heffernan to Keef (simulates from Normal distribution)}
 \begin{itemize}
   \item Can simulate from $\bm{X}|\bm{X}_i > \nu_{X_i}$ by simulating from $\bm{Y}|\bm{Y}_i > y_i$ and transforming back to $\bm{X}$ space, using the following algorithm:
     \begin{enumerate}
@@ -711,6 +716,8 @@ Summary:
   \item Makes interesting conclusions about bivariate extremal behaviour of Ireland which will be useful for TFR report, but is different in it's use of gridded data, which underestimates extremal precipitation and wind speeds. 
 \end{itemize}
 
+
+
 \paragraph{Modelling panels of extremes}
 
 \cite{Dupuis2023} derives EM (really MM) algorithm for identifying group structure and group-specific model parameters for GEV distributed panel data. \\
@@ -784,6 +791,7 @@ Here, we will detail some of the methods used in Bayesian extremes.
 \paragraph{A hierarchical max-stable spatial model for extreme precipitation}
 
 \paragraph{Leveraging Extremal Dependence to Better Characterize the 2021 Pacific Northwest Heatwave}
+\cite{Zhang2024}
 
 
 % \printbibliography

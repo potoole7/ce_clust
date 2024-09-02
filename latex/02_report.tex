@@ -102,7 +102,11 @@
 \todo{Make linebreak the same as abstract}
 \todo{Add Responsible Research and Innovation statement}
 \todo{Ensure acronyms are defined properly}
+\todo{Ensure bracketing is consistent throughout}
+\todo{Ensure all references have second name first, then first name}
+\todo{Order references by alphabetical order of first author}
 \todo{Only have TOC show as far as subsections}
+\todo{Put references before full stops, not after}
 
 \newpage
 
@@ -174,6 +178,7 @@ Finally, section \ref{sec:discussion} will summarise the report and suggest futu
 \todo{Flow and wording can be improved a lot!}
 
 \section{Motivating example} \label{sec:motivating}
+\todo{See Rohrbeck2021 for similar setup}
 
 % \begin{itemize}
   % \item Introduce Ireland dataset, which will serve as a motivating example to elucidate how both marginal extreme value models and the conditional extremes can be fit to data. 
@@ -198,223 +203,346 @@ Will now explain univariate extremes show how marginal models can be fit to this
 
 \section{Peaks-over-threshold method for univariate extremes}\label{sec:uni}
 
-% Follow other papers using GPD, like \cite{Carreau2017}. 
-% \begin{itemize}
-%   \item Peaks over threshold (reference Halkema and de Haan 1974, Pickands 1975, see Carreau 2017 for example) definition for extremes (including reference to limiting extreme value distribution $G$ from Coles 2001)
-%   \item Conditional CDF of GPD distribution
-%   \item Different tails of GPD for different signs of shape parameter
-%   \item Talk about different threshold selection methods, e.g.\ stability plots, including quantile regression method used in \cite{Youngman2019}.
-%   \item IID assumption in GPD as defined above, can model parameters as covariates, numerous methods to do this, such as using \texttt{evgam} as first introduced in \cite{Youngman2019}, and also Gaussian processes and INLA in \cite{Opitz2018} and Gaussian processes \todo{need reference}.
-%   \item Return levels (m-observations, n-year, from \cite{Coles2001}) can be estimated from GPD parameters (derived from conditional probability and exceedance probability, as in \cite{Cooley2007} and \cite{Coles2001}). 
-%   \item Reference difficulty in estimating GPD and particularly $\xi$ due to lack of data and strange likelihood (following \cite{Coles2001}). 
-%   \item Also mention inadequacy of return level estimates with univariate
-%   methods when dependence is seen, as seen in Pacific Northwest in
-%   \cite{Zhang2024}, motivating use of dependence models. Also, interest in
-%   situations where we have both extreme wind speed and rain, as in
-%   \cite{Heffernan2004}, motivating dependence modelling. (Leave for dependence
-%   modelling section!)
-%   \item (See \cite{Huser2024} for details) Although max-stable naturally follow theory as dependence model, practically they are unwieldy and CE appears to be preferred now in literature. 
-% \end{itemize}
+One classical approach to modelling univariate extremes, such as extremal precipitation or wind speed, is the peaks-over-threshold method, which uses the Generalised Pareto Distribution (GPD) to model exceedances over a high threshold.
+In section \ref{subsec:uni_theory}, we first derive the GPD and describe in detail the modelling procedure for univariate extremes.
+We expand on this methodology to more complex, non-stationary models in section \ref{subsubsec:non_stationary}, to formulate the method by which we will use in section \ref{subsec:uni_application} to model the univariate, marginal extremes of precipitation and wind speed in Ireland.
 
-% \begin{itemize}
-%   \item Suppose we have a continuous random variable X.
-%   \item Peaks over threshold definition (see Coles, Carraeu, anything else? Zhang)
-% \end{itemize}
+\subsection{Theory} \label{subsec:uni_theory}
+% \todo{Add more here! Don't repeat what is above though}
+\todo{How heavily should I relate this theory to our application?}
+\todo{Reference Coles2001 once as a general reference for EVT, not multiple times}
 
-\subsection{Theory}
-
-Here we will asymptotically motivate the use of EVT and the GPD \todo{return and write something about this}
-
-
-\todo{Use Z or X? Z used here to avoid confusion with X later}
-% \todo{Split into subsections!?}
+Here, we will asymptotically motivate the use of the GPD, and describe the methods through which it can be used to model univariate extremes, ending in our non-stationary model for the marginal distribution for extremal precipitation and wind speed in Ireland.
+Throughout this description, unless stated otherwise, we follow the general notation, illustration and definitions of \cite{Coles2001}.
 
 \subsubsection{Block maxima asymptotic motivation} \label{subsubsec:asymptotic}
 
-\todo{Completely copied from Coles 2001, change to own words, perhaps simplify}
-\todo{Dupuis2023 has another good example of this, add reference}
+% \todo{Change to own words}
+% \todo{Dupuis2023 has another good example of this, add reference}
+% \todo{Must give GEV to justify GPD sigma, mean residual life linearity in u}
+% \todo{Read Coles again to ensure everything we want to say is here}
+% \todo{Why do we not have to estimate a and b here? Look at Coles 2001}
+% \todo{Talk about block maxima more clearly}
+% \todo{Talk about how Gz is referred to as an extreme value distribution}
+\todo{Used Z to not confuse with X or Y in CE model, but Z is used as residuals?}
+\todo{Is it clear that GEV is used to model maxima, not a single maximum?}
 
 Extreme Value Theory is justified and motivated by the asymptotic basis upon which it relies.
-Following the illustration given in \cite{Coles2001}, suppose we have a sequence of independent and identically distributed (IID) random variables $Z_1, Z_2, \ldots$ a distribution function $F$. 
-Let $M_n = \max(Z_1, \ldots, Z_n)$ be the maximum of the first $n$ observations. % use Z to not confuse with X later
-Then the distribution function of $M_n$ is given by 
+% Following the illustration given in \cite{Coles2001}, suppose we have a sequence of independent and identically distributed (IID) random variables $Z_1, Z_2$ with common distribution function $F$. 
+Suppose we have a sequence of independent and identically distributed (IID) random variables $Z_1, Z_2, \ldots$ with common distribution function $F$. 
+% Let $M_n = \max(Z_1, \ldots, Z_n)$ be the ``block'' maximum of the first $n$ observations. 
+Let $M_n = \max(Z_1, \ldots, Z_n)$ be the maximum of the ``block'' of size $n$.
+Then $M_n$ is distributed as
 \[
-  % \mathbb{P}(M_n \le z) = \prod_{i = 1}^{n}{\mathbb{P}(Z_i < z)} = {F(z)}^n.
-  \mathbb{P}(M_n \le z) = {F(z)}^n.
+  \mathbb{P}(M_n \le z) = \prod_{i = 1}^{n}{\mathbb{P}(Z_i < z)} = \{F(z)\}^n.
 \]
-Clearly, even slight inaccuracies in the estimate of $F$ can result in significant differences for $F^n$.
-Instead, we want to model $F^n$ directly by looking at its limiting behaviour as $n \to \infty$.
-Define the upper end-point of F as $z_+ = \sup(F)$. \todo{Define as z up F as in Shooter2020 so we can use + below for GPD}
-Then, for any $z < z_+$, $M_n$ will tend to degenerate to point mass on $z_+$ as $n \to \infty$.
-This degeneration can be avoided by a linear normalisation of $M_n$:
-\begin{equation}
+$F^n$ is difficult to recover from $F$ directly, as even slight inaccuracies in the estimate of $F$ can result in significant perturbations for $F^n$.
+% \todo{Define as z up F as in Shooter2020 so we can use + below for GPD}
+% Instead, we want to model $F^n$ directly by looking at its limiting behaviour as $n \to \infty$% , essentially as an extreme value analogue of the central limit theorem, which allows for the approximation of the distribution of sample means by the normal distribution. 
+Instead, we model $F^n$ directly by looking at its limiting behaviour as $n \to \infty$.
+Define the upper endpoint of F, as $z^F$. % , the smallest value such that $F(z^F) = 1$.
+Then for any $z < z_F$, $M_n$ will degenerate to a point mass on $z_F$ as $n \to \infty$.
+% This degeneration can be avoided by a linear normalisation of $M_n$:
+% A non-degenerative sequence of maxima can be obtained by a linear renormalisation of $M_n$, such that
+$M_n$ can be linearly renormalised to avoid this degeneration, such that
+\[
   M_n = \frac{M_n - b_n}{a_n},
-\end{equation}
-for some sequences of normalising constants $a_n > 0$ and $b_n$.
-
-The Fisher-Tippet-Gnedenko theorem (\cite{Fisher1928}, \cite{Gnedenko1943}) states that the limiting distribution of these non-degenerate maxima,
+\]
+for some sequences of normalising constants $a_n > 0, b_n$. 
+\todo{Improve how this is stated to be in line with Dupuis2023?}
+The Fisher-Tippet-Gnedenko theorem (\cite{Fisher1928}, \cite{Gnedenko1943}) states that, should such $a_n$ and $b_n$ exist, the limiting distribution of these non-degenerate maxima,
 \begin{equation} \label{eq:uni_limiting_dist}
   \lim_{n \to \infty}\left\{\frac{M_n - b_n}{a_n}\right\} = G(z),
 \end{equation}
-\todo{Why do we not have to estimate a and b here? Look at Coles 2001}
-\todo{Talk about how Gz is referred to as an extreme value distribution}
-is in the max-domain of attraction, or less formally converges to, the Generalised Extreme Value (GEV) distribution. \todo{word better}
-We will not define the GEV distribution here for the sake of brevity. 
-\todo{Refer to an, bn needing to exist?}
-This asymptotic argument is known as the ``block-maxima'' definition of extremes and forms the basis on which the field has developed.
+is in the max-domain of attraction to, or must be, the Generalised Extreme Value (GEV) distribution, given by \todo{Need to be less formal/more clear?}
+\todo{Need to write G z as H z | mu, sigma, xi?}
+\begin{equation} \label{eq:gev}
+  % G(z) = \exp\left\{-\left[1 + \xi\left(\frac{z - \mu}{\sigma}\right)\right]^{-1/\xi}\right\},
+  G(z) = \begin{cases}
+    \exp\left\{-\left[1 + \xi\left(\frac{z - \mu}{\sigma}\right)\right]_+^{-1/\xi}\right\} & \text{if } \xi \ne 0, \\
+    \exp\left\{-\exp\left(-\frac{z - \mu}{\sigma}\right)\right\} & \text{if } \xi = 0,
+  \end{cases}
+\end{equation}
+where $z_+ = \max(0, z)$, $z \in \mathbb{R}$, and $\mu \in \mathbb{R}, \sigma > 0$ and $\xi \in \mathbb{R}$ are location, scale, and shape parameters, respectively. 
+These parameters absorb and implicitly incorporate the normalising constants, so they do not also have to be estimated. 
+% For notes
+% $a_n$ is a scaling factor and $b_n$ is a location adjustment that normalizes the maxima. 
+% The GEV parameters absorb these scaling and shifting effects, which means that the estimation of $\mu$ and $\sigma$ serve the same purpose as estimating $a_n$ and $b_n$.
+% The GEV distribution is so called because it is a family of distributions,
+% incorporating the Gumbel, Frechet, and Weibull distributions as special cases
+% for $\xi = 0, \xi > 0, \xi < 0$, respectively, which greatly simplifies
+% estimation of the distribution. 
+The limiting result in \ref{eq:uni_limiting_dist} holds under weak assumptions on the tail of $F$ for almost all continuous distributions \cite{Dupuis2023}. 
+% This asymptotic argument is known as the ``block-maxima'' definition of extremes and forms the basis on which the field of EVT has developed.
+This asymptotic argument is known as the ``block-maxima'' definition and forms the classical model for extremes. 
+In practice, the block size $n$ is often taken to be a regularly spaced block of time, such as a year. % , and the maxima are taken over the samples of the random variable within each block.
+For example, we may take the maximum daily precipitation over each year, and model these maxima with a GEV distribution.
+% \todo{Relate to our application with example?}
 
-\subsubsection{Peaks-over-threshold method}
-\todo{Change title to include GPD?}
+\subsubsection{Peaks-over-threshold method} \label{subsubsec:pot}
+% \todo{Describe how GPD is equivalent to GEV and has same shape but different scale}
 
 % In constrast, GPD for excesses over threshold (Fisher, Tippet, Gnedenko)
-From this block-maxima definition, another approach to EVT, which we will be focusing more on, can be derived. 
-% Specifically, it rather than taking a block maxima over some sequence, we ca
-The Pickands-Balkema-de-Haan theorem (\cite{Pickands1975}, \cite{Balkema1974}) states that should $M_n$ satisfy the above \todo{reference equations} and convergence in distribution to $G(z)$, then for any $Z = Z_i$ in our sequence, the distribution of exceedances $z > 0$ over a high threshold $u$ are approximated by the Generalised Pareto Distribution (GPD), defined as
+From this block-maxima definition, another approach to EVT, which we will be focusing more on, can be derived.
+The Pickands-Balkema-de-Haan theorem (\cite{Pickands1975}, \cite{Balkema1974}) states that should $M_n$ satisfy \ref{eq:uni_limiting_dist} and converge in distribution to the GEV distribution, then for any $Z = Z_i, 1 \le i \le n$ in our sequence, the distribution of exceedances $z > 0$ over a high threshold $u$ are approximated by the Generalised Pareto Distribution (GPD), defined as
 \begin{equation} \label{eq:gpd}
-  % \mathbb{P}(Z > z + u \mid Z > u) = \left(1 + \xi \frac{z}{\sigma} \right)_{+}^{-1/\xi},
+  % \mathbb{P}(Z \le z + u \mid Z > u) = 1 - \left(1 + \xi \frac{z}{\sigma} \right)_{+}^{-1/\xi},
   \mathbb{P}(Z > z + u \mid Z > u) = \left(1 + \xi \frac{z}{\sigma} \right)_{+}^{-1/\xi},
 \end{equation}
-\todo{Check if right! May be definition of Z < z + u, rather than the one I want!}
-where $\xi \ne 0$ and $\sigma > 0$ are shape and scale parameters, respectively. \todo{Define y+, ensure it doesn't mess with definition of supremum above}.
-The GPD can be derived from the definition of the GEV quite simply, and is covered in detail in section 4.2.2 of \cite{Coles2001}. 
-This is known as the ``peaks-over-threshold'' method for modelling extremes. 
-In many applications, it is preferable to the block-maxima method, as logically there may be many observations within a single block which exceed so-called ``maxima'' in other blocks \todo{go into more detail here}
+% \todo{Gives survival function here, as in CE model, not CDF, change?}
+where $\xi$ is equal to the shape parameter $\xi_{GEV}$ of the equivalent GEV distribution, which is invariant to block size, and the scale parameter is reformulated such that $\sigma = \sigma_{GEV} + \xi(u + \mu_{GEV})$ and is also unchanged by block size as the changes in $\sigma_{GEV}$ and $\xi_{GEV}$ are self-compensating. %, thus absorbing $\mu$ and removing the need to estimate a location parameter for the GPD, although $u$ can be thought of as one. 
+\todo{Are xi and sigma invariant to block size?}
+The derivation of the GPD is covered in detail in section 4.2.2 of \cite{Coles2001}. 
 
-\subsubsection{Shape parameter}
+This alternative definition is known as the ``peaks-over-threshold'' method for modelling extremes. 
+In many applications, it is preferable to the block-maxima method, as logically there may be many observations within a single block which exceed so-called ``maxima'' in other blocks, and so the block-maxima method may be inefficient.
+% For example, in countries with a temperate climate, such as Ireland, daily precipitation in Winter months may exceed a certain threshold on many days, and so the block-maxima method would be inefficient for modelling the extremes of precipitation.
+For example, in temperate, oceanic climates such as Ireland, daily precipitation in Winter months may exceed a certain threshold, and the block maxima for Summer months, on numerous occasions, and so the block-maxima method would be inefficient for modelling the extremes of precipitation.
 
-% The shape parameter in particular describes the upper tail behaviour of this distribution, and indeed the form of the distribution itself, with the Generalised Pareto distribution actually defining a ``family'' of distributions. 
-The upper tail behaviour of this distribution is largely determined by shape parameter. 
-Indeed, it determines the form of the distribution itself, with the Generalised Pareto distribution actually defining a ``family'' of distributions. 
-Higher values for the shape parameter give higher probabilities of extreme events of greater magnitude. 
-When $\xi < 0$, the upper tail is said to follow theWeibull distribution, which is short-tailed and has a finite maximum bounded by the point $u - \sigma/\xi$. 
-In the limit $\xi \to 0$, the GPD converges to the exponential distribution, and the distribution is said to be ``light-tailed'' with the right hand side of \ref{eq:gpd} being $ \approx 1/exp(-z)$ for large $z$, with no upper bound on the maximum.
-Finally, where $\xi > 0$, the upper tail is said to be follow a Pareto or heavy-tailed distribution, and the distribution function of the GPD is $\approx 1/z^{1/\xi}$ for large $z$, a power-law tail decay. \cite{Rohrbeck2021} \cite{Carreau2017}.
+% \subsubsection{Shape parameter}
+
+% \todo{Cut down on some detail, will remove subsubsection here later}
+The upper tail behaviour of the GPD is largely determined by the shape parameter, with higher values for the shape parameter give higher probabilities of extreme events of greater magnitude. 
+% Indeed, it determines the form of the distribution itself, with the Generalised Pareto distribution actually defining a ``family'' of distributions. 
+% More detailed version
+% When $\xi < 0$, the upper tail is said to follow the Weibull distribution, which is short-tailed and has a finite maximum bounded by the point $u - \sigma/\xi$. 
+% As $\xi \to 0$, the GPD converges to the exponential distribution, and the distribution is said to be ``light-tailed'' with the right hand side of \ref{eq:gpd} being $ \approx 1/exp(-z)$ for large $z$, with no upper bound on the maximum.
+% Finally, where $\xi > 0$, the upper tail is said to be follow a Pareto or heavy-tailed distribution, and the distribution function of the GPD is $\approx 1/z^{1/\xi}$ for large $z$, following a power-law upper tail decay with no upper bound. \cite{Rohrbeck2021} \cite{Carreau2017}.
+For $\xi <0$, the upper tail is said to be Weibull distributed or short-tailed, and has a finite maximum at $u - \sigma/\xi$.
+For $\xi \to 0$, the tail is exponentially distributed and is said to be light-tailed with no upper bound, while for $\xi > 0$, the tail is said to be Pareto distributed or heavy-tailed, and follows a slower, power-law decay, again with no upper bound \cite{Rohrbeck2021} \cite{Carreau2017}.
+
+% \subsubsection{Return levels}
+
+% \todo{Possibly move this motivation to intro}
+% One of the principle and indeed unique uses of EVT is in the estimation of return levels, as outlined in \cite{Coles2001}. 
+% Return levels are immensely useful as they give the expected value of the maximum observation of a random variable $Z$ over a number of observations or block of time, which may be an extrapolation over observed values. \todo{Word better!}
+% For example, the 100-year return level for precipitation is the value which we expect to be exceeded on average once every 100 years. 
+% \todo{Talk about how this is useful in applications, or should I do that in intro?}
+
+% Return levels are estimated high quantiles beyond observed values, one of the principal uses of EVT. 
+
+\todo{Shorten considerably}
+
+In the context of extremes, we are often interested in return levels, which correspond to the expected value of the maximum observation of a random variable $Z$ over a number of observations or block of time.
+This allows us to extrapolate modelled processes to values which have not been observed, and are useful in many applications.
+
+% m-observation return level
+The $m$-observation return level is the value of $Z$ which is expected to be exceeded on average once every $m$ observations.
+% Long derivation
+% We can derive this from the GPD by noting that the probability of $Z$ exceeding some value $z > u$ is given by
+% \begin{align*}
+%   \mathbb{P}(Z > z) &= \mathbb{P}(Z > z, Z > u) \\
+%                     &= \mathbb{P}(Z > z \mid Z > u) \mathbb{P}(Z > u)
+% \end{align*}
+% % The first of these probabilities can be estimated by a GPD as in equation \ref{eq:gpd}, and the second is the exceedance probability for a given threshold $u$, which we define as $\zeta_u$, and can be estimated by, for example, a Binomial distribution.
+% The first of these probabilities can be estimated by a GPD as in equation \ref{eq:gpd}, and the second, which we denote as $\zeta_u$, is the exceedance probability for a given threshold $u$, and can be estimated using a Binomial distribution.
+% Therefore, the level $z_m$ exceeded on average every $m$ observations is the solution of 
+% $\zeta_u \mathbb{P}(Z > z_m \mid Z > u) = 1/m$, which is given by
+% \begin{equation} \label{eq:m_obs_return}
+%   z_m = u + \frac{\sigma}{\xi}\left(\left(m \zeta_u \right)^{\xi} - 1\right),
+% \end{equation}
+% for $m$ large enough that $x_m > u$. 
+Defining the exceedance probability for a given threshold $u$ as $\zeta_u = \mathbb{P}(Z > u)$, the $m$-observation return level is given by
+\begin{equation} \label{eq:m_obs_return}
+  z_m = u + \frac{\sigma}{\xi}\left(\left(m \zeta_u \right)^{\xi} - 1\right),
+\end{equation}
+where $\sigma$ and $\xi$ come from the corresponding GPD fit, and for $m$ large enough that $x_m > u$. 
+
+% N-year
+It is often more intuitive to express return levels in terms of years, and so we can also define the $N$-year return level.
+For $n_y$ observations per year, we have that $m = N \times n_y$, and the $N$-year return level follows as
+\begin{equation} \label{eq:n_year_return}
+  z_N = u + \frac{\sigma}{\xi}\left(\left(N n_y \zeta_u \right)^{\xi} - 1\right). 
+\end{equation}
 
 \subsubsection{Threshold selection} \label{subsubsec:threshold}
-\todo{Mathematical motivation/argument for mean residual life plot}
-\todo{Less detail in places}
 % Threshold selection methods (stability plots, automatic selection, quantile regression)
 % Bias-variance tradeoff in threshold selection
 % Can also work with extremal mixture models with so called "Bulk" distributions (as seen in marginal component of CE model)
 % (see Rohrbeck2021)
-\todo{Rewrite, largely taken from IRP report}
-The threshold $u$ can also be thought of as a location parameter for this pdf, as for fixed $\sigma, \xi$, a change in $u$ will simply shift the distribution. \cite{Coles2001}
-The problem of threshold selection for the GPD is a difficult one, as the choice of threshold can have a large impact on the parameter estimates of the GPD, and presents a classic bias-variance trade-off. 
-A choice of $u$ which is too small can violate the asymptotic properties on which the GPD relies, and introduce significant bias. \todo{Refer to above}
-On the other hand, we require sufficient data to estimate the distribution. 
-Hence, too large a choice of $u$ will leave us with little data to estimate our distribution with and result in high uncertainty in our parameters. 
-In practice, the choice of $u$ comes down to choosing a value large enough to give stable estimates for $\sigma$ and $\xi$, while still leaving enough data to fit the distribution to. 
-Two commonly used diagnostic tools to aid in the choice of $u$ are the so-called mean residual life and threshold stability plots \cite{Coles2001}.
 
-The mean residual life plot plots the mean excesses over a series of thresholds.
-In mathematical notation, we plot the points
-\todo{Check if notation matches that of rest of section}
-\todo{Even required if we're not using it?}
+% The threshold $u$ can also be thought of as a location parameter for this pdf, as for fixed $\sigma, \xi$, a change in $u$ will simply shift the distribution. \cite{Coles2001}
+% The problem of threshold selection for the GPD is a difficult one, as the choice of threshold can have a large impact on the parameter estimates of the GPD, and presents a classic bias-variance trade-off. 
+Threshold selection for the GPD presents a bias-variance tradeoff. 
+\todo{Would like to somehow say this in a better way, making reference to asymptotic behaviour..}
+% If $u$ is too small then the asymptotic justification on which the GPD relies becomes less valid, making it a less appropriate distribution for the data in question and introducing significant bias.
+If $u$ is too small then the asymptotic justification for the GPD will not hold,  introducing significant bias.
+% On the other hand, we require sufficient data to estimate the distribution. 
+% Hence, too large a choice of $u$ will leave us with little data to numerically estimate the distribution with and result in high uncertainty in its parameters. 
+In contrast, if $u$ is too large, we may have too little data to estimate the distribution with, resulting in high parameter uncertainty.
+Classically, graphical methods have been employed for threshold selection.
+
+% Mean residual life plot
+% One classical method of threshold selection is the mean residual life plot. %, for which we follow the derivation in \cite{Coles2001}.  
+\todo{Check that this is correct}
+One such method is the mean residual life plot, the idea behind which we will now explore. \todo{Cite original paper this comes from?}
+For a random variable $Z \sim GPD(\sigma, \xi)$, provided $\xi < 1$ the expected value of $Z$ is finite and $\mathbb{E}(Z) = \sigma/1 - \xi$.
+Now suppose we have a series of random variables $X_1, X_2, \ldots, X_n$ for which excesses over a threshold $u_0$ follow a GPD. 
+Then for any $X = X_i, 1 \le i \le n$, 
 \[
-  \left\{\left( u, \frac{1}{n_u} \sum_{i=1}^{n_u}{\left(z_i - u\right)}: u < z_{+} \right) \right\} 
+  \left\{\left( u, \frac{1}{n_u} \sum_{i=1}^{n_u}{\left(z_i - u\right)}: u < z_{F} \right) \right\},
 \]
-\todo{Check with supremum above}
-The mean excesses should depend linearly on $u$ for choices of $u$ which produce a stable GPD. \cite{Coles2001} 
-The threshold choice plot shows the values of $\xi$ and a modified $\sigma$ for various choices of $u$. 
-The choice of $u$ follows as the smallest value which appears to result in stable estimates of these parameters, i.e.\ they should be linear in $u$. 
-Both of these methods, however, are rather subjective, and entirely manual, and so are quite laborious in the context of fitting multiple marginal models to, for example, different spatial locations or seasons of the year. 
+where $n_u$ is the number of excesses over the corresponding threshold $u$.
+For valid choices of $u$, we should see a linear relationship between the mean excesses and the threshold, and in practice we try to choose the smallest $u$ which gives this linear relationship, preserving as much data as possible for the estimation of the GPD.
 
-There are several methods for automatic and ``semi-automatic'' threshold selection. 
-One such method is that described in \cite{Murphy2024}, which repeatedly fits the GPD over various choices of $u$ based on the quantiles of the data, and takes the optimal choice to be the threshold which minimises the so-called expected quantile discrepancy (EQD).
-This method has been shown to be robust in the face of this bias-variance trade-off problem, when compared to other means of automatic threshold selection, and is less subjective than the plotting methods described above. 
+Following a similar logic, for sufficiently large choices of $u$, the values of $\xi$ should be constant and the values of $\sigma$ should be linear in $u$, as in equation \ref{eq:lin_u}.
+This is the basis for the second classical method of threshold selection, the so-called ``threshold choice'' plot.
 
-Yet another method for threshold selection is via quantile regression, as outlined in \cite{Youngman2019} in the context of extremes, and more generally developed in \cite{Yu2001}. 
-% This is useful where we want to estimate a separate threshold for a number of
-% marginal fits, such as to GPDs fitted to different locations. \todo{Can word
-% better} (add back in ?)
-% Quantile regression estimates $u$ as a function of some covariates, $\bm{x}$, which could include spatial location and/or time, as a prespecified quantile of the data $\tau$. \todo{Need to define x more clearly}
-Quantile regression for extremes estimates $u$ as a prespecified quantile $\tau$ of the data. \todo{Rewrite from Youngman}
-\todo{May require reference to covariates for this to make sense!}
-The random variable $Z$ can be modelled with an asymmetric Laplace distribution,
-\begin{equation} \label{eq:asymmetric_laplace}
-  Z \mid u, \sigma \sim ALD(u, \psi),
-\end{equation}
-% \todo{Used sigma already for GPD!}
-where $u$ is the quantile $0 < \tau < 1$ of the data, and $\psi > 0$. 
-Likelihood methods allow us to estimate $u$ from this model, giving us a threshold above which to define extreme values of $Z$.
-This method is useful when we want to ``semi-automatically'' estimate thresholds across different times and/or spatial locations, which is addressed in greater detail in \ref{subsubsec:non_stationary}.
+% Newer developments
+% Other classical methods that focus instead on diagnosing the fit of a GPD for a given threshold to data are discussed in section \ref{subsubsec:uni_diagnostics}.
+These earlier, graphical methods, however, are rather subjective.
+There have been many more recent advances in the field of threshold selection, aiming to provide more subjective methods. 
+A review of many alternative threshold selection methods can be found in section 2.6 of \cite{Belzile2022}, including methods focused on formal testing of a GPD for a given $u$ against an alternative model, and evaluating predictions of unseen data, such as leave-one-out cross-validation (CV). \todo{Need for section?}
 
-\todo{expand on this, requires more details}
-\todo{Mightn't even make sense without predictors? Wouldn't u just}
-% This is the method used in the motivating example for this report.
-
-% Return levels (m-observations, n-year, from Coles)
-\subsubsection{Return levels}
-
-\todo{Possibly move this motivation to intro}
-One of the principle and indeed unique uses of EVT is in the estimation of return levels, as outlined in \cite{Coles2001}. 
-Return levels are immensely useful as they give the expected value of the maximum observation of a random variable $Z$ over a number of observations or block of time, which may be an extrapolation over observed values. \todo{Word better!}
-For example, the 100-year return level for precipitation is the value which we expect to be exceeded on average once every 100 years. 
-\todo{Talk about how this is useful in applications, or should I do that in intro?}
-
-% m-observation return level
-We begin my noting that the probability of $Z$ exceeding some value $z > u$ is given by 
-\[
-  \mathbb{P}(Z > z) = \mathbb{P}(Z > z \mid Z > u) \mathbb{P}(Z > u)
-\]
-
-The $m$-observation return level is the value of $Z$ which is expected to be exceeded on average once every $m$ observations.
-
-The $n$-year return level is the value of $Z$ which is expected to be exceeded on average once every $n$ years.
-
-\todo{Come back to this!}
+% However, many of these techniques are entirely manual, and so are quite laborious in the context of fitting multiple marginal models to, for example, different variables or spatial locations.
+However, many of these techniques are still quite manual, and in the face of this, the area of ``automatic'' threshold selection is a growing area of research. 
+One such method is that described in \cite{Murphy2024}, where the GPD is repeatedly fit over various choices of $u$ based on the quantiles of the data, and the optimal choice of threshold is taken to be that which minimises the so-called expected quantile discrepancy (EQD).
+% This method has been shown to be robust in the face of the bias-variance trade-off problem, when compared to other means of automatic threshold selection, and is less subjective than the plotting methods described above. 
+This method is less subjective than the plotting methods described above.
+In \ref{subsubsec:non_stationary}, we will discuss another method for automatic threshold selection through quantile regression, which is useful when we want to estimate thresholds across different times and/or spatial locations.
 
 \subsubsection{Non-stationary modelling} \label{subsubsec:non_stationary}
 % Including covariates, using evgam, Gaussian processes, INLA in spatial context
 % to reflect non-linearity of spatial effects
-\todo{Cooley2007 uses Gaussian process}
+% \todo{Cooley2007 uses Gaussian process}
+% \todo{See Rohrbeck2021 for nice write up about this}
+\todo{Section probably too long, cut down!}
 
-\todo{See Rohrbeck2021 for nice write up about this}
-Recall that the asymptotic motivations for EVT from \ref{subsubsec:asymptotic} assumes that the distribution of the random variables $Z_1, Z_2, \ldots$ are I.I.D stationary.
-In practice, this is often not a realistic assumption, since their values may be influenced by some covariates, such as spatial location or time.
-For simplicity, we define these covariates as the spatial location $s \in S$, and $Z(s)$ as the process sampled at $s$, since this is what is used in our motivating example. 
-
+% Introduction  
+% Recall that the asymptotic motivations for EVT from \ref{subsubsec:asymptotic} assumes that the distribution of the random variables $Z_1, Z_2, \ldots$ are I.I.D and stationary.
+The asymptotic justification for EVT in section \ref{subsubsec:asymptotic} assumes that the sequence $Z_1, Z_2, \ldots, Z_n$ are IID stationary.
+% In practice, this is often not a realistic assumption, since their values may be influenced by some covariates, such as spatial location or time.
+This assumption can often be unrealistic in practice, 
 There are many methods for handling this non-stationarity. 
 One method is to split the data into separate time series over which we deem the data to be stationary, and fit separate GPDs to each of these series.
-However, a more intuitive method which makes better use of the available data is to model the parameters of the GPD.
-Firstly, the threshold $u$ can optionally be modelled as a function of covariates $bm{x}$, using the quantile regression method outlined in \ref{subsubsec:threshold}, with equation \ref{eq:asymmetric_laplace} becoming:
-\[
-  Z(s) \mid u(s), \sigma \sim ALD(u(s), \psi(s)).
-\]
-This allows us to ``semi-automatically'' select our threshold for different spatial locations.
-% \todo{Need to define spatial location as s and use it everywhere! Much simpler}
-\todo{Expand on this, mention how its much easier/more objective than stability plots}
+Another method which often makes better use of the available data is to model the parameters of the GPD as functions of covariates. 
+% For simplicity, we use spatial location $s \in S$ as our covariate, and $Z(s)$ as the process sampled at location $s$, since this is what is used in our motivating example. 
+For simplicity of exposition, and to link to our motivating example, our covariate will be spatial location $s \in S$, denoted a process sampled at location $s$ as $Z(s)$.
 
-Furthermore, we can also model the parameters of the GPD as functions of covariates such as $s$.
-Under this model, equation \ref{eq:gpd} becomes
-\begin{equation} \label{eq:gpd_cov}
-  \mathbb{P}(Z((s)) > z + u(\bm(x)) \mid Z > u, s) = \left(1 + \xi(s) \frac{z}{\sigma(s)} \right)_{+}^{-1/\xi(s)}.
-\end{equation}
-This allows for much more flexibility in our models, and reduces the bias associated with assuming a constant shape and scale parameter across all locations.
-\todo{Also need to revisit return levels, right?}
+% Quantile regression for threshold
+As mentioned in \ref{subsubsec:threshold}, the exceedance threshold $u$ can be modelled as a function of covariates using quantile regression, as developed in \cite{Yu2001} and outlined in the context of extremes in \cite{Youngman2019}.
+% Quantile regression estimates $u$ as a function of some covariates, $\bm{x}$, which could include spatial location and/or time, as a prespecified quantile of the data $\tau$. \todo{Need to define x more clearly}
+Extremal quantile regression estimates the threshold as a prespecified quantile $\tau$ of the data. 
+The random variable $Z(s)$ can be modelled with an asymmetric Laplace distribution (ALD).
+Following \cite{Youngman2019} the parameters of said distribution can be modelled as smoothed basis functions, and we have that
+% \begin{equation} \label{eq:asymmetric_laplace}
+%   Z(s) \mid u(s), \psi(s) \sim ALD(u(s), \psi(s)),
+% \end{equation}
+\begin{center}
+  \begin{align} \label{eq:asymmetric_laplace}
+    \begin{split}
+      Z(s) \mid u(s), \psi(s) &\sim ALD(u(s), \psi(s)), \\
+      % \log{\psi(s)} &= u_0 + \sum_{k = 1}^{K_{\psi}}{\sum_{d = 1}^{D_k_{\psi}}\beta_{kd}(s)},
+      % u(s) &= u_0 + \sum_{k = 1}^{K_u}{\sum_{d = 1}^{D_k{_u}}\beta_{kd}(s)}, \\
+      u(s) &= f_u(s), \\
+      \log(\psi(s)) &= f_{\psi}(s), \\
+      f_*(s) &= \beta_0 + \sum_{k = 1}^{K_*}{\sum_{d = 1}^{D_k{_*}}\beta_{kd}b_{kd}(s)}, \\
+    \end{split}
+  \end{align}
+\end{center}
+where $u(s)$ is the quantile $0 < \tau < 1$ of the data at location $s$, $\psi(s) > 0$, and $f_*(s)$ is the smooth function across space for either $u$ or $\psi$ with associated intercept $\beta_0$ and basis functions $b_kd$ with corresponding parameters $\beta_{kd}$.
+Using a log link function ensures that $\psi(s) > 0$.
+The use of basis functions and GAMs is described further surrounding equation \ref{eq:gpd_gam} below. 
+Likelihood methods allow us to estimate $u(s)$ from this model, giving us a threshold above which to define extreme values of $Z(s)$.
+This method allows us to easily estimate thresholds for a high-dimensional dataset characterised by covariates such as spatial location.
 
-There are several methods for estimating these models, which in this spatial context are derived from spatio-temporal statistics. \todo{Look in chapter 4 of Coles}
-One is to perform regression on the parameters of the GPD, giving the 
+% Non-stationary GPD
+% Furthermore, we can also model the parameters of the GPD as functions of covariates such as $s$.
+Furthermore, we can also model the GPD parameters using covariates.
+Un
+% Under this model, equation \ref{eq:gpd} becomes
+%   \mathbb{P}(Z((s)) > z + u(\bm(x)) \mid Z > u, s) = \left(1 + \xi(s) \frac{z}{\sigma(s)} \right)_{+}^{-1/\xi(s)}.
+% \end{equation}
+For example, we could assume that the scale and shape parameters of the GPD are linear functions of $s$.
+Under this model, we could model threshold exceedances at location $s$ as 
+\begin{centre}
+  \begin{align} \label{eq:non_stationary_gpd}
+    \begin{split}
+      Z(s) - u(s) \mid Z(s) > u(s) &\sim GPD(\sigma(s), \xi(s)), \\
+                   \log(\sigma(s)) &= \sigma_0 + \sigma_1 s, \\
+                            \xi(s) &= \xi_0 + \xi_1 z(s),
+    \end{split}
+  \end{align}
+\end{centre}
+where $\sigma_0, \sigma_1, \xi_0, \xi_1$ are intercept and slope parameters for the scale and shape, respectively, and $u(s)$ is modelled as in equation \ref{eq:asymmetric_laplace}.
+% Using a log link function ensures that $\sigma(s) > 0$.
+% This model, which can be made as complicated as necessary, allows for much greater flexibility in our models, and reduces the bias associated with assuming a constant shape and scale parameter across all locations.
+This model allows for much greater flexibility, and reduces the bias associated with assuming a constant shape and scale parameter across all locations.
+% However, it is important to note that as always, there is a variance trade-off here as well, as in this example, estimating a GPD at each location will require more data than estimating a single GPD for all locations.
+However, there is a variance tradeoff associated with estimating a GPD at each location, where less data is available than for a single GPD for all locations.
+In particular, the shape parameter is often difficult to estimate, and so in practise in spatial and spatio-temporal applications it is often assumed to be constant across locations, or be the same for a group or cluster of different locations \cite{Cooley2007}, \cite{Rohrbeck2021}, and also often fixed over time \cite{Risser2019} \cite{Zhang2024}. 
+% This tradeoff has motivated research into clustering or grouping locations into groups which share similar characteristics and GPD parameters, as discussed in section \ref{sec:clustering}.
+% \todo{Motivate clustering here?}
+
+\todo{Cut down sections here}
 % Gaussian processes
-% INLA
-\todo{Write about INLA and Gaussian processes(?)(?)(?)(?)(?)(?)(?)(?)(?)}
+% There are several more advanced, non-linear methods for modelling non-stationary GPDs.
+% One of these is the use of a Gaussian process (GP), as in \cite{Cooley2007}, where the scale parameter was modelled as an isotropic GPs with a mean function depending on various spatial and climatic covariates, and a covariance function given by an exponential variogram, allowing for the spatial dependence of the scale parameter to be modelled.
+% The non-parametric nature of GPs mean they can capture complex, non-linear spatial patterns in the scale parameter.
+
+% % INLA
+% Another method for estimating a non-stationary GPD is using the Integrated Nested Laplace Approximation (INLA), a method for approximate Bayesian Inference popular in spatial statistics \cite{Rue2009}.
+% The GPD was shown to fit the class of latent Gaussian models required of INLA, and implemented for the \texttt{R-INLA} R package in \cite{Opitz2018}.
+% R-INLA is a powerful tool for fitting complex, non-linear models to spatial data, with many spatial and spatio-temporal random and mixed-effects models available, and performs particularly well for high dimensional geostatistical data. 
+% In particular, \cite{Opitz2018} implemented a penalised complexity prior for the shape parameter, which penalises deviation from the exponential model where $\xi = 0$, encouraging lighter tails \cite{Simpson2015}.
+
+% GPs and INLA
+There are several more advanced, non-linear methods for modelling spatially non-stationary GPDs.
+\cite{Cooley2007} uses a Gaussian process to nonparametrically model the non-linear, complex spatial patterns in the scale parameter.
+\cite{Opitz2018} implements the GPD using the Integrated Nested Laplace Approximation (INLA) of \cite{Rue2009} for approximate Bayesian inference using a variety of spatial mixed- and random-effects models for the GPD.
+% Also, \cite{Opitz2018} implemented a penalised complexity prior for the shape parameter, which penalises deviation from the exponential model where $\xi = 0$, encouraging lighter tails \cite{Simpson2015}.
+Also, \cite{Opitz2018} uses a penalised complexity prior for the shape parameter, where significant deviation from the exponential model is penalised, encouraging lighter tails \cite{Simpson2015}.
 
 % evgam
-\todo{Take from ITT2 report}
-Another method which 
+\todo{change wording from ITT2 report}
+% Finally, the method we will use is fitting generalised additive models (GAMs) to the parameters of the GPD, using the \texttt{evgam} R package used and developed in \cite{Youngman2019} and \cite{Youngman2023}.
+A GAM is a more flexible extension of the Generalised Linear Model (GLM) which allows the response to depend linearly on smooth functions, called basis functions, of some predictors \cite{Wood2006}.
+The method we will be using for our motivating example is modelling the scale and shape parameters of the GPD as smooth functions of spatial location using generalised additive models (GAMs), using the \texttt{evgam} R package \cite{Youngman2022}.
+The extreme value GAM model we use for both extreme precipitation and wind speed in section \ref{subsec:uni_application} is
+\begin{center}
+  \begin{align} \label{eq:gpd_gam}
+    \begin{split}
+      Z(s) - u \mid W(s) > u &\sim GPD(\sigma(s), \xi) \\
+      % Z(s) \mid u(s), \psi(s) &\sim ALD(u(s), \psi(s))  \\
+      \log{\sigma(s)} &= f_{\sigma}(s), \\
+              \xi(s) &= f_{\xi}(s), \\
+              f_*(s) &= \beta_0 + \sum_{k=1}^{K_*}b_k(s)\beta_k,
+    \end{split}
+  \end{align}
+\end{center}
+where $u(s)$ is as in equation \ref{eq:asymmetric_laplace} and $f_*$ is a smooth function of the spatial location $s$ for either $\sigma$ or $\xi$, modelled as a linear function of an intercept term $\beta_0$ and $K_*$ basis functions $b_k$ with corresponding coefficients $\beta_k$. 
+A popular choice of basis function, which we have elected to use here, is the cubic spline, a curve constructed from interconnected segments of cubic polynomials, ensuring the curve's continuity up to its second derivative \cite{Wood2006}. 
+This model, while simple to formulate and implement, allows for complex, non-linear patterns in the GPD parameters to be smoothed over space.
 
 \subsubsection{Model diagnostics} \label{subsubsec:uni_diagnostics}
-% Difficulty in estimating xi, natural lack of data in extremes
-% Instability for certain values (see help page for texmex:evm)
-% Uncertainty in parameter estimates from bootstrapping/resampling algorithms in
-% Frequentist, or from posterior samples in Bayesian
+\todo{Cut down on detail here as well?}
+% There are several methods described in \cite{Coles2001}, amongst other sources, for diagnosing the fit of a GPD to data, which are useful for threshold selection and model validation.
+There are numerous methods for diagnosing the fit of a GPD to data, which are useful for  model validation and also threshold selection.
+Suppose we have $k$ ordered threshold exceedances $z_{(1)} < z_{(2)} < \ldots < z_{(k)}$.
+The probability plot consists of the points
+\begin{equation} \label{eq:prob_plot}
+  \left\{ \left(i/(k + 1), \hat{H}\left(z_{(i)}\right)\right); i = 1, 2, \ldots, k \right\}, 
+\end{equation}
+where $\hat{H}(z)$ is the cumulative distribution function (CDF) of the GPD, equivalent to 1 - equation \ref{eq:gpd}, for the corresponding parameter estimates $\hat{\sigma}$ and $\hat{\xi}$. \todo{Need to spell out with Hz is?}
+For a good fit to the data, these points should be approximately linear.
 
-% Return levels worse for marginal models and want joint extremal probs, need dependence
+The quantile plot shows the points
+\begin{equation} \label{eq:quantile_plot}
+  \left\{ \left( \hat{H}^{-1}(i/(k+1)) , y_{(i)}\right); i = 1, 2, \ldots, k \right\},
+\end{equation}
+where $\hat{H}^{-1}$ is the estimated quantile function of the GPD.
+Again, the quantile plot should be approximately linear for a good fit.
 
-% Model diagnostics to check how well asymptotic basis holds
+The $n$-year return levels as described in equations \ref{eq:n_year_return} are often plotted on the log scale against year with empirical estimates included for comparison, to understand the long term extrapolation of the model and how well these fit the observed data. For a non-stationary fit such as that described in \ref{subsubsec:non_stationary}, the return levels will also be non-stationary and so can be plotted against covariates to understand how they relate.
+% \todo{Link to return level equation once written}
 
+Finally, a density curve for the fitted GPD can also be overlaid on the histogram of exceedance values to assess the fit of the GPD to the data.
 
-\subsection{Application to motivating example}
+\todo{Talk about need to estimate parameter uncertainty? Not done below!}
+Another important aspect of model diagnostics is the estimation of parameter uncertainty, which is often overlooked in the context of GPDs, where uncertainty often high.
+In the Bayesian setting, we can sample from the estimated posterior distributions of the parameters to estimate uncertainty, and in the Frequentist setting this can be done by bootstrapping the data and refitting the GPD to each bootstrap sample, giving a distribution of parameter estimates.
+
+\subsection{Application to motivating example} \label{subsec:uni_application}
 % \begin{itemize}
 %   \item uses \texttt{evgam} to estimate $\sigma, \xi$ at each location smoothing both over space (can take from ITT2 report) for GPDs fitted to precipitation and wind speed, respectively.
 %   \item Also uses method from \cite{Youngman2019} whereby location-specific thresholds are defined as fixed quantiles and estimated by quantile regression.

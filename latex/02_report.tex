@@ -357,11 +357,11 @@ For $n_y$ observations per year, we have that $m = N \times n_y$, and the $N$-ye
 \end{equation}
 
 \subsubsection{Threshold selection} \label{subsubsec:threshold}
-\todo{Perhaps shorten, quite longwinded}
 % Threshold selection methods (stability plots, automatic selection, quantile regression)
 % Bias-variance tradeoff in threshold selection
 % Can also work with extremal mixture models with so called "Bulk" distributions (as seen in marginal component of CE model)
 % (see Rohrbeck2021)
+
 % The threshold $u$ can also be thought of as a location parameter for this pdf, as for fixed $\sigma, \xi$, a change in $u$ will simply shift the distribution. \cite{Coles2001}
 % The problem of threshold selection for the GPD is a difficult one, as the choice of threshold can have a large impact on the parameter estimates of the GPD, and presents a classic bias-variance trade-off. 
 Threshold selection for the GPD presents a bias-variance tradeoff. 
@@ -380,23 +380,6 @@ One such method is the mean residual life plot, the idea behind which we will no
 For a random variable $Z \sim GPD(\sigma, \xi)$, provided $\xi < 1$ the expected value of $Z$ is finite and $\mathbb{E}(Z) = \sigma/1 - \xi$.
 Now suppose we have a series of random variables $X_1, X_2, \ldots, X_n$ for which excesses over a threshold $u_0$ follow a GPD. 
 Then for any $X = X_i, 1 \le i \le n$, 
-\[
-  \mathbb{E}(X - u_0 \mid X > u_0) = \frac{\sigma_{u_0}}{1 - \xi},
-\]
-% where we denote the scale parameter corresponding to the threshold $u_0$ as $\sigma_{u_0}$, with $\xi$ being invariant for sufficiently high $u_0$. 
-where $\sigma_{u_0}$ is the scale parameter corresponding to the threshold $u_0$, and $\xi$ is invariant as $u_0$ is sufficiently high.
-If the GPD is valid for $u_0$, then for any threshold $u > u_0$, the GPD should also be valid.
-Then from section \ref{subsubsec:pot}, $\sigma_u = \sigma_{u_0} + \xi(u_0 + \mu)$, with $\mu = 0$ for the GPD, and we have that \todo{Is this clear enough? Was first in reference to GEV}
-\begin{align} \label{eq:lin_u}
-  \begin{split}
-  \mathbb{E}(X - u \mid X > u) &= \frac{\sigma_u}{1 - \xi} \\
-                                   &= \frac{\sigma_{u_0} + \xi u_0}{1-\xi}.
-  \end{split}
-\end{align}
-Hence, for $u > u_0$, this expectation is a linear function of $u$. 
-Furthermore, we can say that this expectation is the mean of the excesses over $u$, which is estimated by the sample mean. 
-% Hence, we can plot the mean excesses over a series of thresholds, and if the GPD is valid for a given threshold, we should see a linear relationship between the mean excesses and the threshold.
-Hence, the mean residual life plot takes as points a series of thresholds $u$ and the correspoding sample mean of the excesses over each threshold, plotting
 \[
   \left\{\left( u, \frac{1}{n_u} \sum_{i=1}^{n_u}{\left(z_i - u\right)}: u < z_{F} \right) \right\},
 \]

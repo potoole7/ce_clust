@@ -588,64 +588,95 @@ In the Bayesian setting, we can sample from the estimated posterior distribution
 % Below narrative is a bit jumbled, can order better by looking at \cite{Heffernan2004}, \cite{Keef2013} and applied conditional extremes papers again. 
 % \todo{Anything else to add?}
 % \todo{Where to include applications? At the start?}
-
-\subsection{Dependence Modelling}
-\todo{See Shooter2020 for this layout}
+\todo{Add section similar to univariate introducing the CE model}
 
 % \begin{itemize}
-% 
+%   \item Briefly motivate the need for dependence modelling
+%   \item Describe dependence modelling more generally
+%   \item Introduce the conditional extremes model for extremal dependence
+%   \item Briefly describe extensions
+%   \item apply to motivating example
 % \end{itemize}
 
-% Previous
-% \begin{itemize}
-  % \item Define asymptotic dependence/independence, mentioning $\chi$ statistic (look at narrative elsewhere)
-  % \item Introduction to dependence modelling for extremes, following \cite{Heffernan2004} for modelling $\mathbb{P}(\bm{X} \in \bm{C})$, i.e.\ an observation which is extreme in more than one dimension, be that for multiple variables at a single location (e.g.\ rain and wind speed) or across multiple locations and/or times. 
-  % \item Motivation: modelling dependence give improved return levels and allows for estimation of joint probability of extremes, whether at multiple sites for the same variable or across multiple variables at the same site.
-  % \item Models include max-stable processes, Pareto processes, Gaussian processes, copulas, and conditional extremes model.
-  % \item Former four models limited in both their ability to model dependence and their computational feasibility, CE model is more flexible.
-  % \item Can mention \cite{Tawn2018} and \cite{Huser2024} for more information on this.
-% \end{itemize}
+While section \ref{sec:uni} introduced how the GPD can be fit to extreme data in a univariate or marginal context, we are often interested in modelling the dependence between extremes of different variables or at different locations.
+For example, we may be interested in modelling the joint probability of extreme rainfall and wind speed at a given location, which may together produce an especially damaging storm event.
+In the context of the insurance and risk industries, these events are of particular interest, as they can lead to large payouts and significant losses.
+Similarly, we may also be interested in the joint probability of extreme rainfall at different locations, which may lead to widespread flooding for which flood defences need to be prepared.
+Furthermore, in \cite{Zhang2024}, return levels have been shown to be improved by modelling dependence between extremes.
+% We will focus on the former example in our motivating example.
 
-% Section \ref{sec:uni} introduced how marginal models can be fit to data in a univariate extermal context.
+% \todo{Rewrite from Heffernan2004}
+\todo{Need to be more formal here, as in Heffernan2004?}
+Formally, following the illustration in \cite{Heffernan2004}, suppose we have a continuous vector variable $\bm{X} = (X_1, X_2, \ldots, X_d)$, where each $X_i$ corresponds to a different marginal variable or location.
+We want to estimate the joint probability $\mathbb{P}(\bm{X} \in \bm{C})$, where $\bm{C}$ is the set of extreme values for $\bm{X}$.
+This probability can be decomposed as
+\[
+  \mathbb{P}(\bm{X} \in \bm{C}) = \sum_{i=1}^{d}{\mathbb{P}(\bm{X} \in C_i)} = \sum_{i=1}^{d}{\mathbb{P}(\bm{X} \in C_i \mid X_i > u_{X_i}) \mathbb{P}(X_i > u_{X_i})},
+\]
+where $u_{X_i}$ is the threshold for the $i^{th}$ component of $\bm{X}$.
+The second of these probabilities can be estimated using a univariate GPD as in section \ref{subsec:uni}, but the first requires a model for the dependence structure between the components of $\bm{X}$.
 
-% \todo{Flesh out, define }
-% However, may want to estimate joint probability of extremes.
-% The second part of this equation requires a marginal extremes model, but the first requires a model for the dependence structure. \todo{Rewrite from notes and Heffernan2004}
-% \begin{equation} \label{eq:joint_prob}
-  % %\mathbb{P}(\bm{X} \in \bm{C}) = \sum_{i=1}^{d}{\mathbb{P}(\bm{X} \in C_i)} = \sum_{i=1}^{d}\mathbb{P}(\bm{X} \in C_i \mid X_i > u_{X_i}) \mathbb{P}(X_i> u_{X_i})
-  % \mathbb{P}(\bm{X} \in \bm{C}) = \sum_{i=1}^{d}{\mathbb{P}\left(\bm{X} \in C_i\right)} = 
-  % \sum_{i=1}^{d}{\mathbb{P}\left(\bm{X} \in C_i \mid X_i > u_{X_i}\right) \mathbb{P}\left(X_i > u_{X_i}\right)}
-% \end{equation}
-% % where $\bm{X}$ is a $d$-dimensional random vector, and $C_i$ is the set of extreme values for the $i^{th}$ component of $\bm{X}$, and $\u_{X_i}$ is the threshold for the $i^{th}$ component of $\bm{X}$.
-% \todo{Fix above line, how is it producing a missing dollar error??}
-% This dependence can be for the same variable over space, or different variables at the same location.
+In this section, we will first introduce the concept of dependence modelling for extremes more generally, and then describe the conditional extremes model, a flexible model for extremal dependence, and how it can be fit to data and subsequently interpreted.
+% The conditional extremes model is a more flexible and computationally feasible dependence model for extremes than its alternatives, such as max-stable processes, Pareto processes, Gaussian processes, and copulas \cite{Heffernan2004} \cite{Tawn2018} \cite{Huser2024}.
+\todo{Add above to below section on CE model}
+We will then briefly talk about some extensions to the original conditional extremes model of \cite{Heffernan2004} and the widely adopted revisions made in \cite{Keef2013}, before applying the model to our motivating example.
 
-% Extremal dependence can come in two forms, asymptotic independence and asymptotic dependence
-% \todo{define and talk about chi statistics}
-% \todo{Perhaps see Vignotto2021 or Keef2013 for this}
-% % \begin{itemize}
-% %   \item 
-% %     \[
-% %       \lim_{y \rightarrow \infty}\{\mathbb{P}(\bm{Y}_{-i} \mid Y_i > y)\} = \begin{cases}
-% %       0 &\text{for asymptotic independence} \\
-% %       \ne 0 &\text{for asymptotic dependence}, 
-% %     \end{cases}
-% %     \]
-% %   where $\bm{Y}_{-i} = (Y_1, Y_2, \ldots, Y_{i-1}, Y_{i+1}, \ldots, Y_d)$. 
-% %   \item Existing methods for multivariate extremes (e.g.\ max-stable processes, copulas) can only model $\mathbb{P}(\bm{X} \in C)$ under asymptotic dependence.\todo{revisit this and talk a bit more about it!}
-% % \end{itemize}
+\subsection{Extremal Dependence}
+\todo{Return to this section, also look at Keef 2013 for anything additional to add}
+\todo{Could be made more clear? Why is chi bar between -1 and 1 for asymptotic independence}
 
-% \todo{Also talk about how return levels are better when incorporating dependence information}
+In order to characterise the dependence between extremes, we must introduce the concepts of asymptotic dependence and independence, as described in \citet{Coles1999}.
+% The coefficient of asymptotic dependence, $\chi \in [0, 1]$, measures the degree of asymptotic dependence between two random variables $X_1$ and $X_2$ with corresponding CDFs $F_1$ and $F_2$, under the class of asymptotically dependent distributions.
+The coefficient of dependence, $\chi \in [0, 1]$, measures the degree of extremal dependence between two random variables $X_1$ and $X_2$ with corresponding CDFs $F_1$ and $F_2$, under the class of asymptotically dependent distributions.
+It is defined as $\chi = \lim_{u \rightarrow 1}{\chi(u)}$, where
+\[
+  \chi(u) = \mathbb{P}\left( F_1(X_1) > u \mid F_2(X_2) > u \right), u \in [0, 1].
+\]
+If $\chi = 0$, then $X_1$ and $X_2$ are said to be asymptotically independent, while for $\chi > 0$, they are asymptotically dependent, with greater magnitude as $\chi$ increases \cite{Coles1999}.
+Thus, $\chi$ gives the limit probability of $X_1$ being extreme given that $X_2$ is extreme, and we expect the joint probability of observing extremal events in both variables to be greater where $\chi$ is higher \cite{Rohrbeck2021}.
+Furthermore, $\chi$ is symmetric in $X_1$ and $X_2$.
+Two variables can be asymptotically dependent even if they are not dependent in the classical sense.
+% Another coefficient, $\bar{\chi} \in [-1, 1]$, is used to measure the strength of dependence in the case of asymptotically independent distributions, where $\chi = 0$.
+Another coefficient, $\bar{\chi} \in [-1, 1]$, is used to measure the strength of extremal dependence where $\chi = 0$, in the case of asymptotically independent distributions.
+This coefficient is defined as $\bar{\chi} = \lim_{u \rightarrow 1}{\bar{\chi}(u)}$, where
+\[
+  \bar{\chi}(u) = \lim_{u \rightarrow 1} \frac{2\log\mathbb{P}(F_1(X_1) > u)}{ \log{\mathbb{P}(F_1(X_1) > u, F_2(X_2) > u)}} - 1.
+\]
+Under asymptotic independence, $\bar{\chi} = 0$, while for asymptotic dependence $\bar{\chi} = 1$.  \todo{Rewrite to not be the same as the following line}
+Under asymptotic independence, $\bar{\chi}$ increases in magnitude as the variables become more positively (for $\bar{\chi} > 0$) or negatively (for $\bar{\chi} < 0$) dependent in their extremes \cite{Vignotto2021}.
+
+Together, $(\chi, \bar{\chi})$ describe the extremal dependence of any pair of random variables.
+However, while they provide a useful measure of extremal dependence, they do not provide a full description of the dependence structure of a multivariate distribution.
+For example, we cannot calculate the joint probability of observing extreme values in more than two variables using these coefficients.
+% For this, we require a model for extremal dependence, such as the conditional extremes model.
+For this, we require a model for extremal dependence.
+Various approaches to this problem have included max-stable processes, Pareto processes, Gaussian processes and copulas.
+However, these models are limited in their ability to model dependence and their computational feasibility, and are often conceptually quite difficult. 
+For example, max-stable processes can only model $\mathbb{P}(\bm{X} \in \bm{C})$ under asymptotic dependence between each pair of variables in $\bm{X}$, while in contrast Gaussian processes can only model asymptotic independence \citep{Tawn2018} \citep{Huser2024}.
+Max-stable processes are also quite computationally expensive, and so are often not feasible for large datasets.
+\todo{Check this in Tawn 2018 and H\&T 2004}
+A model which provides a more flexible approach to modelling extremal dependence is the conditional extremes model of \cite{Heffernan2004}.
+
+% Vignotto point
+% Note that in this latter case, not all the considered variables need to lay in the tail region since the only one explicitly modeled as extreme is the conditioning variable (
+% Heffernan and Tawn, 2004
+% ). 
 
 \subsection{Conditional extremes model}
-The conditional extremes model combines a piecewise semiparametric marginal extremes model with a semiparametric regression model for the dependence structure. \todo{Write better}
 
-\todo{Flesh out more!}
 \todo{Might be useful to include explanation of notation used in this section}
-\todo{Relate different sections to motivating example and previous section to make it more coherent}
-\todo{Also include brief lit review of uses of CE model in various papers}
+\todo{Include brief lit review of uses of CE model in various papers}
 
-The \texttt{texmex} R package provides a ``vanilla'' implementation of the conditional extremes model. \todo{Move to motivating example}
+The conditional extremes model combines a piecewise semi-parametric marginal extremes model which includes a fitted GPD as described in \ref{sec:uni} with a semi-parametric regression model for the dependence structure. 
+It is seeing increasing use in the literature.
+The model was first introduced in \citep{Heffernan2004}, where it was applied in the context of air pollutants, specifically modelling the dependence between $O_3$ and various sulphur- and nitrogen-based pollutants, for which $O_3$ is known to have synergistic corrosive effects. \todo{Rewrite from Heffernan2004}
+In \citep{Keef2012_flooding}, the conditional extremes model was used to simulate a set of flood events in order to estimate the probability of widespread flooding. \todo{Rewrite from Keef2012}
+\citep{Jonathan2013} models the joint probabilities of significant wave height and spectral peak period during peak oceanic storm events, which are important for the design of offshore structures. 
+The severe heatwave experienced by Australia in 2009 was modelled in \citep{Winter2016} to understand the relationship between the El Niño-Southern oscillation and extreme temperature.
+\todo{Mention application in Keef 2012?}
+\todo{More recent references? Brain waves?}
+
+In this section, we describe the conditional extremes model, much as we did for the univariate GPD in section \ref{sec:uni}.
 
 \subsubsection{Marginal model}
 %   marginal model is piecewise ECDF and GPD, which can be fitted using any method mentioned in \ref{sec:uni}. 
@@ -805,6 +836,7 @@ Finally, rearranging equation \ref{eq:standardised_residuals} for our standardis
 \subsubsection{Return levels} \label{subsubsec:ce_return_levels}
 
 \todo{Find reference outside of H and T for return levels}
+\todo{Return levels through simulations, refer to Keef2012_flooding}
 
 When multivariate set $\bm{C}$ is described by single parameter $nu$ (i.e.\ $C = C(\nu)$), the return level $\nu_p$ for event with probability $p$ is defined as 
 \[

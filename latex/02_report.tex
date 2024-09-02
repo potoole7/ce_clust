@@ -291,6 +291,8 @@ In the limit $\xi \to 0$, the GPD converges to the exponential distribution, and
 Finally, where $\xi > 0$, the upper tail is said to be follow a Pareto or heavy-tailed distribution, and the distribution function of the GPD is $\approx 1/z^{1/\xi}$ for large $z$, a power-law tail decay. \cite{Rohrbeck2021} \cite{Carreau2017}.
 
 \subsubsection{Threshold selection} \label{subsubsec:threshold}
+\todo{Mathematical motivation/argument for mean residual life plot}
+\todo{Less detail in places}
 % Threshold selection methods (stability plots, automatic selection, quantile regression)
 % Bias-variance tradeoff in threshold selection
 % Can also work with extremal mixture models with so called "Bulk" distributions (as seen in marginal component of CE model)
@@ -302,7 +304,7 @@ A choice of $u$ which is too small can violate the asymptotic properties on whic
 On the other hand, we require sufficient data to estimate the distribution. 
 Hence, too large a choice of $u$ will leave us with little data to estimate our distribution with and result in high uncertainty in our parameters. 
 In practice, the choice of $u$ comes down to choosing a value large enough to give stable estimates for $\sigma$ and $\xi$, while still leaving enough data to fit the distribution to. 
-Two commonly used diagnostic tools to aid in the choice of $u$ are the so-called mean residual life and threshold choice plots \cite{Coles2001}.
+Two commonly used diagnostic tools to aid in the choice of $u$ are the so-called mean residual life and threshold stability plots \cite{Coles2001}.
 
 The mean residual life plot plots the mean excesses over a series of thresholds.
 In mathematical notation, we plot the points
@@ -316,6 +318,7 @@ The mean excesses should depend linearly on $u$ for choices of $u$ which produce
 The threshold choice plot shows the values of $\xi$ and a modified $\sigma$ for various choices of $u$. 
 The choice of $u$ follows as the smallest value which appears to result in stable estimates of these parameters, i.e.\ they should be linear in $u$. 
 Both of these methods, however, are rather subjective, and entirely manual, and so are quite laborious in the context of fitting multiple marginal models to, for example, different spatial locations or seasons of the year. 
+
 There are several methods for automatic and ``semi-automatic'' threshold selection. 
 One such method is that described in \cite{Murphy2024}, which repeatedly fits the GPD over various choices of $u$ based on the quantiles of the data, and takes the optimal choice to be the threshold which minimises the so-called expected quantile discrepancy (EQD).
 This method has been shown to be robust in the face of this bias-variance trade-off problem, when compared to other means of automatic threshold selection, and is less subjective than the plotting methods described above. 

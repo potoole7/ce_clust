@@ -507,8 +507,9 @@ In particular, the shape parameter is often difficult to estimate, and so in pra
 % GPs and INLA
 There are several more advanced, non-linear methods for modelling spatially non-stationary GPDs.
 \cite{Cooley2007} uses a Gaussian process to nonparametrically model the non-linear, complex spatial patterns in the scale parameter.
-\cite{Opitz2018} implements the GPD using the Integrated Nested Laplace Approximation (INLA) of \cite{Rue2009} for approximate Bayesian inference using a variety of spatial mixed- and random-effects models for the GPD.
-% Also, \cite{Opitz2018} implemented a penalised complexity prior for the shape parameter, which penalises deviation from the exponential model where $\xi = 0$, encouraging lighter tails \cite{Simpson2015}.
+% \cite{Opitz2018} implements the GPD using the Integrated Nested Laplace Approximation (INLA) of \cite{Rue2009} for approximate Bayesian inference using a variety of spatial mixed- and random-effects models for the GPD which 
+\cite{Opitz2018} implements the GPD using the Integrated Nested Laplace Approximation (INLA) of \cite{Rue2009} for approximate Bayesian inference.
+A variety of spatial mixed- and random-effects models using, for example, autoregressive priors, are available which can exploit the spatial structure of the scale parameter.
 Also, \cite{Opitz2018} uses a penalised complexity prior for the shape parameter, where significant deviation from the exponential model is penalised, encouraging lighter tails \cite{Simpson2015}.
 
 % evgam
@@ -589,46 +590,52 @@ In the Bayesian setting, we can sample from the estimated posterior distribution
 % \todo{Where to include applications? At the start?}
 
 \subsection{Dependence Modelling}
-\todo{See Shooter2020 for this}
-\begin{itemize}
-  \item Define asymptotic dependence/independence, mentioning $\chi$ statistic (look at narrative elsewhere)
-  \item Introduction to dependence modelling for extremes, following \cite{Heffernan2004} for modelling $\mathbb{P}(\bm{X} \in \bm{C})$, i.e.\ an observation which is extreme in more than one dimension, be that for multiple variables at a single location (e.g.\ rain and wind speed) or across multiple locations and/or times. 
-  \item Motivation: modelling dependence give improved return levels and allows for estimation of joint probability of extremes, whether at multiple sites for the same variable or across multiple variables at the same site.
-  \item Models include max-stable processes, Pareto processes, Gaussian processes, copulas, and conditional extremes model.
-  \item Former four models limited in both their ability to model dependence and their computational feasibility, CE model is more flexible.
-  \item Can mention \cite{Tawn2018} and \cite{Huser2024} for more information on this.
-\end{itemize}
+\todo{See Shooter2020 for this layout}
 
-Section \ref{sec:uni} introduced how marginal models can be fit to data in a univariate extermal context.
-
-\todo{Flesh out, define }
-However, may want to estimate joint probability of extremes.
-The second part of this equation requires a marginal extremes model, but the first requires a model for the dependence structure. \todo{Rewrite from notes and Heffernan2004}
-\begin{equation} \label{eq:joint_prob}
-  %\mathbb{P}(\bm{X} \in \bm{C}) = \sum_{i=1}^{d}{\mathbb{P}(\bm{X} \in C_i)} = \sum_{i=1}^{d}\mathbb{P}(\bm{X} \in C_i \mid X_i > u_{X_i}) \mathbb{P}(X_i> u_{X_i})
-  \mathbb{P}(\bm{X} \in \bm{C}) = \sum_{i=1}^{d}{\mathbb{P}\left(\bm{X} \in C_i\right)} = 
-  \sum_{i=1}^{d}{\mathbb{P}\left(\bm{X} \in C_i \mid X_i > u_{X_i}\right) \mathbb{P}\left(X_i > u_{X_i}\right)}
-\end{equation}
-% where $\bm{X}$ is a $d$-dimensional random vector, and $C_i$ is the set of extreme values for the $i^{th}$ component of $\bm{X}$, and $\u_{X_i}$ is the threshold for the $i^{th}$ component of $\bm{X}$.
-\todo{Fix above line, how is it producing a missing dollar error??}
-This dependence can be for the same variable over space, or different variables at the same location.
-
-Extremal dependence can come in two forms, asymptotic independence and asymptotic dependence
-\todo{define and talk about chi statistics}
-\todo{Perhaps see Vignotto2021 or Keef2013 for this}
 % \begin{itemize}
-%   \item 
-%     \[
-%       \lim_{y \rightarrow \infty}\{\mathbb{P}(\bm{Y}_{-i} \mid Y_i > y)\} = \begin{cases}
-%       0 &\text{for asymptotic independence} \\
-%       \ne 0 &\text{for asymptotic dependence}, 
-%     \end{cases}
-%     \]
-%   where $\bm{Y}_{-i} = (Y_1, Y_2, \ldots, Y_{i-1}, Y_{i+1}, \ldots, Y_d)$. 
-%   \item Existing methods for multivariate extremes (e.g.\ max-stable processes, copulas) can only model $\mathbb{P}(\bm{X} \in C)$ under asymptotic dependence.\todo{revisit this and talk a bit more about it!}
+% 
 % \end{itemize}
 
-\todo{Also talk about how return levels are better when incorporating dependence information}
+% Previous
+% \begin{itemize}
+  % \item Define asymptotic dependence/independence, mentioning $\chi$ statistic (look at narrative elsewhere)
+  % \item Introduction to dependence modelling for extremes, following \cite{Heffernan2004} for modelling $\mathbb{P}(\bm{X} \in \bm{C})$, i.e.\ an observation which is extreme in more than one dimension, be that for multiple variables at a single location (e.g.\ rain and wind speed) or across multiple locations and/or times. 
+  % \item Motivation: modelling dependence give improved return levels and allows for estimation of joint probability of extremes, whether at multiple sites for the same variable or across multiple variables at the same site.
+  % \item Models include max-stable processes, Pareto processes, Gaussian processes, copulas, and conditional extremes model.
+  % \item Former four models limited in both their ability to model dependence and their computational feasibility, CE model is more flexible.
+  % \item Can mention \cite{Tawn2018} and \cite{Huser2024} for more information on this.
+% \end{itemize}
+
+% Section \ref{sec:uni} introduced how marginal models can be fit to data in a univariate extermal context.
+
+% \todo{Flesh out, define }
+% However, may want to estimate joint probability of extremes.
+% The second part of this equation requires a marginal extremes model, but the first requires a model for the dependence structure. \todo{Rewrite from notes and Heffernan2004}
+% \begin{equation} \label{eq:joint_prob}
+  % %\mathbb{P}(\bm{X} \in \bm{C}) = \sum_{i=1}^{d}{\mathbb{P}(\bm{X} \in C_i)} = \sum_{i=1}^{d}\mathbb{P}(\bm{X} \in C_i \mid X_i > u_{X_i}) \mathbb{P}(X_i> u_{X_i})
+  % \mathbb{P}(\bm{X} \in \bm{C}) = \sum_{i=1}^{d}{\mathbb{P}\left(\bm{X} \in C_i\right)} = 
+  % \sum_{i=1}^{d}{\mathbb{P}\left(\bm{X} \in C_i \mid X_i > u_{X_i}\right) \mathbb{P}\left(X_i > u_{X_i}\right)}
+% \end{equation}
+% % where $\bm{X}$ is a $d$-dimensional random vector, and $C_i$ is the set of extreme values for the $i^{th}$ component of $\bm{X}$, and $\u_{X_i}$ is the threshold for the $i^{th}$ component of $\bm{X}$.
+% \todo{Fix above line, how is it producing a missing dollar error??}
+% This dependence can be for the same variable over space, or different variables at the same location.
+
+% Extremal dependence can come in two forms, asymptotic independence and asymptotic dependence
+% \todo{define and talk about chi statistics}
+% \todo{Perhaps see Vignotto2021 or Keef2013 for this}
+% % \begin{itemize}
+% %   \item 
+% %     \[
+% %       \lim_{y \rightarrow \infty}\{\mathbb{P}(\bm{Y}_{-i} \mid Y_i > y)\} = \begin{cases}
+% %       0 &\text{for asymptotic independence} \\
+% %       \ne 0 &\text{for asymptotic dependence}, 
+% %     \end{cases}
+% %     \]
+% %   where $\bm{Y}_{-i} = (Y_1, Y_2, \ldots, Y_{i-1}, Y_{i+1}, \ldots, Y_d)$. 
+% %   \item Existing methods for multivariate extremes (e.g.\ max-stable processes, copulas) can only model $\mathbb{P}(\bm{X} \in C)$ under asymptotic dependence.\todo{revisit this and talk a bit more about it!}
+% % \end{itemize}
+
+% \todo{Also talk about how return levels are better when incorporating dependence information}
 
 \subsection{Conditional extremes model}
 The conditional extremes model combines a piecewise semiparametric marginal extremes model with a semiparametric regression model for the dependence structure. \todo{Write better}

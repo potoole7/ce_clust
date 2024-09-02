@@ -473,7 +473,7 @@ Un
 % \end{equation}
 For example, we could assume that the scale and shape parameters of the GPD are linear functions of $s$.
 Under this model, we could model threshold exceedances at location $s$ as 
-\begin{centre}
+\begin{center}
   \begin{align} \label{eq:non_stationary_gpd}
     \begin{split}
       Z(s) - u(s) \mid Z(s) > u(s) &\sim GPD(\sigma(s), \xi(s)), \\
@@ -481,7 +481,7 @@ Under this model, we could model threshold exceedances at location $s$ as
                             \xi(s) &= \xi_0 + \xi_1 z(s),
     \end{split}
   \end{align}
-\end{centre}
+\end{center}
 where $\sigma_0, \sigma_1, \xi_0, \xi_1$ are intercept and slope parameters for the scale and shape, respectively, and $u(s)$ is modelled as in equation \ref{eq:asymmetric_laplace}.
 % Using a log link function ensures that $\sigma(s) > 0$.
 % This model, which can be made as complicated as necessary, allows for much greater flexibility in our models, and reduces the bias associated with assuming a constant shape and scale parameter across all locations.
@@ -706,7 +706,7 @@ Furthermore, this is useful to have common marginal distributions, as we are int
 In \cite{Heffernan2004}, this is achieved by transforming the marginal distribution to a Gumbel distribution, which has an exponential upper tail.
 This transformation, for which we denote the transformed marginal variable as $Y_i$, is given by
 \begin{equation} \label{eq:gumbel}
-  Y_i &= -\log[-\log\{\hat{F}_{X_i}(X_i)\}], i = 1, \ldots, d. \\
+  Y_i = -\log[-\log\{\hat{F}_{X_i}(X_i)\}], i = 1, \ldots, d. \\
 \end{equation}
 This results in $\mathbb{P}(Y_i \le y) = \exp(-\exp(-y))$ and hence $\mathbb{P}(Y_i > y) \sim \exp(-y) \text{ as } y \rightarrow \infty$, so $Y_i$ has an exponential upper tail. 
 
@@ -836,7 +836,7 @@ Finally, rearranging equation \ref{eq:standardised_residuals} for our standardis
 \subsubsection{Return levels} \label{subsubsec:ce_return_levels}
 
 \todo{Find reference outside of H and T for return levels}
-\todo{Return levels through simulations, refer to Keef2012_flooding}
+\todo{Return levels through simulations, refer to Keef2012 flooding}
 
 When multivariate set $\bm{C}$ is described by single parameter $nu$ (i.e.\ $C = C(\nu)$), the return level $\nu_p$ for event with probability $p$ is defined as 
 \[
@@ -950,7 +950,7 @@ In \cite{Bernard2013}, a clustering algorithm for (weekly precipitation) maxima 
 Summary:
 \begin{itemize}
   \item bivariate vector $(M_i, M_j)^T$ assumed to follow a bivariate EVT distribution.
-  \item A variogram of order $p$ is defined as the moment of order $p$ of the difference between maxima $M_i$ and $M_j$, $\matbb{E}|M_i - M_j|^p$.
+  \item A variogram of order $p$ is defined as the moment of order $p$ of the difference between maxima $M_i$ and $M_j$, $\mathbb{E}|M_i - M_j|^p$.
   \item The F-madogram $d_{ij}$ is, amongst other things:
     \begin{enumerate}
       \item an interpretable distance, thus forming a distance matrix over which to cluster,

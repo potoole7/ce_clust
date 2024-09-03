@@ -108,6 +108,7 @@
 \todo{Only have TOC show as far as subsections}
 \todo{Put references before full stops, not after}
 \todo{Make TFR public on Github before submitting!}
+\todo{Fix citations and equations references as per feedback}
 
 \newpage
 
@@ -588,7 +589,7 @@ In the Bayesian setting, we can sample from the estimated posterior distribution
 % Below narrative is a bit jumbled, can order better by looking at \cite{Heffernan2004}, \cite{Keef2013} and applied conditional extremes papers again. 
 % \todo{Anything else to add?}
 % \todo{Where to include applications? At the start?}
-\todo{Add section similar to univariate introducing the CE model}
+% \todo{Add section similar to univariate introducing the CE model}
 
 % \begin{itemize}
 %   \item Briefly motivate the need for dependence modelling
@@ -598,11 +599,12 @@ In the Bayesian setting, we can sample from the estimated posterior distribution
 %   \item apply to motivating example
 % \end{itemize}
 
-While section \ref{sec:uni} introduced how the GPD can be fit to extreme data in a univariate or marginal context, we are often interested in modelling the dependence between extremes of different variables or at different locations.
-For example, we may be interested in modelling the joint probability of extreme rainfall and wind speed at a given location, which may together produce an especially damaging storm event.
+% While section \ref{sec:uni} introduced how the GPD can be fit to extreme data in a univariate or marginal context, we are often interested in modelling the dependence between extremes of different variables or at different locations.
+As opposed to the univariate case, where we are interested in modelling the distribution of a single variable, we are often interested in modelling the dependence between extremes of different variables or at different locations.
+For example, we may be interested in modelling the joint probability of extreme rainfall and wind speed at a given location, which may together produce especially damaging storm events.
 In the context of the insurance and risk industries, these events are of particular interest, as they can lead to large payouts and significant losses.
-Similarly, we may also be interested in the joint probability of extreme rainfall at different locations, which may lead to widespread flooding for which flood defences need to be prepared.
-Furthermore, in \cite{Zhang2024}, return levels have been shown to be improved by modelling dependence between extremes.
+Similarly, we may also be interested in the joint probability of extreme rainfall at different locations, which may lead to widespread flooding for which flood defences need to be coordinated and prepared.
+Furthermore, in \cite{Zhang2024}, return level calculations have been shown to be improved by incorporating extremal dependence.
 % We will focus on the former example in our motivating example.
 
 % \todo{Rewrite from Heffernan2004}
@@ -610,10 +612,14 @@ Furthermore, in \cite{Zhang2024}, return levels have been shown to be improved b
 Formally, following the illustration in \cite{Heffernan2004}, suppose we have a continuous vector variable $\bm{X} = (X_1, X_2, \ldots, X_d)$, where each $X_i$ corresponds to a different marginal variable or location.
 We want to estimate the joint probability $\mathbb{P}(\bm{X} \in \bm{C})$, where $\bm{C}$ is the set of extreme values for $\bm{X}$.
 This probability can be decomposed as
+% \begin{equation} \label{eq:decomp}
 \[
-  \mathbb{P}(\bm{X} \in \bm{C}) = \sum_{i=1}^{d}{\mathbb{P}(\bm{X} \in C_i)} = \sum_{i=1}^{d}{\mathbb{P}(\bm{X} \in C_i \mid X_i > u_{X_i}) \mathbb{P}(X_i > u_{X_i})},
+  % \mathbb{P}(\bm{X} \in \bm{C}) = \sum_{i=1}^{d}{\mathbb{P}(\bm{X} \in C_i)} = \sum_{i=1}^{d}{\mathbb{P}(\bm{X} \in C_i \mid X_i > u_{X_i}) \mathbb{P}(X_i > u_{X_i})},
+  \mathbb{P}(\bm{X} \in \bm{C}) = \sum_{i=1}^{d}{\mathbb{P}(\bm{X} \in C_i)} = \sum_{i=1}^{d}{\mathbb{P}(\bm{X} \in C_i \mid X_i > v_{X_i}) \mathbb{P}(X_i > v_{X_i})},
 \]
-where $u_{X_i}$ is the threshold for the $i^{th}$ component of $\bm{X}$.
+% \end{equation}
+where $v_{X_i} = \inf_{\bm{x} \in C_i}(x_i)$.
+% where $u_{X_i}$ is the threshold for the $i^{th}$ component of $\bm{X}$.
 The second of these probabilities can be estimated using a univariate GPD as in section \ref{subsec:uni}, but the first requires a model for the dependence structure between the components of $\bm{X}$.
 
 In this section, we will first introduce the concept of dependence modelling for extremes more generally, and then describe the conditional extremes model, a flexible model for extremal dependence, and how it can be fit to data and subsequently interpreted.
@@ -684,7 +690,7 @@ In this section, we describe the conditional extremes model, much as we did for 
 The conditional extremes model requires a marginal model for the complete marginal distribution of a random variable $X_i$.
 Therefore, realisations above a high threshold $u_{X_i}$ are modelled using a GPD, while the empirical distribution function is used for observations below this threshold.
 For simplicity, we leave out the space covariate $s$ in this section, although in practice we model our GPD as in equation \ref{eq:gpd_cov}.
-The marginal distribution of $X_i$ under the conditional extremes model is therefore characterised by the piecewise semiparametric model
+The marginal distribution of $X_i$ under the conditional extremes model is therefore characterised by the piecewise semi-parametric model
 \begin{equation} \label{eq:piecewise_marg}
   \hat{F}_{X_i}(x) = \begin{cases}
     1 - \{ 1 - \tilde{F}_{X_i}(u_{X_i})\} \left\{1 + \xi_{i}(x - u_{X_i})/\sigma_i\right\}_{+}^{-1/\xi_{i}} & \text{if } x > u_{X_i} \\
@@ -694,24 +700,24 @@ The marginal distribution of $X_i$ under the conditional extremes model is there
 where $\tilde{F}_{X_i}$ is the empirical distribution function of $X_i$.
 It is important to note that this marginal model can be fit using any of the methods outlined in section \ref{sec:uni}, including with the use of covariates to model the parameters of the GPD, as in section \ref{subsubsec:non_stationary}.
 \todo{Define gam function above, say how we've used it to estimate this model}
-From equation \ref{eq:piecewise_marg}, we can estimate the probability of $X_i$ exceeding the threshold $u_{X_i}$, handling the second part of equation \ref{eq:joint_prob}.
+From equation \ref{eq:piecewise_marg}, we can estimate the probability of $X_i$ exceeding the threshold $u_{X_i}$, handling the second part of equation \ref{eq:joint_prob}. \todo{Fix this reference}
 
 \subsubsection{Marginal transformation}
 % Requires Gumbel transformation of margins to have exponential upper tail, but this gives complex form for $a$ for negative dependence, so instead following \cite{Keef2013} Laplace margins are used which have doubly exponential tails and thus have the conceptually simple $a_{\mid i} = \alpha_{\mid i}Y_{\mid i} , b = Y_{\mid i}^{\beta_{\mid i}}$, which can be interpreted as the slope and spread parameters for our semi-parametric regression line (is there a reference I can use which makes this interpretation?). 
 
-The conditional extremes model requires the marginal distributions $\bm{X}_i$ to have an exponential upper tail.
 \todo{Go through and check bm X vs X!}
-This greatly simplifies the estimation procedure for \todo{Finish}
-Furthermore, this is useful to have common marginal distributions, as we are interested in rare events in our margins regardless of their original scales, as in our example where we compare extremal wind speed, measured in metres per second, and precipitation, measured in mm \cite{Winter2016}.
-In \cite{Heffernan2004}, this is achieved by transforming the marginal distribution to a Gumbel distribution, which has an exponential upper tail.
-This transformation, for which we denote the transformed marginal variable as $Y_i$, is given by
-\begin{equation} \label{eq:gumbel}
-  Y_i = -\log[-\log\{\hat{F}_{X_i}(X_i)\}], i = 1, \ldots, d. \\
-\end{equation}
-This results in $\mathbb{P}(Y_i \le y) = \exp(-\exp(-y))$ and hence $\mathbb{P}(Y_i > y) \sim \exp(-y) \text{ as } y \rightarrow \infty$, so $Y_i$ has an exponential upper tail. 
 
-However, this results in a relatively complex form for the normalising functions in the semiparametric regression model for the dependence structure in the case of negative dependence, since the lower tail of the Gumbel distribution is not exponential.
-This topic is treated in more detail in section \ref{subsubsec:ce_normalisation}.
+The conditional extremes model requires the marginal distributions $\bm{X}_i$ to have an exponential upper tail, which greatly simplifies the estimation procedure for the dependence structure.
+Furthermore, it is useful to have common marginal distributions, as we are interested in rare events in our margins regardless of their original scales, as in our example, where we compare extremal wind speed, measured in metres per second, and precipitation, measured in mm \cite{Winter2016}.
+In \cite{Heffernan2004}, this is achieved by transforming the marginal distribution to a Gumbel distribution, which has an exponential upper tail.
+% This transformation, for which we denote the transformed marginal variable as $Y_i$, is given by
+% \begin{equation} \label{eq:gumbel}
+%   Y_i = -\log[-\log\{\hat{F}_{X_i}(X_i)\}], i = 1, \ldots, d. \\
+% \end{equation}
+% This results in $\mathbb{P}(Y_i \le y) = \exp(-\exp(-y))$ and hence $\mathbb{P}(Y_i > y) \sim \exp(-y) \text{ as } y \rightarrow \infty$, so $Y_i$ has an exponential upper tail.  
+% However, this results in a relatively complex form for the normalising functions in the semi-parametric regression model for the dependence structure in the case of negative dependence, since the lower tail of the Gumbel distribution is not exponential.
+However, this results in a relatively complex form of the model in the case of negative dependence, since the lower tail of the Gumbel distribution is not exponential.
+% This topic is treated in more detail in section \ref{subsubsec:ce_normalisation}.
 
 A much more common approach, first proposed in \cite{Keef2013}, is to instead use a Laplace transformation, which has a doubly exponential tails.
 This transformation is given by
@@ -771,28 +777,30 @@ We look at methods for assessing the validity of this assumption in section \ref
 
 \subsubsection{Normalisation} \label{subsubsec:ce_normalisation}
 
-Under Gumbel margins, the normalising functions are given by:
-\begin{align} \label{eq:gumbel_normalisation}
-  \begin{split}
-    \bm{a}_{\mid i}(y) &= \bm{\alpha}_i y + I_{\{\bm{\alpha}_{\mid i} = 0, \bm{\beta}_{\mid i} < 0\}} \{\bm{\gamma}_{\mid i} - \bm{\delta}_{\mid i}\log(y)\}, \\
-    \bm{b}_{\mid i}(y) &= y^{\bm{\beta}_{\mid i}}, 
-  \end{split}
- \end{align}
-where $\ldots$ \todo{Define constants above, say how alpha and beta in indicator function refer to negative dependence}
-Hence, they have quite a simple form for the class of positively associated variables, as the Gumbel margins have exponential upper tails for which the indicator function will equal zero, but a more complex and difficult to interpret formulation for negatively associated variables, as no such thing can be said about their lower tails. 
+\todo{Shooter 2020 has good interpretation of normalising functions}
 
-Under the Laplace marginal transformation in \cite{Keef2013}, we have doubly exponential tails, and thus there is no need for the indicator function, so \ref{eq:gumbel_normalisation} simplifies to
+% Under Gumbel margins, the normalising functions are given by:
+% \begin{align} \label{eq:gumbel_normalisation}
+%   \begin{split}
+%     \bm{a}_{\mid i}(y) &= \bm{\alpha}_i y + I_{\{\bm{\alpha}_{\mid i} = 0, \bm{\beta}_{\mid i} < 0\}} \{\bm{\gamma}_{\mid i} - \bm{\delta}_{\mid i}\log(y)\}, \\
+%     \bm{b}_{\mid i}(y) &= y^{\bm{\beta}_{\mid i}}, 
+%   \end{split}
+%  \end{align}
+% where $\ldots$ \todo{Define constants above, say how alpha and beta in indicator function refer to negative dependence}
+% Hence, they have quite a simple form for the class of positively associated variables, as the Gumbel margins have exponential upper tails for which the indicator function will equal zero, but a more complex and difficult to interpret formulation for negatively associated variables, as no such thing can be said about their lower tails. 
+
+Under the Laplace marginal transformation in \citet{Keef2013}, we have doubly exponential tailed margins, and thus have the same form of normalising functions for both positive and negative dependence.
+% , and thus there is no need for the indicator function, so \ref{eq:gumbel_normalisation} simplifies to
+Specifically, the normalising functions are given by
 \begin{align} \label{eq:laplace_normalisation}
   \begin{split}
-    \bm{a}_{\mid i}(y) &= \bm{\alpha}_i(y), \\
+    \bm{a}_{\mid i}(y) &= \bm{\alpha}_i y, \\
     \bm{b}_{\mid i}(y) &= y^{\bm{\beta}_{\mid i}}, 
   \end{split}
 \end{align}
 % where $\bm{\alpha}_{\mid i} \in [-1, 1], \bm{\beta}_{\mid i} \in \(-\infty, 1)$. 
-where $(\bm{\alpha}_{\mid i}, \bm{\beta}_{\mid i}) \in [-1, 1]^{d-1} \times (-\infty, 1)^{d-1}$ \cite{Keef2013}. \todo{Go back over citations throughout!}
-$\alpha_{j \mid i}$ controls the level of association between $Y_j$ and large $Y_i$, with positive and negative values indicating positive and negative asymptotic dependence, respectively, and values closer to 0 indicating stronger asymptotic independence. 
-$\beta_{j \mid i}$ controls the spread $\ldots$ \todo{Fill in more formally, can I get a reference which says this?}
-\todo{Need to reference Beta values in the above paragraph! See Keef 2013}
+where $(\bm{\alpha}_{\mid i}, \bm{\beta}_{\mid i}) \in [-1, 1]^{d-1} \times (-\infty, 1)^{d-1}$. % \citep{Keef2013}. \todo{Go back over citations throughout!}
+The interpretation of $\bm{\alpha}_{\mid i}$ and $\bm{\beta}_{\mid i}$ is discussed in greater detail in the next section in relation to the regression model for the dependence structure.
 
 \subsubsection{Dependence model} \label{subsubsec:dep_model}
 
@@ -800,80 +808,112 @@ $\beta_{j \mid i}$ controls the spread $\ldots$ \todo{Fill in more formally, can
 \todo{Also, is there a need to explicitely define the model for Z j mid i (page 504)?}
 \todo{Need to say somewhere how in practice, Z is first sampled from a normal distribution and thereafter empirically estimated, see inference section in Keef}
 
-Finally, rearranging equation \ref{eq:standardised_residuals} for our standardised residuals, and imputing the values for the vector normalising functions $\bm{a}_{\mid i}$ and $\bm{b}_{\mid i}$ from equation \ref{eq:laplace_normalisation}, we can define the dependence model used in the conditional extremes model, which takes the form of the multivariate semiparametric regression equation
-\todo{Word better}
+Rearranging equation \ref{eq:standardised_residuals} for our standardised residuals, and imputing the values for the vector normalising functions $\bm{a}_{\mid i}$ and $\bm{b}_{\mid i}$ from equation \ref{eq:laplace_normalisation}, we can now define the dependence model used in the conditional extremes model, which takes the form of the multivariate semi-parametric regression equation
 \begin{align} \label{eq:ce_model}
   \begin{split}
     \bm{Y}_{-i} &= \bm{a}_{\mid i}(\bm{y}_i) + \bm{b}_{\mid i}(\bm{y}_i)\bm{Z}_{\mid i} \\
                 &= \bm{\alpha}_{\mid i}\bm{y}_i + \bm{y}_i^{\bm{\beta}_{\mid i}}\bm{Z}_{\mid i}, \text{ for } Y_i = y_i > u_{Y_i}.
   \end{split}
 \end{align}
-\todo{Write something about this! Most important equation}
-\todo{Write second line as standalone, since it is so important?}
+\todo{Perhaps change to more clear formulation in Shooter2020?}
+The normalising functions $\bm{a}_{\mid i}$ and $\bm{b}_{\mid i}$ can be interpreted as the slope and spread parameters for our semi-parametric regression line.
+The level of association between $\bm{Y}_{-i}$ (i.e.\ each $Y_j, j \ne i$) and large $Y_i$ is controlled by $\bm{\alpha}_{\mid i}$, with positive and negative values indicating positive and negative dependence, respectively, and values closer to 0 indicating stronger independence.
+The impact of the residual term $\bm{Z}_{\mid i}$ on the dependence between $\bm{Y}_{-i}$ and $\bm{Y}_i$ is controlled by $\bm{\beta}_{\mid i}$.
+Lower values of $\bm{\beta}_{\mid i}$ indicate a more strongly deterministic relationship between $\bm{Y}_{-i}$ and $\bm{Y}_i$, while higher values indicate a more stochastic relationship \citep{Winter2016}.
+
+Several special cases arise for certain values of $\bm{\alpha}_{\mid i}$ and $\bm{\beta}_{\mid i}$.
+For example, when $\bm{\alpha}_{\mid i} = 0$ and $\bm{\beta}_{\mid i} = 0$, then $\bm{Y}_{-i}$ and $\bm{Y}_i$ are independent.
+For $\bm{\beta}_{\mid i} = 0$, asymptotic positive and negative dependence are indicated by $\bm{\alpha}_{\mid i} = 1$ and $\bm{\alpha}_{\mid i} = -1$, respectively.
+For the values $-1 < \bm{\alpha}_{\mid i} < 1$, $\bm{Y}_{-i}$ and $\bm{Y}_i$ are asymptotically independent.
+
+\todo{Need to look into differences between independence and asymptotic independence!}
+\todo{Add equation for Y j mid i? Perhaps somewhat clearer notation}
+% \todo{Add special cases (asymptotic dependence, asymptotic independence?)}
+
+% Additional constraints
+% \todo{texmex vignette has good description of this}
+In \citet{Keef2013}, additional constraints are placed on the possible values of $\bm{\alpha}_{\mid i}$ and $\bm{\beta}_{\mid i}$.
+These constraints serve to enforce consistency of the fitted dependence model with the extremal dependence of the data \citep{Southworth2024_vignette}.
 
 \subsubsection{Estimation} \label{subsubsec:estimation}
 % How model is estimated, assuming normal dist for Z, then empirical dist
 \todo{See Winter2016 for good description}
+\todo{Come back to this!}
 
-\subsubsection{Extrapolation} \label{subsubsec:extrapolation}
-% Extrapolation through MC algorithm as in \cite{Heffernan2004} (alternative in \cite{Keef2013}.
-
-\todo{Change this algorithm from Heffernan to Keef}
-\todo{Also look at other Keef apper on flood events, seems to be most recent in that series}
-\todo{How do nu and u differ? Is it for thresholding X vs Y?}
-\begin{itemize}
-  \item Can simulate from $\bm{X}|\bm{X}_i > \nu_{X_i}$ by simulating from $\bm{Y}|\bm{Y}_i > y_i$ and transforming back to $\bm{X}$ space, using the following algorithm:
-    \begin{enumerate}
-      \item Simulate $Y_i$ from the transformed marginal distribution conditional on exceeding $t_i(\nu_{X_i})$.
-      \item Sample $\bm{Z}_{\mid i}$ from $\hat{G}_{\mid i}$, independently of $Y_i$. 
-      \item Obtain $\bm{Y}_{-i} = \bm{\alpha}_{\mid i}(Y_i) + (Y_i)^{\bm{\beta}_{\mid i}}\bm{Z}_{\mid i}$.
-      \item Transform $\bm{Y} = (\bm{Y}_{-i}, Y_i)$ back to the original scale by using the inverse of the marginal transformation. 
-      \item the resulting vector $\bm{X}$ is a simulated value from $\bm{X} \mid X_i > \nu_{X_i}$.
-    \end{enumerate}
-  \item This algorithm can be used to estimate $\mathbb{P}(\bm{X} \in C_i \mid X_i > \nu_{X_i})$ by evaluating it as the long run proportion of the generated sample that falls in $C_i$. 
-\end{itemize}
-
-\subsubsection{Return levels} \label{subsubsec:ce_return_levels}
-
-\todo{Find reference outside of H and T for return levels}
-\todo{Return levels through simulations, refer to Keef2012 flooding}
-
-When multivariate set $\bm{C}$ is described by single parameter $nu$ (i.e.\ $C = C(\nu)$), the return level $\nu_p$ for event with probability $p$ is defined as 
+The estimation of the conditional extremes model has seen several developments since its introduction in \cite{Heffernan2004}.
+Inference begins by first generating $Z_{\mid i}$ from a mutually independent multivariate normal distribution with some mean vector $\mu_{\mid i}$ and standard deviation $\sigma_{\mid i}$, i.e.\ $Z_{\mid i} \sim N(\mu_{\mid i}, \sigma_{\mid i})$. 
+This initial form for $G_{\mid i}$, the distribution of $Z_{\mid i}$, was chosen experimentally. 
+% Then, returning to equation \ref{eq:ce_model}, the conditional distribution $\bm{Y}_{\mid i} \mid Y_i$ for $Y_i > u$ is also multivariate normal so tha
+Then, returning to equation \eqref{eq:ce_model}, the conditional distribution also follows a multivariate normal distribution, with
 \[
-  \mathbb{P}(\bm{Y} \in C(\nu_p)) = p
+  \bm{Y}_{-i} \mid \bm{Y}_i = y_i \sim N\left(\bm{\alpha}_{\mid i} y_i + y_i^{\bm{\beta}_i} \bm{\mu}_{\mid i}, y_i^{\bm{\beta}_i} \bm{\sigma_{\mid i}}\right),
+\]
+for $Y_i > u$. \todo{Is conditioning/notation right here??}
+With this formulation, we can use likelihood methods to estimate the parameters $\hat{\bm{\alpha}}_{\mid i}$ and $\hat{\bm{\beta}}_{\mid i}$, as well as the nuisance parameters $\hat{\bm{\mu}}_{\mid i}$ and $\hat{\bm{\sigma}}_{\mid i}$.
+Finally, we now nonparametrically estimate $G_{\mid i}$ using the empirical distribution of 
+\[
+  \bm{Z}_{\mid i} = \frac{\bm{Y}_{-i} - \hat{\bm{\alpha}}_{\mid i}Y_i}{Y_i^{\hat{\bm{\beta}}_{\mid i}}}.
 \]
 
-\todo{How are these estimated? How are they an improvement from marginal return levels?}
-\todo{Is it just through Monte Carlo simulations of quantiles?}
+One of the benefits of the conditional extremes model is the ease with which Monte Carlo (MC) samples can be generated from the fitted model.
+These samples can be used to calculate the probability of $\bm{X} \in \bm{C}$ conditioning on various $X_{\mid i}$, and return levels can be calculated as high quantiles of these simulations.
+Many different MC algorithms have been proposed for this purpose, including the one described in \cite{Heffernan2004} and an alternative rejection sampling method in \cite{Keef2012_flooding}.
+\todo{Need to describe algorithm in detail?}
+
+% We will follow the procedure described in \cite{Winter2016} \todo{Will we?}
+% First, we assume the standardised residuals $\bm{Z}_{\mid i}$ are normally distributed, and sample them from a multivariate normal distribution $\ldots$.
+% Afterwards, we discard this assumption and estimate 
+% We then estimate the normalising functions $\bm{\alpha}_{\mid i}$ and $\bm{\beta}_{\mid i}$ by fitting a non-parametric regression model to the data.
+
+% The generally followed procedure is to first sample the standardised residuals $\bm{Z}_{\mid i}$ from a multivariate normal distribution, and then estimate the normalising functions $\bm{\alpha}_{\mid i}$ and $\bm{\beta}_{\mid i}$ by fitting a non-parametric regression model to the data.
+
+\todo{Refer to extrapolation procedure, how easy it is generate MC sample from CE, return levels can be calculated as high quantiles of these simulations}
+
+% \subsubsection{Extrapolation} \label{subsubsec:extrapolation}
+% % Extrapolation through MC algorithm as in \cite{Heffernan2004} (alternative in \cite{Keef2013}.
+
+% \todo{Change this algorithm from Heffernan to Keef}
+% \todo{Also look at other Keef apper on flood events, seems to be most recent in that series}
+% \todo{How do nu and u differ? Is it for thresholding X vs Y?}
+% \begin{itemize}
+  % \item Can simulate from $\bm{X}|\bm{X}_i > \nu_{X_i}$ by simulating from $\bm{Y}|\bm{Y}_i > y_i$ and transforming back to $\bm{X}$ space, using the following algorithm:
+    % \begin{enumerate}
+      % \item Simulate $Y_i$ from the transformed marginal distribution conditional on exceeding $t_i(\nu_{X_i})$.
+      % \item Sample $\bm{Z}_{\mid i}$ from $\hat{G}_{\mid i}$, independently of $Y_i$. 
+      % \item Obtain $\bm{Y}_{-i} = \bm{\alpha}_{\mid i}(Y_i) + (Y_i)^{\bm{\beta}_{\mid i}}\bm{Z}_{\mid i}$.
+      % \item Transform $\bm{Y} = (\bm{Y}_{-i}, Y_i)$ back to the original scale by using the inverse of the marginal transformation. 
+      % \item the resulting vector $\bm{X}$ is a simulated value from $\bm{X} \mid X_i > \nu_{X_i}$.
+    % \end{enumerate}
+  % \item This algorithm can be used to estimate $\mathbb{P}(\bm{X} \in C_i \mid X_i > \nu_{X_i})$ by evaluating it as the long run proportion of the generated sample that falls in $C_i$. 
+% \end{itemize}
 
 \subsubsection{Diagnostics} \label{subsubsec:ce_diagnostics}
 % Talk about diagnostics through independence of residuals and tail exceedances in the limit. 
 
-
 The marginal model is diagnosed as in univariate EVT, with threshold selection and model fit assessed through probability and quantile plots, as described in section \ref{subsubsec:uni_diagnostics}.
 
-\todo{Need to reference texmex vignette for this?}
-\todo{Talk about texmex here anyway, to make this theory more relative to its applications}
+% \todo{Need to reference texmex vignette for this?}
+% \todo{Talk about texmex here anyway, to make this theory more relative to its applications}
 \todo{Check use of apostrophes}
 For diagnosing the dependence model, we return to the weak assumption in equation \ref{eq:limit_independence} of asymptotic independence between the standardised residuals $\bm{Z}_{\mid i}$ and the exceedances $Y_i - u_i$, as $u_i \to \infty$.
 The normalised residuals $\bm{Z}_{\mid i}$ must be stable across the range of $Y_i$ values over which they were estimated. 
 Therefore, a plot of $Z_{\mid i}$ against $\hat{F}(Y_i)$ should show no trend, and the residuals should be approximately constant over the range of $Y_i$ values used for estimation.
 \todo{F Y or F X? Does it matter?}
-\todo{Should this be Z j mid i?}
-A number of statistical tests for independence can also be used. \todo{Define some?}
+A number of statistical tests for independence can also be used, such as the corresponding test statistic of the Pearson correlation coefficient. 
+
+Another graphical diagnostic tool is to overlay the fitted quantiles of the conditional extremes model on a plot of the raw data. 
+This can be used to assess how well these quantiles agree with the shape of the data \citep{Southworth2024_vignette}.
 
 
 \subsubsection{Uncertainty} \label{subsubsec:ce_uncertainty}
 
+\todo{Come back to this!}
+
 There are numerous sources of uncertainty intrinsic to the estimation of the conditional extremes model.
 These include the shape and scale parameters of the marginal GPDs, the normalising functions in the dependence model and the standardised residuals. 
-The uncertainty in each of these sources can be estimated using bootstrapping.
+The uncertainty in each of these sources can be estimated using bootstrapping, as described in \citet{Heffernan2004}.
 For fixed marginal and dependence thresholds, we can perform bootstrapping by resampling the residuals and the exceedances, and then refitting the marginal and dependence models to the resampled data.
-We can also perform bootstrapping for different dependence thresholds as a means of choosing a threshold which gives the least uncertainty in its estimates of $\bm{\alpha}_{\mid i}$ and $\bm{\beta}_{\mid i}$.
-\todo{Describe bootstrapping algorithm in more (mathematical) detail?}
-
-\subsubsection{Additional constraints}
-%  Additional constraints from \cite{Keef2013} on possible values of $\alpha$ and $\beta$ to ensure stochastic ordering of $Y_j \mid Y_i = y$ for large $y$ 
+We can also perform bootstrapping for different dependence thresholds as a means of choosing a threshold which gives the least uncertainty in the estimates of $\bm{\alpha}_{\mid i}$ and $\bm{\beta}_{\mid i}$ \citep{Southworth2024_vignette}.
 
 \subsection{Extensions}
 
@@ -881,39 +921,34 @@ There have been several extensions to the original conditional extremes model of
 
 \todo{Richards2023 (EVA challenge) has good summary of this}
 \todo{Should I adopt minus notation for all CE models rather than mid i?}
-In \cite{Winter2016}, the conditional extremes model is extended to include time-varying covariates for the normalising functions in the dependence model, treating them as non stationary. 
-
+In \cite{Winter2016}, the conditional extremes model is extended to include time-varying covariates for the normalising functions in the dependence model at each location, treating them as non-stationary.
+Here, we use $\bm{\alpha}_{-s, t}$ and $\bm{\beta}_{-s, t}$ to denote the vectors $\bm{\alpha}_t$ and $\bm{\beta}_t$ corresponding to the vector $\bm{Y}_t$ without its $s$-th location, as using the $\bm{\alpha}_{\mid i}$ notation of section \ref{subsubsec:dep_model}
+is rather ambiguous in this spatio-temporal context. \todo{Review this, what am I trying to say?}
 % the parameters of the dependence model in equation \ref{eq:ce_model} at some location $s$ and time $t$ are modelled as functions of some time-varying covariates $g_t$ using the generalised linear models
+Therefore, the normalising functions are themselves modelled as
 \begin{align} \label{eq:ce_winter}
+  \begin{split}
   % \bm{\alpha}_{\mid i}(s, t) &= \bm{\alpha}_{\mid i}(s) + \bm{\gamma}_{\mid i}g_t, \\
-  \tanh^{-1}(\bm{\alpha}_{\mid \{s, t\}}) &= \bm{\alpha}^{(0)}_{\mid i} + \bm{\alpha}^{(1)}_{\mid i}g_t, \\
-  \tanh^{-1}(\bm{\beta}_{\mid \{s, t\}}) &= \bm{\beta}^{(0)}_{\mid i} + \bm{\beta}^{(1)}_{\mid i}g_t, \\
+  \tanh^{-1}(\bm{\alpha}_{-s, t}) &= \bm{\alpha}^{(0)}_{-s} + \bm{\alpha}^{(1)}_{-s}g_t, \\
+  \tanh^{-1}(\bm{\beta}_{-s, t}) &= \bm{\beta}^{(0)}_{-s} + \bm{\beta}^{(1)}_{-s}g_t,
+  \end{split}
 \end{align}
-\todo{Check that this is expressed correctly}
-\todo{change beta}
-\todo{Check superscript d-1, need to define!}
-\todo{Change capitalised Conditional Extremes to conditional extremes}
-with intercept and slope parameters $\bm{\alpha}^{(0)}_{\mid i}, \bm{\alpha}^{(1)}_{\mid i}, \bm{\beta}^{(0)}_{\mid i}, \bm{\beta}^{(1)}_{\mid i} \in \mathbb{R}^{d-1}$. 
+with intercept and slope parameters $\bm{\alpha}^{(0)}_{-s}, \bm{\alpha}^{(1)}_{-s}, \bm{\beta}^{(0)}_{-s}, \bm{\beta}^{(1)}_{-s} \in \mathbb{R}^{d-1}$ and temporal covariate $g_t$.
 The inverse hyperbolic tangent function $\tanh^{-1}$ is used as a link function as it restricts the parameters to the range $[-1, 1]$. 
-While $\beta$ within the conditional extremes model can range from $-\infty$ to 1, in practice $\beta$ is rarely seen to be less than $-1$, as this would result in $X_{-s, t}$ being almost deterministic given large $X_{s, t}$, which is rarely realistic, so this link function is appropriate. 
+While $\beta$ within the conditional extremes model can theoretically range from $-\infty$ to 1, in practice $\beta$ is rarely seen to be less than $-1$, as this would result in an almost deterministic relationship with the conditioning variable, which is rarely realistic, so this link function is appropriate. 
+In \cite{Richards2023}, the logit link function is instead used for $\bm{\beta}_{-s, t}$. 
 
+% \todo{Write this section!}
+\todo{Enough written for this section? Trying to keep somewhat vague}
 \cite{Wadsworth2018} extends the conditional extremes model to a spatial context, where the dependence model is extended to include a spatially varying dependence structure within the normalising functions. 
-\todo{Write this section!}
+The model represents $\alpha$ as a slowly decaying function of the distance between some reference site and the site in question.
+Several choices of $\bm{\beta}_{-s}$ are considered to fit different tails, and the residuals are modelled as a Gaussian process with some constraints to ensure that the residuals are 0 when the site in question is the same as the reference site.
+This model was further extended to the spatio-temporal case in \citet{Simpson2021}, adapting the dependence model to condition on a reference location in time as well as space. 
 
-\cite{Simpsons2023} further extends the feasibility of this model for large datasets with thousands of locations. 
-By reformulating the spatial conditional extremes model slightly to fit into the class of latent Gaussian models, the spatial conditional extremes model can be fit using INLA.
-The use of the Laplace approximation and Gaussian Markov random fields to represent a sparse precision matrix allows for the model to be fitted to large datasets, and the stochastic partial differential equation (SPDE) approach in INLA allows for the model to be used in a geostatistical context, where previously the model was shown to only be feasible for a few hundred locations. \todo{Use citation in Simpson2023}
-\todo{Cite Lindgren}
-\todo{Check and write this! Needs to be fleshed out considerably}
-\todo{INLA should be defined above}
-
-\begin{itemize}
-  \item \cite{Winter2016} shows how time varying covariate can be added to normalising functions
-  \item Spatial extension in \cite{Wadsworth2018}, which has $\alpha$ which slowly decays as distance between site and some reference site increases, several choices of $\beta$ to fit different tails, and the representation of the residuals as a Gaussian process with some constraints to ensure its value is 0 when the site in question is the same as the reference site. 
-  \item Modified in \cite{Simpson2023} to be part of latent Gaussian class of models, meaning it can be fitted to 1000s of sites, and can be used in geostatistical context.
-\end{itemize}
-
-
+Despite these extensions, the conditional extremes model is still rather computationally expensive, and has its applications have been limited to datasets with hundreds of locations.
+\cite{Simpson2023} further extends the feasibility of this model for large datasets with thousands of locations. 
+By reformulating the spatial conditional extremes model slightly to fit into the class of latent Gaussian models, the model can be fit using INLA.
+This has opened up the conditional extremes model to a wider range of applications, particularly in the context of high-dimensional spatio-temporal and geostatistical data.
 
 \subsection{Application to motivating example}
 

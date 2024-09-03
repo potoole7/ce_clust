@@ -580,7 +580,7 @@ In the Bayesian setting, we can sample from the estimated posterior distribution
 % Uncertainty in xi estimates
 
 % QQ plots for GPD fits 
-\todo{Fix texmex so it estimates return levels correctly? Look at where modPoints and sim come from in data, where is ppevm called? Seems to be somethign to with data\$y in evm!}
+\todo{Fix texmex so it estimates return levels correctly? Look at where modPoints and sim come from in data, where is ppevm called? Seems to be something to with data\$y in evm!}
 
 % Lead into dependence modelling
 
@@ -612,17 +612,15 @@ Furthermore, in \cite{Zhang2024}, return level calculations have been shown to b
 Formally, following the illustration in \cite{Heffernan2004}, suppose we have a continuous vector variable $\bm{X} = (X_1, X_2, \ldots, X_d)$, where each $X_i$ corresponds to a different marginal variable or location.
 We want to estimate the joint probability $\mathbb{P}(\bm{X} \in \bm{C})$, where $\bm{C}$ is the set of extreme values for $\bm{X}$.
 This probability can be decomposed as
-% \begin{equation} \label{eq:decomp}
-\[
+\begin{equation} \label{eq:decomp}
   % \mathbb{P}(\bm{X} \in \bm{C}) = \sum_{i=1}^{d}{\mathbb{P}(\bm{X} \in C_i)} = \sum_{i=1}^{d}{\mathbb{P}(\bm{X} \in C_i \mid X_i > u_{X_i}) \mathbb{P}(X_i > u_{X_i})},
   \mathbb{P}(\bm{X} \in \bm{C}) = \sum_{i=1}^{d}{\mathbb{P}(\bm{X} \in C_i)} = \sum_{i=1}^{d}{\mathbb{P}(\bm{X} \in C_i \mid X_i > v_{X_i}) \mathbb{P}(X_i > v_{X_i})},
-\]
-% \end{equation}
+\end{equation}
 where $v_{X_i} = \inf_{\bm{x} \in C_i}(x_i)$.
 % where $u_{X_i}$ is the threshold for the $i^{th}$ component of $\bm{X}$.
-The second of these probabilities can be estimated using a univariate GPD as in section \ref{subsec:uni}, but the first requires a model for the dependence structure between the components of $\bm{X}$.
+The second of these probabilities can be estimated using a univariate GPD as in section \ref{sec:uni}, but the first requires a model for the dependence structure between the components of $\bm{X}$.
 
-In this section, we will first introduce the concept of dependence modelling for extremes more generally, and then describe the conditional extremes model, a flexible model for extremal dependence, and how it can be fit to data and subsequently interpreted.
+In this section, we will first introduce the concept of dependence modelling for extremes more generally, and then describe the conditional extremes model, a flexible model for extremal dependence which conditions on each variable in $\bm{X}$ to estimate its dependence structure, and how it can be fit to data and subsequently interpreted.
 % The conditional extremes model is a more flexible and computationally feasible dependence model for extremes than its alternatives, such as max-stable processes, Pareto processes, Gaussian processes, and copulas \cite{Heffernan2004} \cite{Tawn2018} \cite{Huser2024}.
 \todo{Add above to below section on CE model}
 We will then briefly talk about some extensions to the original conditional extremes model of \cite{Heffernan2004} and the widely adopted revisions made in \cite{Keef2013}, before applying the model to our motivating example.
@@ -648,19 +646,18 @@ This coefficient is defined as $\bar{\chi} = \lim_{u \rightarrow 1}{\bar{\chi}(u
 \[
   \bar{\chi}(u) = \lim_{u \rightarrow 1} \frac{2\log\mathbb{P}(F_1(X_1) > u)}{ \log{\mathbb{P}(F_1(X_1) > u, F_2(X_2) > u)}} - 1.
 \]
-Under asymptotic independence, $\bar{\chi} = 0$, while for asymptotic dependence $\bar{\chi} = 1$.  \todo{Rewrite to not be the same as the following line}
-Under asymptotic independence, $\bar{\chi}$ increases in magnitude as the variables become more positively (for $\bar{\chi} > 0$) or negatively (for $\bar{\chi} < 0$) dependent in their extremes \cite{Vignotto2021}.
+For asymptotic dependence, $\bar{\chi} = 1$.
+Under asymptotic independence, $\bar{\chi} = 0$, with $\bar{\chi}$ increasing in magnitude as the variables become more positively (for $\bar{\chi} > 0$) or negatively (for $\bar{\chi} < 0$) dependent in their extremes \cite{Vignotto2021}.
 
-Together, $(\chi, \bar{\chi})$ describe the extremal dependence of any pair of random variables.
-However, while they provide a useful measure of extremal dependence, they do not provide a full description of the dependence structure of a multivariate distribution.
-For example, we cannot calculate the joint probability of observing extreme values in more than two variables using these coefficients.
-% For this, we require a model for extremal dependence, such as the conditional extremes model.
+
+Together, $(\chi, \bar{\chi})$ provide a useful summary of extremal dependence for any pair of random variables.
+However, they are restricted to the bivariate setting, and they do not fully describe the dependence structure of a multivariate distribution.
+For example, probabilities of jointly extreme events for two or more variables cannot be calculated from these coefficients.
 For this, we require a model for extremal dependence.
 Various approaches to this problem have included max-stable processes, Pareto processes, Gaussian processes and copulas.
 However, these models are limited in their ability to model dependence and their computational feasibility, and are often conceptually quite difficult. 
 For example, max-stable processes can only model $\mathbb{P}(\bm{X} \in \bm{C})$ under asymptotic dependence between each pair of variables in $\bm{X}$, while in contrast Gaussian processes can only model asymptotic independence \citep{Tawn2018} \citep{Huser2024}.
-Max-stable processes are also quite computationally expensive, and so are often not feasible for large datasets.
-\todo{Check this in Tawn 2018 and H\&T 2004}
+Max-stable processes are also quite computationally expensive and conceptually difficult to derive, and so are often not feasible for large datasets.
 A model which provides a more flexible approach to modelling extremal dependence is the conditional extremes model of \cite{Heffernan2004}.
 
 % Vignotto point
@@ -673,14 +670,13 @@ A model which provides a more flexible approach to modelling extremal dependence
 \todo{Might be useful to include explanation of notation used in this section}
 \todo{Include brief lit review of uses of CE model in various papers}
 
-The conditional extremes model combines a piecewise semi-parametric marginal extremes model which includes a fitted GPD as described in \ref{sec:uni} with a semi-parametric regression model for the dependence structure. 
+The conditional extremes model combines a piecewise semi-parametric marginal extremes model which includes a fitted GPD as described in section \ref{sec:uni} with a semi-parametric regression model for the dependence structure. 
 It is seeing increasing use in the literature.
 The model was first introduced in \citep{Heffernan2004}, where it was applied in the context of air pollutants, specifically modelling the dependence between $O_3$ and various sulphur- and nitrogen-based pollutants, for which $O_3$ is known to have synergistic corrosive effects. \todo{Rewrite from Heffernan2004}
 In \citep{Keef2012_flooding}, the conditional extremes model was used to simulate a set of flood events in order to estimate the probability of widespread flooding. \todo{Rewrite from Keef2012}
 \citep{Jonathan2013} models the joint probabilities of significant wave height and spectral peak period during peak oceanic storm events, which are important for the design of offshore structures. 
-The severe heatwave experienced by Australia in 2009 was modelled in \citep{Winter2016} to understand the relationship between the El Niño-Southern oscillation and extreme temperature.
-\todo{Mention application in Keef 2012?}
-\todo{More recent references? Brain waves?}
+The severe heatwave experienced by Australia in 2009 was explored in \citep{Winter2016} using the model, to better understand the relationship between the El Niño-Southern oscillation and extreme temperature.
+Some more recent extensions of the conditional extremes model which extend its feasibility in a variety of settings is discussed in section \ref{subsec:extensions}.
 
 In this section, we describe the conditional extremes model, much as we did for the univariate GPD in section \ref{sec:uni}.
 
@@ -689,7 +685,8 @@ In this section, we describe the conditional extremes model, much as we did for 
 
 The conditional extremes model requires a marginal model for the complete marginal distribution of a random variable $X_i$.
 Therefore, realisations above a high threshold $u_{X_i}$ are modelled using a GPD, while the empirical distribution function is used for observations below this threshold.
-For simplicity, we leave out the space covariate $s$ in this section, although in practice we model our GPD as in equation \ref{eq:gpd_cov}.
+% For simplicity, we leave out the space covariate $s$ in this section, although in practice we model our GPD as in equation \ref{eq:gpd_cov}.
+For simplicity of notation, we return here to the stationary version of the GPD, although in practice we model our GPD as in equation \eqref{eq:non_stationary_gpd}.
 The marginal distribution of $X_i$ under the conditional extremes model is therefore characterised by the piecewise semi-parametric model
 \begin{equation} \label{eq:piecewise_marg}
   \hat{F}_{X_i}(x) = \begin{cases}
@@ -700,7 +697,7 @@ The marginal distribution of $X_i$ under the conditional extremes model is there
 where $\tilde{F}_{X_i}$ is the empirical distribution function of $X_i$.
 It is important to note that this marginal model can be fit using any of the methods outlined in section \ref{sec:uni}, including with the use of covariates to model the parameters of the GPD, as in section \ref{subsubsec:non_stationary}.
 \todo{Define gam function above, say how we've used it to estimate this model}
-From equation \ref{eq:piecewise_marg}, we can estimate the probability of $X_i$ exceeding the threshold $u_{X_i}$, handling the second part of equation \ref{eq:joint_prob}. \todo{Fix this reference}
+From equation \ref{eq:piecewise_marg}, we can estimate the probability of $X_i$ exceeding the threshold $u_{X_i}$, handling the second part of equation \eqref{eq:decomp}. 
 
 \subsubsection{Marginal transformation}
 % Requires Gumbel transformation of margins to have exponential upper tail, but this gives complex form for $a$ for negative dependence, so instead following \cite{Keef2013} Laplace margins are used which have doubly exponential tails and thus have the conceptually simple $a_{\mid i} = \alpha_{\mid i}Y_{\mid i} , b = Y_{\mid i}^{\beta_{\mid i}}$, which can be interpreted as the slope and spread parameters for our semi-parametric regression line (is there a reference I can use which makes this interpretation?). 
@@ -720,13 +717,20 @@ However, this results in a relatively complex form of the model in the case of n
 % This topic is treated in more detail in section \ref{subsubsec:ce_normalisation}.
 
 A much more common approach, first proposed in \cite{Keef2013}, is to instead use a Laplace transformation, which has a doubly exponential tails.
-This transformation is given by
+This transformation, which we denote as $Y_i$ to differentiate from the marginals $\bm{X}$ on their original scales, is given by 
 \begin{equation} \label{eq:laplace}
-  \mathbb{P}(Y_i \le y) = \begin{cases}
-    \exp(y)/2 &\text{ for } y < 0 \\
-    1-\exp(-y)/2 &\text{ for } y \ge 0. \\
+  Y_i = \begin{cases}
+    % \exp(y)/2 &\text{ for } y < 0 \\
+    \log\left\{2F_{X_i}(X_i)\right\} &\text{ for } X_i < F_{X_i}^{-1}(0.5), \\
+    -\log\left\{2(1 - F_{X_i}(X_i))\right\} &\text{ for } X_i \ge F_{X_i}^{-1}(0.5), \\
   \end{cases}
 \end{equation}
+% \begin{equation} \label{eq:laplace_tails}
+%   \mathbb{P}(Y_i \le y) = \begin{cases}
+%     \exp(y)/2 &\text{ for } y < 0 \\
+%     1-\exp(-y)/2 &\text{ for } y \ge 0. \\
+%   \end{cases}
+% \end{equation}
 Both tails of $Y_i$ are exponential, and for any $u > 0$, the distribution of $Y_i - u \mid Y_i > u$ and $(-Y_i + u) \mid Y_i \le -u$ are exponential with mean 1. 
 This greatly simplifies the normalising functions, as the form of $a_{\mid i}$ is the same for both positive and negative dependence. 
 
@@ -746,7 +750,8 @@ Furthermore, we use the notation $\bm{a}_{\mid i}$ to denote the vector normalis
 \todo{Rewrite more in own words}
 Following a similar line of reasoning to the univariate asymptotic motivation detailed in section \ref{subsubsec:asymptotic}, for each $Y_i$, we want to estimate $\lim_{y \to \infty}\{\mathbb{P}(\bm{Y}_{-i} \le \bm{y}_{-i} \mid Y_i = y_i)\}$. 
 Therefore, we require the limiting distribution to be non-degenerate for all margins.
-This is achieved by the principal assumption of the conditional extremes model, mirroring that in equation \ref{eq:uni_limiting_dist} for univariate extremes, which is that for each $i$, there exists vector normalising functions $\bm{a}_{\mid i}(y_i),\bm{b}_{\mid i}(y_i), \in \mathbb{R} \rightarrow \mathbb{R}^{(d-1)}$ such that for fixed $\bm{z}_{\mid i}$,
+% This is achieved by the principal assumption of the conditional extremes model, mirroring that in equation \ref{eq:uni_limiting_dist} for univariate extremes, which is that for each $i$, there exists vector normalising functions $\bm{a}_{\mid i}(y_i),\bm{b}_{\mid i}(y_i), \in \mathbb{R} \rightarrow \mathbb{R}^{(d-1)}$ such that for fixed $\bm{z}_{\mid i}$,
+This is achieved by the principal assumption of the conditional extremes model that for each $i$, there exists vector normalising functions $\bm{a}_{\mid i}(y_i),\bm{b}_{\mid i}(y_i), \in \mathbb{R} \rightarrow \mathbb{R}^{(d-1)}$ such that for fixed $\bm{z}_{\mid i}$,
 \begin{equation} \label{eq:ce_limiting_dist}
       \lim_{y_i \rightarrow \infty}\{\mathbb{P}(\bm{Y}_{-i} \le \bm{a}_{\mid i}(y_i) + \bm{b}_{\mid i}(y_i)\bm{z}_{\mid i} \mid Y_i = y_i)\} = \bm{G}_{\mid i}(\bm{z}_{\mid i}),
 \end{equation}
@@ -767,13 +772,12 @@ where $\bm{Z}_{\mid i}$ is the vector of standardised residuals for our model, a
       \lim_{y_i \rightarrow \infty}\{\mathbb{P}(\bm{Z}_{\mid i} \le \bm{z}_{\mid i} \mid Y_i = y_i)\} = \bm{G}_{\mid i}(\bm{z}_{\mid i})
 \]
 
-An important consequence of this formulation is that we have made the weak assumption that
+An important consequence of this formulation is the weak assumption that
 \begin{equation} \label{eq:limit_independence}
 \mathbb{P}(\bm{Z}_{\mid i} \le \bm{z}_{\mid i}, Y_i - u_i = y_i \mid Y_i > u_i) \rightarrow G_{\mid i}(\bm{z}_i) \exp(-y) \text{ as } u_i \rightarrow \infty,
 \end{equation}
-i.e.\ in the limit as $u_i \to \infty$, the extremal exceedances $Y_i - u_i$ and $\bm{Z}_{\mid i}$ are independent.
-We look at methods for assessing the validity of this assumption in section \ref{subsubsec:ce_diagnostics},
-\todo{Maybe say how high threshold for dependence model does not have to be the same as for marginals!}
+so that in the limit as $u_i \to \infty$, the extremal exceedances $Y_i - u_i$ and $\bm{Z}_{\mid i}$ are independent.
+Methods for assessing the validity of this assumption and hence the conditional extremes model for a given application are explored in section \ref{subsubsec:ce_diagnostics}.
 
 \subsubsection{Normalisation} \label{subsubsec:ce_normalisation}
 
@@ -850,7 +854,7 @@ Then, returning to equation \eqref{eq:ce_model}, the conditional distribution al
 \]
 for $Y_i > u$. \todo{Is conditioning/notation right here??}
 With this formulation, we can use likelihood methods to estimate the parameters $\hat{\bm{\alpha}}_{\mid i}$ and $\hat{\bm{\beta}}_{\mid i}$, as well as the nuisance parameters $\hat{\bm{\mu}}_{\mid i}$ and $\hat{\bm{\sigma}}_{\mid i}$.
-Finally, we now nonparametrically estimate $G_{\mid i}$ using the empirical distribution of 
+Finally, we now nonparametrically estimate $G_{\mid i}$ as the empirical distribution of 
 \[
   \bm{Z}_{\mid i} = \frac{\bm{Y}_{-i} - \hat{\bm{\alpha}}_{\mid i}Y_i}{Y_i^{\hat{\bm{\beta}}_{\mid i}}}.
 \]
@@ -915,7 +919,7 @@ The uncertainty in each of these sources can be estimated using bootstrapping, a
 For fixed marginal and dependence thresholds, we can perform bootstrapping by resampling the residuals and the exceedances, and then refitting the marginal and dependence models to the resampled data.
 We can also perform bootstrapping for different dependence thresholds as a means of choosing a threshold which gives the least uncertainty in the estimates of $\bm{\alpha}_{\mid i}$ and $\bm{\beta}_{\mid i}$ \citep{Southworth2024_vignette}.
 
-\subsection{Extensions}
+\subsection{Extensions} \label{subsec:extensions}
 
 There have been several extensions to the original conditional extremes model of \cite{Heffernan2004} and the additions of \cite{Keef2013}, particularly for the modelling of spatial and/or temporal extremes, which we will briefly cover below. 
 

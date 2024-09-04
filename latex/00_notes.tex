@@ -91,7 +91,7 @@ Description of model comes from \cite{Heffernan2004}, with the addition of using
 
 \begin{itemize} 
   \item Continuous vector variable $\bm{X} = (X_1, X_2, \ldots, X_d)$. 
-  \item Want to estimate $\mathbb{P}(\bm{X} \in \bm{C})$, where $\bm{C}$ is an extreme set such that $\forall \bm{X} \in \bm{C}$, at least one component of $\bm{X}$ i extreme. 
+  \item Want to estimate $\mathbb{P}(\bm{X} \in \bm{C})$, where $\bm{C}$ is an extreme set such that $\forall \bm{X} \in \bm{C}$, at least one component of $\bm{X}$ is extreme. 
   \item $C_i$ corresponds to the part of $C$ for which $X_i$ is the largest component of $\bm{X}$, by quantiles of the marginal distribution. 
   \item $C_i = C \cap \left\{ \bm{x} \in \mathbb{R}^d: F_{X_i}(x_i) > F_{X_j}(x_j); j = 1, \ldots, d; j \ne i \right\}$ for $i = 1, \ldots, d$., where $F_{X_i}$ is the marginal distribution function of $X_i$. % \todo{Double check capitalisation on Fs}
   \item Ignore subsets $C \cap \left\{ \bm{X} \in \mathbb{R}^d: F_{X_i}(X_i) = F_{X_j}(x_j) \text{for some} j \ne i \right\}$, as they are null sets. 
@@ -542,7 +542,8 @@ This algorithm for Bayesian spatial clustering of (hydrological) extremes is det
     \]
 \end{itemize}
   where $\bm{\theta}_m^{(J)}$ are the true parameter, H denotes the Fischer information (see paper for full definition).
-  \item Using $L_m(\bm{\theta}_m^{(J)} \mid \bm{D}, \bm{Z})$ would underestimate the variance of $\bm{\theta}_m^{(J)}$ due to spatial dependence.
+  \todo{Fix latex}
+  % \item Using $L_m(\bm{\theta}_m^{(J)} \mid \bm{D}, \bm{Z})$ would underestimate the variance of $\bm{\theta}_m^{(J)}$ due to spatial dependence.
   \item Adjust likelihood around it's mode:
     \[
       L_m^{\text{adj}}(\bm{\theta}_m^{(J)} \mid \bm{D}, \bm{Z}) = L_m(\bm{\theta}_m^{(J)} + \bm{B}(\bm{\theta}_m^{(J)} - \hat{\bm{\theta}}_m^{(J)}) \mid \bm{D}, \bm{Z}),

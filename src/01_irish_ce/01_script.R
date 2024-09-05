@@ -64,7 +64,6 @@ sf::sf_use_s2(FALSE)
 min_max_dates <- as_date(c("1990-01-01", "2020-12-31"))
 all_dates <- seq.Date(min_max_dates[1], min_max_dates[2], by = "day")
 
-
 #### Load data ####
 
 data <- readr::read_csv(
@@ -78,12 +77,16 @@ data <- readr::read_csv(
 areas <- sf::read_sf("data/met_eireann/final/irl_shapefile.geojson")
 
 
-#### Take Winter data only ####
+#### Take Winter data only, remove weeks with no rain ####
 
 data <- data %>% 
   mutate(month = as.numeric(substr(date, 6, 7))) %>% 
   filter(month %in% c(1:3, 10:12)) %>% 
-  select(-month)
+  select(-month) %>% 
+  # remove weeks with no rainfall, as in Vignotto 2021 (required/important?)
+  filter(rain != 0) %>% 
+  identity()
+
 
 #### Convert to weekly ####
 
@@ -113,8 +116,92 @@ data <- data %>%
 
 data <- dist2coast(data, areas)
 
+#### Motivating example plots ####
+
+# locations with highest and lowest rain, to specifically plot
+highest_lowest_rain <- data %>% 
+  group_by(name) %>% 
+  summarise(rain = mean(rain, na.rm = TRUE), .groups = "drop") %>% 
+  arrange(rain) %>% 
+  slice(c(1, n())) %>% 
+  pull(name)
+
+data_plot <- data %>% 
+  # mutate(indicator = ifelse(name %in% highest_lowest_rain, name, NA)) %>% 
+  mutate(indicator = ifelse(name %in% highest_lowest_rain, name, "other")) %>% 
+  arrange(desc(indicator)) %>% 
+  st_to_sf()
+
+# First, plot the location of each site
+p1 <- ggplot(areas) +
+  geom_sf(colour = "black", fill = NA) +
+  # points other than two sites
+  geom_sf(
+    data = filter(data_plot, indicator == "other"),
+    colour = "black",
+    size = 3,
+    alpha = 0.9,
+    show.legend = FALSE
+  ) +
+  # points for two sites with highest and lowest rain
+  geom_sf(
+    data = filter(data_plot, indicator != "other"),
+    aes(colour = indicator, size = indicator),
+    alpha = 0.9
+  ) +
+  scale_colour_manual(values = c(ggsci::pal_nejm()(2))) + 
+  scale_size_manual(values = c(4.5, 4.5)) + 
+  labs(colour = "", size = "") + 
+  theme + 
+  # remove axis text
+  theme(
+    axis.text = element_blank(),
+    axis.ticks = element_blank(),
+    legend.key = element_blank()
+  )
+
+# Second, plot wind speeds against rain for sites with the highest and lowest rainfall
+# TODO: Add 95% quantile lines for both (?)
+p2 <- data_plot %>% 
+  filter(name %in% highest_lowest_rain, rain > 0) %>% 
+  group_by(name) %>% 
+  mutate(across(c(rain, wind_speed), ~ quantile(.x, 0.95, na.rm = TRUE), .names = "quant_{.col}")) %>% 
+  ungroup() %>% 
+  ggplot(aes(x = rain, y = wind_speed)) + 
+  # geom_point(aes(colour = name), size = 1.5, alpha = 0.9) + 
+  geom_point(aes(colour = name), size = 1.5, alpha = 0.9) + 
+  # geom_vline(aes(xintercept = quant_rain)) + 
+  # geom_hline(aes(yintercept = quant_wind_speed)) + 
+  facet_wrap(~ name, scales = "free_x") + 
+  scale_colour_manual(values = c(ggsci::pal_nejm()(2))) + 
+  labs(
+    # x = "Weekly total precipitation (mm)", 
+    x = "precipitation (mm)", 
+    y = "wind speed (m/s)", # TODO: What is the unit of ws?
+    colour = ""
+  ) + 
+  theme + 
+  # remove facet labels, colour will do
+  theme(
+    strip.background = element_blank(),
+    strip.text.x = element_blank(), 
+    legend.key = element_blank()
+  )
+
+# join plots
+# TODO: Change size of first plot to be larger!
+p_sec_2 <- p1 + 
+  (p2 + guides(colour = "none", size = "none")) + 
+  # have common legends
+  plot_layout(guides = "collect") & 
+  theme(legend.position = "bottom")
+  
+ggsave("latex/plots/02_mot_ex_plot.png", p_sec_2, width = 7, height = 6, units = "in")
+
 
 #### Data Exploration ####
+
+# How many sites are in the data? How many rows? 
 
 # Appears to be rain outliers for many sites, investigate dates
 # TODO: Add difference between second largest and largest rain reading, for context
@@ -226,6 +313,70 @@ quantile_thresh <- function(data, response, tau = .95, jitter = TRUE) {
 data_rain <- quantile_thresh(data, "rain")
 data_ws <- quantile_thresh(data, "wind_speed")
 
+# data to plot u across space
+data_thresh <- data_rain %>% 
+  distinct(name, lon, lat, thresh_rain = thresh) %>% 
+  left_join(
+    data_ws %>% 
+    distinct(name, lon, lat, thresh_ws = thresh)
+  ) %>% 
+  pivot_longer(contains("thresh"), names_to = "var") %>% 
+  st_to_sf()
+
+# function for plotting
+plot_thresh <- \(x, areas, scales = NULL) {
+  ggplot(areas) + 
+    geom_sf(colour = "black", fill = NA) +
+    geom_sf(
+      data = x,
+      # aes(fill = n, size = n),
+      aes(fill = value, size = value),
+      # size = 6,
+      stroke = 1,
+      pch = 21
+    ) +
+    # labs(fill = toupper(col)) +
+    scale_x_continuous(expand = c(0, 0)) +
+    scale_y_continuous(expand = c(0, 0)) +
+    # scale_fill_gradientn(
+    #   colours = RColorBrewer::brewer.pal(name = "Blues", n = 7),
+    #   breaks = scales,
+    #   labels = as.character(scales),
+    #   guide = "legend"
+    # ) +
+    viridis::scale_fill_viridis(
+      option = "A",
+      breaks = scales,
+      labels = as.character(scales),
+      guide = "legend"
+    ) + 
+    scale_size_continuous(
+      range = c(3, 8),
+      breaks = scales,
+      labels = as.character(scales),
+      guide = "legend"
+    ) +
+    labs(fill = "", size = "") + 
+    guides(fill = guide_legend(), size = guide_legend()) +
+    theme +
+    theme(
+      legend.position = "right",
+      axis.text = element_blank(),
+      axis.ticks = element_blank(),
+      legend.key = element_blank()
+    )
+}
+
+p_thresh_rain <- plot_thresh(
+  filter(data_thresh, var == "thresh_rain"), areas, seq(50, 150, by = 25)
+)
+p_thresh_ws <- plot_thresh(
+  filter(data_thresh, var == "thresh_ws"), areas, seq(9, 15, by = 2)
+)
+
+p_thresh <- p_thresh_rain + p_thresh_ws
+ggsave("latex/plots/031_thresh_plots.png", p_thresh, width = 6.3, height = 6, units = "in")
+
 # plot exceedances for each (~25-75/931-1462)
 data_thresh_plt <- data %>% 
   distinct(name, lon, lat) %>% 
@@ -271,8 +422,8 @@ ggplot(areas) +
   #   labels = as.character(c(0, 50, 100, 150)),
   #   guide = "legend"
   # ) +
-  labs(fill = "", size = "") +
-  guides(fill = guide_legend(), size = guide_legend()) +
+  # labs(fill = "", size = "") +
+  # guides(fill = guide_legend(), size = guide_legend()) +
   theme +
   theme(legend.position = "right") +
   NULL
@@ -315,8 +466,7 @@ data_rain_map <- data_rain %>%
 
 # plot parameter values over space
 # plot_scale <- \(areas, data_map, scales) {
-# TODO: Add 
-plot_param <- \(areas, data_map, scales, col = "scale") {
+plot_param <- \(data_map, areas, scales, col = "scale") {
   col_sym <- sym(col)
   p <- ggplot(areas) +
     geom_sf(colour = "black", fill = NA) +
@@ -332,6 +482,7 @@ plot_param <- \(areas, data_map, scales, col = "scale") {
     scale_x_continuous(expand = c(0, 0)) +
     scale_y_continuous(expand = c(0, 0)) +
     scale_size_continuous(
+      range = c(2, 7),
       breaks = scales,
       labels = as.character(scales),
       guide = "legend"
@@ -339,7 +490,12 @@ plot_param <- \(areas, data_map, scales, col = "scale") {
     labs(fill = "", size = "") + 
     guides(fill = guide_legend(), size = guide_legend()) +
     theme +
-    theme(legend.position = "right")
+    theme(
+      legend.position = "right",
+      axis.text = element_blank(),
+      axis.ticks = element_blank(),
+      legend.key = element_blank()
+    )
   
   # add colour depending on range of values (same sign vs centred around 0)
   vals <- data_map[[col]]
@@ -355,27 +511,54 @@ plot_param <- \(areas, data_map, scales, col = "scale") {
     )
   } else {
     p <- p + 
-      scale_fill_gradientn(
-        colours = RColorBrewer::brewer.pal(name = "Blues", n = 7),
+      # scale_fill_gradientn(
+      #   colours = RColorBrewer::brewer.pal(name = "Blues", n = 7),
+      #   breaks = scales,
+      #   labels = as.character(scales),
+      #   guide = "legend"
+      # )  
+      viridis::scale_fill_viridis(
         breaks = scales,
         labels = as.character(scales),
-        guide = "legend"
-      )  
+        guide = "legend" 
+      )
+    # p <- p + 
+    #   scale_fill_gradient2(
+    #   low = "white",
+    #   high = "blue3",
+    #   na.value = "grey",
+    #   breaks = scales,
+    #   labels = as.character(scales),
+    #   guide = "legend"
+    # )
   }
   return(p)
 }
 
 # (p_scale_rain <- plot_param(areas, data_rain_map, seq(10, 30, by = 5)) + 
-(p_scale_rain <- plot_param(areas, data_rain_map, seq(10, 40, by = 5)) + 
-    ggtitle("GPD scale parameter for rain"))
+# (p_scale_rain <- plot_param(areas, data_rain_map, seq(10, 40, by = 5)) + 
+lab_scale_rain <- latex2exp::TeX(r"($\sigma_{rain}$)")
+p_scale_rain <- plot_param(data_rain_map, areas, seq(10, 45, by = 5)) + 
+    # ggtitle("GPD scale parameter for rain"))
+    # ggtitle("scale"))
+    labs(fill = lab_scale_rain, size = lab_scale_rain) + 
+    theme(legend.title = element_text(size = 15))
 
 # (p_shape_rain <- plot_param(areas, data_rain_map, seq(-0.05, 0.15, by = 0.04), "shape") + 
 # (p_shape_rain <- plot_param(areas, data_rain_map, seq(-0.1, 0.15, by = 0.04), "shape") + 
-(p_shape_rain <- plot_param(
-  areas, data_rain_map, sort(c(0, c(0, seq(-0.1, 0.02, by = 0.03)))), "shape"
+lab_shape_rain <- latex2exp::TeX(r"($\xi_{rain}$)")
+p_shape_rain <- plot_param(
+  # areas, data_rain_map, sort(c(0, c(0, seq(-0.1, 0.02, by = 0.03)))), "shape"
+  data_rain_map, areas, round(seq(-0.15, 0.15, by = 0.05), 2), "shape"
 ) + 
-    ggtitle("GPD shape parameter for rain"))
+    labs(fill = lab_shape_rain, size = lab_shape_rain) + 
+    theme(legend.title = element_text(size = 15))
 
+(p_mod_rain <- p_scale_rain + p_shape_rain)
+
+ggsave(
+  "latex/plots/032_gpd_rain.png", p_mod_rain, width = 6.3, height = 6, units = "in"
+)
 ggsave(
   "plots/scale_rain_ire_weekly_winter.png", p_scale_rain, width = 6.3, height = 6, units = "in"
 )
@@ -405,12 +588,34 @@ data_ws_map <- data_ws %>%
 #     )) + 
 #     theme(plot.title = element_text(hjust = 0.5)))
 
-(p_scale_ws <- plot_param(areas, data_ws_map, seq(0.6, 2, by = 0.2)) + 
-    ggtitle("GPD scale parameter for wind speed"))
+lab_scale_ws <- latex2exp::TeX(r"($\sigma_{wind}$)")
+p_scale_ws <- plot_param(data_ws_map, areas, seq(0.5, 1, by = 0.1)) + 
+    # ggtitle("GPD scale parameter for wind speed")
+    labs(fill = lab_scale_ws, size = lab_scale_ws) + 
+    theme(legend.title = element_text(size = 15))
+ 
 
 # (p_shape_ws <- plot_param(areas, data_ws_map, seq(-0.35, -0.1, by = 0.05), "shape") + 
-(p_shape_ws <- plot_param(areas, data_ws_map, seq(-0.35, -0.1, by = 0.03), "shape") + 
-    ggtitle("GPD shape parameter for wind speed"))
+# give same colour scheme as rain
+lab_shape_ws <- latex2exp::TeX(r"($\xi_{wind}$)")
+p_shape_ws <- plot_param(data_ws_map, areas, seq(-0.3, -0.1, by = 0.05), "shape") + 
+    # ggtitle("GPD shape parameter for wind speed") + 
+    labs(fill = lab_shape_ws, size = lab_shape_ws) + 
+    theme(legend.title = element_text(size = 15)) + 
+    scale_fill_gradient2(
+      low = "red3",
+      high = "blue3",
+      na.value = "grey",
+      breaks = seq(-0.3, -0.1, by = 0.05),
+      labels = as.character(seq(-0.3, -0.1, by = 0.05)),
+      guide = "legend"
+    )
+
+p_mod_ws <- p_scale_ws + p_shape_ws
+
+ggsave(
+  "latex/plots/033_gpd_ws.png", p_mod_ws, width = 6.3, height = 6, units = "in"
+)
 
 ggsave(
   "plots/scale_ws_ire_weekly_winter.png", p_scale_ws, width = 6.3, height = 6, units = "in"
@@ -419,10 +624,29 @@ ggsave(
   "plots/shape_ws_ire_weekly_winter.png", p_shape_ws, width = 6.3, height = 6, units = "in"
 )
 
+#### Finite end points for wind speed ####
+
+scales <- seq(10, 25, by = 3)
+p_endpoint <- data_ws_map %>% 
+  mutate(end_point = thresh - (scale / shape)) %>% 
+  plot_param(areas, scales, "end_point") +
+  scale_size_continuous(
+    range = c(1.5, 10),
+    breaks = scales,
+    labels = as.character(scales),
+    guide = "legend"
+  ) + 
+  labs(fill = "Windspeed endpoint (m/s)", size = "Windspeed endpoint (m/s)")
+
+ggsave(
+  "latex/plots/034_ws_endpoint.png", p_endpoint, width = 6.3, height = 6, units = "in"
+)
+
 
 #### Diagnostic plots (QQ, Probability) ####
 
 pp_qq_plot <- \(evgam_fit, data_map) {
+  
   # calculate exponential margins
   y_tilde <- (1 / evgam_fit$predictions$shape) *
     log(1 + evgam_fit$predictions$shape * (
@@ -633,6 +857,7 @@ names(marginal) <- paste0(data_gpd$name, " - ", data_gpd$county)
 # ))
 
 # TODO: Repeat for fixed b, easily done through functionalising below!
+# TODO: Repeat after removing weeks with no rain observations!
 
 # function to make bootstrap plots of CE parameters for each location and thresh 
 create_bootstrap_plot <- \(
@@ -1127,7 +1352,8 @@ dev.off()
 
 pdf("plots/diag_plots_windspeed_weekly_winter.pdf", onefile = TRUE) 
 for (i in seq(length(plots))) {
-  if (length(plots[[i]][[2]]) == 1 && is.na(plots[[i]][[1]])) next
+  # print(i)
+  if (length(plots[[i]][[2]]) == 1 && is.na(plots[[i]][[2]])) next
   do.call("grid.arrange", plots[[i]][[2]])
 }
 dev.off()

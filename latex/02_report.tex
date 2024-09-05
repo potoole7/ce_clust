@@ -183,7 +183,7 @@ Finally, section \ref{sec:discussion} will summarise the report and suggest futu
 \section{Motivating example} \label{sec:motivating}
 \todo{See Rohrbeck2021 for similar setup}
 
-\begin{itemize}
+% \begin{itemize}
 % \item Introduce Ireland dataset, which will serve as a motivating example to elucidate how both marginal extreme value models and the conditional extremes can be fit to data. 
 % \item Precipitation data from Met Eireann, wind speed data from ERA5 reanalysis, reference accordingly (also map from 
 % \item This dataset is interesting in that it has two variables (wind speed, rain), recorded at each site, and this bivariate setting is unusual in the extremal clustering literature, which often focuses on univariate extremes across space (with one notable exception of \cite{Vignotto2021}). 
@@ -193,7 +193,7 @@ Finally, section \ref{sec:discussion} will summarise the report and suggest futu
   % % \begin{enumerate}
   % % \end{enumerate}
   % \item Will now show how marginal models can be fit to this data.
-\end{itemize}
+% \end{itemize}
 
 % Introduce problem in relation to insurance and storm defense, some references?
 % See Vignotto2021
@@ -631,7 +631,7 @@ In the Bayesian setting, we can sample from the estimated posterior distribution
 % comment on dynamics
 
 % QQ, PP plots for GPD fits (with uncertainty)
-\todo{Add back in labels, too difficult to understand
+\todo{Add back in labels, too difficult to understand}
 \begin{figure}[H]
     \centering
     \includegraphics[width = 0.9\linewidth]{plots/035_pp_qq.png}
@@ -1045,21 +1045,40 @@ This has opened up the conditional extremes model to a wider range of applicatio
 \end{figure}
 
 % Profile likelihood showing uncertainty in alpha
+% \begin{figure}[H]
+%     \centering
+%     \includegraphics[width = 0.9\linewidth]{plots/043_prof_ll.png}
+%     \caption{\emph{Test}}
+%     \label{fig:04_prof_ll}
+% \end{figure}
+% 
+% 
+% % Bootstrap density for alpha, ultimate decision to fix beta
+% \todo{Say for how many locations does alpha CI cross 0 (and also which bootstrapping fails for)}
+% \begin{figure}[H]
+%     \centering
+%     \includegraphics[width = 0.9\linewidth]{plots/044_bootstrap_density.png}
+%     \caption{\emph{Test}}
+%     \label{fig:04_density_alpha}
+% \end{figure}
+
 \begin{figure}[H]
     \centering
-    \includegraphics[width = 0.9\linewidth]{plots/043_prof_ll.png}
-    \caption{\emph{Test}}
-    \label{fig:04_prof_ll}
-\end{figure}
-
-
-% Bootstrap density for alpha, ultimate decision to fix beta
-\todo{Say for how many locations does alpha CI cross 0 (and also which bootstrapping fails for)}
-\begin{figure}[H]
-    \centering
-    \includegraphics[width = 0.9\linewidth]{plots/044_density_alpha.png}
-    \caption{\emph{Test}}
-    \label{fig:04_density_alpha}
+    \begin{minipage}{0.55\textwidth}
+        \centering
+        % \includegraphics[width=\textwidth]{plots/043_prof_ll.png}
+        \includegraphics[width=\textwidth]{plots/Rplot01.png}
+        % \caption{Plot 1}
+        \label{fig:plot1}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.44\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{plots/044_bootstrap_density.png}
+        % \caption{Plot 2}
+        \label{fig:plot2}
+    \end{minipage}
+    \caption{Two plots side by side}
 \end{figure}
 
 % Map of alpha values for rain and wind speed

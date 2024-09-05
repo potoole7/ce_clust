@@ -1354,26 +1354,28 @@ From this literature review of extremal clustering, some interesting avenues for
 Firstly, we would like to apply some general clustering through the use of the k-mediods or k-means algorithm on the parameters of the conditional extremes model. 
 However, some challenges are likely to stand in the way. 
 Particularly, the choice of distance metric poses a difficulty. 
-This prospective distance metric must be sensible and valid in the context of the parameters for the conditional extremes model. 
-\todo{Probably requires more work}
+This prospective distance metric must be sensible and valid in the context of the parameters of the conditional extremes model, for which something as simple as euclidean distance will not be sufficient.
 
 It would also be interesting to try applying the method of \cite{Vignotto2021} to our the conditional extremes model in our motivating example. 
 The methodology behind this approach is rather simple, and the application is quite similar to our own, also looking at bivariate extremal dependence between precipitation and wind speed for Ireland, as well as the United Kingdom.
-In this paper, they 
+In this paper, they compute the KL divergence for some partitioned bivariate space of precipitation and wind speed readings at different locations, projecting into univariate space over which locations can be compared. 
+We could take a similar approach, although it must be noted that we have two parameters for the conditional extremes model for both precipitation and wind speed, so it may be that we focus on just clustering on $\alpha$ at first, fixing $\beta$ as we did in the analysis in this report. 
+We could also simply simply compare the results of this method with that of our own prospective clustering algorithm.
 
 A more long term goal would be to explore the use of the Bayesian hierarchical approach using an RJMCMC algorithm, first used in the extremes in \citet{Bottolo2003} for mixture models, and then used more closely to our interests for dependence modelling in \citet{Rohrbeck2021}, using the $\chi$ statistic.
 There are several considerations to be made when exploring such an approach. 
-As in any Bayesian model, a likelihood will need to derived, and suitable priors for $\alpha$ and $\beta$, or $\tanh^{-1}{\alpha}$ and $\tanh^{-1}(\beta)$ or $logit(\beta)$, as in \citet{Winter2016} and \cite{Richards2023} will need to be specified. \todo{Fix!}
+As in any Bayesian model, a likelihood will need to derived, and suitable priors for $\alpha$ and $\beta$, or $\tanh^{-1}{\alpha}$ and $\tanh^{-1}(\beta)$ or $logit(\beta)$, as in \citet{Winter2016} and \cite{Richards2023} will need to be specified. 
 In the conditional extremes model, the standardised residuals $\bm{Z}$ are assumed to come from a multivariate normal distribution. 
 After implementing and testing our prospective Bayesian clustering approach, we may consider whether the assumption of Z being normally distributed may be relaxed.
 
 Should these approaches produce some promising results for the stationary conditional extremes model, we may also attempt to extend our clustering algorithm(s) to the non-stationary, spatial and spatio-temporal conditional extremes models.
 These extensions may require the improvement of the computational implementation of existing algorithms to prove realistic.
 
-\begin{itemize}
-  \item Code for analysis available at \url{https://github.com/potoole7/TFR}. \todo{Make sure this is public while TFR report is being reviewed!}
-  \item Fork of \texttt{texmex} package available at \url{http://github.com/potoole7/texmex}, adds functionality to fix $\beta$ values and only estimate $\alpha$. \todo{any other functionality added? Also used marginal fits from evgam rather than naive marginal in texmex}
-\end{itemize}
+\section*{Code Availability}
+
+\todo{Make sure this is public while TFR report is being reviewed!}
+The code for this analysis is available at \url{https://github.com/potoole7/TFR}.
+A ``fork'' of the \texttt{texmex} package, available at \url{https://github.com/potoole7/texmex}, was required to add certain functionality, such as fixing $\beta$ values and only estimate $\alpha$, and to use the marginal model from \texttt{evgam} rather than the stationary marginal models used in \texttt{texmex}.
 
 \todo{Number references!}
 \todo{Add links for references, if not already present}

@@ -179,6 +179,7 @@ Section \ref{sec:clustering} will review clustering methods for extremes.
 Finally, section \ref{sec:discussion} will summarise the report and suggest future work.
 \todo{Flow and wording can be improved a lot!}
 
+\newpage
 \section{Motivating example} \label{sec:motivating}
 \todo{See Rohrbeck2021 for similar setup}
 
@@ -197,9 +198,19 @@ Finally, section \ref{sec:discussion} will summarise the report and suggest futu
 % Introduce problem in relation to insurance and storm defense, some references?
 % See Vignotto2021
 
+% Image of locations and precipitation vs wind speed for two sites
+\todo{Perhaps make points in plot larger}
+\todo{Cutout whitespace}
+\begin{figure}[H]
+    \centering
+    % \includegraphics[width=0.7\linewidth]{plots/logscale_plot.png}
+    \includegraphics[width = 0.9\linewidth]{plots/02_mot_ex_plot.png}
+    \caption{\emph{The figure on the left shows the location of 59 Met Éireann weather stations with rainfall data available from 1990 to 2020, inclusive. The points in red and blue show the weather sites at Cloone Lake in county Kerry and Ringsend and Dublin, which have the highest and lowest mean precipiation across this period, respectively. The figure on the right shows the weekly total precipitation in millimetres versus weekly wind speed maxima in metres per second for both of these sites.}}
+    \label{fig:02_locs}
+\end{figure}
+
 % Introduce dataset
 We consider extreme precipitation across ? weather sites in the Republic of Ireland from 1990 to 2020, inclusive.  
-
 
 % Summaries of dataset
 
@@ -208,6 +219,7 @@ Include single exploratory plot to showcase data (left plot could have locations
 
 Will now explain univariate extremes show how marginal models can be fit to this data.
 
+\newpage
 \section{Peaks-over-threshold method for univariate extremes}\label{sec:uni}
 
 One classical approach to modelling univariate extremes, such as extremal precipitation or wind speed, is the peaks-over-threshold method, which uses the Generalised Pareto Distribution (GPD) to model exceedances over a high threshold.
@@ -577,19 +589,61 @@ In the Bayesian setting, we can sample from the estimated posterior distribution
 %   add histogram and return levels? Will need to fix from texmex plots) \todo{Add uncertainty to plots! From ITT2}
 % \end{itemize}
 
+\todo{Follow Youngman2019 for narrative and comments to be made}
+
+% Threshold plot
+\todo{Cutout whitespace in plot!}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width = 0.9\linewidth]{plots/031_thresh_plots.png}
+    \caption{\emph{Figures, from left to right, show the Generalised Pareto Distribution thresholds for rain and wind speed, respectively, for each Met Éireann weather station.}}
+    \label{fig:03_uni_thresh}
+\end{figure}
+
 % Method with evgam and quantile regression for threshold selection, to allow
 % threshold to vary for different areas. 
 
-% maps of sigma and xi for rain and wind, comment on dynamics
+% Parameters for rain
+\begin{figure}[H]
+    \centering
+    \includegraphics[width = 0.9\linewidth]{plots/032_gpd_rain.png}
+    \caption{\emph{Figures, from left to right, showing the scale ($\sigma_rain)$ and shpa e($\xi_rain$) parameters of the Generalised Pareto distribution for weekly sums of precipitation at each Met Éireann weather station.}}
+    \label{fig:03_gpd_rain}
+\end{figure}
 
-% Uncertainty in xi estimates
+% Parameters for wind speed
+\todo{Fix latex, not showing correctly!}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width = 0.9\linewidth]{plots/033_gpd_ws.png}
+    \caption{\emph{Figures, from left to right, showing the scale ($\sigma_wind)$ and shape ($\xi_wind$) parameters of the Generalised Pareto distribution for weekly wind speed maxima at each Met Éireann weather station.}}
+    \label{fig:03_gpd_ws}
+\end{figure}
 
-% QQ plots for GPD fits 
-\todo{Fix texmex so it estimates return levels correctly? Look at where modPoints and sim come from in data, where is ppevm called? Seems to be something to with data\$y in evm!}
+% Also map of finite end points for wind speed, since it's difficult to interpret
+\begin{figure}[H]
+    \centering
+    \includegraphics[width = 0.9\linewidth]{plots/034_ws_endpoint.png}
+    \caption{\emph{Upper endpoints for Generalised Pareto Distribution fit for weekly wind speed maxima at each Met Éireann weather station.}}
+    \label{fig:03_ws_endpoint}
+\end{figure}
+
+% comment on dynamics
+
+% QQ, PP plots for GPD fits (with uncertainty)
+\todo{Add back in labels, too difficult to understand
+\begin{figure}[H]
+    \centering
+    \includegraphics[width = 0.9\linewidth]{plots/035_pp_qq.png}
+    % \caption{\emph{Test}}
+    \caption{\emph{Figures in the first row shows the probability and quantile plots associated with the Generalised Pareto Distribution (GPD) fit to weekly total precipitation, while the second row shows the same plots for the GPD fit to weekly wind speed maxima.}}
+    \label{fig:03_pp_qq}
+\end{figure}
 
 % Lead into dependence modelling
 
-\section{Conditional extremes model}\label{sec:ce}
+\newpage
+\section{Conditional extremes}\label{sec:ce}
 
 % Below narrative is a bit jumbled, can order better by looking at \cite{Heffernan2004}, \cite{Keef2013} and applied conditional extremes papers again. 
 % \todo{Anything else to add?}
@@ -974,7 +1028,74 @@ This has opened up the conditional extremes model to a wider range of applicatio
    \end{enumerate}
 \end{itemize}
 
+% Plot of chi and chi bar
+\begin{figure}[H]
+    \centering
+    \includegraphics[width = 0.9\linewidth]{plots/041_chi_plots.png}
+    \caption{\emph{Test}}
+    \label{fig:04_chi}
+\end{figure}
 
+% Plot bootstrapping results for one location
+\begin{figure}[H]
+    \centering
+    \includegraphics[width = 0.9\linewidth]{plots/042_bootstrap_thresh.png}
+    \caption{\emph{Test}}
+    \label{fig:04_bootstrap_thresh}
+\end{figure}
+
+% Profile likelihood showing uncertainty in alpha
+\begin{figure}[H]
+    \centering
+    \includegraphics[width = 0.9\linewidth]{plots/043_prof_ll.png}
+    \caption{\emph{Test}}
+    \label{fig:04_prof_ll}
+\end{figure}
+
+
+% Bootstrap density for alpha, ultimate decision to fix beta
+\todo{Say for how many locations does alpha CI cross 0 (and also which bootstrapping fails for)}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width = 0.9\linewidth]{plots/044_density_alpha.png}
+    \caption{\emph{Test}}
+    \label{fig:04_density_alpha}
+\end{figure}
+
+% Map of alpha values for rain and wind speed
+\begin{figure}[H]
+    \centering
+    \includegraphics[width = 0.9\linewidth]{plots/045_alpha_map.png}
+    \caption{\emph{Test}}
+    \label{fig:04_alpha_map}
+\end{figure}
+
+% alpha values for rain vs wind speed
+\begin{figure}[H]
+    \centering
+    \includegraphics[width = 0.9\linewidth]{plots/046_alpha_rain_vs_ws.png}
+    \caption{\emph{Test}}
+    \label{fig:04_alpha_rain_vs_ws}
+\end{figure}
+
+% alpha values vs lon and lat
+\begin{figure}[H]
+    \centering
+    \includegraphics[width = 0.9\linewidth]{plots/047_alpha_vs_lon_lat.png}
+    \caption{\emph{Test}}
+    \label{fig:04_alpha_vs_lon_lat}
+\end{figure}
+
+% Individual diagnostic plots for some location
+\begin{figure}[H]
+    \centering
+    \includegraphics[width = 0.9\linewidth]{plots/048_diag.png}
+    \caption{\emph{Test}}
+    \label{fig:04_diag}
+\end{figure}
+
+
+\newpage
 \section{Clustering for extremes}\label{sec:clustering}
 
 Mainly lit review on clustering. 
@@ -1135,24 +1256,25 @@ Summary:
   \item Simulation study performed, and applications to financial risk, extreme temperature and flood risk data shown to be effective (and better than when using groupings based on domain knowledge). 
 \end{itemize}
 
+\newpage
 \section{Discussion} \label{sec:discussion}
 
 Summary of report:
 \begin{enumerate}
   \item Introduced extremes, why they are important, why dependence modelling is important,
   \item Introduced motivating example of extreme wind speed and rain in Ireland,
-  \item Showed how univariate extremes can be modelled using GPD, and how parameter estimates can include covariates, and how GPD can be applied to Ireland dataset. 
-  \item Introduced dependence modelling and the conditional extremes model, why its an improvement over previous models, some applications, where it has some limitations in its non-spatial limitation may be susceptible to uncertainty in $\xi$ estimates and some previous applications of the model.
-  \item Reviewed clustering methods for extremes, examples of both types of clustering, highlighted some papers where there is potential to use these methods on the conditional extremes model.
+  \item Showed how univariate extremes can be modelled using GPD, parameter estimates can include covariates, and how GPD can be applied to Ireland dataset. 
+  \item Introduced dependence modelling and the conditional extremes model with some previous applications, why its an improvement over previous models (brief), some extensions, an application which shows where it has some limitations, being susceptible to uncertainty in $\xi$ estimates which propogate into $\alpha$ and $\beta$ (some limitations to this approach, fixed $\beta$, calculated CE model for each location separately (although GPD modelled spatially))
+  \item Reviewed clustering methods for extremes, examples of both types of clustering (explanatory and hierarchical), highlighted some papers where there is potential to use these methods on the conditional extremes model.
 \end{enumerate}
 
 Future work:
 \begin{itemize}
   \item Try general clustering (k-means, k-medoids) on conditional extremes models
-  \item Another more sophisticated but also quite simple area of future work would be to try to implement \cite{Vignotto2021} paper method on Ireland dataset for conditional extremes model, as contexts of wind speed and precipitation at different locations is quite similar to the context of the paper.
-  \item This model has obvious limitations in that it may not be extended past bivariate case \todo{See discussion in paper to see what they had to say about this}.
-  \item Potential to try Bayesian clustering approach similar to \cite{Rohrbeck2021}, will involve deriving likelihood for CE model and priors for parameter values. 
-  \item Later, can extend clustering to spatial and spatio-temporal CE from \cite{Tawn2018}.
+  \item Another more sophisticated but also quite simple area of future work would be to try to implement \citet{Vignotto2021} paper method on Ireland dataset for conditional extremes model, as context of bivariate wind speed and precipitation dependencies at different locations is quite similar to the context of the paper.
+  \item This model has some limitations in that it may not be extended past bivariate case, doesn't use spatial information, must manually refit CE model with clustering, questionable basis on which to perform clustering for improved parameter estimation  \todo{See discussion in Vignotto paper to see what they had to say about this}.
+  \item Potential to try Bayesian clustering approach similar to \citet{Rohrbeck2021}, will involve deriving likelihood for CE model and priors for parameter values. 
+  \item Later, can extend clustering to spatial and spatio-temporal CE from \citep{Tawn2018, Simpson2021}.
 \end{itemize}
 
 \section{Code availability}

@@ -109,6 +109,7 @@
 \todo{Put references before full stops, not after}
 \todo{Make TFR public on Github before submitting!}
 \todo{Fix citations and equations references as per feedback}
+\todo{Check for typos!}
 
 \newpage
 
@@ -188,7 +189,7 @@ Finally, section \ref{sec:discussion} will summarise the report and suggest futu
 % \item Precipitation data from Met Eireann, wind speed data from ERA5 reanalysis, reference accordingly (also map from 
 % \item This dataset is interesting in that it has two variables (wind speed, rain), recorded at each site, and this bivariate setting is unusual in the extremal clustering literature, which often focuses on univariate extremes across space (with one notable exception of \cite{Vignotto2021}). 
 % \item Introduction to dataset (rows, locations, years, etc), weekly Winter precipitation sum and daily wind speed maxima for Ireland from 1990 to 2020 inclusive, following \cite{Vignotto2021}. 
-  % Include single exploratory plot to showcase data (left plot could have locations of weather sites, right could have rainfall plotted against wind speed for a given site).
+  % Include single exploratory plot to showcase data (left plot could have locations of weather sites, right could have precipitation plotted against wind speed for a given site).
   % \todo{Fill in with points to make about data (see past reports)}
   % % \begin{enumerate}
   % % \end{enumerate}
@@ -205,7 +206,7 @@ Finally, section \ref{sec:discussion} will summarise the report and suggest futu
     \centering
     % \includegraphics[width=0.7\linewidth]{plots/logscale_plot.png}
     \includegraphics[width = 0.9\linewidth]{plots/02_mot_ex_plot.png}
-    \caption{\emph{The figure on the left shows the location of 59 Met Éireann weather stations with rainfall data available from 1990 to 2020, inclusive. The points in red and blue show the weather sites at Cloone Lake in county Kerry and Ringsend and Dublin, which have the highest and lowest mean precipiation across this period, respectively. The figure on the right shows the weekly total precipitation in millimetres versus weekly wind speed maxima in metres per second for both of these sites.}}
+    \caption{\emph{The figure on the left shows the location of 59 Met Éireann weather stations with precipitation data available from 1990 to 2020, inclusive. The points in red and blue show the weather sites at Cloone Lake in county Kerry and Ringsend and Dublin, which have the highest and lowest mean precipiation across this period, respectively. The figure on the right shows the weekly total precipitation in millimetres versus weekly wind speed maxima in metres per second for both of these sites.}}
     \label{fig:02_locs}
 \end{figure}
 
@@ -214,15 +215,15 @@ We consider extreme precipitation across ? weather sites in the Republic of Irel
 
 % Summaries of dataset
 
-% Plot of locations on map, with wind speeds and rainfall for some
-Include single exploratory plot to showcase data (left plot could have locations of weather sites, right could have rainfall plotted against wind speed for a given site).
+% Plot of locations on map, with wind speeds and precipitation for some
+Include single exploratory plot to showcase data (left plot could have locations of weather sites, right could have precipitation plotted against wind speed for a given site).
 
 Will now explain univariate extremes show how marginal models can be fit to this data.
 
 \newpage
 \section{Peaks-over-threshold method for univariate extremes}\label{sec:uni}
 
-One classical approach to modelling univariate extremes, such as extremal precipitation or wind speed, is the peaks-over-threshold method, which uses the Generalised Pareto Distribution (GPD) to model exceedances over a high threshold.
+One classical approach to modelling univariate extremes, such as extremal precipitation or wind speed, is the peaks-over-threshold (POT) method, which uses the Generalised Pareto Distribution (GPD) to model exceedances over a high threshold.
 In section \ref{subsec:uni_theory}, we first derive the GPD and describe in detail the modelling procedure for univariate extremes.
 We expand on this methodology to more complex, non-stationary models in section \ref{subsubsec:non_stationary}, to formulate the method by which we will use in section \ref{subsec:uni_application} to model the univariate, marginal extremes of precipitation and wind speed in Ireland.
 
@@ -660,9 +661,9 @@ In the Bayesian setting, we can sample from the estimated posterior distribution
 
 % While section \ref{sec:uni} introduced how the GPD can be fit to extreme data in a univariate or marginal context, we are often interested in modelling the dependence between extremes of different variables or at different locations.
 As opposed to the univariate case, where we are interested in modelling the distribution of a single variable, we are often interested in modelling the dependence between extremes of different variables or at different locations.
-For example, we may be interested in modelling the joint probability of extreme rainfall and wind speed at a given location, which may together produce especially damaging storm events.
+For example, we may be interested in modelling the joint probability of extreme precipitation and wind speed at a given location, which may together produce especially damaging storm events.
 In the context of the insurance and risk industries, these events are of particular interest, as they can lead to large payouts and significant losses.
-Similarly, we may also be interested in the joint probability of extreme rainfall at different locations, which may lead to widespread flooding for which flood defences need to be coordinated and prepared.
+Similarly, we may also be interested in the joint probability of extreme precipitation at different locations, which may lead to widespread flooding for which flood defences need to be coordinated and prepared.
 Furthermore, in \cite{Zhang2024}, return level calculations have been shown to be improved by incorporating extremal dependence.
 % We will focus on the former example in our motivating example.
 
@@ -838,9 +839,17 @@ An important consequence of this formulation is the weak assumption that
 so that in the limit as $u_i \to \infty$, the extremal exceedances $Y_i - u_i$ and $\bm{Z}_{\mid i}$ are independent.
 Methods for assessing the validity of this assumption and hence the conditional extremes model for a given application are explored in section \ref{subsubsec:ce_diagnostics}.
 
-\subsubsection{Normalisation} \label{subsubsec:ce_normalisation}
 
-\todo{Shooter 2020 has good interpretation of normalising functions}
+\subsubsection{Dependence model} \label{subsubsec:dep_model}
+
+\todo{Perhaps (here or below) mention how G estimated nonparametrically, for Z hat on page 508?}
+\todo{Also, is there a need to explicitely define the model for Z j mid i (page 504)?}
+\todo{Need to say somewhere how in practice, Z is first sampled from a normal distribution and thereafter empirically estimated, see inference section in Keef}
+
+% \subsubsection{Normalisation} \label{subsubsec:ce_normalisation}
+
+
+% \todo{Shooter 2020 has good interpretation of normalising functions}
 
 % Under Gumbel margins, the normalising functions are given by:
 % \begin{align} \label{eq:gumbel_normalisation}
@@ -853,7 +862,7 @@ Methods for assessing the validity of this assumption and hence the conditional 
 % Hence, they have quite a simple form for the class of positively associated variables, as the Gumbel margins have exponential upper tails for which the indicator function will equal zero, but a more complex and difficult to interpret formulation for negatively associated variables, as no such thing can be said about their lower tails. 
 
 Under the Laplace marginal transformation in \citet{Keef2013}, we have doubly exponential tailed margins, and thus have the same form of normalising functions for both positive and negative dependence.
-% , and thus there is no need for the indicator function, so \ref{eq:gumbel_normalisation} simplifies to
+
 Specifically, the normalising functions are given by
 \begin{align} \label{eq:laplace_normalisation}
   \begin{split}
@@ -863,14 +872,7 @@ Specifically, the normalising functions are given by
 \end{align}
 % where $\bm{\alpha}_{\mid i} \in [-1, 1], \bm{\beta}_{\mid i} \in \(-\infty, 1)$. 
 where $(\bm{\alpha}_{\mid i}, \bm{\beta}_{\mid i}) \in [-1, 1]^{d-1} \times (-\infty, 1)^{d-1}$. % \citep{Keef2013}. \todo{Go back over citations throughout!}
-The interpretation of $\bm{\alpha}_{\mid i}$ and $\bm{\beta}_{\mid i}$ is discussed in greater detail in the next section in relation to the regression model for the dependence structure.
-
-\subsubsection{Dependence model} \label{subsubsec:dep_model}
-
-\todo{Perhaps (here or below) mention how G estimated nonparametrically, for Z hat on page 508?}
-\todo{Also, is there a need to explicitely define the model for Z j mid i (page 504)?}
-\todo{Need to say somewhere how in practice, Z is first sampled from a normal distribution and thereafter empirically estimated, see inference section in Keef}
-
+% The interpretation of $\bm{\alpha}_{\mid i}$ and $\bm{\beta}_{\mid i}$ is discussed in greater detail in the next section in relation to the regression model for the dependence structure.
 Rearranging equation \ref{eq:standardised_residuals} for our standardised residuals, and imputing the values for the vector normalising functions $\bm{a}_{\mid i}$ and $\bm{b}_{\mid i}$ from equation \ref{eq:laplace_normalisation}, we can now define the dependence model used in the conditional extremes model, which takes the form of the multivariate semi-parametric regression equation
 \begin{align} \label{eq:ce_model}
   \begin{split}
@@ -1278,25 +1280,95 @@ Summary:
 \newpage
 \section{Discussion} \label{sec:discussion}
 
-Summary of report:
-\begin{enumerate}
-  \item Introduced extremes, why they are important, why dependence modelling is important,
-  \item Introduced motivating example of extreme wind speed and rain in Ireland,
-  \item Showed how univariate extremes can be modelled using GPD, parameter estimates can include covariates, and how GPD can be applied to Ireland dataset. 
-  \item Introduced dependence modelling and the conditional extremes model with some previous applications, why its an improvement over previous models (brief), some extensions, an application which shows where it has some limitations, being susceptible to uncertainty in $\xi$ estimates which propogate into $\alpha$ and $\beta$ (some limitations to this approach, fixed $\beta$, calculated CE model for each location separately (although GPD modelled spatially))
-  \item Reviewed clustering methods for extremes, examples of both types of clustering (explanatory and hierarchical), highlighted some papers where there is potential to use these methods on the conditional extremes model.
-\end{enumerate}
+In this section, we summarise and conclude the work in this report. 
+We also explore several promising avenues for future work within the scope of clustering methods for the conditional extremes model, both in the short and long-term, which we hope to pursue over the next three years of PhD research. 
 
-Future work:
-\begin{itemize}
-  \item Try general clustering (k-means, k-medoids) on conditional extremes models
-  \item Another more sophisticated but also quite simple area of future work would be to try to implement \citet{Vignotto2021} paper method on Ireland dataset for conditional extremes model, as context of bivariate wind speed and precipitation dependencies at different locations is quite similar to the context of the paper.
-  \item This model has some limitations in that it may not be extended past bivariate case, doesn't use spatial information, must manually refit CE model with clustering, questionable basis on which to perform clustering for improved parameter estimation  \todo{See discussion in Vignotto paper to see what they had to say about this}.
-  \item Potential to try Bayesian clustering approach similar to \citet{Rohrbeck2021}, will involve deriving likelihood for CE model and priors for parameter values. 
-  \item Later, can extend clustering to spatial and spatio-temporal CE from \citep{Tawn2018, Simpson2021}.
-\end{itemize}
+\section{Summary and conclusions}
 
-\section{Code availability}
+% Introduction
+In this report, we began in section \ref{sec:intro} with an introduction to the field of EVT and why it is useful.
+% We described how EVT is used for modelling both univariate extreme data, and in particular how it can be extended to model the dependence structure of a multivariate dataset, with some examples from the literature. 
+We described how EVT is used in modelling univariate extreme data, and also in particular how it important in a multivariate extremes setting to model the dependence structure in our data, for which we have used the conditional extremes model.
+We have provided numerous examples from the literature of the use of EVT in both univariate and multivariate contexts. 
+
+% Motivating example
+In section \ref{sec:motivating}, we introduced our motivating example of extreme precipitation and wind speed data from 52 weather stations in Ireland. 
+This example serves to illustrate the univariate and dependence models described in this report, and also to shed some light on the possible shortcomings in these methods as they currently stand.
+
+% Univariate
+We described the POT method for defining extreme data in a univariate setting in \ref{sec:uni}, and how we can use the GPD to model this data. 
+Foundational modelling techniques used under this framework were described, including methods for both graphical and automatic threshold selection and model diagnostic tools. 
+We showed how the model can be extended to handle non-stationary data, particularly through the use of GAMs, which allow for the inclusion of non-linear spatial effects to reflect the  geographical heterogeneity in extremal patterns in our GPD parameter estimates. 
+These methods were put into practice for our motivating example by successfully fitting GPDs to both precipitation and wind speed, producing sensible results for both. 
+To summarise the results of this modelling, more extreme precipitation is to be anticipated further West in the country, while more severe wind speeds are to be expected along coastal regions than inland, particularly for the East coast surrounding Dublin. 
+\todo{Was this in line with any other modelling, such as Vignotto2021?}
+\todo{Maybe some physical reason why we get more extreme further West? W/ reference (see Vignotto)}
+
+% Conditional Extremes
+\todo{Reference some max-stable process paper in 4.1!}
+\todo{have section before all references to sections}
+In section \ref{sec:ce}, we gave a general introduction to dependence modelling for extremes, its usefulness, and some of the types of models used in the literature for this purpose. 
+The dependence model which is more flexible than many alternatives that we particularly focus on is the conditional extremes model, which combines a semiparametric model for multiple univariate extremes with a semiparametric regression model for their corresponding dependence structure.
+This model and methods for its estimation and use were described in detail. 
+Several extensions to adapt the model to work with covariates and in possibly high-dimensional spatial and spatio-temporal settings were also mentioned. 
+Finally, the conditional extremes model was applied to our motivating example, with some mixed results. 
+Exploratory analysis through the $\chi$ and $\bar{\chi}$ statistics implied that there may be some extremal dependence between precipitation and wind speed in Ireland, becoming more pronounced further West.
+Bootstrapping and profile likelihoods revealed that the parameter estimates for the conditional extremes model were susceptible to high uncertainty at many locations, which made interpretation difficult. 
+A makeshift solution to this problem was to fix the $\beta$ parameter to a single value, $0.1$, and have the model only estimate the $\alpha$ parameter, which as the slope parameter of the regression line corresponds to the strength of dependence between precipitation and extreme wind speeds, and vice versa.
+This adaption did reveal some patterns in the data.
+In particular, our results agreed with the exploratory analysis in that extremal dependence between precipitation and wind speed did appear to increase further West in Ireland. 
+Also, at stations where high extremal dependence for precipitation on wind speed was observed, often the wind speed also had high extremal association with precipitation. 
+However, this solution was quite makeshift, and does not make up for some of the outstanding issues with parameter uncertainty which the model experiences in this application. 
+As we did not use a non-stationary conditional extremes model here, one possible extension to this analysis would be to incorporate spatial covariates for our regression parameters. 
+Another approach, which we focused on in greater detail, is the use of clustering.
+
+% Clustering
+We performed a literature review, looking at the numerous existing applications of clustering for extremes.
+In particular, extremal clustering falls into two categories.
+The first kind typically derives some dissimilarity matrix via some distance metric, such as euclidean distance or KL divergence, over either the parameters of an extreme value distribution or some derived summary, and uses either the k-means or k-mediods algorithms to perform clustering. 
+This type of clustering is more typically used as part of an exploratory analysis. 
+The second type of clustering focuses on deriving hierarchical models with latent group structures which improve parameter estimation when using either the GPD or GEV, possibly in combination with some measure of dependence.
+In frequentist settings, these models often use some form of EM algorithm, while in a Bayesian setting the use of a RJMCMC algorithm is one possible approach.
+Both approaches have their respective merits, with the need for specifying priors for Bayesian analysis seen as both a strength and a possible weakness.
+
+% Notes:
+% Bayesian CE: how do we write the likelihood?
+% What priors will need to be used? Priors on tanh^-1(alpha), log(beta) (?)
+% Gaussian assumption for residuals, see how well this holds up
+% Mixture of Gaussians may work well, but would assume a linear trend (???) 
+% ALso want to work on computation
+
+\subsection{Future work}
+
+% Future work:
+% \begin{itemize}
+  % \item Try general clustering (k-means, k-medoids) on conditional extremes models
+  % \item Another more sophisticated but also quite simple area of future work would be to try to implement \citet{Vignotto2021} paper method on Ireland dataset for conditional extremes model, as context of bivariate wind speed and precipitation dependencies at different locations is quite similar to the context of the paper.
+  % \item This model has some limitations in that it may not be extended past bivariate case, doesn't use spatial information, must manually refit CE model with clustering, questionable basis on which to perform clustering for improved parameter estimation  \todo{See discussion in Vignotto paper to see what they had to say about this}.
+  % \item Potential to try Bayesian clustering approach similar to \citet{Rohrbeck2021}, will involve deriving likelihood for CE model and priors for parameter values. 
+  % \item Later, can extend clustering to spatial and spatio-temporal CE from \citep{Tawn2018, Simpson2021}.
+% \end{itemize}
+
+From this literature review of extremal clustering, some interesting avenues for future research in clustering for the conditional extremes model arise. 
+
+Firstly, we would like to apply some general clustering through the use of the k-mediods or k-means algorithm on the parameters of the conditional extremes model. 
+However, some challenges are likely to stand in the way. 
+Particularly, the choice of distance metric poses a difficulty. 
+This prospective distance metric must be sensible and valid in the context of the parameters for the conditional extremes model. 
+\todo{Probably requires more work}
+
+It would also be interesting to try applying the method of \cite{Vignotto2021} to our the conditional extremes model in our motivating example. 
+The methodology behind this approach is rather simple, and the application is quite similar to our own, also looking at bivariate extremal dependence between precipitation and wind speed for Ireland, as well as the United Kingdom.
+In this paper, they 
+
+A more long term goal would be to explore the use of the Bayesian hierarchical approach using an RJMCMC algorithm, first used in the extremes in \citet{Bottolo2003} for mixture models, and then used more closely to our interests for dependence modelling in \citet{Rohrbeck2021}, using the $\chi$ statistic.
+There are several considerations to be made when exploring such an approach. 
+As in any Bayesian model, a likelihood will need to derived, and suitable priors for $\alpha$ and $\beta$, or $\tanh^{-1}{\alpha}$ and $\tahh^{-1}(\beta)$ or $\logit(\beta)$, as in \citet{Winter2016} and \cite{Richards2023} will need to be specified. \todo{Fix!}
+In the conditional extremes model, the standardised residuals $\bm{Z}$ are assumed to come from a multivariate normal distribution. 
+After implementing and testing our prospective Bayesian clustering approach, we may consider whether the assumption of Z being normally distributed may be relaxed.
+
+Should these approaches produce some promising results for the stationary conditional extremes model, we may also attempt to extend our clustering algorithm(s) to the non-stationary, spatial and spatio-temporal conditional extremes models.
+These extensions may require the improvement of the computational implementation of existing algorithms to prove realistic.
 
 \begin{itemize}
   \item Code for analysis available at \url{https://github.com/potoole7/TFR}. \todo{Make sure this is public while TFR report is being reviewed!}

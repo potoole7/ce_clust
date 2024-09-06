@@ -1015,7 +1015,7 @@ Despite these extensions, the conditional extremes model is still rather computa
 By reformulating the spatial conditional extremes model slightly to fit into the class of latent Gaussian models, the model can be fit using INLA.
 This has opened up the conditional extremes model to a wider range of applications, particularly in the context of high-dimensional spatio-temporal and geostatistical data.
 
-\subsection{Application to motivating example}
+\subsection{Application to motivating example} \label{subsec:ce_example}
 
 (Not necessarily in correct order)
 \begin{itemize}
@@ -1119,83 +1119,78 @@ This has opened up the conditional extremes model to a wider range of applicatio
 \newpage
 \section{Clustering for extremes}\label{sec:clustering}
 
-Mainly lit review on clustering. 
-\begin{itemize}
-  \item Clustering generally done for two reasons: improved explainability and improved parameter estimation. 
-  \item Wealth of literature on clustering for extremes for both of these types. 
-\end{itemize}
+% Mainly lit review on clustering. 
+% \begin{itemize}
+%   \item Clustering generally done for two reasons: improved explainability and improved parameter estimation. 
+%   \item Wealth of literature on clustering for extremes for both of these types. 
+% \end{itemize}
 
-\subsection{Explanatory clustering}
+\todo{Talk about clustering more? Unsupervised lerning}
+Section \ref{subsec:ce_example} has shown how the conditional extremes model is susceptible to uncertainty in its parameter estimates. 
+One possible approach to mitigating this susceptibility is through the use of clustering. 
+Clustering is generally done for two main reasons.
+One purpose is as part of an exploratory analysis, which seek to aid in the interpretation of data. 
+The second purpose is to improve parameter estimation in a multidimensional setting, through applying an implicit grouping structure on the data to optimally group together parameter estimates for similar locations or individuals. 
+These methods try to use clustering to find a balance in the bias-variance tradeoff inherent in such non-stationary modelling. 
+Both purposes have seen widespread usage within extremes, and in this section of the report we perform a literature review on the current landscape of extremal clustering methodologies, which broadly fit within these two categories, so as to consider them in the context of clustering over the conditional extremes model, a currently unexplored problem.
 
-\begin{itemize}
-  \item First kind mainly focuses on deriving distance matrices for some metric (such as marginal GPD parameters, F-madogram, etc) and applying some classical clustering algorithm such as k-mediods. Can talk about different papers which have done this (multiple references to make here).
-  \item In particular \cite{Vignotto2021} paper matches our application here, would be a promising method to try on the conditional extremes model. In particular, is really simple to implement, but perhaps won't help so much with parameter estimation problem. 
-\end{itemize}
+\subsection{Exploratory clustering}
 
-In \cite{Bernard2013}, a clustering algorithm for (weekly precipitation) maxima is proposed which uses (an empirical/nonparametric estimator for) the F-madogram, a type of variogram (estimates spatial correlation of spatial random field) for extremes, and PAM (partitioning around mediods). \\
-Summary:
-\begin{itemize}
-  \item bivariate vector $(M_i, M_j)^T$ assumed to follow a bivariate EVT distribution.
-  \item A variogram of order $p$ is defined as the moment of order $p$ of the difference between maxima $M_i$ and $M_j$, $\mathbb{E}|M_i - M_j|^p$.
-  \item The F-madogram $d_{ij}$ is, amongst other things:
-    \begin{enumerate}
-      \item an interpretable distance, thus forming a distance matrix over which to cluster,
-      \item expressed in terms of the scalar "extremal coefficient" $V_{ij}(1, 1)$, which gives information about the degree of dependence between $M_i$ and $M_j$. 
-      \item forms a copula, and so is completely decoupled from marginal estimates, meaning there is no need to re-estimate a GEV distribution at each site, and it is not required to assume these maxima come from a GEV, but only that they lie in the domain of attraction of max-stable distribution. 
-    \end{enumerate}
-  \item PAM preferred to k-means, for the following reasons:
-    \begin{enumerate}
-      \item K-means averages over all cluster members. 
-      The average of normally distributed obs remain Gaussian, but this is not the case for maxima following an extremal distribution.
-      \item Taking mediods ensures that the cluster centre is an actual observation, which allows the maxima to remain maxima and does not apply any averaging or smoothing. 
-    \end{enumerate}
-  \item Interestingly, PAM not given geographical information, but still produces spatially coherent clusters. 
-  \item Choice of K (number of clusters) and assessment of clustering quality made through analysis of silhouette coefficient, which compares cluster tightness (small distance within cluster) with cluster dissociation/separation (clusters should be adequately distinct).
-\end{itemize}
+Exploratory clustering, for extremes and elsewhere, mostly focuses on deriving some similarity matrix for a given distance metric, and then using performing some generic clustering algorithm such as k-means or k-mediods on this matrix.
 
-\cite{Vignotto2021} k-mediods algorithm of KL divergence between events characterised by risk function (sum/max) for Pareto transformed extreme wind and precipitation observations over Great Britian and Ireland. \\ 
-Summary:
-\begin{itemize}
-  \item \textbf{Data}: Weekly sum of precipitation and average of daily wind speed maxima used, as precipitation and wind speed extremes can be linked through storms with a lag of several days due to persistent weather patterns. 
-  \item \textbf{Mapping from bivariate to univariate space}: \todo{Word better}
-  \begin{itemize}
-    \item Marginal distributions (i.e.\ rain and wind speed at a single site) are transformed to standard Pareto distributions. 
-    \item Risk function computed on Pareto scale $r:\mathbb{R}^2 \rightarrow \mathbb{R}$ used to define which points are extreme, where $r(x, y) = x + y$ or $r(x, y) = \max(x, y)$, mapping from bivariate to univariate space (taking (Pareto transformed) wind and precipitation estimates at each site and giving us a single estimate for each)   \end{itemize}
-  \todo{is the Risk function only used to determine which points are extreme, with the original data bivariate data used to calculate KL divergence???}
-  \textbf{Distance metric}:
-  \begin{itemize}
-    \item coefficient of tail dependence $\chi/\bar{\chi}$ cannot directly measure similarity of extremal behaviour of two bivariate random variables $\bm{X}^{(1)} = (X_1^{(1)}, X_2^{(1)})$ and $\bm{X}^{(2)} = (X_1^{(2)}, X_2^{(2)})$, i.e.\ rain and wind speeds at two different locations.
-    \item Instead, use the Kullback-Leibler divergence, which measures the difference between two probability distributions $P$ and $Q$, and is defined as 
-    \[
-      D_{KL}(P \mid Q) = \int{p(x) \log\left(\frac{p(x)}{q(x)}\right)dx}.
-    \]
-    KL divergence is shown to generalise the concept of $\chi$, since $\ldots$ \todo{Finish}
-  \item Extreme points $\{R^{(j)} > q_u^{(j)}\}$ partitioned into $W = 3$ sets, one for co-occurring extremes and two for where data is extreme for only one variable (easily extended to multivariate case from bivariate).
-  \item Empirical proportions of data points belonging to each set used to estimate KL divergence between any two sites (i.e.\ how similar occurrence of extremes are at two sites), this giving distance/dissimilarity matrix over which to cluster.
-  \end{itemize}
-  \item K-mediods algorithm clusters sites over KL divergences. 
-  \item Silhouette coefficient used to choose number of cluster and assess solution. 
-  \item Makes interesting conclusions about bivariate extremal behaviour of Ireland which will be useful for TFR report, but is different in its use of gridded data, which underestimates extremal precipitation and wind speeds. 
-\end{itemize}
+The k-means algorithm \cite{Macqueen1967} defines a cluster centre by some summary statistic, such as the cluster mean.
+To give a short description of this simple algorithm, we first randomly select a given number of cluster centres.
+Data points are allocated to the cluster whose centre is ``closest'' to that point in terms of some distance metric, the most popular being the squared euclidean distance.
+We then re-compute cluster centres by taking some summary statistic such as the mean for the data points allocated to that cluster.
+The algorithm then iterates between these cluster allocation and cluster centre computation steps until some stopping criteria is met, such as the cluster membership being stable, or some prescribed number of iterations of the algorithm occurring.
 
-\cite{deCarvalho2023} uses k-means to cluster over bivariate cluster centroid of the extremal index and the heteroskedastic function, interpreted as the magnitude and frequency of extreme events, respectively. 
-Summary (from reading course report):
-\begin{itemize}
-  \item Heteroskedastic extremes violate assumption of IID observations, and may exhibit serial dependence or be drawn from different distributions. 
-  \item The \textbf{heteroskedastic function} $c$ gives the frequency of extremes, with $c = 1$ defining "homoskedastic extremes". 
-  Defined as a limit which compares only the distribution tails, not imposing any assumption on centre of distributions. 
-  \item \textbf{Extremal index} $\gamma$ (\textbf{the same as the shape parameter!}) is a scalar which controls the behaviour of a CDF in its right tail (i.e.\ its rate of tail decay), and is often thought of as the inverse of the limiting mean cluster size).
-  \item Nonparametric kernel-based estimator and Hill function provide respective estimates $\hat{c}, \hat{\gamma}$.
-  \item Two quantities are jointly thresholded such that a specific quantile of observations is preserved. 
-  \item The level of bias towards one of these metrics is parameterised in this procedure, so that one can be favoured over the other in an analysis, as deemed necessary. 
-  \item Standard k-means clustering performed on bivariate cluster centroid $(\hat{c}, \hat{\gamma})$.
-\end{itemize}
+The k-mediods algorithm \cite{Kaufman1987}, in contrast to k-means, defines a cluster centre not by some summary statistics such as the cluster mean, but rather as a data point itself.
+This method is particularly useful where it is not suitable to use a non-data point to define a cluster by. 
+For example, the mean of a normally distributed variable is itself normal, but no such guarantee is available for, say, a variable with a GPD \cite{Vignotto2021}.
+In these situations, using a real data point is often preferred.
 
+There are many examples in the literature of the use of the k-means and k-mediods algorithms for clustering extremes.
+Here, we will summarise some examples.
+
+% \begin{itemize}
+%   \item First kind mainly focuses on deriving distance matrices for some metric (such as marginal GPD parameters, F-madogram, etc) and applying some classical clustering algorithm such as k-mediods. Can talk about different papers which have done this (multiple references to make here).
+%   \item In particular \cite{Vignotto2021} paper matches our application here, would be a promising method to try on the conditional extremes model. In particular, is really simple to implement, but perhaps won't help so much with parameter estimation problem. 
+% \end{itemize}
+
+In \citet{Bernard2013}, a clustering algorithm is derived for weekly precipitation maxima for sites across France.
+It uses as its distance metric the F-madogram, an extreme-value type of variogram, which are used to estimate spatial correlation. 
+The F-madogram forms a copula, and so is completely decoupled from marginal estimates, meaning there is no need to re-estimate a GEV distribution at each site, and it is not required to assume these maxima come from a GEV.
+The partitioning-around-mediods (PAM) algorithm, a type of k-mediods algorithm, is used to cluster locations based on the F-madogram. 
+Taking mediods ensures that the cluster centre is an actual observation, which allows the maxima to remain maxima and does not apply any averaging or smoothing. 
+The PAM algorithm is compared to k-means.
+Interestingly, while the algorithm is not given any geographical information, it still produces spatially coherent clusters, in contrast to k-means.
+The choice of K, the number of clusters and assessment of clustering quality was made through analysis of the silhouette coefficient, which compares cluster tightness, seeking a small distance within each cluster with cluster dissociation/separation, whereby clusters should be adequately distinct.
+
+\citet{Vignotto2021} proposes a k-mediods algorithm for clustering locations in Great Britian and Ireland characterised by weekly sums of precipitation and weekly maxima of wind speeds.
+These variables are transformed to Pareto margins at each location, and a risk function, namely the maximum for both trasformed margins, is used to define extreme observations and partition the bivariate space into three disjoint sets, corresponding to extremal observations for precipitation, wind speed and both. 
+The number of points in each of these disjoint sets can be used to compute an empirical estimate for the Kullback-Leibler divergence, a distance used assess the level of similarity between two probability distributions \cite{Kullback1951}, between any two locations.
+In this way, a mapping from bivariate to univariate space is made, and a dissimilarity matrix is derived on which the k-medoids algorithm can be applied to perform clustering. 
+
+In \citet{deCarvalho2023}, a ``heteroskedastic clustering'' algorithm is derived, which uses k-means to cluster over a bivariate cluster centre formed from estimators for the extremal index and heteroskedastic function, respectively. 
+These metrics can be interpreted as the magnitude and frequency of extreme events, respectively.
+They are jointly thresholding to define extreme observations.
+This method is particularly useful for clustering extremal time series, since heteroskedastic extremes violate the assumption of IID observations, and may exhibit serial dependence or be drawn from different distributions. 
+Accounting for this heteroskedasticity provides an improved clustering solution to competing approaches in the context of time series. 
+This method is then applied to stock prices on the London Stock Exchange. 
+
+% \todo{Clustering on polar coordinates!}
+All of the methods discussed cluster locations or individuals. 
+However, clustering extreme observations is also possible. 
+One approach to this problem is through the use of spherical clustering, for which algorithms have been developed in the context of extremes.
+Observations are transformed to polar coordinates, decoupling the magnitude and ``direction'' of events into a radial and angular component, respectively.
+We can threshold the observations based on their ``radius'' or magnitude, and then cluster observations where extreme events appear to have occurred in tandem or ``concomitantly''.
+Again, standard clustering algorithms such as k-means or k-mediods can be used here.
+As the data has been projected onto the unit sphere, the cosine similarity metric is a sensible distance measure to cluster with \citep{Fomichov2022, Janen2020, deCarvalho2024}.
+Another type of clustering which can be performed in this context is spectral clustering, which takes the eigenvector decomposition of your observations, rather than the observations themselves, projecting them onto a lower dimensional space upon which to do clustering on \citep{Ng2001, Vonluxburg2007}.
+Spectral clustering is often preferable to ordinary k-means when data is non-convex or not linearly separable. 
 
 % \subsection{Clustering for improved parameter estimation}
 \subsection{Hierarchical clustering}
-\todo{Better subsection name}
-\todo{introduction}
 
 % \begin{itemize}
 %   \item Second kind uses hierarchical modelling and generally produces latent, ``data-driven'' group structure, methods for estimating likelihood can be split between Frequentist methods which use some flavour of EM algorithm, and Bayesian which uses MCMC, in particular \cite{Bottolo2003} and  \cite{Rohrbeck2021}, which use RJMCMC (other methods (possibly from outside extrems) include use of ``stick-breaking prior'' and latent Dirichlet allocation, reference).
@@ -1215,67 +1210,49 @@ Summary (from reading course report):
 %   \item However, Frequentist method doesn't require specification of priors, which is a controversial subject and can be quite laborious.  
 % \end{itemize}
 
-\cite{Bottolo2003} defines exceedances over a given threshold as generated by a model characterised by a Poisson process $PP(\mu, \sigma, \xi)$, and derives a hierarchical mixture prior for each of these parameters which has (unknown, latent) parameter-specific group structuring (allowing for great flexibility) estimated through a Reversible Jump MCMC (RJMCMC) scheme similar to that of \cite{Rohrbeck2021}. 
-\begin{itemize}
-  \item Data is exceedances over a threshold, which are modelled as a (Poisson) point process with parameters $\mu, \sigma, \xi$.
-  \item incorporating prior knowledge in context of extremes useful due to rarity of extremal data.
-  \item Proposed Bayesian hierarchical model with (parameter-specific) grouping of type-effects, where grouping is latent and ``data-driven'', as in \cite{Dupuis2023}. 
-  \item RJMCMC algorithm used to estimate group structure and group-specific parameters.
-  \item Previous models assumed exchangeability of parameters meaning that types were treated symmetrically and correspondingly parameter estimates were shrunk towards common points. 
-  \item Under mixture priors, parameters are assumed to be i.i.d.\ according to some finite-mixture distribution with number of components $w$, corresponding weights $k$ hyperparameters $\delta$, and latent variable $Z_i$ indicating the mixture component to which the parameter belongs.
-  \item Hyperpriors perform partial-pooling between groups, with $k \sim \mathbb{P}(k^{\eta} = k)$ (can be uniform, fully specified or somewhere in between) for a PP parameter $\eta$ and Dirichlet prior on $w^{\eta} \mid k^{\eta}$ (nice DAG for these in paper). 
-\end{itemize}
+% Exploratory clustering, for extremes and elsewhere, mostly focuses on deriving some similarity matrix for a given distance metric, and then using performing some generic clustering algorithm such as k-means or k-mediods on this matrix.
 
-\todo{Look at where Cooley has been cited elsewhere}
-\begin{itemize}
-  \item Abstract/summary:
-    \begin{itemize}
-      \item \cite{Cooley2007} models \textbf{r-year return levels} (with uncertainty) for extreme precipitation in Colorado.
-      \item Separately hierarchical models for intensity $\mathbb{P}(Z(\bm{x}) > z + u \mid Z(\bm{x}) > u)$ and frequency $P(Z(\bm{x}) > u$) at location $\bm{x}$ under GPD and binomial distributions, respectively, as in chapter 5 of \cite{Coles2001}. 
-      \item Both models incorporate latent spatial process characterised by geographical and climatological covariates using a Gaussian process. 
-      \item MCMC and spatial interpolation used for inference. 
-    \end{itemize}
-    \item temporal dependence reduced by declustering (keeping only highest of consecutive days exceeding threshold). 
-    \item Work in a ``climate space'' (rather than longitude/latitude), where the coordinates of $\bm{x}$ are defined by orographic and climatological measures. 
-    \item Both models are described by the three layer hierarchical model
-      \[
-        p(\bm{\theta} | \bm{Z}(\bm{x})) \propto p_1(\bm{Z}(\bm{x}) | \bm{\theta}_1) p_2(\bm{\theta}_1 | \bm{\theta}_2) p_3(\bm{\theta}_2),
-      \]
-      where the first layer models the data (with a GPD or Binomial), the second layer models the latent process (with a Gaussian process) and the third layer consists of the hyperparameters for the parameters $\theta_2$ that drive the latent process (with $\theta_1$ being the parameters of the GPD/binomial likelihoods). 
-    \item Best model amongst different covariate forms for $\phi = log(\sigma) and \xi$ were compared via DIC (also using long/lat vs climate space), $\xi$ taken to be different for ``mountainous'' and ``planes'' regions, so fit for just \textbf{two separate regions} (with shared information) rather than estimated for each site (important as this is quite like clustering/grouping for parameter estimation improvement, although the clustering is via domain knowledge rather than data-driven). 
-\end{itemize}
+Clustering for improved parameter estimation is often performed through hierarchical clustering.
+In hierarchical clustering for extremes, the parameters of our extremal distribution, such as the GPD, are treated as non-stationary, with data split into groups, over which the same parameter estimates are used. 
+A grouping structure is sought which balances the bias-variance tradeoff associated with estimating parameters over more or less locations or individuals.
 
+An early example of hierarchical clustering for extremes can be found in \cite{Bottolo2003}, which defined exceedances over a high threshold as generated by a model characterised by a Poisson process $PP(\mu, \sigma, \xi)$.
+A Bayesian hierarchical model is proposed with a separate hierarchical mixture prior for each of the parameters of the PP, each having a specific latent group structuring.
+The use of a mixture and parameter-specific prior assumes that parameters are IID according to some finite-mixture distribution, and gives this model great flexibility in its group structure and parameter estimation. 
+The model also allows the incorporation of prior knowledge into these priors, which is useful in the context of extremes due to the innate scarcity of extremal data.
+The model is estimated using a Reversible Jump MCMC (RJMCMC) algorithm, which allows for the estimation of the number of clusters, rather than requiring it to be pre-determined, as in k-eans clustering. 
 
+Another early example is \citet{Cooley2007}, which modelled return levels for extreme precipitation in Colorado.
+Separate hierarchical models were used to estimate for intensity and frequency of extremes for a given location using the GPD and the binomial distribution, respectively.
+Both of these fitted distributions incorporate latent spatial process characterised by geographical and climatological covariates using a Gaussian process. 
+Hyperparameters which drive the latent spatial process are specified.
+Unlike \cite{Bottolo2003}, grouping of locations was not latent, and the Deviance Information Criterion (DIC) was used to compare models with different covariate forms for the shape and scale parameters of the GPD.
+Interestingly, the best model used two separate shape parameters for ``mountainous'' and ``planes'' regions, performing better than models which estimated the shape parameter using covariates and for fewer locations, highlighting the instability inherent in this parameter.
 
+% In a more recent, frequentist example, \citet{Carreau2017} derives a model which uses covariates to estimate the scale parameter for a conditional mixture of GPDs with subregions defined by a constant shape parameter.
+In a more recent, frequentist example, \citet{Carreau2017} derives a model which utilises a conditional mixture of GPDs with subregions defined by a constant shape parameter.
+Building on the findings of \cite{Cooley2007} that the shape parameter is unstable when modelled with covariates, only the scale parameter is estimated as a function of covariates, and clusters are formed over which the shape parameter is held constant. 
+Inference is performed through an adapted expectation-maximisation (EM) algorithm. 
+The E-step estimates the partition of each location, while the M-step estimates the probability of subregion membership used in the mixture GPD, as well as the model parameters.
+The number of subregions to partition the data into was chosen by out-of-sample cross-validation using three different loss functions, including the Anderson-Darling statistic, which is used to compare probability distributions and is particularly sensitive to tail deviation.
 
+In \cite{Dupuis2023}, an EM algorithm is derived for identifying group structure and group-specific model parameters for GEV distributed panel data.
+Each parameter of the GEV is modelled as a function of covariates. 
+The EM algorithm in question is really made up of two E-steps, which iteratively estimate the group structure and assignment and the individual rregression equations, respectively
+The grouping is latent and ``data-driven'', rather than based on domain knowledge. 
+Stronger dependence in the data is found to help group identification because it reduces the variance among individuals in the same group, but it gives worse quantile estimates. 
+A simulation study using this model was performed, and applications to financial risk, extreme temperature and flood risk data were shown to be effective, and superior to methods using groupings based on domain knowledge.
 
-\cite{Carreau2017} derives a model which uses covariates to estimate $\sigma(\bm{x})$ and conditional mixture of GPDs with subregions defined by constant shape parameters $\xi_j$, estimated through EM algorithm and partitioned into subregions, the number of which was determined via out-of-sample cross validation. \\
-Summary:
-\begin{itemize}
-  \item As $T \uparrow$, $\xi$ becomes determining factor in return/hazard level estimates, particularly in how it determines the tail behaviour of the distribution.
-  \item $\xi$ estimation is difficult, as it is highly variable and can be influenced by many factors, such as the choice of threshold, the number of observations, etc.
-  \item Approach here is to treat hazard level as piecewise constant, and partition region of interest into subregions over which to fit a conditional mixture of GPDs (can be seen as extension of \cite{Cooley2007} which uses two subregions).
-  \item \# regions sees bias-variance tradeoff; more regions means more $\xi$ to estimate with less data (more variance), while less regions means greater bias as each subregion will represent the local characteristics of more locations (more groups often also harder to interpret). 
-  \item $\sigma$ doesn't have same issue, so just estimated with $\sigma(\bm{x})$, i.e.\ a function of covariates. 
-  \item EM algorithm: \\
-  \begin{itemize}
-    \item \textbf{E-step} estimates partition $C$, uses probability weighted moment estimators, U-statistics, kernel regression and k-means (complex, see paper)
-    \item \textbf{M-step} estimates $\mathbb{P}(C = j \mid \bm{x}) \text{ probability of subregion membership used in mixture GPD}, \sigma(\bm{x}), \xi_j$ for each subregion $j$.
-  \end{itemize}
-  \item Number of subregions chosen by out-of-sample CV using three different loss fuctions, including Anderson-Darling statistic (more sensitive to changes in the tails)
-\end{itemize}
+\todo{bayesian clustering!}
 
-\cite{Dupuis2023} derives EM (really MM) algorithm for identifying group structure and group-specific model parameters for GEV distributed panel data. \\
-Summary:
-\begin{itemize}
-  \item \textbf{Data}: data for individuals/locations $i$, time $t$ (known as panel data, i.e.\ $X_{i t}$) which are GEV distributed. 
-  \item Because of the nature of extremes, both complete and no pooling results in poor parameter estimates, so some/"partial" pooling over similar/homogeneous locations desired.
-  \item Use EM/EE algorithm and QML (where variance-covariance matrix may be misspecified) to iteratively estimate (i.e.\ estimation is disentangled for simplicity) group structure/assignment $\bm{\tau}$ and group-specific parameters $\bm{\theta}$ related to parameters of GEV through individual regression equations (so each GEV parameter estimated separately). 
-  The consistency of this algorithm is also proven.
-  \item grouping is latent and ``data-driven'', rather than based on domain knowledge, and is done mainly for improved parameter estimation, as opposed to methods which derive distance matrices over which to perform e.g.\ k-mediods clustering. 
-  \item Stronger dependence in data helps group identification because it reduces the variance among individuals in the same group, but it gives worse quantile estimates (i.e.\ stronger dependence gives lower effective sample size $\implies$ less information $\implies$ greater variance in QML estimator).
-  \item Simulation study performed, and applications to financial risk, extreme temperature and flood risk data shown to be effective (and better than when using groupings based on domain knowledge). 
-\end{itemize}
+Another, more recent example of Bayesian hierarchical clustering is in \cite{Rohrbeck2021}, specifically applied to hydrological variables. 
+This clustering algorithm derives a separable likelihood function defined by a marginal and dependence component.
+% The marginal component consists of a GPD, over which constraints are set using priors so that the parameters of the fitted GPDs are more similar for locations within the same cluster than those in different clusters. 
+The marginal component consists of a cluster-specific GPD.
+The dependence component uses the $\chi$ statistic, and constraints are applied to this statistic so that locations in the same cluster have more similar $\chi$ values than those in other clusters, and also that this similarity is a function of and decreases with distance.
+Priors are set so that each cluster is spatially contiguous, and each site is assigned to the closest cluster centre in terms of their geographical distance from each other.
+This algorithm uses a similar RJMCMC algorithm to \cite{Bottolo2003} for inference, where the number of clusters it itself estimated rather than supplied, and cluster membership is represented as a random variable. 
+
 
 \newpage
 \section{Discussion} \label{sec:discussion}
@@ -1329,7 +1306,8 @@ The first kind typically derives some dissimilarity matrix via some distance met
 This type of clustering is more typically used as part of an exploratory analysis. 
 The second type of clustering focuses on deriving hierarchical models with latent group structures which improve parameter estimation when using either the GPD or GEV, possibly in combination with some measure of dependence.
 In frequentist settings, these models often use some form of EM algorithm, while in a Bayesian setting the use of a RJMCMC algorithm is one possible approach.
-Both approaches have their respective merits, with the need for specifying priors for Bayesian analysis seen as both a strength and a possible weakness.
+Both approaches have their respective merits, with the need for specifying priors for Bayesian analysis seen as both a strength, especially in the context of extremes where data is naturally rare, and a possible weakness, in that prior specification is often a difficult and hazardous task, even when uninformative priors are sought. 
+From this literature review of extremal clustering, some interesting avenues for future research in clustering for the conditional extremes model arise. 
 
 % Notes:
 % Bayesian CE: how do we write the likelihood?
@@ -1348,8 +1326,6 @@ Both approaches have their respective merits, with the need for specifying prior
   % \item Potential to try Bayesian clustering approach similar to \citet{Rohrbeck2021}, will involve deriving likelihood for CE model and priors for parameter values. 
   % \item Later, can extend clustering to spatial and spatio-temporal CE from \citep{Tawn2018, Simpson2021}.
 % \end{itemize}
-
-From this literature review of extremal clustering, some interesting avenues for future research in clustering for the conditional extremes model arise. 
 
 Firstly, we would like to apply some general clustering through the use of the k-mediods or k-means algorithm on the parameters of the conditional extremes model. 
 However, some challenges are likely to stand in the way. 

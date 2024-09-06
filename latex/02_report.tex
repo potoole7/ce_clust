@@ -169,6 +169,7 @@ EVT has also been used in what might be considered more niche applications, such
 % Dependence 
 
 % Key focus of report, combining conditional extremes and clustering
+Clustering for conditional extremes has never been done previously.
 
 % Structure of report
 Section \ref{sec:motivating} will introduce the motivating example which we will be using throughout this report to illustrate its concepts in an applied setting.
@@ -210,15 +211,32 @@ Finally, section \ref{sec:discussion} will summarise the report and suggest futu
     \label{fig:02_locs}
 \end{figure}
 
+\todo{Impress importance of dataset, rain and wind = storms (see Vignotto)}
+In the context of extremes, the occurrence of compounding extremal events can be particularly disastrous \citet{Vignotto2021, Leonard2014}.
+For example, concurrent extremal precipitation and wind speeds can lead to especially devastating storms \citet{Martius2016}.
+These events are of particular interest for risk modellers, for instance in the insurance industry or disaster planning, as preparations must be made for worst case scenario events.
+Often, the marginal modelling of these extremes can underestimate the risk posed by these events, and provide inadequate risk projections \citet{Zscheischler2017}.
+
 % Introduce dataset
-We consider extreme precipitation across ? weather sites in the Republic of Ireland from 1990 to 2020, inclusive.  
+We consider extreme precipitation and wind speeds across 52 weather sites in the Republic of Ireland from 1990 to 2020, inclusive.  
+The data we have performed our clustering on is precipitation data for the Republic of Ireland, collected from the Met Éireann website at \citet{metHistoricalData}, and wind speed data from the ERA5 Reanalysis dataset at \citet{Hersbach2020}, corresponding to the closest grid point to each location.
+To acknowledge weaknesses for these datasets, while the point estimates of the precipitation data can be considered more precise, it may also be susceptible to preferential sampling, with weather sites likely to be more densely found in areas with higher precipitation.
+Conversely, although reanalysis data is spatially complete, it only has a certain resolution (in this case, $0.25^{\circ} \times 0.25^{\circ}$), the data is averaged over each grid cell, and so often underestimates extreme wind speeds. \cite{Gandoin2024}
+
+% Preprocessing
+This data spans the dates 1990-01-01 to 2020-12-31 inclusively, totaling 11,323 days of consecutive precipitation readings. 
+Sites which did not have a complete set of data for these dates were removed, leaving us with 50 sites in total, located in 20 of the 26 counties of the Republic of Ireland. 
+Following the example of \cite{Vignotto2021}, we look at weekly sums of daily precipitation and weekly averages of wind speed maxima, for the Winter months (November to March) only.
+This weekly temporal scale is chosen as precipitation and wind in the case of storms is believed to experience a slight lag \citet{Bengtsson2009}.
+Weeks with no rain are also ignored, leaving us with 5022 weeks of data for our 52 sites.
 
 % Summaries of dataset
-
-% Plot of locations on map, with wind speeds and precipitation for some
-Include single exploratory plot to showcase data (left plot could have locations of weather sites, right could have precipitation plotted against wind speed for a given site).
-
-Will now explain univariate extremes show how marginal models can be fit to this data.
+The maximum weekly precipitation sum observed was to 198.6mm at Cloone Lake in county Kerry. 
+The mean precipitation across all sites for each day was 5.96mm.
+For wind speed, the maximum weekly maxima had a speed of 20.2 m/s, and was recorded closest to Eskeragh in county Mayo.
+Conversely, the minimum wind speed of 0.95 m/s was recorded Glenvickee in Kerry, with the mean wind speed being 6.83 m/s.
+The difference between the mean and maximum values for each of these marginal extremes suggests that there will be an extreme right tail to the distribution of this data, a situation well suited to the use of EVT.
+This data will be used to showcase the marginal and dependence models we have chosen to use, and illustrate some of their shortcomings, and the need for extremal clustering to address these challenges.
 
 \newpage
 \section{Peaks-over-threshold method for univariate extremes}\label{sec:uni}

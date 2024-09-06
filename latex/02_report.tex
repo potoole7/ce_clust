@@ -661,20 +661,19 @@ In the Bayesian setting, we can sample from the estimated posterior distribution
 %   add histogram and return levels? Will need to fix from texmex plots) \todo{Add uncertainty to plots! From ITT2}
 % \end{itemize}
 
-% Threshold plot
-\todo{Cutout whitespace in plot!}
-\begin{figure}[H]
-    \centering
-    \includegraphics[width = 0.9\linewidth]{plots/031_thresh_plots.png}
-    \caption{\emph{Figures, from left to right, show the Generalised Pareto Distribution thresholds for rain and wind speed, respectively, for each Met Éireann weather station.}}
-    \label{fig:03_uni_thresh}
-\end{figure}
-
 First, we must select the threshold over which to fit our GPD. 
 Following \citet{Youngman2019}, we use the ALD to model the threshold over space, with a prescribed quantile of $\tau = 0.95$, as described in \eqref{eq:asymmetric_laplace}.
 The results of this thresholding can be seen in figure \ref{fig:03_uni_thresh}.
 It appears that, with some exceptions, for both precipitation and wind speeds the intercept is higher for coastal areas than inland.
 Also, in the case of precipitation, the threshold appears to be higher for the west and South-west coastal areas, encompassing the counties of Mayo and Kerry.
+
+% Threshold plot
+\begin{figure}[H]
+    \centering
+    \includegraphics[width = 0.9\linewidth]{plots/031_thresh_plots_crop.png}
+    \caption{\emph{Figures, from left to right, show the Generalised Pareto Distribution thresholds for rain and wind speed, respectively, for each Met Éireann weather station.}}
+    \label{fig:03_uni_thresh}
+\end{figure}
 
 % Method with evgam and quantile regression for threshold selection, to allow
 % threshold to vary for different areas. 
@@ -684,7 +683,7 @@ Again following \citet{Youngman2019}, we model the shape and scale parameters of
 % Parameters for rain
 \begin{figure}[H]
     \centering
-    \includegraphics[width = 0.9\linewidth]{plots/032_gpd_rain.png}
+    \includegraphics[width = 0.9\linewidth]{plots/032_gpd_rain_crop.png}
     \caption{\emph{Figures, from left to right, showing the scale ($\sigma_rain)$ and shpa e($\xi_rain$) parameters of the Generalised Pareto distribution for weekly sums of precipitation at each Met Éireann weather station.}}
     \label{fig:03_gpd_rain}
 \end{figure}
@@ -700,7 +699,7 @@ These parameters suggest a clear pattern of precipitation becoming more extreme 
 % Parameters for wind speed
 \begin{figure}[H]
     \centering
-    \includegraphics[width = 0.9\linewidth]{plots/033_gpd_ws.png}
+    \includegraphics[width = 0.9\linewidth]{plots/033_gpd_ws_crop.png}
     \caption{\emph{Figures, from left to right, showing the scale ($\sigma_wind)$ and shape ($\xi_wind$) parameters of the Generalised Pareto distribution for weekly wind speed maxima at each Met Éireann weather station.}}
     \label{fig:03_gpd_ws}
 \end{figure}
@@ -1127,18 +1126,18 @@ This has opened up the conditional extremes model to a wider range of applicatio
 
 \subsection{Application to motivating example} \label{subsec:ce_example}
 
-(Not necessarily in correct order)
-\begin{itemize}
-  \item used \texttt{texmex} to fit conditional extremes model on top of marginal models to estimate $\alpha, \beta$ for rain $\mid$ wind speed and vice versa for each location. 
-        Vanilla CE used for simplicity of implementation for this motivating example. 
-   \begin{enumerate}
-     \item Show diagnostic and quantile plots for CE for some location(s),
-     \item Show bootstrapped $\alpha$ and $\beta$ values for rain $\mid$ wind speed and wind speed $\mid$ rain for different thresholds, motivating choice of CE threshold at 70th quantile, and fixing $\beta$ at 0.1 so that all variability is in $\alpha$ (also makes interpretation easier, and need for this further highlights need for better parameter estimation through grouping and/or some hierarchical model). 
-     \item Bootstrapped values for $\xi$ (under vanilla \texttt{texmex} marginal estimates, rather than \texttt{evgam}) and $\alpha$ show that uncertainty high in both, even when fixing $\beta$. 
-     \item Maps of $\alpha$ values conditioning on rain and windspeed, possibly cross-hatch where bootstrapped $\alpha$ values have 95\% CI which intersects 0. 
-     \item Plot of $\alpha$ values versus longitude and latitude (possibly coloured by distance to coast), showing how space is main driver in difference (unsurprising as used as only covariate in marginal \texttt{evgam} model). 
-   \end{enumerate}
-\end{itemize}
+% (Not necessarily in correct order)
+% \begin{itemize}
+%   \item used \texttt{texmex} to fit conditional extremes model on top of marginal models to estimate $\alpha, \beta$ for rain $\mid$ wind speed and vice versa for each location. 
+%         Vanilla CE used for simplicity of implementation for this motivating example. 
+%    \begin{enumerate}
+%      \item Show diagnostic and quantile plots for CE for some location(s),
+%      \item Show bootstrapped $\alpha$ and $\beta$ values for rain $\mid$ wind speed and wind speed $\mid$ rain for different thresholds, motivating choice of CE threshold at 70th quantile, and fixing $\beta$ at 0.1 so that all variability is in $\alpha$ (also makes interpretation easier, and need for this further highlights need for better parameter estimation through grouping and/or some hierarchical model). 
+%      \item Bootstrapped values for $\xi$ (under vanilla \texttt{texmex} marginal estimates, rather than \texttt{evgam}) and $\alpha$ show that uncertainty high in both, even when fixing $\beta$. 
+%      \item Maps of $\alpha$ values conditioning on rain and windspeed, possibly cross-hatch where bootstrapped $\alpha$ values have 95\% CI which intersects 0. 
+%      \item Plot of $\alpha$ values versus longitude and latitude (possibly coloured by distance to coast), showing how space is main driver in difference (unsurprising as used as only covariate in marginal \texttt{evgam} model). 
+%    \end{enumerate}
+% \end{itemize}
 
 As an exploratory analysis, we computed the $\chi$ and $\bar{\chi}$ coefficients for the extremal dependence between rain and wind speed for each location, at $u = 0.95$, as shown in figure \ref{fig:04_chi}.
 Extremal dependence is expected to be driven by a combination of the factors that affect our marginal fits. 
@@ -1365,7 +1364,7 @@ Clustering for improved parameter estimation is often performed through hierarch
 In hierarchical clustering for extremes, the parameters of our extremal distribution, such as the GPD, are treated as non-stationary, with data split into groups, over which the same parameter estimates are used. 
 A grouping structure is sought which balances the bias-variance tradeoff associated with estimating parameters over more or less locations or individuals.
 
-An early example of hierarchical clustering for extremes can be found in \citet{Bottolo2003}, which defined exceedances over a high threshold as generated by a model characterised by a Poisson process $PP(\mu, \sigma, \xi)$.
+An early example of hierarchical clustering for extremes can be found in \citet{Bottolo2003}, which defined exceedances over a high threshold as generated by a model characterised by a Poisson process (PP).
 A Bayesian hierarchical model is proposed with a separate hierarchical mixture prior for each of the parameters of the PP, each having a specific latent group structuring.
 The use of a mixture and parameter-specific prior assumes that parameters are IID according to some finite-mixture distribution, and gives this model great flexibility in its group structure and parameter estimation. 
 The model also allows the incorporation of prior knowledge into these priors, which is useful in the context of extremes due to the innate scarcity of extremal data.

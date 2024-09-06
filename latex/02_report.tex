@@ -1,6 +1,6 @@
 \documentclass{article}
 
-\usepackage[top=3cm, bottom=3cm, left=3cm,right=3cm]{geometry}
+\usepackage[top=3cm, bottom=3cm, left=3.5cm,right=3.5cm]{geometry}
 \usepackage[colorinlistoftodos]{todonotes}
 \usepackage{graphicx}
 \usepackage{bm}
@@ -117,9 +117,60 @@
 
 \newpage
 
-\section{Introduction}\label{sec:intro}
+% % \section{Introduction}\label{sec:intro}
+% 
+% \todo{Look at Coles for more motivation for extremes!}
+% 
+% % \begin{itemize}
+% %   \item What are extremes (modelling tails of distributions where underlying stochastic process is assumed), why they are used (anywhere where we are more interested in tails of distributions). 
+% %   \item Examples of uses of extreme value theory (see reading course, Conor Murphy and Matthew Speers review papers).
+% %   \item Paragraph on key focus of report (dependence modelling through conditional extremes). Could talk about other dependence models, referencing how they are more restrictive and more computationally intensive, citing \cite{Tawn2018} and \cite{Huser2024}. 
+% %   \item "This proposal suggests combining conditional extremes and clustering", to improve parameter estimation for the model. 
+% %   \item Summarise what will be talked about in the rest of the report.
+% % \end{itemize}
+% \mynote{Key challenges should be left until the end to aid narrative}
+% \mynote{Keep vague, just mention that clustering for extremes has been done before, but not in the context of conditional extremes}
+% 
+% % Motivating extremes
+% \todo{Needs some references!}
+% Often, statistics is concerned with generating models for the mean or ``bulk'' behaviour of a random variable.
+% For example, models for the expected daily precipitation over the course of a year are essential for both small and large-scale agriculture, and more generally, weather forecasts are key in the proper functioning of society. \todo{Rewrite, finish, citations!}
+% 
+% However, there are situations where we are more interested in only the greatest observations for a given variable, and the mean behaviour of that variable is of little interest.
+% Natural disaster prediction, for example, does not concern itself with the mean behaviour of environmental processes such as precipitation (at least as an outcome), and instead is solely interested in the heaviest precipitation which may cause large scale flooding, and together with very fast wind speeds can lead to storms, and separately for extremely high temperatures can lead to wildfires \todo{references}
+% This is useful for countries disaster modelling and planning. \todo{Word better, see other papers}.
+% For example, rivers that are expected to raise to a certain level in the Winter can be lined with sand bags and other flood defences, and the same for areas which are expected to have high winds, such as the coast of Ireland, which can be prepared for with storm barriers and other defences. \todo{Word better, make reference to sea walls from Coles 2001?}
+% It is also of use in the insurance industry, where insurance premiums are calculated based on the likelihood of a claim being made, and the size of that claim, and so being able to predict the size of the largest claims, such as the result of flooding, is essential for the industry.
+% On the other end of the scale, engineers designing and testing a product, such as home utility machines like a washing machine and dishwasher, must keep in mind and identify the components of that product which have the shortest lifespans, as opposed to the mean component lifespan, as this will determine when it will next require fixing, and its ultimate lifespan.
+% For these applications, a branch of statistics called Extreme Value Theory (EVT) is uniquely suited.
+% \todo{Talk more about return levels, most common predictions made in EVT (but also perhaps downplay, as we don't calculate any below)}
+% \todo{Talk about wanting to predict 100 year return levels given only 10 years of data, extrapolating from data we have, you've seen all this before!}
+% 
+% % What is EVT, examples
+% EVT focuses on modelling the extreme tails of distributions, where there is an assumption that there is an underlying stochastic process to be modelled \citep{Coles2001}.
+% It uses asymptotically motivated distributions to model either the maximum observations of a dataset over specified blocks of time, or the observations which exceed a certain threshold. 
+% Specifically, the Generalised Pareto Distribution (GPD) is used to model exceedances over a certain threshold, and the Generalised Extreme Value (GEV) distribution is used to model the maximum observations over blocks of time.
+% 
+% % Examples
+% \todo{See Coles intro for examples of uses}
+% \todo{Also see reading course}
+% \todo{some environmental stuff + insurance}
+% \todo{Finance papers}
+% \todo{Bird arrival dates paper by Koh, Opitz seems cool and interesting}
+% \todo{Brain connectivity in eplilectic seizures}
+% 
+% There are many examples of the use of EVT across a wide variety of contexts. 
+% An obvious choice is in environmental science, with EVT being used to model precipitation \todo{citations}, flooding \todo{citations}, cyclones and storms \todo{citations from ITT2} and extreme heat and wildfires \todo{citations}. 
+% insurance $\ldots$
+% finance $\ldots$
+% EVT has also been used in what might be considered more niche applications, such as in the study of trpoical bird arrival dates \todo{citations}, and in the study of high frequencies in brain signals associated with the onset of epileptic seizures \todo{citations}. \todo{Anything else? Anything on left tail?}
+% 
+% % Dependence 
+% 
+% % Key focus of report, combining conditional extremes and clustering
+% Clustering for conditional extremes has never been done previously.
 
-\todo{Look at Coles for more motivation for extremes!}
+\section{Introduction}\label{sec:intro}
 
 % \begin{itemize}
 %   \item What are extremes (modelling tails of distributions where underlying stochastic process is assumed), why they are used (anywhere where we are more interested in tails of distributions). 
@@ -128,58 +179,48 @@
 %   \item "This proposal suggests combining conditional extremes and clustering", to improve parameter estimation for the model. 
 %   \item Summarise what will be talked about in the rest of the report.
 % \end{itemize}
-\mynote{Key challenges should be left until the end to aid narrative}
-\mynote{Keep vague, just mention that clustering for extremes has been done before, but not in the context of conditional extremes}
 
-% Motivating extremes
-\todo{Needs some references!}
-Often, statistics is concerned with generating models for the mean or ``bulk'' behaviour of a random variable.
-For example, models for the expected daily precipitation over the course of a year are essential for both small and large-scale agriculture, and more generally, weather forecasts are key in the proper functioning of society. \todo{Rewrite, finish, citations!}
+% What is extreme value theory
+Extreme Value Theory (EVT) focuses on modelling the extreme tails of distributions, where there is an implicit assumption that there is an underlying stochastic process which is smooth enough to allow extrapolation to unseen levels \citep{Coles2001}.
+% uses asymptotically motivated distributions to model the observations which exceed a certain threshold using the Generalised Pareto Distribution. 
 
-However, there are situations where we are more interested in only the greatest observations for a given variable, and the mean behaviour of that variable is of little interest.
-Natural disaster prediction, for example, does not concern itself with the mean behaviour of environmental processes such as precipitation (at least as an outcome), and instead is solely interested in the heaviest precipitation which may cause large scale flooding, and together with very fast wind speeds can lead to storms, and separately for extremely high temperatures can lead to wildfires \todo{Expand on this more}.
-This is useful for countries disaster modelling and planning. \todo{Word better, see other papers}.
-For example, rivers that are expected to raise to a certain level in the Winter can be lined with sand bags and other flood defences, and the same for areas which are expected to have high winds, such as the coast of Ireland, which can be prepared for with storm barriers and other defences. \todo{Word better, make reference to sea walls from Coles 2001?}
-It is also of use in the insurance industry, where insurance premiums are calculated based on the likelihood of a claim being made, and the size of that claim, and so being able to predict the size of the largest claims, such as the result of flooding, is essential for the industry.
-On the other end of the scale, engineers designing and testing a product, such as home utility machines like a washing machine and dishwasher, must keep in mind and identify the components of that product which have the shortest lifespans, as opposed to the mean component lifespan, as this will determine when it will next require fixing, and its ultimate lifespan.
-For these applications, a branch of statistics called Extreme Value Theory (EVT) is uniquely suited.
-\todo{Talk more about return levels, most common predictions made in EVT (but also perhaps downplay, as we don't calculate any below)}
-\todo{Talk about wanting to predict 100 year return levels given only 10 years of data, extrapolating from data we have, you've seen all this before!}
+% Examples of uses in univariate case
+EVT is useful anywhere we are interested more in the ``extreme'' tails of the distributions of a phenomenon, rather than the mean or ``bulk'' behaviour.
+This situation can arise in a variety of contexts.
+One popular application of EVT is for environmental data, which sees use mainly for the design of defences and insurance policies against natural disaster.
+Extreme heatwaves can lead to droughts and wild fires, and are modelled extensively using EVT \citep{tanarhte2015heat, french2019quantifying, koh2023gradient}.
+Extreme rainfall contributes to storms and flooding, which can cause major damages and trigger large insurance claims \citep{Rohrbeck_flooding, osei2021estimation}.
+High wind speeds can lead to significant damaging events, and have also seen much focus in the field of EVT \citep{soukissian2015effect, steinkohl2013extreme}.
+With financial data, such as risk assessment and stock prices, the accurate prediction of extreme stock price volatility or high risk events is of the utmost importance \citep{Furio2013, dridi2012monitoring}.
+EVT has also been used in more ``esoteric'' circumstances, such as the modelling of migratory birds first dates of arrival in \citet{Koh2024}, and the monitoring of brain activity in the lead up to an epileptic seizure \citet{Karpov2022-xj}.
 
-% What is EVT, examples
-EVT focuses on modelling the extreme tails of distributions.
-\todo{Add assumption of underlying stochastic process}
-It uses asymptotically motivated distributions to model either the maximum observations of a dataset over specified blocks of time, or the observations which exceed a certain threshold. \todo{Read other paper introductions to improve on this!}
-More specifically, the Generalised Pareto Distribution (GPD) is used to model exceedances over a certain threshold, and the Generalised Extreme Value (GEV) distribution is used to model the maximum observations over blocks of time.
+% Dependence modelling 
+Often, the simultaneous occurrence of extreme events leads to significantly more catastrophic events \citep{zscheischler2018future, bevacqua2021guidelines}.
+This can be either extreme events that occur over multiple locations, or at the same site where multiple variables can be simultaneously extreme.
+For example, in the UK in 2015 and 2016, serious flooding as a result of Storms Desmond, Eva and Frank resulted in damages estimated at £1.3–1.9 billion \citep{FloodsWinter, Rohrbeck2021}.
+The co-occurrence of extreme wind speeds and wave heights have been led to some devastating tropical cyclones, as modeled in \citet{Sando2022}.
+Climate change is exacerbating the effects of compound environmental hazards \citet{AghaKouchak2020-ji}.
+To explore these phenomena, we must have a model for the extremal dependence structure of multivariate extreme datasets.
+One such model is the conditional extremes model, which combines a univariate GPD and a semiparametric regression dependence model \cite{Heffernan2004}.
+The conditional extremes model is very flexible in the types of extremal dependence it can model and is conceptually simple, in comparison to competitors.
+However, as with many models for extremes, which suffer from the natural rarity of extreme data, it is susceptible to high uncertainty in its parameter estimates. 
 
-% Examples
-\todo{See Coles intro for examples of uses}
-\todo{Also see reading course}
-\todo{some environmental stuff + insurance}
-\todo{Finance papers}
-\todo{Bird arrival dates paper by Koh, Opitz seems cool and interesting}
-\todo{Brain connectivity in eplilectic seizures}
-
-There are many examples of the use of EVT across a wide variety of contexts. 
-An obvious choice is in environmental science, with EVT being used to model precipitation \todo{citations}, flooding \todo{citations}, cyclones and storms \todo{citations from ITT2} and extreme heat and wildfires \todo{citations}. 
-insurance $\ldots$
-finance $\ldots$
-EVT has also been used in what might be considered more niche applications, such as in the study of trpoical bird arrival dates \todo{citations}, and in the study of high frequencies in brain signals associated with the onset of epileptic seizures \todo{citations}. \todo{Anything else? Anything on left tail?}
-
-% Dependence 
-
-% Key focus of report, combining conditional extremes and clustering
-Clustering for conditional extremes has never been done previously.
+One method for improved parameter estimation is through clustering.
+Clustering is a popular method in extremes, where data is naturally scarce \citep{Ferreira2023-mz, Zheng2023-jf}.
+However, clustering has never been performed for the conditional extremes model before. 
+While clustering is not novel within extremes, we hope to identify some opportunities to adapt some of the existing methods in the field to the conditional extremes model.
 
 % Structure of report
-Section \ref{sec:motivating} will introduce the motivating example which we will be using throughout this report to illustrate its concepts in an applied setting.
-Specifically, we will look at extreme precipitation and wind speed in the Republic of Ireland. It is important to note that this applied context of modelling the bivariate tail behaviour of these two variables across space in relatively novel, as the literature of extremal dependence, conditional extremes and extremal clustering has mainly focused on modelling the spatial dependence of univariate extremes across space. One notable exception of this is in \citet{Vignotto2021}, for which we will take most of our data preprocessing procedure. \todo{Talk about this in so much detail here?}
+The structure of this report will be as follows.
+Section \ref{sec:motivating} will introduce the motivating example which we will be using throughout this report to illustrate its concepts, as well as the shortcomings of the conditional extremes model, in an applied setting.
+Specifically, we will look at extreme precipitation and wind speed in the Republic of Ireland. 
+It is important to note that this applied context of modelling the bivariate tail behaviour of these two variables across space is relatively novel, as the literature of extremal dependence, conditional extremes and extremal clustering has mainly focused on modelling the spatial dependence of univariate or multivariate extremes across space. 
+One notable exception of this is in \citet{Vignotto2021}, which tackles a similar problem to or own, for which we will take most of our data preprocessing procedure. 
 Following this, section \ref{sec:uni} will start with the concept of marginal extremal modelling and apply it to marginal models for precipitation and wind speed for Ireland.
 % Section \ref{sec:uni} will introduce the peaks-over-threshold method for univariate extremes, and show how this can be applied to the motivating example of extreme wind speed and rain in Ireland.
-Section \ref{sec:ce} will introduce the conditional extremes model, and show how this can be applied to the motivating example. \todo{Word better}
-Section \ref{sec:clustering} will review clustering methods for extremes.
-Finally, section \ref{sec:discussion} will summarise the report and suggest future work.
-\todo{Flow and wording can be improved a lot!}
+Section \ref{sec:ce} will introduce the conditional extremes model, and show how this can be applied to the motivating example, and how the current model can only provide limited success.
+Section \ref{sec:clustering} will review existing clustering methods for extremes.
+Finally, section \ref{sec:discussion} will summarise the report and suggest future work based on this literature review.
 
 \newpage
 \section{Motivating example} \label{sec:motivating}
@@ -311,7 +352,7 @@ These parameters absorb and implicitly incorporate the normalising constants, so
 % incorporating the Gumbel, Frechet, and Weibull distributions as special cases
 % for $\xi = 0, \xi > 0, \xi < 0$, respectively, which greatly simplifies
 % estimation of the distribution. 
-The limiting result in \ref{eq:uni_limiting_dist} holds under weak assumptions on the tail of $F$ for almost all continuous distributions \citep{Dupuis2023}. 
+The limiting result in equation \eqref{eq:uni_limiting_dist} holds under weak assumptions on the tail of $F$ for almost all continuous distributions \citep{Dupuis2023}. 
 % This asymptotic argument is known as the ``block-maxima'' definition of extremes and forms the basis on which the field of EVT has developed.
 This asymptotic argument is known as the ``block-maxima'' definition and forms the classical model for extremes. 
 In practice, the block size $n$ is often taken to be a regularly spaced block of time, such as a year. % , and the maxima are taken over the samples of the random variable within each block.
@@ -323,7 +364,7 @@ For example, we may take the maximum daily precipitation over each year, and mod
 
 % In constrast, GPD for excesses over threshold (Fisher, Tippet, Gnedenko)
 From this block-maxima definition, another approach to EVT, which we will be focusing more on, can be derived.
-The Pickands-Balkema-de-Haan theorem (\cite{Pickands1975, Balkema1974}) states that should $M_n$ satisfy \ref{eq:uni_limiting_dist} and converge in distribution to the GEV distribution, then for any $Z = Z_i, 1 \le i \le n$ in our sequence, the distribution of exceedances $z > 0$ over a high threshold $u$ are approximated by the Generalised Pareto Distribution (GPD), defined as
+The Pickands-Balkema-de-Haan theorem (\cite{Pickands1975, Balkema1974}) states that should $M_n$ satisfy equation \eqref{eq:uni_limiting_dist} and converge in distribution to the GEV distribution, then for any $Z = Z_i, 1 \le i \le n$ in our sequence, the distribution of exceedances $z > 0$ over a high threshold $u$ are approximated by the Generalised Pareto Distribution (GPD), defined as
 \begin{equation} \label{eq:gpd}
   % \mathbb{P}(Z \le z + u \mid Z > u) = 1 - \left(1 + \xi \frac{z}{\sigma} \right)_{+}^{-1/\xi},
   \mathbb{P}(Z > z + u \mid Z > u) = \left(1 + \xi \frac{z}{\sigma} \right)_{+}^{-1/\xi},
@@ -441,7 +482,7 @@ Hence, the mean residual life plot takes as points a series of thresholds $u$ an
 where $n_u$ is the number of excesses over the corresponding threshold $u$.
 For valid choices of $u$, we should see a linear relationship between the mean excesses and the threshold, and in practice we try to choose the smallest $u$ which gives this linear relationship, preserving as much data as possible for the estimation of the GPD.
 
-Following a similar logic, for sufficiently large choices of $u$, the values of $\xi$ should be constant and the values of $\sigma$ should be linear in $u$, as in equation \ref{eq:lin_u}.
+Following a similar logic, for sufficiently large choices of $u$, the values of $\xi$ should be constant and the values of $\sigma$ should be linear in $u$, as in equation \eqref{eq:lin_u}.
 This is the basis for the second classical method of threshold selection, the so-called ``threshold choice'' plot.
 
 % Newer developments
@@ -498,7 +539,7 @@ Following \citet{Youngman2019} the parameters of said distribution can be modell
 \end{center}
 where $u(s)$ is the quantile $0 < \tau < 1$ of the data at location $s$, $\psi(s) > 0$, and $f_*(s)$ is the smooth function across space for either $u$ or $\psi$ with associated intercept $\beta_0$ and basis functions $b_kd$ with corresponding parameters $\beta_{kd}$.
 Using a log link function ensures that $\psi(s) > 0$.
-The use of basis functions and GAMs is described further surrounding equation \ref{eq:gpd_gam} below. 
+The use of basis functions and GAMs is described further surrounding equation \eqref{eq:gpd_gam} below. 
 Likelihood methods allow us to estimate $u(s)$ from this model, giving us a threshold above which to define extreme values of $Z(s)$.
 This method allows us to easily estimate thresholds for a high-dimensional dataset characterised by covariates such as spatial location.
 
@@ -520,7 +561,7 @@ Under this model, we could model threshold exceedances at location $s$ as
     \end{split}
   \end{align}
 \end{center}
-where $\sigma_0, \sigma_1, \xi_0, \xi_1$ are intercept and slope parameters for the scale and shape, respectively, and $u(s)$ is modelled as in equation \ref{eq:asymmetric_laplace}.
+where $\sigma_0, \sigma_1, \xi_0, \xi_1$ are intercept and slope parameters for the scale and shape, respectively, and $u(s)$ is modelled as in equation \eqref{eq:asymmetric_laplace}.
 % Using a log link function ensures that $\sigma(s) > 0$.
 % This model, which can be made as complicated as necessary, allows for much greater flexibility in our models, and reduces the bias associated with assuming a constant shape and scale parameter across all locations.
 This model allows for much greater flexibility, and reduces the bias associated with assuming a constant shape and scale parameter across all locations.
@@ -567,7 +608,7 @@ The extreme value GAM model we use for both extreme precipitation and wind speed
     \end{split}
   \end{align}
 \end{center}
-where $u(s)$ is as in equation \ref{eq:asymmetric_laplace} and $f_*$ is a smooth function of the spatial location $s$ for either $\sigma$ or $\xi$, modelled as a linear function of an intercept term $\beta_0$ and $K_*$ basis functions $b_k$ with corresponding coefficients $\beta_k$. 
+where $u(s)$ is as in equation \eqref{eq:asymmetric_laplace} and $f_*$ is a smooth function of the spatial location $s$ for either $\sigma$ or $\xi$, modelled as a linear function of an intercept term $\beta_0$ and $K_*$ basis functions $b_k$ with corresponding coefficients $\beta_k$. 
 A popular choice of basis function, which we have elected to use here, is the cubic spline, a curve constructed from interconnected segments of cubic polynomials, ensuring the curve's continuity up to its second derivative \citep{Wood2006}. 
 This model, while simple to formulate and implement, allows for complex, non-linear patterns in the GPD parameters to be smoothed over space.
 
@@ -580,7 +621,7 @@ The probability plot consists of the points
 \begin{equation} \label{eq:prob_plot}
   \left\{ \left(i/(k + 1), \hat{H}\left(z_{(i)}\right)\right); i = 1, 2, \ldots, k \right\}, 
 \end{equation}
-where $\hat{H}(z)$ is the cumulative distribution function (CDF) of the GPD, equivalent to 1 - equation \ref{eq:gpd}, for the corresponding parameter estimates $\hat{\sigma}$ and $\hat{\xi}$. \todo{Need to spell out with Hz is?}
+where $\hat{H}(z)$ is the cumulative distribution function (CDF) of the GPD, equivalent to 1 - equation \eqref{eq:gpd}, for the corresponding parameter estimates $\hat{\sigma}$ and $\hat{\xi}$. \todo{Need to spell out with Hz is?}
 For a good fit to the data, these points should be approximately linear.
 
 The quantile plot shows the points
@@ -590,7 +631,7 @@ The quantile plot shows the points
 where $\hat{H}^{-1}$ is the estimated quantile function of the GPD.
 Again, the quantile plot should be approximately linear for a good fit.
 
-The $n$-year return levels as described in equations \ref{eq:n_year_return} are often plotted on the log scale against year with empirical estimates included for comparison, to understand the long term extrapolation of the model and how well these fit the observed data. For a non-stationary fit such as that described in \ref{subsubsec:non_stationary}, the return levels will also be non-stationary and so can be plotted against covariates to understand how they relate.
+The $n$-year return levels as described in equations \eqref{eq:n_year_return} are often plotted on the log scale against year with empirical estimates included for comparison, to understand the long term extrapolation of the model and how well these fit the observed data. For a non-stationary fit such as that described in \ref{subsubsec:non_stationary}, the return levels will also be non-stationary and so can be plotted against covariates to understand how they relate.
 % \todo{Link to return level equation once written}
 
 Finally, a density curve for the fitted GPD can also be overlaid on the histogram of exceedance values to assess the fit of the GPD to the data.
@@ -619,7 +660,7 @@ In the Bayesian setting, we can sample from the estimated posterior distribution
 \end{figure}
 
 First, we must select the threshold over which to fit our GPD. 
-Following \citet{Youngman2019}, we use the ALD to model the threshold over space, with a prescribed quantile of $\tau = 0.95$, as described in \ref{eq:asymmetric_laplace}.
+Following \citet{Youngman2019}, we use the ALD to model the threshold over space, with a prescribed quantile of $\tau = 0.95$, as described in \eqref{eq:asymmetric_laplace}.
 The results of this thresholding can be seen in \ref{fig:03_uni_thresh}.
 It appears that, with some exceptions, for both precipitation and wind speeds the intercept is higher for coastal areas than inland.
 Also, in the case of precipitation, the threshold appears to be higher for the west and South-west coastal areas, encompassing the counties of Mayo and Kerry.
@@ -627,7 +668,7 @@ Also, in the case of precipitation, the threshold appears to be higher for the w
 % Method with evgam and quantile regression for threshold selection, to allow
 % threshold to vary for different areas. 
 
-Again following \citet{Youngman2019}, we model the shape and scale parameters of our GPD using spatially smoothed GAMs for both precipitation and wind speed, with the model shown in \ref{eq:gpd_gam}.
+Again following \citet{Youngman2019}, we model the shape and scale parameters of our GPD using spatially smoothed GAMs for both precipitation and wind speed, with the model shown in \eqref{eq:gpd_gam}.
 
 % Parameters for rain
 \begin{figure}[H]
@@ -871,7 +912,7 @@ Furthermore, to ensure $\bm{G}_{\mid i}$ is well-defined, we must have the const
 \]
 ensuring that there is no mass at $+\infty$ for any margin, but allowing for some mass to be at $-\infty$ \citep{Keef2013}. \todo{Why is this}
 
-An alternative formulation of the assumption in equation \ref{eq:ce_limiting_dist} which can be more readily adapted into our dependence model in section \ref{subsubsec:dep_model} is
+An alternative formulation of the assumption in equation \eqref{eq:ce_limiting_dist} which can be more readily adapted into our dependence model in section \ref{subsubsec:dep_model} is
 \begin{equation} \label{eq:standardised_residuals}
   \bm{Z}_{\mid i} = \frac{\bm{Y}_{-i} - \bm{a}_{\mid i}(y_i)} {\bm{b}_{\mid i}(y_i)},
 \end{equation}
@@ -921,7 +962,7 @@ Specifically, the normalising functions are given by
 % where $\bm{\alpha}_{\mid i} \in [-1, 1], \bm{\beta}_{\mid i} \in \(-\infty, 1)$. 
 where $(\bm{\alpha}_{\mid i}, \bm{\beta}_{\mid i}) \in [-1, 1]^{d-1} \times (-\infty, 1)^{d-1}$. % \citet{Keef2013}. \todo{Go back over citations throughout!}
 % The interpretation of $\bm{\alpha}_{\mid i}$ and $\bm{\beta}_{\mid i}$ is discussed in greater detail in the next section in relation to the regression model for the dependence structure.
-Rearranging equation \ref{eq:standardised_residuals} for our standardised residuals, and imputing the values for the vector normalising functions $\bm{a}_{\mid i}$ and $\bm{b}_{\mid i}$ from equation \ref{eq:laplace_normalisation}, we can now define the dependence model used in the conditional extremes model, which takes the form of the multivariate semi-parametric regression equation
+Rearranging equation \eqref{eq:standardised_residuals} for our standardised residuals, and imputing the values for the vector normalising functions $\bm{a}_{\mid i}$ and $\bm{b}_{\mid i}$ from equation \eqref{eq:laplace_normalisation}, we can now define the dependence model used in the conditional extremes model, which takes the form of the multivariate semi-parametric regression equation
 \begin{align} \label{eq:ce_model}
   \begin{split}
     \bm{Y}_{-i} &= \bm{a}_{\mid i}(\bm{y}_i) + \bm{b}_{\mid i}(\bm{y}_i)\bm{Z}_{\mid i} \\
@@ -1008,7 +1049,7 @@ The marginal model is diagnosed as in univariate EVT, with threshold selection a
 % \todo{Need to reference texmex vignette for this?}
 % \todo{Talk about texmex here anyway, to make this theory more relative to its applications}
 \todo{Check use of apostrophes}
-For diagnosing the dependence model, we return to the weak assumption in equation \ref{eq:limit_independence} of asymptotic independence between the standardised residuals $\bm{Z}_{\mid i}$ and the exceedances $Y_i - u_i$, as $u_i \to \infty$.
+For diagnosing the dependence model, we return to the weak assumption in equation \eqref{eq:limit_independence} of asymptotic independence between the standardised residuals $\bm{Z}_{\mid i}$ and the exceedances $Y_i - u_i$, as $u_i \to \infty$.
 The normalised residuals $\bm{Z}_{\mid i}$ must be stable across the range of $Y_i$ values over which they were estimated. 
 Therefore, a plot of $Z_{\mid i}$ against $\hat{F}(Y_i)$ should show no trend, and the residuals should be approximately constant over the range of $Y_i$ values used for estimation.
 \todo{F Y or F X? Does it matter?}
@@ -1078,6 +1119,11 @@ This has opened up the conditional extremes model to a wider range of applicatio
    \end{enumerate}
 \end{itemize}
 
+As an exploratory analysis, we computed the $\chi$ and $\bar{\chi}$ coefficients for the extremal dependence between rain and wind speed for each location, at $u = 0.95$, as shown in figure \ref{fig:04_chi}.
+Extremal dependence is expected to be driven by a combination of the factors that affect our marginal fits. 
+As such, it is perhaps unsurprising to see higher $\chi$ and $\bar{\chi}$ values as we move further west, where precipitation was expected to be highest, and wind speeds were anticipated to be high along the coast. 
+This suggests that precipitation and wind speed have greater extremal dependence the further west you go, which is an unsurprising but reassuring result.
+
 % Plot of chi and chi bar
 \begin{figure}[H]
     \centering
@@ -1085,6 +1131,12 @@ This has opened up the conditional extremes model to a wider range of applicatio
     \caption{\emph{Test}}
     \label{fig:04_chi}
 \end{figure}
+
+In practice, the threshold used for the dependence model often needs to be significantly lower than for the marginal models, as concurrently extremal data for both precipitation and wind speeds help with fits. 
+To select the quantile on which to threshold the conditional extremes model, bootstrapping was performed over a range of sensible quantile values, for each location. 
+Figure \ref{fig:04_bootstrap_thresh} shows the results of this boostrapping for Cloone Lake, the site in Kerry which experienced the highest rainfall observation. 
+We can see that there is quite a lot of uncertainty surrounding the parameter estimates of the conditional extremes model, but that in general, this uncertainty decreases for lower thresholds, particularly for wind speed. 
+Taking this and other locations into account, a threshold quantile of $0.7$ seems acceptable.
 
 % Plot bootstrapping results for one location
 \begin{figure}[H]
@@ -1112,6 +1164,12 @@ This has opened up the conditional extremes model to a wider range of applicatio
 %     \label{fig:04_density_alpha}
 % \end{figure}
 
+To further investigate the uncertainty surrounding the parameter estimates for the conditional extremes model, we produced profile likelihood and bootstrapped contour plots for Cloone Lake for the range of possible $\alpha$ and $\beta$ values, as shown in figure \ref{fig:04_uncertainty} (and labelled as $a$ and $b$).
+These plots show that there is significant uncertainty surrounding the estimation of the model parameters of the GPD, and taking 95\% credible intervals around our boostrap estimates for $\hat{alpha}$ and $hat{\beta}$, we can see that this credible interval passes through 0 for $\hat{\alpha}$ and is narrowly higher than 0 for $\hat{beta}$, indicating that these parameter values aren't significantly different from $0$. 
+Specifically, for precipitation, 25 of 52 sites had $\hat{\alpha}$ values whose credible interval included 0, with 33 sites having the same for $\hat{\beta}$ values. 
+The corresponding number of sites with credible intervals crossing 0 for wind speed are 3 and 30 for $\hat{\alpha}$ and $\hat{\beta}$, respectively.
+This shows that many of the estimates for the parameters of our conditional extremes models fit at each site show significant uncertainty, with the exception of $\hat{\alpha}$ for wind speed.
+
 \begin{figure}[H]
     \centering
     \begin{minipage}{0.55\textwidth}
@@ -1119,17 +1177,28 @@ This has opened up the conditional extremes model to a wider range of applicatio
         % \includegraphics[width=\textwidth]{plots/043_prof_ll.png}
         \includegraphics[width=\textwidth]{plots/Rplot01.png}
         % \caption{Plot 1}
-        \label{fig:plot1}
     \end{minipage}
     \hfill
     \begin{minipage}{0.44\textwidth}
         \centering
         \includegraphics[width=\textwidth]{plots/044_bootstrap_density.png}
         % \caption{Plot 2}
-        \label{fig:plot2}
     \end{minipage}
     \caption{Two plots side by side}
+    \label{fig:04_uncertainty}
 \end{figure}
+
+A rudimentary workaround for this problem is to fix the $\beta$ value within the conditional extremes, and only estimate $\alpha$.
+By doing this, we express all of the uncertainty and all of the patterns in the data through $\hat{\alpha}$, and it was thought that this would aid in interpreting our results.
+We fix $\beta = 0.1$ for both precipitation and wind speed, to allow for some heteroskedasticity from our residuals.
+
+The $\hat{\alpha}$ values for both are shown for each site in figure \ref{fig:04_alpha_map}.
+Conditioning on precipitation, it is clear that $\hat{\alpha}$ becomes higher as we travel further, indicating greater dependence between wind speed and extreme precipitation for more westerly sites. 
+For windspeed, $\hat{\alpha}$ is less straightforward to interpret, and interestingly, although wind speed had large GPD parameter estimates along the coast, $\hat{\alpha}$ doesn't appear to be particularly high there. 
+
+To get a better understanding of the dynamics in extremal dependence for precipitation and wind speed in Ireland, we can plot the $\hat{\alpha}$ values for each site for each variable against each other, as in figure \ref{fig:04_alpha_rain_vs_ws}.
+Pearson's correlation coefficient for this figure is 0.43, with a corresponding p-value of 0.002. 
+This suggests some association between high $\alpha$ values when conditioning on either variable, which can be linked to compounding extremal events.
 
 % Map of alpha values for rain and wind speed
 \begin{figure}[H]
@@ -1148,12 +1217,18 @@ This has opened up the conditional extremes model to a wider range of applicatio
 \end{figure}
 
 % alpha values vs lon and lat
-\begin{figure}[H]
-    \centering
-    \includegraphics[width = 0.9\linewidth]{plots/047_alpha_vs_lon_lat.png}
-    \caption{\emph{Test}}
-    \label{fig:04_alpha_vs_lon_lat}
-\end{figure}
+% \begin{figure}[H]
+%     \centering
+%     \includegraphics[width = 0.9\linewidth]{plots/047_alpha_vs_lon_lat.png}
+%     \caption{\emph{Test}}
+%     \label{fig:04_alpha_vs_lon_lat}
+% \end{figure}
+
+Finally, to assess the validity of the model fits, we can plot our residuals and also the quantiles of the conditional extremes model, as shown in Figure \ref{fig:04_diag} for Cloone Lake.
+The top plot shows a random scatter of points, with the scatterplot smoother being approximately horizontal. 
+This indicates that the residuals and the conditioning variable are independent, as the conditional extremes model assumes in equation \eqref{eq:ce_limiting_dist}.
+The bottom plot shows that the fitted quantiles agree with the shape of the raw data distribution, indicating an acceptable model fit.
+Plots for other locations were similarly acceptable. 
 
 % Individual diagnostic plots for some location
 \begin{figure}[H]
@@ -1163,6 +1238,10 @@ This has opened up the conditional extremes model to a wider range of applicatio
     \label{fig:04_diag}
 \end{figure}
 
+In summary, we were able to produce some interpretable results for the conditional extremes model as applied to our motivating example.
+However, some ad-hoc adjustments were required, namely to fix the $\beta$ values, to overcome the high uncertainty in our parameter estimates. 
+It would be preferable to produce a principled approach for improving upon these parameter estimates. 
+For this, clustering provides a promising approach. 
 
 \newpage
 \section{Clustering for extremes}\label{sec:clustering}
@@ -1297,7 +1376,7 @@ Another, more recent example of Bayesian hierarchical clustering is in \citet{Ro
 This clustering algorithm derives a separable likelihood function defined by a marginal and dependence component.
 % The marginal component consists of a GPD, over which constraints are set using priors so that the parameters of the fitted GPDs are more similar for locations within the same cluster than those in different clusters. 
 The marginal component consists of a cluster-specific GPD.
-The dependence component uses the $\chi$ statistic, and constraints are applied to this statistic so that locations in the same cluster have more similar $\chi$ values than those in other clusters, and also that this similarity is a function of and decreases with distance.
+The dependence component uses the coefficient $\chi$, and constraints are applied to this statistic so that locations in the same cluster have more similar $\chi$ values than those in other clusters, and also that this similarity is a function of and decreases with distance.
 Priors are set so that each cluster is spatially contiguous, and each site is assigned to the closest cluster centre in terms of their geographical distance from each other.
 This algorithm uses a similar RJMCMC algorithm to \citet{Bottolo2003} for inference, where the number of clusters it itself estimated rather than supplied, and cluster membership is represented as a random variable. 
 
@@ -1337,7 +1416,7 @@ The dependence model which is more flexible than many alternatives that we parti
 This model and methods for its estimation and use were described in detail. 
 Several extensions to adapt the model to work with covariates and in possibly high-dimensional spatial and spatio-temporal settings were also mentioned. 
 Finally, the conditional extremes model was applied to our motivating example, with some mixed results. 
-Exploratory analysis through the $\chi$ and $\bar{\chi}$ statistics implied that there may be some extremal dependence between precipitation and wind speed in Ireland, becoming more pronounced further west.
+Exploratory analysis through the $\chi$ and $\bar{\chi}$ coefficients implied that there may be some extremal dependence between precipitation and wind speed in Ireland, becoming more pronounced further west.
 Bootstrapping and profile likelihoods revealed that the parameter estimates for the conditional extremes model were susceptible to high uncertainty at many locations, which made interpretation difficult. 
 A makeshift solution to this problem was to fix the $\beta$ parameter to a single value, $0.1$, and have the model only estimate the $\alpha$ parameter, which as the slope parameter of the regression line corresponds to the strength of dependence between precipitation and extreme wind speeds, and vice versa.
 This adaption did reveal some patterns in the data.
@@ -1386,7 +1465,7 @@ In this paper, they compute the KL divergence for some partitioned bivariate spa
 We could take a similar approach, although it must be noted that we have two parameters for the conditional extremes model for both precipitation and wind speed, so it may be that we focus on just clustering on $\alpha$ at first, fixing $\beta$ as we did in the analysis in this report. 
 We could also simply simply compare the results of this method with that of our own prospective clustering algorithm.
 
-A more long term goal would be to explore the use of the Bayesian hierarchical approach using an RJMCMC algorithm, first used in the extremes in \citet{Bottolo2003} for mixture models, and then used more closely to our interests for dependence modelling in \citet{Rohrbeck2021}, using the $\chi$ statistic.
+A more long term goal would be to explore the use of the Bayesian hierarchical approach using an RJMCMC algorithm, first used in the extremes in \citet{Bottolo2003} for mixture models, and then used more closely to our interests for dependence modelling in \citet{Rohrbeck2021}, using $\chi$.
 There are several considerations to be made when exploring such an approach. 
 As in any Bayesian model, a likelihood will need to derived, and suitable priors for $\alpha$ and $\beta$, or $\tanh^{-1}{\alpha}$ and $\tanh^{-1}(\beta)$ or $logit(\beta)$, as in \citet{Winter2016} and \citet{Richards2023} will need to be specified. 
 In the conditional extremes model, the standardised residuals $\bm{Z}$ are assumed to come from a multivariate normal distribution. 

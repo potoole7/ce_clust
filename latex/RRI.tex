@@ -1,0 +1,53 @@
+\documentclass[a4paper]{article}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{amsmath, amssymb}
+\usepackage{natbib} % print author's name and year when citing
+
+\bibliographystyle{unsrtnat}
+
+%\usepackage{trinhcmd}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{microtype}
+
+\usepackage[pdfauthor={Christian Rohrbeck}]{hyperref}
+\usepackage[usenames, dvipsnames]{xcolor}
+\hypersetup{colorlinks=true,linkcolor=MidnightBlue,citecolor=MidnightBlue}
+
+\title{Responsible Research and Innovation (RRI) statement on clustering methods for the Conditional Extremes Model}
+\author{Patrick O'Toole}
+\newcommand*{\de}{\operatorname{d\!}{}} % Do this
+\newcommand{\dd}[2]{\frac{\de#1}{\de#2}}
+\newcommand{\pd}[2]{\frac{\partial#1}{\partial#2}}
+\newcommand{\pD}[2]{\dfrac{\partial#1}{\partial#2}}
+\newcommand{\pdd}[2]{\frac{\partial^2\!#1}{\partial#2^2}}
+
+\begin{document}
+
+\maketitle
+\noindent This project concerns clustering methods for the Conditional Extremes model, and is done in collaboration with Dr. Jordan Richards at the University of Edinburgh.
+The Conditional Extremes model is a flexible multivariate model in Extreme Value Theory.
+However, the model has some shortcoming, one notable issue being high uncertainty in its parameter estimates, and we aim to identify clustering techniques to improve this. 
+Areas of potential research include applying standard k-means and k-mediods algorithms to some summary statistic or parameter values from the model, for which we must decipher some sensible distance metric. 
+We can also try a hierarchical modelling approach, which in a frequentist setting often involves the use of the EM algorithm, while in a Bayesian setting various options for priors are available to share information between groups and incorporate expert advice. 
+Furthermore, it is hoped that this clustering can improve the computational feasability of the Conditional Extremes model, especially for high dimensional problems such as those found in spatial and spatio-temporal settings, reducing the need for expensive computing solutions.
+\hfill \break
+
+\noindent This research aims to improve the Conditional Extremes model, while currently quite theoretical, can naturally be used in whatever fields the model is applicable to. 
+This covers a wide range of applications, from modelling air pollution \cite{Tawn2018}, financial market performance \cite{Nolde2018}, and particularly environmental settings, such as concurrently occurring extremal rainfall and wind speeds \cite{Vignotto2021}.
+We will focus on the environmental applications, but other contexts for the use of the model are important to acknowledge in the context of ethical integrity. 
+Within environmental applications, the Conditional Extremes model has been used in the insurance industry, within risk modelling, and for the design of offshore facilities such as oil platforms. 
+We will be focusing on the application of the Conditional Extremes to extreme rainfall and wind speeds, and so these uses are important to acknowledge and be aware of in an ethical context, and how the uses of the model can develop further in the future within these and other industries and applications. 
+\hfill \break
+
+\noindent In particular, we will be looking at data for Ireland, as provided by \citet{metHistoricalData} and the ERA5 reanalysis dataset \citep{Hersbach2020}, as a means of validating our theoretical methods. 
+This data is freely available, as is the work we have done so far within this project, which can be found on Github at  \url{https://github.com/potoole7/TFR}.
+We hope to use this data to improve the understanding of the relationship between extreme rainfall and windspeed, in the hopes that particularly damaging events incorporating extreme levels of both can mitigated against by flood defenses and other preperations against natural disasters. 
+It is important to acknowledge that this modelling can also be used for calculating insurance premiums by acturial and insurance companies. 
+
+
+\newpage
+\bibliography{library}
+
+\end{document}

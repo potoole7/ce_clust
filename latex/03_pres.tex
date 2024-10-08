@@ -48,6 +48,9 @@
   %\setbeamertemplate{frame footer}{My custom footer}
 } 
 
+\setbeamertemplate{section in toc}{\hspace*{1em}\inserttocsectionnumber.~\inserttocsection\par}
+\setbeamertemplate{subsection in toc}{\hspace*{2em}\inserttocsectionnumber.\inserttocsubsectionnumber.~\inserttocsubsection\par}
+
 % ------------------------------------------------------------------------------
 % beamer doesn't have texttt defined, but I usually want it anyway
 % ------------------------------------------------------------------------------
@@ -124,11 +127,11 @@ keywordstyle=\color{myblue}\bfseries,
 \title{Developing clustering algorithms for conditional extremes models}
 
 \date{
-  \footnotesize Thesis formulation report presentation \\ 
+  \footnotesize Thesis formulation report (TFR) presentation \\ 
   \today \\
   % \shortdate \\
   \vspace{0.4cm}
-  \emph{Paddy O'Toole}
+  \emph{Paddy O'Toole, supervised by Christian Rohrbeck}
 }
 
 % \title{Wessex Water: Bayesian Network for Source Apportionment}
@@ -163,17 +166,53 @@ keywordstyle=\color{myblue}\bfseries,
     %     \item Concerned with performing \textbf{extremal clustering}, helps with dimensionality reduction and understanding patterns in data
     %     % Need to have metric for magnitude over which to deem events as extreme, and then frequency or concommitant extremes for clustering 
     % \end{itemize}
+
+   \begin{minipage}{0.49\textwidth}
+        % Anything else to add here?
+        \begin{itemize}
+            \item Extreme Value Theory models the extreme tails of distributions % standard models don't work well
+            \item Only known method that can reliably predict beyond observations in extremal context
+            \item Applications include in finance and insurance, and environmental data, such as extreme precipitation and/or wind speeds. % todo: Rewrite this!
+        \end{itemize}
+   \end{minipage}
+   \hfill
+   \begin{minipage}{0.49\textwidth}
+     % \centering
+     \vspace{}
+     \includegraphics[width=6cm]{latex/images/tail.png}
+   \end{minipage}
+\end{frame}
+
+% Images of Pulteney Bridge Weir and plaque
+\begin{frame}
+   \begin{minipage}{0.49\textwidth}
+     \vspace{}
+     \includegraphics[width=6cm]{latex/images/civictrustaward_location.jpg}
+   \end{minipage}
+   \hfill
+   \begin{minipage}{0.49\textwidth}
+   % todo: Rotate image (and add in!)
+   \end{minipage}
 \end{frame}
 
 % MV extremes, uses, methods, shortcomings - clustering
 \begin{frame}{Multivariate extremes}
-
+    \begin{itemize}
+        \item Often, for a 
+    \end{itemize}
 \end{frame}
 
 \section{Motivating example}
 
 % Describe motivating example
 \begin{frame}{Motivating example - Ireland}
+
+   \begin{minipage}{0.49\textwidth}
+   \end{minipage}
+   \begin{minipage}{0.49\textwidth}
+     \vspace{}
+     \includegraphics[width=6cm]{latex/plots/Rplot.png}
+   \end{minipage}
 
 \end{frame}
 

@@ -1,0 +1,154 @@
+\documentclass[10pt]{beamer}
+\usepackage[utf8x]{inputenc}
+\usepackage{hyperref}
+\usepackage{fontawesome}
+\usepackage{graphicx}
+\usepackage[english]{babel}
+\usepackage[nodayofweek]{datetime}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage[dvipsnames]{xcolor}
+
+\definecolor{ForestGreen}{RGB}{34, 139, 34}
+
+% ------------------------------------------------------------------------------
+% Use the beautiful metropolis beamer template
+% ------------------------------------------------------------------------------
+\usepackage[T1]{fontenc}
+\usepackage{fontawesome}
+\usepackage{FiraSans} 
+\mode<presentation>
+{
+  \usetheme[progressbar=foot,numbering=fraction,background=light]{metropolis} 
+  \usecolortheme{default} % or try albatross, beaver, crane, ...
+  \usefonttheme{default}  % or try serif, structurebold, ...
+  \setbeamertemplate{navigation symbols}{}
+  % \setbeamertemplate{caption}[numbered]
+  %\setbeamertemplate{frame footer}{My custom footer}
+} 
+
+% ------------------------------------------------------------------------------
+% beamer doesn't have texttt defined, but I usually want it anyway
+% ------------------------------------------------------------------------------
+\let\textttorig\texttt
+\renewcommand<>{\texttt}[1]{%
+  \only#2{\textttorig{#1}}%
+}
+
+% ------------------------------------------------------------------------------
+% minted
+% ------------------------------------------------------------------------------
+\usepackage{minted}
+
+
+% ------------------------------------------------------------------------------
+% tcolorbox / tcblisting
+% ------------------------------------------------------------------------------
+\usepackage{xcolor}
+\definecolor{codecolor}{HTML}{FFC300}
+
+\usepackage{tcolorbox}
+\tcbuselibrary{most,listingsutf8,minted}
+
+\tcbset{tcbox width=auto,left=1mm,top=1mm,bottom=1mm,
+right=1mm,boxsep=1mm,middle=1pt}
+
+\newtcblisting{myr}[1]{colback=codecolor!5,colframe=codecolor!80!black,listing only, 
+minted options={numbers=left, style=tcblatex,fontsize=\tiny,breaklines,autogobble,linenos,numbersep=3mm},
+left=5mm,enhanced,
+title=#1, fonttitle=\bfseries,
+listing engine=minted,minted language=r}
+
+
+% ------------------------------------------------------------------------------
+% Listings
+% ------------------------------------------------------------------------------
+\definecolor{mygreen}{HTML}{37980D}
+\definecolor{myblue}{HTML}{0D089F}
+\definecolor{myred}{HTML}{98290D}
+
+\usepackage{listings}
+
+% the following is optional to configure custom highlighting
+\lstdefinelanguage{XML}
+{
+  morestring=[b]",
+  morecomment=[s]{<!--}{-->},
+  morestring=[s]{>}{<},
+  morekeywords={ref,xmlns,version,type,canonicalRef,metr,real,target}% list your attributes here
+}
+
+\lstdefinestyle{myxml}{
+language=XML,
+showspaces=false,
+showtabs=false,
+basicstyle=\ttfamily,
+columns=fullflexible,
+breaklines=true,
+showstringspaces=false,
+breakatwhitespace=true,
+escapeinside={(*@}{@*)},
+basicstyle=\color{mygreen}\ttfamily,%\footnotesize,
+stringstyle=\color{myred},
+commentstyle=\color{myblue}\upshape,
+keywordstyle=\color{myblue}\bfseries,
+}
+
+% ------------------------------------------------------------------------------
+% The Document
+% ------------------------------------------------------------------------------
+
+\begin{document}
+
+% \title{Wessex Water: Bayesian Network for Forecasting and Source Apportionment}
+\title{BeZero Carbon: Extreme value modelling of cyclones}
+
+\date{
+  \footnotesize ITT Friday Presentation \\ 
+  \today \\
+  % \shortdate \\
+  \vspace{0.4cm}
+  % \emph{Paddy O'Toole, Christian Rohrbeck, Haiyan Zheng, Emiko Dupont}
+  \emph{Paddy O'Toole, Kristina Bratkova, Matthew Speers, Christian Rohrbeck}
+}
+
+% \title{Wessex Water: Bayesian Network for Source Apportionment}
+% \author{\emph{Sam Williams, Paddy O'Toole, Christian Rohrbeck, Haiyan Zheng, Emiko Dupont}}
+% \date{\today}
+
+
+\frame{\titlepage}
+
+%==================================================
+
+% \frame{\begin{small}
+% \frametitle{Overview}
+% \tableofcontents\end{small}}
+
+%=================================================
+% \begin{frame}
+% \frametitle{Table of Contents}
+% \tableofcontents
+% \end{frame}
+
+% \section{Introduction}
+
+\begin{frame}{Problem}
+
+\begin{minipage}{0.49\textwidth}
+\begin{itemize}
+    \item Mangrove forests in tropics vital for carbon capture
+    \item Cyclones range from ``tropical disturbances'' to hurricanes
+    % \item Particularly endangered by ``extreme'' cyclones (i.e.\ hurricanes)
+    \item Desire to estimate return levels of extreme wind speeds for these events
+\end{itemize}
+\end{minipage}
+\hfill
+\begin{minipage}{0.49\textwidth}
+  % \centering
+  \vspace{}
+  % \includegraphics[width=6cm]{plots/mangrove.png}
+\end{minipage}
+\end{frame}
+
+\end{document}

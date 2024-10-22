@@ -3,6 +3,7 @@
 # Note: Doesn't work for fixed b when keeping b values, so remove
 
 # TODO: Investigate differences in length for reglines
+# TODO: Get data for 6 counties
 
 #### Libs ####
 
@@ -59,19 +60,23 @@ within_cluster_sum <- function(k, distance_matrix) {
 #   sum(p * log(p / q), na.rm = TRUE)
 # }
 
-
 #### Load Data ####
+
+# load original dataset
+data <- readr::read_csv("data/met_eireann/final/met_eir_preprocess.csv.gz")
 
 # load shapefile
 areas <- sf::read_sf("data/met_eireann/final/irl_shapefile.geojson")
 
 # Fitted conditional extremes models for each site
-dependence <- readRDS("data/texmex_mexdep_obj_fixed_b.RDS")
+dependence <- readRDS("data/texmex_mexdep_obj.RDS")
+# dependence <- readRDS("data/texmex_mexdep_obj_fixed_b.RDS")
 
 # a and b values
 # TODO: Save for fixed and varying b in 01_script
 # Investigate NAs for Crolly (Filter Works) in Donegal
-ab_df <- readr::read_csv("data/ab_vals_fixed_b.csv")
+ab_df <- readr::read_csv("data/ab_vals.csv")
+# ab_df <- readr::read_csv("data/ab_vals_fixed_b.csv")
 
 # remove locations with NAs for a
 na_locs <- ab_df %>% 
@@ -85,6 +90,10 @@ if (length(na_locs) > 0) {
     !grepl(na_locs, names(dependence), fixed = TRUE)
   ]
 }
+
+# remove locations with NAs from data
+data <- data %>% 
+  semi_join(ab_df, by = "name")
 
 # convert ab values to wide format
 ab_df_wide <- ab_df %>% 
@@ -139,7 +148,6 @@ calc_adj_mat <- \(pts, cut_vor = TRUE, plot = FALSE) {
 
 adj_mat <- calc_adj_mat(pts, plot = TRUE)
 
-
 #### Simple k-mediod cluster on a and b values ####
 
 # matrix of a and b values for rain and wind for each site
@@ -168,6 +176,7 @@ scree_plot <- \(dist_mat) {
     # ylab = "Total Within-Cluster Sum of Distances",
     # main = "Scree Plot for K-medoids Clustering"
   )
+  return(total_within_ss)
 }
 scree_plot(dist_mat_euc)
 
@@ -218,7 +227,294 @@ pam_euc_adj_clust <- pam(dist_euc_adj, k = 7)
 plt_clust(pts, pam_euc_adj_clust)
 
 
-#### Vignotto 2017 KL divergence clustering on regression lines ####
+#### Vignotto 2021 KL divergence clustering ####
+
+# function to convert to Pareto scale
+# divide by N + 1, not N (so do i / n + 1)
+# x: Vector representing e.g. rain
+pareto_trans <- \(x) {
+  stopifnot(is.vector(x))
+  # calculate ECDF
+  ecdf_vals <- order(x) / (length(x) + 1) 
+  # pareto transform
+  return(1 / (1 - ecdf_vals))
+}
+
+# TODO: Investigate why no observations appear to be extreme for both???
+# nrows for first place
+data %>% 
+  filter(name == data$name[[1]]) %>% 
+  nrow() # 693
+# nrows with high rain and wind speed at same time for first place
+data %>% 
+  filter(name == data$name[[1]]) %>% 
+  filter(rain > quantile(rain, 0.9), wind_speed > quantile(wind_speed, 0.9)) %>% 
+  nrow() # 13
+# same, but Pareto transformed
+data.frame(
+  "rain" = pareto_trans(data$rain[data$name == data$name[[1]]]), 
+  "wind_speed" = pareto_trans(data$wind_speed[data$name == data$name[1]])) %>% 
+  filter(rain > quantile(rain, 0.9), wind_speed > quantile(wind_speed, 0.9)) %>% 
+  nrow() # 4
+# None == 0, so why does this not carry through to below??
+
+# function to compute bivariate risk function
+# x: list of vectors representing different 
+# fun: fun used to calculate "risk", defaults to max as easier to partition
+risk_fun <- \(x, fun = max) {
+  # test list
+  stopifnot(is.list(x)) 
+  # test equal length
+  stopifnot(length(unique(vapply(x, length, numeric(1)))) == 1) 
+  
+  # TODO: Improve/speedup (could have x as a dataframe!)
+  risk_vec <- vector(length = length(x[[1]]))
+  for (i in seq_along(x[[1]])) {  
+    risk_vec[[i]] <- fun(
+      # pull ith entry in each vector in the list x
+      vapply(x, `[[`, i, FUN.VALUE = numeric(1))
+    )
+  }
+  return(risk_vec)
+}
+
+# Partition into 3 subsets, calculate empirical proportion in each
+# TODO: Only works for max risk fun, unsure how to do for sum...
+# TODO: Fix, obviously wrong since it doesn't identify times where both 
+# are high!
+partition_max <- \(x, prob, plot = FALSE) {
+  
+  # x must be a list of length 2 (rain and wind speed)
+  stopifnot(is.list(x) && length(x) == 2) 
+  
+  # convert to dataframe, easier to subset (must follow this order!)
+  df <- data.frame(
+    rain       = x[[1]], 
+    wind_speed = x[[2]], # TODO: Make x a dataframe already
+    # TODO: Fix this, wrong somehow!!!
+    R          = risk_fun(x, max)
+  ) 
+  
+  # calculate quantile of risk function
+  qu <- quantile(df$R, prob = prob)[[1]]
+  
+  # partition into 3 subsets
+  df <- df %>% 
+    mutate(extreme = case_when(
+      rain > qu & wind_speed > qu ~ "both",
+      rain > qu                    ~ "rain",
+      wind_speed > qu              ~ "wind_speed",
+      TRUE                          ~ NA
+    ))
+  
+  if (plot) {
+    df %>% 
+      ggplot() +
+      geom_point(aes(x = rain, y = wind_speed, colour = extreme)) + 
+      geom_vline(xintercept = qu, linetype = "dashed") + 
+      geom_hline(yintercept = qu, linetype = "dashed") + 
+      ggsci::scale_colour_nejm() + 
+      labs(y = "wind speed", title = paste0(
+        "Hazard subsets, q_u = ", round(qu, 3), " (prob = ", prob, ")"
+      )) + 
+      theme
+  }
+  
+  # return list with points falling into each category
+  return(list(
+      "rain"       = sum(df$extreme == "rain", na.rm = TRUE),
+      "wind_speed" = sum(df$extreme == "wind_speed", na.rm = TRUE),
+      "both"       = sum(df$extreme == "both", na.rm = TRUE)
+    )
+  )
+}
+
+# TODO: re colour points at original scale
+
+# Function to calculate proportion 
+calc_prop <- \(x) {
+  stopifnot(is.list(x) & names(x) == c("rain", "wind_speed", "both"))
+  # denom <- length(unlist(x))
+  denom <- sum(unlist(x))
+  ret <- lapply(x, \(y) y / denom)
+  names(ret) <- names(x)
+  return(ret)
+}
+
+# function to calculate KL divergence between any two locations
+emp_kl_div <- \(x, y, convert_pareto = TRUE, prob = 0.9, print = TRUE) {
+  # stopifnot(length(x) == length(y))
+  
+  # split x and y in half (rain vs wind speed)
+  # remove NAs from x and y from padding matrix
+  x <- x[!is.na(x)]
+  y <- y[!is.na(y)]
+  n <- length(x)
+  m <- length(y) # need for m???
+  df_lst <- list(
+  # x_df <- data.frame(
+    "x" = data.frame(
+      "rain"       = x[1:(n / 2)],
+      "wind_speed" = x[((n / 2) + 1):n]
+    ),
+    "y" = data.frame(
+    "rain"       = y[1:(m / 2)],
+    "wind_speed" = y[((m / 2) + 1):m]
+    )
+  )
+   
+  # convert to Pareto scale
+  df_lst_par <- df_lst
+  if (convert_pareto) {
+    df_lst_par <- lapply(df_lst, \(z) {
+      data.frame(apply(z, 2, pareto_trans))
+    })
+  }
+  
+  # partition into 3 subsets
+  df_part <- lapply(df_lst_par, \(z) {
+    partition_max(list(z[, 1], z[, 2]), prob = prob)
+  })
+  
+  # calculate proportions of partitions
+  # TODO: parts of df part can just be named vector, doesn't need list!
+  df_part_prop <- lapply(df_part, \(z) {
+    denom <- sum(unlist(z)) # denominator is # extreme obs
+    lapply(z, `/`, denom) # find prop of extreme obs for each disjoint set
+  })
+  
+  # calculate proportions of partitions
+  x_part <- df_part_prop[[1]]
+  y_part <- df_part_prop[[2]]
+  if (print) {
+    print(paste0("both for x: ", x_part$both))
+    print(paste0("both for y: ", round(y_part$both)))
+  }
+  sum_vals <- vector(length = length(x_part))
+  for (i in seq_along(sum_vals)) { 
+    sum_vals[i] <- (x_part[[i]] - y_part[[i]]) * 
+                      log(x_part[[i]] / y_part[[i]])
+  }
+  # sum_vals[is.nan(sum_vals) | is.infinite(sum_vals)] <- 0
+  if (any(is.nan(sum_vals) | is.infinite(sum_vals), na.rm = TRUE)) return(NA)
+  return((1  / 2) * sum(sum_vals))
+}
+
+# test for 2 locations
+emp_kl_div(
+  c(data$rain[data$name == data$name[[1]]], data$wind_speed[data$name == data$name[[1]]]),
+  # c(data$rain[data$name == "Portumna O.p.w."], data$wind_speed[data$name == "Portumna O.p.w."]),
+  c(data$rain[data$name == "Dublin (Ringsend)"], data$wind_speed[data$name == "Dublin (Ringsend)"]),
+  prob = 0.8
+)
+
+# create matrix of vals & calculate KL divergence distance matrix between them
+# TODO: Any way to do in a better way?
+# TODO: Inefficient as symmetric, only need upper triangular calculations
+# locs_mat <- outer(locs, locs, paste, sep = " <---> ")
+# kl_mat <- matrix(nrow = length(locs), ncol = length(locs))
+# seq <- seq_along(locs)
+# for (i in seq) {
+#   print(paste0("Complete: ", round((i / length(seq)) * 100, 3), "%"))
+#   for (j in seq) {
+#     if (i == j) {
+#       kl_mat[i, j] <- 0
+#       next
+#     # only need to calculate once
+#     } else if (i < j) {
+#       kl_mat[i, j] <- kl_mat[j, i]
+#       next
+#     }
+#     
+#     names <- stringr::str_split(locs_mat[i, j], " <---> ")[[1]]
+#     loc_data <- lapply(names, \(spec_name) {
+#       data %>% 
+#         filter(name == spec_name) %>% 
+#         dplyr::select(rain, wind_speed) %>% 
+#         stack() %>% 
+#         select(1) %>% 
+#         unlist(use.names = FALSE)    
+#     })
+#     kl_mat[i, j] <- do.call(emp_kl_div, c(loc_data, "prob" = 0.7))
+#     print(kl_mat[i, j])
+#   }
+# }
+
+# Split data into lists for each location as required by emp_kl_div
+data_lst <- data %>% 
+  # split data by location
+  group_split(name) %>% 
+  purrr::map(\(x) x %>% 
+               select(rain, wind_speed) %>% 
+               stack() %>% 
+               select(1) %>% 
+               as.vector() %>% 
+               `[[`(1))
+
+# Calculate dissimilarity matrix 
+# TODO: Doesn't work for p = 0.9, some sites have no doubly extreme obs
+prob <- 0.8
+kl_mat <- dist(data_lst, method = emp_kl_div, print = FALSE, prob = prob)
+
+# check for NAs, reduce prob if required
+(nas <- apply(apply(kl_mat, 2, is.na), 2, sum))
+while (any(nas) > 0) {
+  prob <- prob - 0.5
+  print(paste0("prob = ", prob))
+  kl_mat <- dist(data_lst, method = emp_kl_div, print = FALSE, prob = prob)
+}
+
+# generate scree plot to decide on # clusters
+scree_plot(kl_mat) # obvious choice seems to be 3
+
+# cluster based on dissimilarity
+cluster::pam(kl_mat, 3, diss = TRUE)
+
+pam_kl_clust <- pam(kl_mat, k = 3, diss = TRUE)
+
+plt_clust(pts, pam_kl_clust)
+
+# imposing adjacency
+kl_mat_adj <- as.matrix(kl_mat)
+kl_mat_adj[adj_mat == 0] <- 1e9
+
+scree_plot(kl_mat_adj) # no obvious choice, go with 3
+
+# pam_kl_clust_adj <- pam(kl_mat_adj, k = 3)
+plt_clust(pts, pam(kl_mat_adj, k = 3)) 
+plt_clust(pts, pam(kl_mat_adj, k = 4)) 
+# pretty good clustering solutions actually! No idea why, could be chance
+
+# TODO Test for simulation dataset, unsure if method is correct!
+
+#### Vignotto 2021 KL divergence clustering on regression lines ####
+
+# pull through regression line for each location
+reglines <- lapply(dependence, \(x) {
+  lapply(x, \(y) as.vector(y$dependence$regline$regline))
+})
+# Notes:
+# - Should already be a distribution (as Y Laplace distributed)
+# - Therefore, KL divergence should be valid?? 
+# - Is it valid to divide by sum to rescale so sum is 1?
+
+# TODO Problem: reglines are different lengths
+# Possible soln: can use regression eqn (a, b, yex, z) to recalculate, 
+# should I use yex for both locations here? What should procedure be to get 
+# regression lines of equal length?
+# Also, how to make a valid probability, other than dividing by sum?
+# May need to convert from (E)CDF to pdf somehow?
+# Can also use alternatives to KL divergence - Maximum mean discrepancy, AD?
+
+KL(matrix(
+  # c(reglines[[1]]$rain, reglines[[2]]$rain), 
+  c(
+    reglines[[1]]$rain / sum(reglines[[1]]$rain), 
+    reglines[[2]]$rain / sum(reglines[[2]]$rain)
+  ), 
+ncol = 1), unit = "log")
+
+#### Old ####
 
 #### Pull through regression lines ####
 
@@ -255,8 +551,8 @@ reglines_df <- bind_rows(lapply(seq_along(reglines), \(i) {
 
 #### Test calculating KL divergence between two locations ####
 
-
 # function to split data into adjoint sets of extremal behaviour
+# TODO: Way to do this more programatically
 split_sets <- \(x, thresh_rain, thresh_ws) {
   rain <- filter(x, rain > thresh_rain & wind_speed < thresh_ws)
   ws   <- filter(x, rain < thresh_rain & wind_speed > thresh_ws)

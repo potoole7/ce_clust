@@ -136,163 +136,63 @@ thresh <- lapply(dependence, pull_thresh_trans)
 
 # take maximum Laplace thresholds; want to geenra
 thresh_max <- apply(bind_rows(thresh), 2, max)
-# thresh_max <- as.list(apply(bind_rows(thresh), 2, max))
 
-# Function to sample from normal dist (likelihood for single conditional) for 
-# Y_{-i}|Y_{i} for data exceeding global threshold
-# TODO: Check normal distribution sampled from correctly, particularly logic
-# params - CE parameters for one location
-# thresh - Thresholds for one location
-# thresh_max - Global maximum threshold
-# data_max - Maximum data point to go up to, defaults as twice thresh_max
-# data_len - How many data points between thresh_max and data_max should we 
-# sample from a normal distribution for?
-# n - Number of normal samples to generate for each data point
-gen_ce_norm <- \(
-  params, thresh, thresh_max, data_max = 2 * thresh_max, data_len = 10, n = 1000
-) {
-  # print(data_max)
-  # print(data_len)
-  # parameters
-  # TODO: Can pull in a more programmatic way
-  a <- params[["a"]] # alpha 
-  b <- params[["b"]] # beta
-  m <- params[["m"]] # mu nuisance parameter
-  s <- params[["s"]] # sigma nuisance
-  
-  # Take sequence of length data_len from global max thresh to specified max
-  # TODO: Should we sample from this using `sample()`?? Wouldn't be the same 
-  # across different locations then, unless we did outside of function and/or 
-  # had same seed
-  data <- seq(thresh_max, data_max, length = data_len)
-  
-  # generate normal samples for each data point
-  return(vapply(data, \(x) {
-    # Likelihood for single conditional (5.2 H & T 2004)
-    rnorm(
-      n     = n,
-      # mean  = a * x + m * (x ^ b),
-      mean  = a * x + m * (x ^ b), #  + 10, # shift to the right -> non-neg
-      sd    = s * (x ^ b)
-    )
-  }, FUN.VALUE = numeric(n)))
-}
+# How best to split up KL divergence problem? Best to have:
+# function to calculate KL divergence for single data point, 
+# Function to calculate Jensen-Shannon from this
+# Master function that applies this to all data, calculating mean and sd
 
-set.seed(123)
-gen_ce_norm(
-  params = params[[1]]$rain, 
-  thresh = thresh[[1]][["rain"]], 
-  thresh_max = thresh_max[["rain"]]
-)
-
-set.seed(123)
-x <- gen_ce_norm(
-  params = params[[1]]$rain, 
-  thresh = thresh[[1]][["rain"]], 
-  thresh_max = thresh_max[["rain"]]
-)
-
-set.seed(123)
-y <- gen_ce_norm(
-  params = params[[2]]$rain, 
-  thresh = thresh[[2]][["rain"]], 
-  thresh_max = thresh_max[["rain"]]
-)
-
-# Compare normal samples using KL divergence
-# TODO: Could functionalise much of this??
-# x - Matrix 
-kl_compare <- \(x, y) {
-  
-  # convert x and y from matrix to vector form, if required
-  x_fun <- x
-  y_fun <- y 
-  if (is.matrix(x)) {
-    x_fun <- as.vector(x)
-  }
-  if (is.matrix(y)) {
-    y_fun <- as.vector(y)
-  }
-  stopifnot(is.vector(x_fun) && is.vector(y_fun))
-  
-  # shift upwards if required, won't change shape of distribution
-  # TODO: However, does appear to effect value of KL divergence!
-  if (any(x_fun < 0) || any(y_fun < 0)) {
-    epsilon <- 1E-8
-    min_val <- min(c(x_fun, y_fun)) - epsilon
-    message(paste0("Shifting by ", min_val, " so samples are non-negative"))
-    # min_val <- -5 + epsilon
-    # min_val <- -10 + epsilon
-    x_fun <- x_fun - min_val
-    y_fun <- y_fun - min_val
-  }
-  
-  # divide by sum to get proper distributions
-  x_fun <- x_fun / sum(x_fun)
-  y_fun <- y_fun / sum(y_fun)
-  
-  plot(
-    density(x_fun, bw = 3.807e-6), 
-    xaxt = "n", 
-    yaxt = "n", 
-    xlim = c(-0.00005, 0.00025), 
-    ylim = c(0, 40000)
-  )
-  # axis(1, at = seq(0, 0.00020, by = 0.00005))
-  axis(1, at = seq(0, 0.00020, by = 0.0001))
-  axis(2, at = seq(0, 40000, by = 10000))
-  lines(density(y_fun), col = "red")
-   
-  # calculate JS divergence between x and y (symmetric and a proper metric)
-  # 
-  return(philentropy::distance(
-    rbind(x_fun, y_fun), 
-    # method = "kullback-leibler", 
-    method = "jensen-shannon", 
-    unit = "log", 
-    mute.message = TRUE
+# function to calculate KL divergence for single data point
+# derivation at https://statproofbook.github.io/P/norm-kl.html
+kl_gauss <- \(mu1, mu2, var1, var2) {
+  return(1 / 2 * (
+    (mu2 - mu1)^2 / var2 + (var1 / var2) - log(var1 / var2) - 1
   ))
 }
 
-#### Clustering ####
+# function to calculate Jensen-Shannon divergence metric from KL divergence
+# This metric is symmetric, as required for clustering 
+# https://tinyurl.com/526rwy9f
+js_gauss <- \(mu1, mu2, var1, var2) {
+  # calculate mean, variance for mixture distribution M = (P + Q)/2
+  # Sum of normals as in https://online.stat.psu.edu/stat414/lesson/26/26.1
+  # (N(u1, v1) + N(u2, v2)) / 2 = N((u1 + u2) / 2, (v1 + v2) / 2^2)
+  mu_m <- (mu1 + mu2) / 2 
+  var_m <- (var1 + var2) / 4
+  
+  # calculate JS(P||Q) = ((KL(P||M)) + KL(Q||M))/2
+  return(
+    (kl_gauss(mu1, mu_m, var1, var_m) + kl_gauss(mu2, mu_m, var1, var_m)) / 2
+  )
+}
 
-# for each location, generate normal samples
-norm_samples_loc <- lapply(seq_along(params), \(i) {
-  lapply(seq_along(params[[i]]), \(j) {
-    gen_ce_norm(
-      params     = params[[i]][[j]], 
-      thresh     = thresh[[i]][[j]],
-      thresh_max = thresh_max[[j]]
-    )
-  })
-})
+# Function to calculate Jensen-Shannon divergence for each data point
+params_x <- params[[1]]$rain
+params_y <- params[[2]]$rain
+data <- data <- seq(
+  thresh_max[[1]], 2 * thresh_max[[1]], length = 10 
+)
+js_div <- \(params_x, params_y, data) {
+  
+  # funs to calculate mu and sd for normal dist as in 5.2 of Heff & Tawn '04
+  mu_fun <- \(x, data) {
+    return(x[["a"]] * data + x[["m"]] * (data ^ x[["b"]]))
+  }
+  var_fun <- \(x, data) {
+    # take square now to avoid in kl_single formula
+    return((x[["s"]] * (data ^ x[["b"]]))^2)
+  }
+  
+  # calculate mu and sigma for each data point
+  mus <- lapply(list(params_x, params_y), mu_fun, data = data)
+  vars <- lapply(list(params_x, params_y), var_fun, data = data)
+  
+  # Calculate Jensen-Shannon divergence for each data point
+  # TODO: How best to summarise across all data points? Sum? Average?
+  return(mapply(
+    js_gauss,
+    mu1 = mus[[1]], mu2 = mus[[2]], var1 = vars[[1]], var2 = vars[[2]]
+  ))
+}
 
-# pull for rain and wind speed
-# norm_samples_rain <- lapply(norm_samples, \(x) as.vector(x[[1]]))
-# norm_samples_ws <- lapply(norm_samples, \(x) as.vector(x[[2]]))
-
-# list of locs -> list of len 2 of variables, each containing all locs
-norm_samples_var <- purrr::transpose(norm_samples_loc)
-
-# calculate distance matrices
-# dist_rain <- dist(x = norm_samples_rain, method = kl_compare)
-# dist_ws <- dist(x = norm_samples_rain, method = kl_compare)
-dist_mats <- lapply(norm_samples_var, dist, method = kl_compare)
-
-# scree plots
-lapply(dist_mats, scree_plot)
-
-# cluster based on both
-# TODO: Not working at all! Need to fix
-plt_clust(pts, pam(dist_mats[[2]], k = 2, diss = TRUE)) 
-
-# cluster adjacent sites only
-dist_mats_adj <- lapply(dist_mats, \(x) {
-  ret <- as.matrix(x)
-  ret[adj_mat == 0] <- 1e9
-  return(ret)
-})
-
-lapply(dist_mats_adj, scree_plot)
-
-plt_clust(pts, pam(dist_mats_adj[[1]], k = 3, diss = FALSE)) 
+# 

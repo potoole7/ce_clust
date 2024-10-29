@@ -45,60 +45,6 @@ theme <- theme_bw() +
 
 sf::sf_use_s2(FALSE)
 
-#### Support functions ####
-
-# TODO: Add to their own file!
-
-# compute the total within-cluster sum of distances
-within_cluster_sum <- function(k, distance_matrix) {
-  kmedoids_result <- pam(distance_matrix, k = k)
-  return(kmedoids_result$objective[1])  # Total cost (sum of distances)
-}
-
-# calculate scree plot
-scree_plot <- \(dist_mat, k_vec = 1:10) {
-  
-  total_within_ss <- vapply(
-    k_vec, within_cluster_sum, dist_mat, FUN.VALUE = numeric(1)
-  )
-  
-  # scree plot
-  plot(
-    k_vec, 
-    total_within_ss, 
-    type = "b", 
-    xlab = "Number of Clusters (k)", 
-    ylab = "Total Within-Cluster Sum of Distances",
-    main = "Scree Plot for K-medoids clustering",
-    pch = 19 
-  )
-  return(total_within_ss)
-}
-
-# plot clustering solution on map
-plt_clust <- \(pts, pam_clust) {
-  medoids <- pam_clust$medoids
-  if (inherits(medoids, "matrix")) medoids <- as.numeric(rownames(medoids))
-  # browser()
-  pts_plt <- cbind(pts, data.frame("clust" = pam_clust$clustering)) %>% 
-    mutate(row = row_number())
-  pts_plt$mediod <- ifelse(
-    pts_plt$row %in% medoids, TRUE, FALSE
-  )
-
-  ggplot(areas) + 
-    geom_sf(colour = "black", fill = NA) + 
-    geom_sf(
-      data = pts_plt, 
-      aes(colour = factor(clust), shape = mediod, size = as.numeric(mediod)), 
-      alpha = 0.8
-    ) + 
-    scale_shape_discrete(breaks = c(1, 15)) + 
-    scale_size_continuous(range = c(3, 6)) +  
-    guides(shape = "none", size = "none") + 
-    theme
-}
-
 
 #### Load Data ####
 

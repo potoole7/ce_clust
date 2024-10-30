@@ -117,7 +117,6 @@ pull_params <- \(dep) {
 }
 
 # pull parameter values for each location
-# TODO: Easier to do as dataframe than in lists?
 params <- lapply(dependence, pull_params)
 
 # pull thresholds
@@ -169,10 +168,14 @@ js_gauss <- \(mu1, mu2, var1, var2) {
 # Function to calculate Jensen-Shannon divergence for each data point
 params_x <- params[[1]]$rain
 params_y <- params[[2]]$rain
-data <- data <- seq(
+data <- seq(
   thresh_max[[1]], 2 * thresh_max[[1]], length = 10 
 )
-js_div <- \(params_x, params_y, data) {
+# js_div <- \(params_x, params_y, data) {
+js_div <- \(params_x, params_y, thresh_max, data_max = 2 * thresh_max, n_dat) {
+  
+  # create data sequence from specified arguments
+  data <- seq(thresh_max, data_max, length = n_dat)
   
   # funs to calculate mu and sd for normal dist as in 5.2 of Heff & Tawn '04
   mu_fun <- \(x, data) {
@@ -189,10 +192,58 @@ js_div <- \(params_x, params_y, data) {
   
   # Calculate Jensen-Shannon divergence for each data point
   # TODO: How best to summarise across all data points? Sum? Average?
-  return(mapply(
+  # return(mapply(
+  #   js_gauss,
+  #   mu1 = mus[[1]], mu2 = mus[[2]], var1 = vars[[1]], var2 = vars[[2]]
+  # ))
+  return(sum(mapply(
     js_gauss,
     mu1 = mus[[1]], mu2 = mus[[2]], var1 = vars[[1]], var2 = vars[[2]]
-  ))
+  )))
 }
 
-# 
+
+#### Clustering ####
+
+# pull parameter values for each location
+params <- lapply(dependence, pull_params)
+
+# pull Laplace threshold values for each location
+thresh <- lapply(dependence, pull_thresh_trans)
+
+# take maximum Laplace thresholds; want to geenra
+# thresh_max <- apply(bind_rows(thresh), 2, max)
+thresh_max <- lapply(bind_rows(thresh), max)
+
+# list of locs -> list of len 2 of variables, each containing all locs
+params <- purrr::transpose(params)
+
+dist_mats <- lapply(seq_along(params), \(i) {
+ proxy::dist(
+   params[[i]], 
+   method = js_div, 
+   thresh_max = thresh_max[[i]], 
+   data_max = 2 * thresh_max[[i]], 
+   n_dat = 10
+ )
+})
+
+# scree plots
+lapply(dist_mats, scree_plot) # looks to be 3 clusters for both
+
+ire_clust_plots <- lapply(dist_mats, \(x) {
+  plt_clust(pts, pam(x, k = 3, diss = TRUE))
+})
+
+# cluster adjacent sites only
+dist_mats_adj <- lapply(dist_mats, \(x) {
+  ret <- as.matrix(x)
+  ret[adj_mat == 0] <- 1e9
+  return(ret)
+})
+
+lapply(dist_mats_adj, scree_plot)
+
+ire_clust_adj_plots <- lapply(dist_mats_adj, \(x) {
+  plt_clust(pts, pam(x, k = 3, diss = TRUE))
+})

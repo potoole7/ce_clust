@@ -40,9 +40,7 @@ n_locs <- 12 # number of "locations"
 # cluster_mem <- c(1, 1, 1, 2, 2, 2, 3, 3, 3, 3) # known cluster membership
 cluster_mem <- c(1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3)
 n_vars <- 2 # number of variables per location
-# mix_p <- c("mvn" = 0.7, "gpd" = 0.3) # mixture percentages
-# mix_p <- c("mvn" = 0.7, "gpd" = 0.3) # mixture percentages
-mix_p <- c("mvn" = 0.3, "gpd" = 0.7) # mixture percentages
+mix_p <- c("mvn" = 0.5, "gpd" = 0.5) # mixture percentages
 # Normal distribution parameters (using standard normal with 0 correlation)
 # mu <- rep(0, n_vars)
 # sigma <- diag(1, n_vars)
@@ -66,22 +64,22 @@ data_mvg <- lapply(seq_len(n_locs), \(i) {
   rmvgamma(n, alpha, beta, corr = diag(rep(1, n_vars)))
 })
 
-par(mfrow = c(2, 2))
-# lapply(data_gpd[c(1, 5, 10)], plot)
-lapply(data_mvg[c(1, 5, 7, 12)], plot)
-par(mfrow = c(1, 1))
+# par(mfrow = c(2, 2))
+# lapply(data_mvg[c(1, 5, 10)], plot)
+# # lapply(data_mvg[c(1, 5, 7, 12)], plot)
+# par(mfrow = c(1, 1))
 
-
+# confirm bulk data for variables at each location have no correlation 
+# TODO: Is this realistic? Won't they have some correlation?
 vapply(data_mvg, \(x) round(cor(x)[1, 2], 3), numeric(1))
 
 # t-copula correlation matrix
-# rho <- matrix(0, nrow = n_locs, ncol = n_locs) # initialise
 # initialise
 id_mat <- diag(1, n_vars)
 rho <- list(
   "cluster_1" = id_mat,
-  "cluster_2" = id_mat # ,
-  # "cluster_3" = sigma
+  "cluster_2" = id_mat,
+  "cluster_3" = id_mat
 )
 
 # separate into known clusters by changing correlation
@@ -90,10 +88,9 @@ rho <- list(
 # rho[7:10, 7:10] <- 0.8  
 # diag(rho) <- 1
 rho[[1]][1, 2] <- rho[[1]][2, 1] <- 0.95
-# rho[[2]][1, 2] <- rho[[2]][2, 1] <- 0.65
-# rho[[3]][1, 2] <- rho[[3]][2, 1] <- 0.01
-
-rho[[2]][1, 2] <- 0.1
+# rho[[2]][1, 2] <- 0.1
+rho[[2]][1, 2] <- rho[[2]][2, 1] <- 0.5
+rho[[3]][1, 2] <- rho[[3]][2, 1] <- 0.1
 
 # create t-copula with above correlation structure
 # t_cop <- tCopula(
@@ -102,6 +99,7 @@ rho[[2]][1, 2] <- 0.1
 #   df = 1, # low df <=> heavier tails
 #   dispstr = "un"
 # )
+# TODO: DF for t-copula very important, determine how well clustering recovered
 set.seed(seed_number)
 t_cop <- lapply(seq_len(n_locs), \(i) {
   
@@ -109,17 +107,18 @@ t_cop <- lapply(seq_len(n_locs), \(i) {
   df <- 1
   rho_spec <- rho[[1]]
   # for three clusters
-  # if (i %in% 5:8) {
-  #   rho_spec <- rho[[2]]
-  # } else if (i %in% 9:12) {
-  #   rho_spec <- rho[[3]]
-  # }
-  # for two clusters
-  if (i %in% 7:12) {
-    df <- 7
+  if (i %in% 5:8) {
+    df <- 5
     rho_spec <- rho[[2]]
-    # return(data_mvg[[i]])
+  } else if (i %in% 9:12) {
+    df <- 10
+    rho_spec <- rho[[3]]
   }
+  # for two clusters
+  # if (i %in% 7:12) {
+  #   df <- 7
+  #   rho_spec <- rho[[2]]
+  # }
   
   # create t-copula (Gaussian copula for other cluster??)
   tCopula(
@@ -143,18 +142,9 @@ data_gpd <- lapply(seq_along(t_cop), \(i) {
   # Generate uniform samples from copula
   u <- rCopula(n, t_cop[[i]])  
   # Transform to GPD marginals 
-  # TODO: Transform (all? some?) to Laplace margins
-  # TODO: Change location parameter? I think this is where I'm going wrong
-  # evd::qgpd(u, loc = 0, scale = 1, shape = 0.2)
-  # evd::qgpd(u, loc = 3, scale = 1, shape = 0.05)
-  # evd::qgpd(u, loc = 3, scale = 1, shape = 0.01)
-  # evd::qgpd(u, loc = 0, scale = 3, shape = -0.5)
-  
-  # for Gamma (parameters chosen so max is ~ 300, in line with Irish data)
-  # evd::qgpd(u, loc = quantile(data_mvg[[i]], 0.99), scale = 3, shape = 0.3)
-  # evd::qgpd(u, loc = quantile(data_mvg[[i]], 0.99), scale = 3, shape = -0.05)
   evd::qgpd(
     u, 
+    # TODO: Will it work after changing this?
     # loc = quantile(data_mvg[[i]], 0.99),
     loc = 0.99 * max(data_mvg[[i]]), 
     scale = 3, 
@@ -170,8 +160,8 @@ vapply(data_gpd, \(x) round(cor(x)[1, 2], 3), numeric(1))
 # Plot var1 vs var2 for first, second and third clusters
 # TODO: Appears to still be many co-occurring extremes for cluster 3
 par(mfrow = c(2, 2))
-# lapply(data_gpd[c(1, 5, 10)], plot)
-lapply(data_gpd[c(1, 5, 7, 12)], plot)
+lapply(data_gpd[c(1, 5, 10)], plot)
+# lapply(data_gpd[c(1, 5, 7, 12)], plot)
 par(mfrow = c(1, 1))
 
 # mixture model
@@ -188,21 +178,17 @@ data_mix <- lapply(seq_along(data_mvg), \(i) {
 })
 
 par(mfrow = c(2, 2))
-# lapply(data_mix[c(1, 5, 10)], plot)
-lapply(data_mix[c(1, 5, 7, 12)], plot)
+lapply(data_mix[c(1, 5, 10)], plot)
+# lapply(data_mix[c(1, 5, 7, 12)], plot)
 par(mfrow = c(1, 1))
 
 # should within reason remove most of normal samples
 # apply(data_mvg[[1]], 2, max)
 # apply(data_gpd[[1]], 2, quantile, 0.9)
-apply(data_mix[[1]], 2, quantile, c(0.9, 0.95, 0.99))
+# apply(data_mix[[1]], 2, quantile, c(0.9, 0.95, 0.99))
 
-# TODO: Plot for each location
-# check that there is little correlation here
+# check correlation after combining
 vapply(data_mix, \(x) round(cor(x)[1, 2], 3), numeric(1))
-
-# TODO: cluster using "normal" methods 
-# (i.e. dissimilarity matrix based on correlation between variables)
 
 # cluster using Vignotto 2021 method:
 # split data into list of locations where variables are stacked
@@ -217,33 +203,29 @@ kl_mat <- proxy::dist(
 )
 
 # save data
-saveRDS(data_lst, file = "data/sim_dat_2_clust.RDS")
+# saveRDS(data_lst, file = "data/sim_dat_2_clust.RDS")
+saveRDS(data_lst, file = "data/sim_dat_3_clust.RDS")
 
 scree_plot(kl_mat, 1:5) # choice of 2/3 seems correct
 
 # walk through function
-source("src/01_irish_ce/functions.R")
-# debugonce(emp_kl_div)
-# debugonce(pareto_trans)
-# debugonce(partition_max)
-emp_kl_div(
-  data_lst[[1]], 
-  # data_lst[[2]], 
-  data_lst[[7]], 
-  # prob = prob, 
-  prob = 0.95, 
-  plot = TRUE, 
-  print = TRUE
-)
+# source("src/01_irish_ce/functions.R")
+# emp_kl_div(
+#   data_lst[[1]], 
+#   data_lst[[7]], 
+#   prob = 0.95, 
+#   plot = TRUE, 
+#   print = TRUE
+# )
 
 # cluster based on dissimilarity
 set.seed(seed_number)
 # pam_kl_clust <- pam(kl_mat, k = 3)
-pam_kl_clust <- pam(kl_mat, k = 2)
+pam_kl_clust <- pam(kl_mat, k = 3)
 pam_kl_clust$clustering
 
 mclust::adjustedRandIndex(
   pam_kl_clust$clustering, 
-  # c(1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3)
-  c(1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2)
+  c(1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3)
+  # c(1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2)
 )

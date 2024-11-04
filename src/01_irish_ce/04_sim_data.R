@@ -214,7 +214,10 @@ kl_mat <- proxy::dist(
   data_lst, method = emp_kl_div, print = FALSE, prob = prob
 )
 
-scree_plot(kl_mat, 1:5) # choice of 3 seems correct
+# save data
+saveRDS(data_lst, file = "data/sim_dat_2_clust.RDS")
+
+scree_plot(kl_mat, 1:5) # choice of 2/3 seems correct
 
 # walk through function
 source("src/01_irish_ce/functions.R")

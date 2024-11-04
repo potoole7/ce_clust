@@ -7,10 +7,20 @@
 # x: Vector representing e.g. rain
 pareto_trans <- \(x) {
   stopifnot(is.vector(x))
+  
+  # order and sort data
+  x_ord <- order(x)
+  x_sort <- x[x_ord]
+  
   # calculate ECDF
-  ecdf_vals <- order(x) / (length(x) + 1) 
-  # pareto transform
-  return(1 / (1 - ecdf_vals))
+  n <- length(x)
+  ecdf_vals <- (seq_len(n)) / (n + 1)
+  # convert back to original order
+  ecdf_vals_x_ord <- numeric(n)
+  ecdf_vals_x_ord[x_ord] <- ecdf_vals
+  
+  # pareto transform 
+  return(1 / (1 - ecdf_vals_x_ord))
 }
 
 # function to compute bivariate risk function
@@ -95,7 +105,7 @@ calc_prop <- \(x) {
 }
 
 # function to calculate KL divergence between any two locations
-emp_kl_div <- \(x, y, convert_pareto = TRUE, prob = 0.9, print = TRUE) {
+emp_kl_div <- \(x, y, convert_pareto = TRUE, prob = 0.9, print = TRUE, plot = FALSE) {
   # stopifnot(length(x) == length(y))
   
   # split x and y in half (rain vs wind speed)
@@ -104,6 +114,7 @@ emp_kl_div <- \(x, y, convert_pareto = TRUE, prob = 0.9, print = TRUE) {
   y <- y[!is.na(y)]
   n <- length(x)
   m <- length(y) # need for m???
+  # TODO: Make more general for multivariate (not bivariate) case
   df_lst <- list(
   # x_df <- data.frame(
     "x" = data.frame(
@@ -115,6 +126,18 @@ emp_kl_div <- \(x, y, convert_pareto = TRUE, prob = 0.9, print = TRUE) {
     "wind_speed" = y[((m / 2) + 1):m]
     )
   )
+  
+  if (print) {
+    n_both <- lapply(df_lst, \(z) {
+      nrow(filter(
+        z, 
+        rain > quantile(rain, prob), 
+        wind_speed > quantile(wind_speed, prob)
+      ))
+    })
+    print(paste0("Number both extreme for x before rescaling: ", n_both[[1]]))
+    print(paste0("Number both extreme for y before rescaling: ", n_both[[2]]))
+  }
    
   # convert to Pareto scale
   df_lst_par <- df_lst
@@ -122,9 +145,16 @@ emp_kl_div <- \(x, y, convert_pareto = TRUE, prob = 0.9, print = TRUE) {
     df_lst_par <- lapply(df_lst, \(z) {
       data.frame(apply(z, 2, pareto_trans))
     })
+    # plot on pareto margins
+    if (plot) {
+      par(mfrow = c(1, 2)) # TODO: Make more general for MV case
+      lapply(df_lst_par, plot)
+      par(mfrow = c(1, 1))
+    }
   }
   
   # partition into 3 subsets
+  # TODO: May be doing this wrong, 
   df_part <- lapply(df_lst_par, \(z) {
     partition_max(list(z[, 1], z[, 2]), prob = prob)
   })
@@ -140,8 +170,8 @@ emp_kl_div <- \(x, y, convert_pareto = TRUE, prob = 0.9, print = TRUE) {
   x_part <- df_part_prop[[1]]
   y_part <- df_part_prop[[2]]
   if (print) {
-    print(paste0("both for x: ", x_part$both))
-    print(paste0("both for y: ", round(y_part$both)))
+    print(paste0("both for x: ", round(x_part$both, 3)))
+    print(paste0("both for y: ", round(y_part$both, 3)))
   }
   sum_vals <- vector(length = length(x_part))
   for (i in seq_along(sum_vals)) { 
@@ -194,17 +224,23 @@ calc_adj_mat <- \(pts, cut_vor = TRUE, plot = FALSE) {
   return(spdep::nb2mat(spdep::poly2nb(vor), style = "B", zero.policy = TRUE))
 }
 
-
 # compute the total within-cluster sum of distances
-within_cluster_sum <- function(k, distance_matrix) {
-  kmedoids_result <- cluster::pam(distance_matrix, k = k)
-  return(kmedoids_result$objective[1])  # Total cost (sum of distances)
+# TODO: Create methods for the below functions to differ for PAM vs k-means
+within_cluster_sum <- function(k, distance_matrix, fun = cluster::pam, ...) {
+  clust_res <- fun(distance_matrix, k, ...)
+  if (inherits(clust_res, "kmeans")) {
+    return(clust_res$tot.withinss)
+  } else if (inherits(clust_res, "pam")) {
+    return(clust_res$objective[1])
+  } else {
+    stop("Clustering class not currently supported")
+  }
 }
 
-# compute scree plot
-scree_plot <- \(dist_mat, k = 1:10) {
+# compute and produce scree plot
+scree_plot <- \(dist_mat, k = 1:10, fun = cluster::pam, ...) {
   total_within_ss <- vapply(
-    k, within_cluster_sum, dist_mat, FUN.VALUE = numeric(1)
+    k, within_cluster_sum, dist_mat, fun = fun, ..., FUN.VALUE = numeric(1)
   )
   
   # scree plot
@@ -215,4 +251,37 @@ scree_plot <- \(dist_mat, k = 1:10) {
     # main = "Scree Plot for K-medoids Clustering"
   )
   return(total_within_ss)
+}
+
+# plot clustering solution on map
+plt_clust <- \(pts, clust_obj) {
+  
+  if (inherits(clust_obj, "kmeans")) {
+    clust_element <- "cluster"  
+    medoids <- NA
+  } else if (inherits(clust_obj, "pam")) {
+    clust_element <- "clustering"  
+    medoids <- clust_obj$medoids
+    if (inherits(medoids, "matrix")) medoids <- as.numeric(rownames(medoids))
+  } else {
+    stop("Clustering class not currently supported")
+  }
+  
+  pts_plt <- cbind(pts, data.frame("clust" = clust_obj[[clust_element]])) %>% 
+    mutate(
+      row = row_number()
+    ) %>% 
+    mutate(mediod = ifelse(row %in% medoids, TRUE, FALSE))
+  
+  ggplot(areas) + 
+    geom_sf(colour = "black", fill = NA) + 
+    geom_sf(
+      data = pts_plt, 
+      aes(colour = factor(clust), shape = mediod, size = as.numeric(mediod)), 
+      alpha = 0.8
+    ) + 
+    scale_shape_discrete(breaks = c(1, 15)) + 
+    scale_size_continuous(range = c(3, 6)) +  
+    guides(shape = "none", size = "none") + 
+    theme
 }

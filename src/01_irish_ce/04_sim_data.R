@@ -77,9 +77,10 @@ vapply(data_mvg, \(x) round(cor(x)[1, 2], 3), numeric(1))
 # t-copula correlation matrix
 # rho <- matrix(0, nrow = n_locs, ncol = n_locs) # initialise
 # initialise
+id_mat <- diag(1, n_vars)
 rho <- list(
-  "cluster_1" = sigma,
-  "cluster_2" = sigma # ,
+  "cluster_1" = id_mat,
+  "cluster_2" = id_mat # ,
   # "cluster_3" = sigma
 )
 
@@ -137,7 +138,8 @@ t_cop <- lapply(seq_len(n_locs), \(i) {
 
 set.seed(seed_number)
 data_gpd <- lapply(seq_along(t_cop), \(i) {
-  if (i %in% 7:12) return(data_mvg[[i]])
+  # TODO: Most basic of testing, no "extreme" data from t-Copula for 2nd clust
+  # if (i %in% 7:12) return(data_mvg[[i]])
   # Generate uniform samples from copula
   u <- rCopula(n, t_cop[[i]])  
   # Transform to GPD marginals 

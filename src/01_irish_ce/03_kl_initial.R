@@ -51,6 +51,11 @@ sf::sf_use_s2(FALSE)
 
 # load original dataset
 data <- readr::read_csv("data/met_eireann/final/met_eir_preprocess.csv.gz")
+# find rough mean and variance of bulk rain and wind data across Ireland
+data %>% 
+  filter(rain != 0, wind_speed != 0) %>% 
+  filter(rain < quantile(rain, 0.9), wind_speed < quantile(wind_speed, 0.9)) %>% 
+  reframe(across(c("rain", "wind_speed"), \(x) c(mean(x), var(x))))
 
 # load shapefile
 areas <- sf::read_sf("data/met_eireann/final/irl_shapefile.geojson")
@@ -116,8 +121,8 @@ pull_params <- \(dep) {
   }))
 }
 
-# pull parameter values for each location
-params <- lapply(dependence, pull_params)
+# # pull parameter values for each location
+# params <- lapply(dependence, pull_params)
 
 # pull thresholds
 # dep - List of mex objects (i.e. CE models for each var) for single location
@@ -130,11 +135,11 @@ pull_thresh_trans <- \(dep) {
   return(lapply(dep, \(x) x$dependence$dth))
 }
 
-# pull Laplace threshold values for each location
-thresh <- lapply(dependence, pull_thresh_trans)
-
-# take maximum Laplace thresholds; want to geenra
-thresh_max <- apply(bind_rows(thresh), 2, max)
+# # pull Laplace threshold values for each location
+# thresh <- lapply(dependence, pull_thresh_trans)
+# 
+# # take maximum Laplace thresholds; want to geenra
+# thresh_max <- apply(bind_rows(thresh), 2, max)
 
 # How best to split up KL divergence problem? Best to have:
 # function to calculate KL divergence for single data point, 
@@ -166,13 +171,20 @@ js_gauss <- \(mu1, mu2, var1, var2) {
 }
 
 # Function to calculate Jensen-Shannon divergence for each data point
-params_x <- params[[1]]$rain
-params_y <- params[[2]]$rain
-data <- seq(
-  thresh_max[[1]], 2 * thresh_max[[1]], length = 10 
-)
+# testing
+# params_x <- params[[1]]$rain
+# params_y <- params[[2]]$rain
+# data <- seq(
+#   thresh_max[[1]], 2 * thresh_max[[1]], length = 10 
+# )
 # js_div <- \(params_x, params_y, data) {
 js_div <- \(params_x, params_y, thresh_max, data_max = 2 * thresh_max, n_dat) {
+  
+  # test that input vectors have correct conditional extremes parameters
+  stopifnot(is.vector(params_x) && is.vector(params_y))
+  stopifnot(
+    all(c(names(params_x), names(params_y)) == rep(c("a", "b", "m", "s"), 2))
+  )
   
   # create data sequence from specified arguments
   data <- seq(thresh_max, data_max, length = n_dat)
@@ -205,6 +217,8 @@ js_div <- \(params_x, params_y, thresh_max, data_max = 2 * thresh_max, n_dat) {
 
 #### Clustering ####
 
+# Perform PAM and k-means clustering, as an exploratory analysis
+
 # pull parameter values for each location
 params <- lapply(dependence, pull_params)
 
@@ -230,9 +244,14 @@ dist_mats <- lapply(seq_along(params), \(i) {
 
 # scree plots
 lapply(dist_mats, scree_plot) # looks to be 3 clusters for both
+lapply(dist_mats, scree_plot, fun = kmeans) 
 
+# plot clustering for both rain and wind speed
 ire_clust_plots <- lapply(dist_mats, \(x) {
-  plt_clust(pts, pam(x, k = 3, diss = TRUE))
+  # for rain or wind speed, plot clustering based on PAM and k-means
+  lapply(c(pam, kmeans), \(fun) {
+    plt_clust(pts, fun(x, 3))
+  })
 })
 
 # cluster adjacent sites only
@@ -243,7 +262,12 @@ dist_mats_adj <- lapply(dist_mats, \(x) {
 })
 
 lapply(dist_mats_adj, scree_plot)
+lapply(dist_mats_adj, scree_plot, fun = kmeans)
 
 ire_clust_adj_plots <- lapply(dist_mats_adj, \(x) {
-  plt_clust(pts, pam(x, k = 3, diss = TRUE))
+  # for rain or wind speed, plot clustering based on PAM and k-means
+  lapply(c(pam, kmeans), \(fun) {
+    plt_clust(pts, fun(x, 3))
+  })
 })
+

@@ -46,6 +46,7 @@ library(latex2exp)
 library(ggpattern)
 
 source("src/functions.R")
+source("src/01_irish_ce/functions.R")
 
 theme <- theme_bw() +
   theme(
@@ -99,7 +100,7 @@ areas <- sf::read_sf("data/met_eireann/final/irl_shapefile.geojson")
 data <- data %>% 
   mutate(month = as.numeric(substr(date, 6, 7))) %>% 
   filter(month %in% c(1:3, 10:12)) %>% 
-  select(-month) %>% 
+  dplyr::select(-month) %>% 
   # remove weeks with no rainfall, as in Vignotto 2021 (required/important?)
   filter(rain != 0) %>% 
   identity()
@@ -337,37 +338,6 @@ nrow(with(data, data[name == "Wexford (Newtown W.w.)", ]))
 
 #### Threshold selection ####
 
-# function to fit varying threshold using quantile regression
-# https://empslocal.ex.ac.uk/people/staff/by223/software/gpd.R
-# TODO: Vary tau and see how that effects results (QQ plots, etc)
-# quantile_thresh <- function(data, response, tau = .95) {
-quantile_thresh <- function(data, response, tau = .95, jitter = TRUE) {
-  fm_ald <- list(
-    # response ~ s(lon, lat, k = 50), # location
-    formula(paste(response, " ~ s(lon, lat, k = 50)")), # location
-    ~ s(lon, lat, k = 40)                               # logscale
-  )
-  
-  # jitter, if specified, to remove 0s when calculating quantiles
-  if (jitter == TRUE) {
-    data <- data %>%
-      mutate(across(all_of(response), ~ . + rnorm(n(), 0, 1e-6)))
-  }
-  
-  # fit the quantile regression model at tau'th percentile
-  ald_fit <- evgam(fm_ald, data, family = "ald", ald.args = list(tau = tau))
-  
-  # add threshold to data and filter
-  data %>% 
-    mutate(
-      thresh = predict(ald_fit)$location, 
-      # excess = wind_speed - thresh
-      excess = !!sym(response) - thresh
-    ) %>% 
-    filter(excess > 0) %>% 
-    return()
-}
-
 # Threshold rainfall and wind speed with varying threshold per location
 data_rain <- quantile_thresh(data, "rain")
 data_ws <- quantile_thresh(data, "wind_speed")
@@ -495,28 +465,6 @@ ggplot(areas) +
 #### Fit evgam to rain #### 
 
 # Fit evgam model with spline for spatial location, create predictions
-fit_evgam <- \(data, pred_data) {
-  # model formula
-  # f <- list(excess ~ s(lon, lat, k = 12), ~ 1) # TODO: smooth for year?
-  # f <- list(excess ~ s(lon, lat, k = 12) + s(date, k = 12), ~ 1) 
-  # f <- list(excess ~ s(lon, lat, k = 50), ~ 1) # increase smoothing
-  f <- list(
-    excess ~ s(lon, lat, k = 40), # increase smoothing on scale parameter
-    ~ s(lon, lat, k = 40) # shape parameter
-  ) 
-  # fit evgam model
-  m <- evgam(f, data = data, family = "gpd")
-
-  # create predictions
-  predictions <- predict(m, pred_data, type = "response")
-  
-  # return model fit and predictions
-  return(list(
-    "m"           = m,
-    "predictions" = predictions
-  ))
-}
-
 evgam_rain <- fit_evgam(data_rain, data_rain)
 
 # TODO: Functionalise 
@@ -792,17 +740,6 @@ ggsave(
 
 #### Fit marginal model ####
 
-# Create "dummy" migpd object to fill in with evgam values
-dat_mat <- data %>% 
-  filter(name == data$name[[1]]) %>% 
-  select(rain, wind_speed) %>% 
-  as.matrix()
-names(dat_mat) <- c("rain", "wind_speed")
-
-temp <- migpd(dat_mat, mqu = 0.95, penalty = "none")
-# m <- evm(y = rain, data = data, qu = 0.95, penalty = "none", famuly = "gpd")
-# m1 <- update(m, phi = ~lon + lat)
-
 # fill in with GPD vals from evgam fits
 # first, make predictions, unique to each location
 pred_rain <- fit_evgam(data_rain, data)
@@ -839,35 +776,9 @@ data_gpd <- data[x, ] %>%
  
 # TODO: Look into this, double check everything is okay!
 # create marginal `migpd` objects from `evgam` objects for each site
-marginal <- lapply(seq_len(nrow(data_gpd)), \(i) {
-  # initialise
-  spec_marg <- temp
-  # replace data 
-  spec_marg$data <- data %>% 
-    filter(name == data_gpd$name[i]) %>% 
-    select(rain, wind_speed) %>% 
-    as.matrix()
-  names(spec_marg$data) <- c("rain", "wind_speed")
-  # replace thresholds
-  # spec_marg$models$rain$threshold <- thresh_rain
-  # spec_marg$models$wind_speed$threshold <- thresh_wind
-  spec_marg$models$rain$threshold <- data_gpd$thresh_rain[[i]]
-  spec_marg$models$wind_speed$threshold <- data_gpd$thresh_wind[[i]]
-  # replace coefficients
-  spec_marg$models$rain$coefficients[1:2] <- c(
-    # data_gpd$scale_rain[i], 
-    log(data_gpd$scale_rain[i]),
-    data_gpd$shape_rain[i]
-  )
-  spec_marg$models$wind_speed$coefficients[1:2] <- c(
-    # data_gpd$scale_ws[i], 
-    log(data_gpd$scale_ws[i]), 
-    data_gpd$shape_ws[i]
-  )
-  
-  return(spec_marg)
-})
+marginal <- gen_marg_migpd(data_gpd, data)
 names(marginal) <- paste0(data_gpd$name, " - ", data_gpd$county)
+
 
 #### Compute Xi statistics for all ####
 
@@ -875,7 +786,7 @@ names(marginal) <- paste0(data_gpd$name, " - ", data_gpd$county)
 # chi_test <- data %>% 
 #   # filter(name == data$name[1]) %>% 
 #   filter(name == highest_lowest_rain[1]) %>% 
-#   select(rain, wind_speed) %>% 
+#   dplyr::select(rain, wind_speed) %>% 
 #   chi() 
 #   
 # chi_test %>%   
@@ -891,7 +802,7 @@ chi_95_df <- bind_rows(lapply(names, \(x) {
   ))
   chi <- data %>% 
     filter(name == x) %>% 
-    select(rain, wind_speed) %>% 
+    dplyr::select(rain, wind_speed) %>% 
     chi()
   
   # whether to show chi or not, based on whether chibar upper extend crosses 1
@@ -1032,7 +943,7 @@ ggsave("latex/plots/041_chi_plots.png", chi_plots, width = 6.3, height = 6, unit
 #   print(loc)
 #   vals <- data %>% 
 #     filter(name == loc) %>% 
-#     select(rain, wind_speed)
+#     dplyr::select(rain, wind_speed)
 #   threshs <- lapply(list(data_rain, data_ws), \(x) {
 #     x %>% 
 #       filter(name == loc) %>% 
@@ -1061,7 +972,7 @@ ggsave("latex/plots/041_chi_plots.png", chi_plots, width = 6.3, height = 6, unit
 #   \(col) {
 #     col_texmex <- paste0(col, "_texmex")
 #     x <- data_gpd_texmex %>% 
-#       select(name, lon, lat, !!sym(col), !!sym(col_texmex)) %>% 
+#       dplyr::select(name, lon, lat, !!sym(col), !!sym(col_texmex)) %>% 
 #       pivot_longer(cols = c(!!sym(col), !!sym(col_texmex)), names_to = "var") %>% 
 #       st_to_sf()
 #     
@@ -1188,60 +1099,15 @@ ggsave("latex/plots/042_bootstrap_thresh.png", bootstrap_thresh_plot, width = 6.
 #### Fit CE model ####
 
 # fit CE dependence model for each site
-# constants
-vars <- c("rain", "wind_speed")
-# start_vals <- c(0.01, 0.1)
-start_vals <- c(0.01, 0.01)
-dqu = 0.7 # seems a reasonable choice of threshold given bootstrap plots
-# fixed_b <- TRUE
-fixed_b <- FALSE
-PlotLikDo <- FALSE
-
-# Save profile likelihood plots as well
-# pdf("plots/prof_lik_weekly_winter.pdf", onefile = TRUE)
-fixed_locs <- names(marginal)
-dependence <- lapply(seq_along(marginal), \(i) {
-  # fit for rain and wind speed
-  ret <- lapply(vars, \(col) {
-    # print(col)
-    # TODO: Can you supply threshold yourself? or match to thresholding value?
-    # TODO: Plot prifle likelihood of dependence model parameters?
-    mod <- mexDependence(
-      # x, 
-      marginal[[i]],
-      which = col, 
-      dqu = 0.7, # seems a reasonable choice of threshold given bootstrap plots
-      nOptim = 2, 
-      fixed_b = fixed_b, 
-      start = start_vals,
-      PlotLikDo = PlotLikDo, 
-      PlotLikTitle = paste0("for ", col, " - ", names(marginal)[i])
-    )
-    
-    # if model didn't optimise with Keef 2013 constains, turn off & refit
-    ll <- mod$dependence$loglik
-    if (is.na(ll) || abs(mod$dependence$loglik) > 1e9) {
-      # mod <- mexDependence(
-      #   # x, 
-      #   marginal[[i]],
-      #   which = col, 
-      #   dqu = 0.7, # seems a reasonable choice of threshold given bootstrap plots
-      #   nOptim = 2, 
-      #   fixed_b = TRUE, 
-      #   start = start_vals, 
-      #   constrain = FALSE
-      #   # PlotLikDo = TRUE, 
-      #   # PlotLikTitle = paste0("for ", col, " - ", names(marginal)[i])
-      # )
-      return(NA)
-    }
-    return(mod)
-  })
-  names(ret) <- vars
-  return(ret)
-})
-names(dependence) <- names(marginal)
-# dev.off()
+dependence <- fit_texmex_dep(
+  marginal, 
+  mex_dep_args = list(
+    start = c(0.01, 0.01), 
+    dqu = 0.7,
+    fixed_b = FALSE,
+    PlotLikDo = FALSE
+  ) 
+)
 
 # pull names of locations with NA for alpha 
 # col sums should equal 6 if dependence fit is valid for rain and wind
@@ -1494,7 +1360,7 @@ readr::write_csv(ab_df, "data/ab_vals.csv")
 pred_dat <- ab_df %>% 
   filter(parameter == "a") %>% 
   filter(value < 0.99) %>% 
-  select(-c(dist2coast, alt, wind_dir)) %>% 
+  dplyr::select(-c(dist2coast, alt, wind_dir)) %>% 
   pivot_longer(
     # c("alt", "dist2coast", "lat", "lon"), 
     c("lat", "lon"), 
@@ -1548,7 +1414,7 @@ ggsave("latex/plots/047_alpha_vs_lon_lat.png", pred_p, width = 16, height = 12, 
 
 ab_df_wide <- ab_df %>% 
   filter(parameter == "a") %>% 
-  select(name, county, var, value) %>% 
+  dplyr::select(name, county, var, value) %>% 
   pivot_wider(names_from = var, values_from = value)
 
 # just plot a for rain vs a for wind!
@@ -1665,7 +1531,7 @@ ggsave("plots/polar_ws_winter.png", circ_p_ws[[2]], width = 6.3, height = 6, uni
 #         var = ifelse(var == "windspeed", "ws", var),
 #         col = paste(parameter, var, sep = "_")
 #       ) %>% 
-#       select(name, col, value) %>% 
+#       dplyr::select(name, col, value) %>% 
 #       tidyr::pivot_wider(id_cols = name, names_from = col, values_from = value)
 #   )
 

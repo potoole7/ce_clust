@@ -91,6 +91,7 @@ js_div <- \(params_x, params_y, thresh_max, data_max = 2 * thresh_max, n_dat) {
 
 #### Vignotto 2021 ####
 
+
 # function to convert to Pareto scale
 # divide by N + 1, not N (so do i / n + 1)
 # x: Vector representing e.g. rain
@@ -243,13 +244,16 @@ emp_kl_div <- \(x, y, convert_pareto = TRUE, prob = 0.9, print = TRUE, plot = FA
   }
   
   # partition into 3 subsets
-  # TODO: May be doing this wrong, 
   df_part <- lapply(df_lst_par, \(z) {
     partition_max(list(z[, 1], z[, 2]), prob = prob)
   })
   
+  # fail if there are any 0s
+  stopifnot(
+    "No set can contain zeros, reduce `prob`" = all(unlist(df_part) != 0)
+  )
+  
   # calculate proportions of partitions
-  # TODO: parts of df part can just be named vector, doesn't need list!
   df_part_prop <- lapply(df_part, \(z) {
     denom <- sum(unlist(z)) # denominator is # extreme obs
     lapply(z, `/`, denom) # find prop of extreme obs for each disjoint set
@@ -270,6 +274,115 @@ emp_kl_div <- \(x, y, convert_pareto = TRUE, prob = 0.9, print = TRUE, plot = FA
   # sum_vals[is.nan(sum_vals) | is.infinite(sum_vals)] <- 0
   if (any(is.nan(sum_vals) | is.infinite(sum_vals), na.rm = TRUE)) return(NA)
   return((1  / 2) * sum(sum_vals))
+}
+
+
+
+#### Conditional Extremes functions ####
+
+# function to fit varying threshold using quantile regression
+# https://empslocal.ex.ac.uk/people/staff/by223/software/gpd.R
+# TODO: Vary tau and see how that effects results (QQ plots, etc)
+# quantile_thresh <- function(data, response, tau = .95) {
+quantile_thresh <- function(data, response, tau = .95, jitter = TRUE) {
+  fm_ald <- list(
+    # response ~ s(lon, lat, k = 50), # location
+    formula(paste(response, " ~ s(lon, lat, k = 50)")), # location
+    ~ s(lon, lat, k = 40)                               # logscale
+  )
+  
+  # jitter, if specified, to remove 0s when calculating quantiles
+  if (jitter == TRUE) {
+    data <- data %>%
+      mutate(across(all_of(response), ~ . + rnorm(n(), 0, 1e-6)))
+  }
+  
+  # fit the quantile regression model at tau'th percentile
+  ald_fit <- evgam(fm_ald, data, family = "ald", ald.args = list(tau = tau))
+  
+  # add threshold to data and filter
+  data %>% 
+    mutate(
+      thresh = predict(ald_fit)$location, 
+      # excess = wind_speed - thresh
+      excess = !!sym(response) - thresh
+    ) %>% 
+    filter(excess > 0) %>% 
+    return()
+}
+
+# Fit evgam model with spline for spatial location, create predictions
+fit_evgam <- \(
+  data, 
+  pred_data,
+  # formula used in evgam, fitting to both scale and shape parameters
+  f = list(
+    excess ~ s(lon, lat, k = 40), # increase smoothing on scale parameter
+    ~ s(lon, lat, k = 40) # shape parameter
+  ) 
+) {
+  # model formula
+  # f <- list(
+  #   excess ~ s(lon, lat, k = 40), # increase smoothing on scale parameter
+  #   ~ s(lon, lat, k = 40) # shape parameter
+  # ) 
+  # fit evgam model
+  m <- evgam(f, data = data, family = "gpd")
+
+  # create predictions
+  predictions <- predict(m, pred_data, type = "response")
+  
+  # return model fit and predictions
+  return(list(
+    "m"           = m,
+    "predictions" = predictions
+  ))
+}
+
+# create marginal `migpd` objects from `evgam` objects for each site
+# - data_gpd: scale and shape parameters for each location
+# - data: Data for each location
+gen_marg_migpd <- \(data_gpd, data, mqu = 0.95) {
+  # Create "dummy" migpd object to fill in with evgam values
+  dat_mat <- data %>% 
+    filter(name == data$name[[1]]) %>% 
+    select(rain, wind_speed) %>% 
+    as.matrix()
+  names(dat_mat) <- c("rain", "wind_speed")
+  
+  temp <- migpd(dat_mat, mqu = mqu, penalty = "none")
+  # m <- evm(y = rain, data = data, qu = 0.95, penalty = "none", famuly = "gpd")
+  # m1 <- update(m, phi = ~lon + lat)
+  
+  marginal <- lapply(seq_len(nrow(data_gpd)), \(i) {
+    # initialise
+    spec_marg <- temp
+    # replace data 
+    spec_marg$data <- data %>% 
+      filter(name == data_gpd$name[i]) %>% 
+      select(rain, wind_speed) %>% 
+      as.matrix()
+    names(spec_marg$data) <- c("rain", "wind_speed")
+    # replace thresholds
+    # spec_marg$models$rain$threshold <- thresh_rain
+    # spec_marg$models$wind_speed$threshold <- thresh_wind
+    spec_marg$models$rain$threshold <- data_gpd$thresh_rain[[i]]
+    spec_marg$models$wind_speed$threshold <- data_gpd$thresh_wind[[i]]
+    # replace coefficients
+    spec_marg$models$rain$coefficients[1:2] <- c(
+      # data_gpd$scale_rain[i], 
+      log(data_gpd$scale_rain[i]),
+      data_gpd$shape_rain[i]
+    )
+    spec_marg$models$wind_speed$coefficients[1:2] <- c(
+      # data_gpd$scale_ws[i], 
+      log(data_gpd$scale_ws[i]), 
+      data_gpd$shape_ws[i]
+    )
+    
+    return(spec_marg)
+  })
+  return(marginal)
 }
 
 

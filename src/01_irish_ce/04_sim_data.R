@@ -13,23 +13,16 @@ source("src/functions.R")
 source("src/01_irish_ce/functions.R")
 
 
-#### Gaussian mixture with t-copula ####
-
-
-#### Gaussian distribution w/ resampling ####
-
-# Want to create a mixture of Gaussian distributions and t-copula
+# Want to create a mixture of Gamma distributions and t-copula
 # - For each location, need data for two variables, e.g. rain & wind speed
-# - Gaussian data will be uncorrelated and make up bulk data
+# - Gamma data will be uncorrelated and make up bulk data
 # - t-copulas will provide extreme data, correlation between variables will be 
-# prespecified and used to define known cluster structure
-# - "Normal" cluster methods must not perform well, while extreme methods 
-# hopefully will
+# pre-specified and used to define known cluster structure
 
 
-#### Gaussian/Gamma distribution w/ resampling (OLD OLD OLD) ####
+#### MV Gamma ####
 
-# Want to create a mixture of Gaussian distributions and t-copula
+# Want to create a mixture of Gamma distributions and t-copula
 # - Gaussians will be uncorrelated and make up bulk data
 # - t-copulas will provide extreme data and be correlated in known clusters
 
@@ -51,27 +44,27 @@ mix_p <- c("mvn" = 0.5, "gpd" = 0.5) # mixture percentages
 # parameter values roughly coming from Ireland dataset
 # gam_mean <- 20
 # gam_var <- 200
-gam_mean <- 2
-gam_var <- 10
+gam_mean <- 1
+gam_var <- 5
 alpha <- (gam_mean ** 2) / gam_var
 beta <- (gam_mean) / gam_var
 
-# Generate MVN data
-# data_mvg <- mvrnorm(n, mu, sigma)
-# list of locs, each with mvn distribution with cols for each var
+# Generate MV Gamma data for two variables at each location
 set.seed(seed_number)
 data_mvg <- lapply(seq_len(n_locs), \(i) {
   rmvgamma(n, alpha, beta, corr = diag(rep(1, n_vars)))
 })
 
-# par(mfrow = c(2, 2))
-# lapply(data_mvg[c(1, 5, 10)], plot)
-# # lapply(data_mvg[c(1, 5, 7, 12)], plot)
-# par(mfrow = c(1, 1))
+par(mfrow = c(2, 2))
+lapply(data_mvg[c(1, 5, 10)], plot)
+# lapply(data_mvg[c(1, 5, 7, 12)], plot)
+par(mfrow = c(1, 1))
 
 # confirm bulk data for variables at each location have no correlation 
 # TODO: Is this realistic? Won't they have some correlation?
 vapply(data_mvg, \(x) round(cor(x)[1, 2], 3), numeric(1))
+
+#### t-Copula w/ GPD margins ####
 
 # t-copula correlation matrix
 # initialise
@@ -144,11 +137,10 @@ data_gpd <- lapply(seq_along(t_cop), \(i) {
   # Transform to GPD marginals 
   evd::qgpd(
     u, 
-    # TODO: Will it work after changing this?
+    # set threshold
     # loc = quantile(data_mvg[[i]], 0.99),
-    loc = 0.99 * max(data_mvg[[i]]), 
-    scale = 3, 
-    # shape = 0.3
+    loc = max(data_mvg[[i]]),
+    scale = 6, 
     shape = -0.05
   )
 })
@@ -164,7 +156,8 @@ lapply(data_gpd[c(1, 5, 10)], plot)
 # lapply(data_gpd[c(1, 5, 7, 12)], plot)
 par(mfrow = c(1, 1))
 
-# mixture model
+#### Mixture Model ####
+
 # data_mix <- rbind(
 #   # sample from normal distributions
 #   apply(data_mvg, 2, sample, size = n * mix_p[[1]]),
@@ -182,22 +175,31 @@ lapply(data_mix[c(1, 5, 10)], plot)
 # lapply(data_mix[c(1, 5, 7, 12)], plot)
 par(mfrow = c(1, 1))
 
-# should within reason remove most of normal samples
-# apply(data_mvg[[1]], 2, max)
-# apply(data_gpd[[1]], 2, quantile, 0.9)
-# apply(data_mix[[1]], 2, quantile, c(0.9, 0.95, 0.99))
+# TEMP: Have data as purely from t-copula with GPD margins
+# data_mix <- data_gpd
 
 # check correlation after combining
 vapply(data_mix, \(x) round(cor(x)[1, 2], 3), numeric(1))
 
-# cluster using Vignotto 2021 method:
+
+#### cluster using Vignotto 2021 method ####
+
 # split data into list of locations where variables are stacked
-# TODO: May be error here!! Plots don't match
 data_lst <- lapply(data_mix, as.vector)
+
+# walk through function
+source("src/01_irish_ce/functions.R")
+emp_kl_div(
+  data_lst[[1]],
+  data_lst[[10]],
+  prob = 0.9,
+  plot = TRUE,
+  print = TRUE
+)
 
 # Calculate dissimilarity matrix 
 # prob <- 0.8
-prob <- 0.95
+prob <- 0.99
 kl_mat <- proxy::dist(
   data_lst, method = emp_kl_div, print = FALSE, prob = prob
 )
@@ -207,16 +209,6 @@ kl_mat <- proxy::dist(
 saveRDS(data_lst, file = "data/sim_dat_3_clust.RDS")
 
 scree_plot(kl_mat, 1:5) # choice of 2/3 seems correct
-
-# walk through function
-# source("src/01_irish_ce/functions.R")
-# emp_kl_div(
-#   data_lst[[1]], 
-#   data_lst[[7]], 
-#   prob = 0.95, 
-#   plot = TRUE, 
-#   print = TRUE
-# )
 
 # cluster based on dissimilarity
 set.seed(seed_number)

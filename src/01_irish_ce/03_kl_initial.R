@@ -96,7 +96,7 @@ data <- data %>%
 # convert ab values to wide format
 ab_df_wide <- ab_df %>% 
   mutate(col = paste0(var, "_", parameter)) %>% 
-  select(name, county, col, value) %>% 
+  dplyr::select(name, county, col, value) %>% 
   pivot_wider(names_from = col, values_from = value)
 
 

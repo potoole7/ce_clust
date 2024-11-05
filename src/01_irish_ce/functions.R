@@ -385,6 +385,41 @@ gen_marg_migpd <- \(data_gpd, data, mqu = 0.95) {
   return(marginal)
 }
 
+# Fit CE dependence model for each site
+fit_texmex_dep <- \(
+  marginal, 
+  vars = c("rain", "wind_speed"), 
+  mex_dep_args = list(
+    start = c(0.01, 0.01), 
+    dqu = 0.7,
+    fixed_b = FALSE,
+    PlotLikDo = FALSE
+  )
+) {
+  dependence <- lapply(seq_along(marginal), \(i) {
+    # fit for rain and wind speed
+    ret <- lapply(vars, \(col) {
+      # TODO: Can you supply threshold yourself? or match to thresholding value?
+      # TODO: Plot profile likelihood of dependence model parameters?
+      mod <- do.call(
+        mexDependence, 
+        args = c(list(x = marginal[[i]], which = col), mex_dep_args)
+      )
+      
+      # if model didn't optimise with Keef 2013 constrains, return NA
+      ll <- mod$dependence$loglik
+      if (is.na(ll) || abs(mod$dependence$loglik) > 1e9) {
+        return(NA)
+      }
+      return(mod)
+    })
+    names(ret) <- vars
+    return(ret)
+  })
+  names(dependence) <- names(marginal)
+  return(dependence)
+}
+
 
 #### Utility functions ####
 

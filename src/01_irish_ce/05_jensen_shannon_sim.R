@@ -6,6 +6,7 @@ library(sf)
 library(dplyr, quietly = TRUE)
 library(tidyr)
 library(ggplot2)
+library(cluster)
 devtools::load_all("texmex")
 
 source("src/functions.R")
@@ -104,6 +105,7 @@ dependence <- fit_texmex_dep(
 params <- lapply(dependence, pull_params)
 
 # pull Laplace threshold values for each location
+# TODO: Problem, last threshold different to others, investigate
 thresh <- lapply(dependence, pull_thresh_trans)
 
 # take maximum Laplace thresholds; want to geenra
@@ -123,31 +125,29 @@ dist_mats <- lapply(seq_along(params), \(i) {
  )
 })
 
-# scree plots
-lapply(dist_mats, scree_plot) # looks to be 3 clusters for both
+# scree plots look to suggest 3 clusters for both
+lapply(dist_mats, scree_plot) 
 lapply(dist_mats, scree_plot, fun = kmeans) 
 
-# plot clustering for both rain and wind speed
-ire_clust_plots <- lapply(dist_mats, \(x) {
-  # for rain or wind speed, plot clustering based on PAM and k-means
+# cluster for rain and wind speed using both k-means and PAM
+js_clust <- lapply(dist_mats, \(x) {
   lapply(c(pam, kmeans), \(fun) {
-    plt_clust(pts, fun(x, 3))
+    fun(x, 3)
   })
 })
 
-# cluster adjacent sites only
-dist_mats_adj <- lapply(dist_mats, \(x) {
-  ret <- as.matrix(x)
-  ret[adj_mat == 0] <- 1e9
-  return(ret)
-})
-
-lapply(dist_mats_adj, scree_plot)
-lapply(dist_mats_adj, scree_plot, fun = kmeans)
-
-ire_clust_adj_plots <- lapply(dist_mats_adj, \(x) {
-  # for rain or wind speed, plot clustering based on PAM and k-means
-  lapply(c(pam, kmeans), \(fun) {
-    plt_clust(pts, fun(x, 3))
+# Rand Index for clustering, works well for everything except k-means for wind
+clust_rand <- lapply(js_clust, \(x) {
+  lapply(x, \(y) {
+    if (inherits(x, "pam")) {
+      clust_sol <- y$clustering
+    } else {
+      clust_sol <- as.vector(y$cluster)
+    }
+    mclust::adjustedRandIndex(
+      clust_sol,
+      c(1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3)
+    )
   })
 })
+unlist(clust_rand)

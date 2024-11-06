@@ -356,6 +356,7 @@ gen_marg_migpd <- \(data_gpd, data, mqu = 0.95) {
   
   marginal <- lapply(seq_len(nrow(data_gpd)), \(i) {
     # initialise
+    # browser()
     spec_marg <- temp
     # replace data 
     spec_marg$data <- data %>% 

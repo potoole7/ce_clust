@@ -33,7 +33,10 @@ n_locs <- 12 # number of "locations"
 # cluster_mem <- c(1, 1, 1, 2, 2, 2, 3, 3, 3, 3) # known cluster membership
 cluster_mem <- c(1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3)
 n_vars <- 2 # number of variables per location
-mix_p <- c("mvn" = 0.5, "gpd" = 0.5) # mixture percentages
+mix_p <- c("mvn" = 0.3, "gpd" = 0.7) # mixture percentages
+# GPD parameters
+scale_gpd <- 6 
+shape_gpd <- -0.05
 # Normal distribution parameters (using standard normal with 0 correlation)
 # mu <- rep(0, n_vars)
 # sigma <- diag(1, n_vars)
@@ -140,8 +143,8 @@ data_gpd <- lapply(seq_along(t_cop), \(i) {
     # set threshold
     # loc = quantile(data_mvg[[i]], 0.99),
     loc = max(data_mvg[[i]]),
-    scale = 6, 
-    shape = -0.05
+    scale = scale_gpd, 
+    shape = shape_gpd
   )
 })
 
@@ -192,7 +195,7 @@ source("src/01_irish_ce/functions.R")
 emp_kl_div(
   data_lst[[1]],
   data_lst[[10]],
-  prob = 0.9,
+  prob = 0.99,
   plot = TRUE,
   print = TRUE
 )

@@ -1,4 +1,4 @@
-#### Simulation Sensitivity Analysis of Vignotto 2021 ####
+#### Simulation sensitivity analysis of Vignotto 2021 ####
 
 #### libs ####
 
@@ -6,11 +6,14 @@ library(copula)
 library(evd)
 library(cluster)
 library(dplyr)
+library(tidyr)
 library(lcmix)
+library(ggplot2)
 
 # source functions
 source("src/functions.R")
 source("src/01_irish_ce/functions.R")
+
 
 #### Metadata ####
 
@@ -103,7 +106,7 @@ kl_sim_eval <- \(
   n_locs = 12,     # number of locations
   n = 1e4,         # number of simulations
   cor_norm,        # bulk correlation for two clusters from Gaussian copula
-  params_norm,     # normal margin parameters
+  params_norm,     # normal marginal parameters (same for both)
   cor_t,           # extreme correlation for two clusters from t-copula
   df_t,            # degrees of freedom for t-copula
   params_gpd,      # GPD margin parameters
@@ -208,19 +211,32 @@ kl_sim_eval(
 # TODO: Reduce number of parameters (Currently 128k, can't possibly run so many times)
 grid <- tidyr::crossing(
   # Don't need all cor_vals for both (i.e. (0.3, 0.8) is the same as (0.8, 0.3)
-  # cor_norm1 = seq(0, 0.5, by = 0.1),
-  # cor_norm2 = seq(0.5, 1, by = 0.1),
-  cor_norm1 = 0.1,
-  cor_norm2 = 0.1,
-  cor_t1    = seq(0, 0.5, by = 0.1),
-  cor_t2    = seq(0.5, 1, by = 0.1),
-  df_t1     = c(1, 5, 10),
-  df_t2     = c(1, 5, 10),
-  mix_p1    = seq(0, 1, by = 0.1),
-  mix_p2    = seq(0, 1, by = 0.1)
+  cor_norm1 = seq(0, 1, by = 0.1),
+  cor_norm2 = seq(0, 1, by = 0.1),
+  # cor_norm1 = 0.1,
+  # cor_norm2 = 0.1,
+  # cor_norm = seq(0, 1, by = 0.1),
+  # t-copula correlation
+  cor_t1    = seq(0.1, 0.9, by = 0.2),
+  cor_t2    = seq(0.2, 1, by = 0.2),
+  # Degrees of freedom for t-copula
+  # df_t1     = c(1, 5, 10),
+  # df_t2     = c(1, 5, 10),
+  df_t1   = 1,
+  df_t2   = 1,
+  # mixture percentages (must sum to 1)
+  mix_p1  = 0.5,
+  mix_p2  = 0.5,
+  # extremal quantiles
+  # kl_prob = c(0.9, 0.95, 0.99)
+  kl_prob = 0.9
 ) %>% 
-  # mixture weights must sum to 1
-  filter(mix_p1 + mix_p2 == 1)
+  filter(
+    # use same correlation in both clusters for Gaussian copula
+    cor_norm1 == cor_norm2,
+    # mixture weights must sum to 1
+    mix_p1 + mix_p2 == 1
+  )
 
 
 #### Plot ####

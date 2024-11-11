@@ -35,14 +35,14 @@ prob <- 0.9
 
 #### Load Data ####
 
-data <- readRDS("data/sim_dat_3_clust.RDS")
+data_mix <- readRDS("data/sim_dat_3_clust.RDS")
 
 # convert to dataframe
-data_df <- bind_rows(lapply(seq_along(data), \(i) {
-  n <- length(data[[i]])
+data_df <- bind_rows(lapply(seq_along(data_mix), \(i) {
+  n <- length(data_mix[[i]])
   data.frame(
-      "rain"       = data[[i]][1:(n / 2)],
-      "wind_speed" = data[[i]][((n / 2) + 1):n]
+      "rain"       = data_mix[[i]][1:(n / 2)],
+      "wind_speed" = data_mix[[i]][((n / 2) + 1):n]
   ) %>% 
     mutate(name = paste0("location_", i))
 }))
@@ -159,3 +159,108 @@ clust_rand <- lapply(js_clust, \(x) {
   })
 })
 unlist(clust_rand)
+
+#### Functionalise ####
+
+js_clust <- \(
+  data_mix, 
+  vars = c("rain", "wind_speed"), 
+  prob = 0.9,
+  f = list(excess ~ name, ~ 1), # keep shape constant for now
+  nclust = 3,
+  split_data = TRUE
+) {
+  
+  # convert to dataframe
+  # TODO: Write where data does not need to be split
+  if (split_data) {
+    data_df <- bind_rows(lapply(seq_along(data_mix), \(i) {
+      n <- length(data_mix[[i]])
+      data.frame(
+        "rain"       = data_mix[[i]][1:(n / 2)],
+        "wind_speed" = data_mix[[i]][((n / 2) + 1):n]
+      ) %>% 
+        mutate(name = paste0("location_", i))
+    }))
+  }
+  
+  # Now fit evgam model for each marginal
+  # TODO: Is just fitting different models by loc appropriate? (Yes I think!)
+  evgam_fit <- lapply(data_thresh, \(x) {
+    fit_evgam(
+      data = x, 
+      pred_data = x,
+      # model scale and shape for each location
+      # f = list(excess ~ name, ~ name) 
+      f = f 
+    )
+  })
+  
+  # Join scale and shape estimates into data
+  # TODO: Functionalise to work with > 2 variables
+  data_gpd <- distinct(data_df, name) %>% 
+    bind_cols(
+      rename(
+        distinct(evgam_fit[[1]]$predictions), 
+        scale_rain = scale, 
+        shape_rain = shape),
+      rename(
+        distinct(evgam_fit[[2]]$predictions), 
+        scale_ws = scale, 
+        shape_ws = shape),
+    )
+  
+  # Now convert marginals to migpd (i.e. texmex format)
+  marginal <- gen_marg_migpd(data_gpd, data_df)
+  names(marginal) <- paste0(data_gpd$name, " - ", data_gpd$county)
+  
+  # Calculate dependence from marginals
+  dependence <- fit_texmex_dep(
+    marginal, 
+    mex_dep_args = list(dqu = prob), 
+    fit_no_keef = TRUE # TODO: Had to unconstrain for some locations!
+  )
+  
+  # check that all dependence models have run successfully
+  # TODO: Turn into test
+  # sapply(dependence, \(x) lapply(x, length))
+  
+  # pull parameter values for each location
+  params <- lapply(dependence, pull_params)
+  
+  # pull Laplace threshold values for each location
+  # TODO: Problem, last threshold different to others, investigate
+  thresh <- lapply(dependence, pull_thresh_trans)
+  
+  # take maximum Laplace thresholds; want to geenra
+  # thresh_max <- apply(bind_rows(thresh), 2, max)
+  thresh_max <- lapply(bind_rows(thresh), max)
+  
+  # list of locs -> list of len 2 of variables, each containing all locs
+  params <- purrr::transpose(params)
+  
+  dist_mats <- lapply(seq_along(params), \(i) {
+    proxy::dist(
+      params[[i]], 
+      method = js_div, 
+      thresh_max = thresh_max[[i]], 
+      data_max = 2 * thresh_max[[i]], 
+      n_dat = 10
+    )
+  })
+  
+  # scree plots look to suggest 3 clusters for both
+  # lapply(dist_mats, scree_plot) 
+  # lapply(dist_mats, scree_plot, fun = kmeans) 
+  
+  # cluster for rain and wind speed using both k-means and PAM
+  # js_clust <- lapply(dist_mats, \(x) {
+  #   lapply(c(pam, kmeans), \(fun) {
+  #     fun(x, 3)
+  #   })
+  # })
+  # cluster for rain and wind speed using PAM
+  return(lapply(dist_mats, pam, k = nclust))
+}
+
+js_clust(data_mix)

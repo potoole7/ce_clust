@@ -70,7 +70,7 @@ gauss_cop <- lapply(seq_len(n_locs), \(i){
   # }
   
   # cop_norm <- normalCopula(cor, dim = n_vars, dispstr = "un")
-  cop_norm <- normalCopula(cor_gauss, dim = n_vars, dispstr = "un")
+  cop_norm <- normalCopula(cor_gauss, dim = 2, dispstr = "un")
   u <- rCopula(n, cop_norm)
   # return(qnorm(u, mean = mu, sd = sigma))
   evd::qgpd(
@@ -96,7 +96,7 @@ t_cop <- lapply(seq_len(n_locs), \(i) {
     cor <- cor_t[[2]]
     df <- df_t[[2]]
   }
-  cop_t <- copula::tCopula(cor, dim = n_vars, df = df_t[[2]], dispstr = "un")
+  cop_t <- copula::tCopula(cor, dim = 2, df = df_t[[2]], dispstr = "un")
   u <- rCopula(n, cop_t)
   return(evd::qgpd(
     p     = u,
@@ -152,17 +152,16 @@ mclust::adjustedRandIndex(
 
 #### Functionalise ####
 
-kl_sim_eval <- \(
+# Function to generate copula data
+sim_cop_dat <- \(
   n_locs = 12,     # number of locations
   n = 1e4,         # number of simulations
-  cor_gauss,        # bulk correlation for two clusters from Gaussian copula
+  cor_gauss,       # bulk correlation for two clusters from Gaussian copula
   # params_norm,     # normal marginal parameters (same for both)
   cor_t,           # extreme correlation for two clusters from t-copula
   df_t,            # degrees of freedom for t-copula
   params_gpd,      # GPD margin parameters
-  mix_p,           # mixture weights
-  kl_prob,         # Extremal quantile
-  ret_data = FALSE # Whether to return data (may be memory intensive)
+  mix_p            # mixture weights
 ) {
   # many arguments must be of length 2 for 2 clusters
   stopifnot(all(vapply(
@@ -170,8 +169,6 @@ kl_sim_eval <- \(
     list(cor_gauss, cor_t, df_t, params_gpd, mix_p), 
     \(x) length(x) == 2, logical(1)
   )))
-  # prob must be valid probability
-  stopifnot(0 <= kl_prob && kl_prob <= 1)
   stopifnot(sum(mix_p) == 1)
   
   # Simulate from Gaussian Copula with GPD margins
@@ -181,8 +178,8 @@ kl_sim_eval <- \(
     if (i > floor(n_locs / 2)) {
       cor <- cor_gauss[[2]]
     }
-    cop_norm <- normalCopula(cor, dim = n_vars, dispstr = "un")
-    # cop_norm <- normalCopula(cor_mat, dim = n_vars, dispstr = "un")
+    cop_norm <- normalCopula(cor, dim = 2, dispstr = "un")
+    # cop_norm <- normalCopula(cor_mat, dim = 2, dispstr = "un")
     u <- rCopula(n, cop_norm)
     # return(qnorm(u, mean = mu, sd = sigma))
     evd::qgpd(
@@ -202,7 +199,7 @@ kl_sim_eval <- \(
       cor <- cor_t[[2]]
       df <- df_t[[2]]
     }
-    cop_t <- copula::tCopula(cor, dim = n_vars, df = df_t[[2]], dispstr = "un")
+    cop_t <- copula::tCopula(cor, dim = 2, df = df_t[[2]], dispstr = "un")
     u <- rCopula(n, cop_t)
     return(evd::qgpd(
       p     = u,
@@ -226,10 +223,27 @@ kl_sim_eval <- \(
       t_cop[[i]][sample(seq_len(y), size = mix_p[[2]] * y), ]
     )
   })
+ return(list(
+   "gauss_cop" = gauss_cop, 
+   "t_cop"     = t_cop,
+   "data_mix"  = data_mix
+ ))
+}
+
+# TODO: Separate data generation and KL divergence/clustering procedures
+# Function to 
+kl_sim_eval <- \(
+  data_mix, # Mixture data from copulas
+  kl_prob, # Extremal quantile
+  ...
+) {
+  
+  # prob must be valid probability
+  stopifnot(0 <= kl_prob && kl_prob <= 1)
   
   # KL divergence between areas using Vignotto 2021 method
   kl_mat <- proxy::dist(
-    data_mix, method = emp_kl_div, print = FALSE, prob = kl_prob
+    data_mix, method = emp_kl_div, print = FALSE, prob = kl_prob, ...
   )
   
   # clustering solution
@@ -242,26 +256,15 @@ kl_sim_eval <- \(
   # print(paste0("adjusted Rand index" = adj_rand))
   
   # return object
-  ret <- list(
-    "data"     = list(
-      "gauss_cop" = gauss_cop, 
-      "t_cop"  = t_cop,
-      "data_mix"  = data_mix
-    ), 
+  return(list(
     "pam"      = pam_kl_clust,
     "adj_rand" = adj_rand
-  )
-  
-  # returning data each time may be quite memory intensive!
-  if (ret_data == FALSE) {
-    ret <- ret[names(ret) != "data"]
-  }
-  return(ret)
+  ))
 }
 
 # test 
 set.seed(seed_number)
-kl_sim_eval(
+data <- sim_cop_dat(
   n_locs = 12, 
   n = 1e3, 
   # cor_gauss = c(0.5, 0.5), 
@@ -270,9 +273,10 @@ kl_sim_eval(
   # df_t = c(1, 5),
   df_t = c(3, 3),
   params_gpd = c(1, -0.05),
-  mix_p = c(0.5, 0.5),
-  kl_prob = 0.9
+  mix_p = c(0.5, 0.5)
 )
+data_mix <- data$data_mix
+kl_sim_eval(data_mix, kl_prob = 0.92)
 
 
 #### Grid search ####
@@ -319,17 +323,17 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
   print(paste0("Progress: ", round(i / nrow(grid), 3) * 100, "%"))
   
   row <- grid[i, , drop = FALSE]
+  data_mix <- with(row, sim_cop_dat(
+    n = 1e3,
+    cor_gauss  = c(cor_gauss1, cor_gauss2),
+    cor_t      = c(cor_t1, cor_t2),
+    df_t       = c(df_t1, df_t2),
+    params_gpd = c(scale_gpd, shape_gpd),
+    mix_p      = c(0.5, 0.5)
+  ))$data_mix
   
   kl_clust <- tryCatch({
-    with(row, kl_sim_eval(
-      n = 1e3,
-      cor_gauss  = c(cor_gauss1, cor_gauss2),
-      cor_t      = c(cor_t1, cor_t2),
-      df_t       = c(df_t1, df_t2),
-      params_gpd = c(scale_gpd, shape_gpd),
-      mix_p      = c(0.5, 0.5),
-      kl_prob    = kl_prob
-    ))
+    kl_sim_eval(data_mix, kl_prob = row$kl_prob)
   # if an error is produced, return a dummy list
   }, error = function(cond) {
     return(list(
@@ -351,21 +355,10 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
 
 #### Plot ####
 
-results_grid %>% 
-  ggplot(aes(x = cor_t1, y = cor_t2, colour = adj_rand)) +
-  geom_bar() + 
-  facet_wrap(~ cor_gauss1) + 
-  NULL
-
 ggplot(results_grid, aes(x = cor_t1, y = adj_rand, colour = factor(cor_t2))) +
   geom_point() +
   geom_line() +
   facet_wrap(~ cor_gauss1, ncol = 3) +
-  labs(
-    x = "Parameter 1",
-    y = "Fit Statistic",
-    colour = "Parameter 2"
-  ) +
   theme
 
 ggplot(results_grid, aes(x = cor_gauss1, y = adj_rand)) +

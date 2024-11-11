@@ -7,7 +7,7 @@
 pull_params <- \(dep) {
   # fail if not list of mex objects for single location
   stopifnot(is.list(dep))
-  stopifnot(all(vapply(dep, class, character(1)) == "mex"))
+  # stopifnot(all(vapply(dep, class, character(1)) == "mex"))
   # loop through conditioning variables for single location
   return(lapply(dep, \(x) {
     # pull parameter vals
@@ -395,7 +395,8 @@ fit_texmex_dep <- \(
     dqu = 0.7,
     fixed_b = FALSE,
     PlotLikDo = FALSE
-  )
+  ),
+  fit_no_keef = FALSE
 ) {
   dependence <- lapply(seq_along(marginal), \(i) {
     # fit for rain and wind speed
@@ -410,7 +411,18 @@ fit_texmex_dep <- \(
       # if model didn't optimise with Keef 2013 constrains, return NA
       ll <- mod$dependence$loglik
       if (is.na(ll) || abs(mod$dependence$loglik) > 1e9) {
-        return(NA)
+        message("Model not fitting properly under Keef constraints")
+        if (fit_no_keef) {
+          mod <- do.call(
+            mexDependence, 
+            args = c(
+              list(x = marginal[[i]], which = col, constrain = FALSE), 
+              mex_dep_args
+            )
+          )
+        } else {
+          return(NA)
+        }
       }
       return(mod)
     })

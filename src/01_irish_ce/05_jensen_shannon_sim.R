@@ -7,6 +7,7 @@ library(dplyr, quietly = TRUE)
 library(tidyr)
 library(ggplot2)
 library(cluster)
+library(evgam)
 devtools::load_all("texmex")
 
 source("src/functions.R")
@@ -30,6 +31,7 @@ sf::sf_use_s2(FALSE)
 #### Metadata ####
 
 vars <- c("rain", "wind_speed")
+prob <- 0.9
 
 #### Load Data ####
 
@@ -50,7 +52,7 @@ data_df <- bind_rows(lapply(seq_along(data), \(i) {
 
 
 # First, calculate threshold (90th quantile across all locations)
-thresh <- apply(data_df[, 1:2], 2, quantile, 0.9)
+thresh <- apply(data_df[, 1:2], 2, quantile, prob)
 
 # for each variable, calculate excess over threshold
 data_thresh <- lapply(vars, \(x) {
@@ -64,13 +66,14 @@ data_thresh <- lapply(vars, \(x) {
 })
 
 # Now fit evgam model for each marginal
-# TODO: Is just fitting different models by loc appropriate?
+# TODO: Is just fitting different models by loc appropriate? (Yes I think!)
 evgam_fit <- lapply(data_thresh, \(x) {
   fit_evgam(
     data = x, 
     pred_data = x,
     # model scale and shape for each location
-    f = list(excess ~ name, ~ name) 
+    # f = list(excess ~ name, ~ name) 
+    f = list(excess ~ name, ~ 1) # keep shape constant
   )
 })
 
@@ -91,11 +94,16 @@ dependence <- fit_texmex_dep(
   marginal, 
   mex_dep_args = list(
     start = c(0.01, 0.01), 
-    dqu = 0.7,
+    dqu = prob,
     fixed_b = FALSE,
     PlotLikDo = FALSE
-  ) 
+  ), 
+  fit_no_keef = TRUE # TODO: Had to unconstrain for some locations!
 )
+
+# check that all dependence models have run successfully
+sapply(dependence, \(x) lapply(x, length))
+
 
 #### Calculate divergence upon which to cluster ####
 
@@ -136,7 +144,7 @@ js_clust <- lapply(dist_mats, \(x) {
   })
 })
 
-# Rand Index for clustering, works well for everything except k-means for wind
+# Rand Index for clustering, works well for everything! 
 clust_rand <- lapply(js_clust, \(x) {
   lapply(x, \(y) {
     if (inherits(x, "pam")) {

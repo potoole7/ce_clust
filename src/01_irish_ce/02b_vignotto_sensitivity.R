@@ -352,6 +352,9 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
 # }))
 }, mc.cores = n_cores))
 
+# save
+saveRDS(results_grid, file = "data/vignotto_grid_search_res.RDS")
+
 
 #### Plot ####
 

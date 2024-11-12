@@ -46,11 +46,11 @@ shape_gpd <- -0.05
 
 # correlation parameters for each cluster
 # cor_gauss <- c(0.1, 0.1)
-cor_gauss <- 0.1
-cor_t <- c(0.9, 0.1)
+cor_gauss <- 0.5
+cor_t <- c(0.8, 0.2)
 # degrees of freedom for t-Copula
 # df_t <- c(1, 5)
-df_t <- c(3, 3)
+df_t <- c(5, 5)
 # quantile for Vignotto 2021 method
 prob <- 0.9
 
@@ -291,6 +291,8 @@ grid <- tidyr::crossing(
   # cor_gauss2 = 0.1,
   # cor_gauss = seq(0, 1, by = 0.1),
   # t-copula correlation
+  # cor_t1    = seq(0, 1, by = 0.1),
+  # cor_t2    = seq(0, 1, by = 0.1),
   cor_t1    = seq(0.1, 0.9, by = 0.2),
   cor_t2    = seq(0, 1, by = 0.2),
   # Degrees of freedom for t-copula
@@ -315,58 +317,82 @@ grid <- tidyr::crossing(
   )
 
 # run kl_sim_eval for each row in grid
-# results_grid <- bind_rows(lapply(seq_len(nrow(grid)), \(i) {
-# TODO: Parallelise
+n_times <- 100
 set.seed(seed_number)
+# results_grid <- lapply(seq_len(nrow(grid)), \(i) {
+# results_grid <- lapply(1:3, \(i) { # test
 results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
-  
+
   print(paste0("Progress: ", round(i / nrow(grid), 3) * 100, "%"))
+  system(sprintf(
+    'echo "\n%s\n"', 
+    paste0(100 * round(i / nrow(grid), 3) * 100, "% completed", collapse = "")
+  ))
   
   row <- grid[i, , drop = FALSE]
-  data_mix <- with(row, sim_cop_dat(
-    n = 1e3,
-    cor_gauss  = c(cor_gauss1, cor_gauss2),
-    cor_t      = c(cor_t1, cor_t2),
-    df_t       = c(df_t1, df_t2),
-    params_gpd = c(scale_gpd, shape_gpd),
-    mix_p      = c(0.5, 0.5)
-  ))$data_mix
+  results_vec <- vector(length = n_times)
+  for (j in seq_len(n_times)) {
+    data_mix <- with(row, sim_cop_dat(
+      n          = 1e3,
+      cor_gauss  = c(cor_gauss1, cor_gauss2),
+      cor_t      = c(cor_t1, cor_t2),
+      df_t       = c(df_t1, df_t2),
+      params_gpd = c(scale_gpd, shape_gpd),
+      mix_p      = c(0.5, 0.5)
+    ))$data_mix
   
-  kl_clust <- tryCatch({
-    kl_sim_eval(data_mix, kl_prob = row$kl_prob)
-  # if an error is produced, return a dummy list
-  }, error = function(cond) {
-    return(list(
-      "adj_rand" = NA,
-      "pam" = list("clustering" = NA)
-    ))
-  })
-   
-  return(cbind(
-    row,
-    data.frame(
-      "adj_rand" = kl_clust$adj_rand, 
-      "membership" = paste0(kl_clust$pam$clustering, collapse = "-")
-    )
-  ))
-# }))
+    kl_clust <- tryCatch({
+      kl_sim_eval(data_mix, kl_prob = row$kl_prob)
+    # if an error is produced, return a dummy list
+    }, error = function(cond) {
+      return(list(
+        "adj_rand" = NA,
+        "pam" = list("clustering" = NA)
+      ))
+    })
+    results_vec[[j]] <- kl_clust$adj_rand
+  }
+  
+  # return(cbind(
+  #   row,
+  #   data.frame(
+  #     "adj_rand" = kl_clust$adj_rand, 
+  #     "membership" = paste0(kl_clust$pam$clustering, collapse = "-")
+  #   )
+  # ))
+  return(cbind(row, "adj_rand" = results_vec))
+# })
 }, mc.cores = n_cores))
+
+# calculate means and add to results
+results_grid_mean <- results_grid %>% 
+  group_by(across(1:last_col(1))) %>% 
+  summarise(mean_rand = mean(adj_rand, na.rm = TRUE), .groups = "drop")
+
+results_grid <- results_grid %>% 
+  left_join(results_grid_mean)
 
 # save
 saveRDS(results_grid, file = "data/vignotto_grid_search_res.RDS")
 
+results_grid <- readRDS("data/vignotto_grid_search_res.RDS")
+
 
 #### Plot ####
 
-ggplot(results_grid, aes(x = cor_t1, y = adj_rand, colour = factor(cor_t2))) +
-  geom_point() +
-  geom_line() +
-  facet_wrap(~ cor_gauss1, ncol = 3) +
-  theme
-
-ggplot(results_grid, aes(x = cor_gauss1, y = adj_rand)) +
-  geom_point() +
-  geom_line() +
-  # facet_wrap(~ cor_gauss1, ncol = 3) +
+ggplot(results_grid) + 
+  geom_point(
+    aes(x = cor_gauss1, y = adj_rand), 
+    colour = "black", alpha = 0.05, size = 0.5
+  ) + 
+  geom_point(
+    aes(x = cor_gauss1, y = mean_rand), 
+    colour = "#BC3C29FF", 
+    size = 2
+  ) + 
+  geom_line(
+    aes(x = cor_gauss1, y = mean_rand), 
+    colour = "#BC3C29FF", linewidth = 1.2
+  ) + 
   facet_grid(cor_t1 ~ cor_t2) + 
   theme

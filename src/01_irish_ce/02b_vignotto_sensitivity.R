@@ -63,206 +63,93 @@ n_cores <- detectCores() - 1
 # simulate from Gaussian copula with GPD margins
 # (This will form asymptotically independent data)
 # TODO: How does using Gaussian copula differ from MVN distribution?
-gauss_cop <- lapply(seq_len(n_locs), \(i){
-  # cor <- cor_gauss[[1]]
-  # if (i > floor(n_locs / 2)) {
-  #   cor <- cor_gauss[[2]]
-  # }
-  
-  # cop_norm <- normalCopula(cor, dim = n_vars, dispstr = "un")
-  cop_norm <- normalCopula(cor_gauss, dim = 2, dispstr = "un")
-  u <- rCopula(n, cop_norm)
-  # return(qnorm(u, mean = mu, sd = sigma))
-  evd::qgpd(
-    p     = u,
-    # loc   = max(gauss_cop[[i]]), 
-    loc   = 0,
-    scale = scale_gpd, 
-    shape = shape_gpd
-  )
-})
-
-# check correlation is correct
-# vapply(gauss_cop, \(x) round(cor(x)[1, 2], 3), numeric(1))
-par(mfrow = c(2, 2))
-lapply(gauss_cop[c(1, 5, 7, 10)], plot)
-par(mfrow = c(1, 1))
-
-# simulate from t-Copula with GPD margins
-t_cop <- lapply(seq_len(n_locs), \(i) {
-  cor <- cor_t[[1]]
-  df <- df_t[[1]]
-  if (i > floor(n_locs / 2)) {
-    cor <- cor_t[[2]]
-    df <- df_t[[2]]
-  }
-  cop_t <- copula::tCopula(cor, dim = 2, df = df_t[[2]], dispstr = "un")
-  u <- rCopula(n, cop_t)
-  return(evd::qgpd(
-    p     = u,
-    # loc   = max(gauss_cop[[i]]), 
-    loc   = 0,
-    scale = scale_gpd, 
-    shape = shape_gpd
-  ))
-})
-
-vapply(t_cop, \(x) round(cor(x)[1, 2], 3), numeric(1))
-par(mfrow = c(2, 2))
-lapply(t_cop[c(1, 5, 7, 10)], plot)
-par(mfrow = c(1, 1))
-
-# mixture
-# data_mix <- lapply(seq_len(n_locs), \(i){
-#   mix_p[[1]] * gauss_cop[[i]] + mix_p[[2]] * t_cop[[i]]
+# gauss_cop <- lapply(seq_len(n_locs), \(i){
+#   # cor <- cor_gauss[[1]]
+#   # if (i > floor(n_locs / 2)) {
+#   #   cor <- cor_gauss[[2]]
+#   # }
+#   
+#   # cop_norm <- normalCopula(cor, dim = n_vars, dispstr = "un")
+#   cop_norm <- normalCopula(cor_gauss, dim = 2, dispstr = "un")
+#   u <- rCopula(n, cop_norm)
+#   # return(qnorm(u, mean = mu, sd = sigma))
+#   evd::qgpd(
+#     p     = u,
+#     # loc   = max(gauss_cop[[i]]), 
+#     loc   = 0,
+#     scale = scale_gpd, 
+#     shape = shape_gpd
+#   )
 # })
-data_mix <- lapply(seq_len(n_locs), \(i) {
-  x <- nrow(gauss_cop[[i]])
-  y <- nrow(t_cop[[i]])
-  # sample mix_p * nrow(gauss_cop) rows from gauss_cop (same for t_cop)
-  rbind(
-    gauss_cop[[i]][sample(seq_len(x), size = mix_p[[1]] * x), ],
-    t_cop[[i]][sample(seq_len(y), size = mix_p[[2]] * y), ]
-  )
-})
+# 
+# # check correlation is correct
+# # vapply(gauss_cop, \(x) round(cor(x)[1, 2], 3), numeric(1))
+# par(mfrow = c(2, 2))
+# lapply(gauss_cop[c(1, 5, 7, 10)], plot)
+# par(mfrow = c(1, 1))
+# 
+# # simulate from t-Copula with GPD margins
+# t_cop <- lapply(seq_len(n_locs), \(i) {
+#   cor <- cor_t[[1]]
+#   df <- df_t[[1]]
+#   if (i > floor(n_locs / 2)) {
+#     cor <- cor_t[[2]]
+#     df <- df_t[[2]]
+#   }
+#   cop_t <- copula::tCopula(cor, dim = 2, df = df_t[[2]], dispstr = "un")
+#   u <- rCopula(n, cop_t)
+#   return(evd::qgpd(
+#     p     = u,
+#     # loc   = max(gauss_cop[[i]]), 
+#     loc   = 0,
+#     scale = scale_gpd, 
+#     shape = shape_gpd
+#   ))
+# })
+# 
+# vapply(t_cop, \(x) round(cor(x)[1, 2], 3), numeric(1))
+# par(mfrow = c(2, 2))
+# lapply(t_cop[c(1, 5, 7, 10)], plot)
+# par(mfrow = c(1, 1))
+# 
+# # mixture
+# # data_mix <- lapply(seq_len(n_locs), \(i){
+# #   mix_p[[1]] * gauss_cop[[i]] + mix_p[[2]] * t_cop[[i]]
+# # })
+# data_mix <- lapply(seq_len(n_locs), \(i) {
+#   x <- nrow(gauss_cop[[i]])
+#   y <- nrow(t_cop[[i]])
+#   # sample mix_p * nrow(gauss_cop) rows from gauss_cop (same for t_cop)
+#   rbind(
+#     gauss_cop[[i]][sample(seq_len(x), size = mix_p[[1]] * x), ],
+#     t_cop[[i]][sample(seq_len(y), size = mix_p[[2]] * y), ]
+#   )
+# })
+# 
+# vapply(data_mix, \(x) round(cor(x)[1, 2], 3), numeric(1))
+# par(mfrow = c(2, 2))
+# lapply(data_mix[c(1, 5, 7, 10)], plot)
+# par(mfrow = c(1, 1))
+# 
+# # test dissimilarity for one
+# emp_kl_div(
+#   data_mix[[1]], data_mix[[10]], prob = 0.95, plot = TRUE
+# )
+# 
+# # KL divergence between areas using Vignotto 2021 method
+# kl_mat <- proxy::dist(
+#   data_mix, method = emp_kl_div, print = FALSE, prob = 0.9
+# )
+# 
+# # clustering solution
+# pam_kl_clust <- pam(kl_mat, k = 2)
+# # evaluate quality
+# mclust::adjustedRandIndex(
+#   pam_kl_clust$clustering, 
+#   cluster_mem
+# )
 
-vapply(data_mix, \(x) round(cor(x)[1, 2], 3), numeric(1))
-par(mfrow = c(2, 2))
-lapply(data_mix[c(1, 5, 7, 10)], plot)
-par(mfrow = c(1, 1))
-
-# test dissimilarity for one
-emp_kl_div(
-  data_mix[[1]], data_mix[[10]], prob = 0.95, plot = TRUE
-)
-
-# KL divergence between areas using Vignotto 2021 method
-kl_mat <- proxy::dist(
-  data_mix, method = emp_kl_div, print = FALSE, prob = 0.9
-)
-
-# clustering solution
-pam_kl_clust <- pam(kl_mat, k = 2)
-# evaluate quality
-mclust::adjustedRandIndex(
-  pam_kl_clust$clustering, 
-  cluster_mem
-)
-
-
-#### Functionalise ####
-
-# Function to generate copula data
-sim_cop_dat <- \(
-  n_locs = 12,     # number of locations
-  n = 1e4,         # number of simulations
-  cor_gauss,       # bulk correlation for two clusters from Gaussian copula
-  # params_norm,     # normal marginal parameters (same for both)
-  cor_t,           # extreme correlation for two clusters from t-copula
-  df_t,            # degrees of freedom for t-copula
-  params_gpd,      # GPD margin parameters
-  mix_p            # mixture weights
-) {
-  # many arguments must be of length 2 for 2 clusters
-  stopifnot(all(vapply(
-    # list(cor_gauss, params_norm, cor_t, df_t, params_gpd, mix_p), 
-    list(cor_gauss, cor_t, df_t, params_gpd, mix_p), 
-    \(x) length(x) == 2, logical(1)
-  )))
-  stopifnot(sum(mix_p) == 1)
-  
-  # Simulate from Gaussian Copula with GPD margins
-  gauss_cop <- lapply(seq_len(n_locs), \(i){
-    # pull correlation specified for each cluster
-    cor <- cor_gauss[[1]]
-    if (i > floor(n_locs / 2)) {
-      cor <- cor_gauss[[2]]
-    }
-    cop_norm <- normalCopula(cor, dim = 2, dispstr = "un")
-    # cop_norm <- normalCopula(cor_mat, dim = 2, dispstr = "un")
-    u <- rCopula(n, cop_norm)
-    # return(qnorm(u, mean = mu, sd = sigma))
-    evd::qgpd(
-      p     = u,
-      # loc   = max(gauss_cop[[i]]), 
-      loc   = 0,
-      scale = scale_gpd, 
-      shape = shape_gpd
-    )
-  })
-
-  # simulate from t-Copula with GPD margins
-  t_cop <- lapply(seq_len(n_locs), \(i) {
-    cor <- cor_t[[1]]
-    df <- df_t[[1]]
-    if (i > floor(n_locs / 2)) {
-      cor <- cor_t[[2]]
-      df <- df_t[[2]]
-    }
-    cop_t <- copula::tCopula(cor, dim = 2, df = df_t[[2]], dispstr = "un")
-    u <- rCopula(n, cop_t)
-    return(evd::qgpd(
-      p     = u,
-      # loc   = max(gauss_cop[[i]]), 
-      loc   = 0,
-      scale = scale_gpd, 
-      shape = shape_gpd
-    ))
-  })
-  
-  # mixture
-  # data_mix <- lapply(seq_len(n_locs), \(i){
-  #   mix_p[[1]] * gauss_cop[[i]] + mix_p[[2]] * t_cop[[i]]
-  # })
-  data_mix <- lapply(seq_len(n_locs), \(i) {
-    x <- nrow(gauss_cop[[i]])
-    y <- nrow(t_cop[[i]])
-    # sample mix_p * nrow(gauss_cop) rows from gauss_cop (same for t_cop)
-    rbind(
-      gauss_cop[[i]][sample(seq_len(x), size = mix_p[[1]] * x), ],
-      t_cop[[i]][sample(seq_len(y), size = mix_p[[2]] * y), ]
-    )
-  })
- return(list(
-   "gauss_cop" = gauss_cop, 
-   "t_cop"     = t_cop,
-   "data_mix"  = data_mix
- ))
-}
-
-# TODO: Separate data generation and KL divergence/clustering procedures
-# Function to 
-kl_sim_eval <- \(
-  data_mix, # Mixture data from copulas
-  kl_prob, # Extremal quantile
-  ...
-) {
-  
-  # prob must be valid probability
-  stopifnot(0 <= kl_prob && kl_prob <= 1)
-  
-  # KL divergence between areas using Vignotto 2021 method
-  kl_mat <- proxy::dist(
-    data_mix, method = emp_kl_div, print = FALSE, prob = kl_prob, ...
-  )
-  
-  # clustering solution
-  pam_kl_clust <- pam(kl_mat, k = 2)
-  # evaluate quality
-  adj_rand <- mclust::adjustedRandIndex(
-    pam_kl_clust$clustering, 
-    cluster_mem
-  )
-  # print(paste0("adjusted Rand index" = adj_rand))
-  
-  # return object
-  return(list(
-    "pam"      = pam_kl_clust,
-    "adj_rand" = adj_rand
-  ))
-}
-
-# test 
+# test functionalised version of above code
 set.seed(seed_number)
 data <- sim_cop_dat(
   n_locs = 12, 
@@ -317,6 +204,7 @@ grid <- tidyr::crossing(
   )
 
 # run kl_sim_eval for each row in grid
+# TODO: Functionalise as used in other scripts
 n_times <- 100
 set.seed(seed_number)
 # results_grid <- lapply(seq_len(nrow(grid)), \(i) {
@@ -326,7 +214,7 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
   print(paste0("Progress: ", round(i / nrow(grid), 3) * 100, "%"))
   system(sprintf(
     'echo "\n%s\n"', 
-    paste0(100 * round(i / nrow(grid), 3) * 100, "% completed", collapse = "")
+    paste0(round(i / nrow(grid), 3) * 100, "% completed", collapse = "")
   ))
   
   row <- grid[i, , drop = FALSE]
@@ -342,13 +230,10 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
     ))$data_mix
   
     kl_clust <- tryCatch({
-      kl_sim_eval(data_mix, kl_prob = row$kl_prob)
+      kl_sim_eval(data_mix, kl_prob = row$kl_prob, cluster_mem = cluster_mem)
     # if an error is produced, return a dummy list
     }, error = function(cond) {
-      return(list(
-        "adj_rand" = NA,
-        "pam" = list("clustering" = NA)
-      ))
+      return(list("adj_rand" = NA))
     })
     results_vec[[j]] <- kl_clust$adj_rand
   }
@@ -374,16 +259,16 @@ results_grid <- results_grid %>%
 
 # save
 saveRDS(results_grid, file = "data/vignotto_grid_search_res.RDS")
-
-results_grid <- readRDS("data/vignotto_grid_search_res.RDS")
+# results_grid <- readRDS("data/vignotto_grid_search_res.RDS")
 
 
 #### Plot ####
 
-ggplot(results_grid) + 
+p1 <- results_grid %>% 
+  ggplot() + 
   geom_point(
     aes(x = cor_gauss1, y = adj_rand), 
-    colour = "black", alpha = 0.05, size = 0.5
+    colour = "black", alpha = 0.05, size = 0.8
   ) + 
   geom_point(
     aes(x = cor_gauss1, y = mean_rand), 
@@ -395,4 +280,8 @@ ggplot(results_grid) +
     colour = "#BC3C29FF", linewidth = 1.2
   ) + 
   facet_grid(cor_t1 ~ cor_t2) + 
-  theme
+  labs(y = "Adjusted Rand Index", x = "Gaussian corr") + 
+  theme + 
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.5))
+
+ggsave(plot = p1, "plots/01a_vignotto_sensitivity.png")

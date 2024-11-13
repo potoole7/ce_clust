@@ -134,7 +134,8 @@ results_grid_mean <- results_grid %>%
 results_grid <- results_grid %>% 
   left_join(results_grid_mean)
 
-# save
+# save 
+# TODO: Change to csv file!
 saveRDS(results_grid, file = "data/js_grid_search_res.RDS")
 # results_grid <- readRDS("data/js_grid_search_res.RDS")
 
@@ -160,5 +161,34 @@ p1 <- results_grid %>%
   labs(y = "Adjusted Rand Index", x = "Gaussian corr") + 
   theme + 
   theme(axis.text.x = element_text(angle = 45, vjust = 0.5))
+p1
 
 ggsave(plot = p1, "plots/01b_js_sensitivity.png")
+
+#### Compare to Vignotto ####
+
+results_grid_vig <- readRDS("data/vignotto_grid_search_res.RDS")
+
+preprocess_fun <- \(x, name) {
+ ret <- x %>% 
+  dplyr::select(-adj_rand) %>% 
+  distinct()
+ names(ret)[names(ret) == "mean_rand"] <- name
+ return(ret)
+}
+
+results_grid_join <- preprocess_fun(results_grid, "rand_js") %>% 
+  left_join(preprocess_fun(results_grid_vig, "rand_vig")) %>% 
+  pivot_longer(contains("rand_"))
+
+p2 <- results_grid_join %>% 
+  mutate(name = ifelse(name == "rand_js", "CE", "Vignotto")) %>% 
+  ggplot(aes(x = cor_gauss1, y = value, colour = name)) + 
+  geom_point(size = 2) + 
+  geom_line(linewidth = 1.2) + 
+  facet_grid(cor_t1 ~ cor_t2) + 
+  labs(y = "Adjusted Rand Index", x = "Gaussian corr") + 
+  theme + 
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.5)) + 
+  ggsci::scale_colour_nejm()
+p2

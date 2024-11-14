@@ -42,6 +42,8 @@ mix_p <- c("gauss_cop" = 0.5, "t_cop" = 0.5) # mixture percentages
 # GPD parameters
 scale_gpd <- 1
 shape_gpd <- -0.05
+marg_prob <- 0.9
+kl_prob <- 0.99
 
 # Number of cores to use for parallel computation
 n_cores <- detectCores() - 1 
@@ -72,7 +74,7 @@ grid <- tidyr::crossing(
   mix_p2  = 0.5,
   # extremal quantiles
   # kl_prob = c(0.9, 0.95, 0.99)
-  kl_prob = 0.9
+  kl_prob = kl_prob
 ) %>% 
   filter(
     # use same correlation in both clusters for Gaussian copula
@@ -108,7 +110,14 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
     js_clust <- tryCatch({
       # kl_sim_eval(data_mix, kl_prob = row$kl_prob, cluster_mem = cluster_mem)
       # if an error is produced, return a dummy list
-      js_clust(data_mix, nclust = 2, cluster_mem = cluster_mem, split_data = FALSE)
+      js_clust(
+        data_mix, 
+        marg_prob   = marg_prob,
+        cond_prob   = row$kl_prob,
+        nclust      = 2, 
+        cluster_mem = cluster_mem, 
+        split_data  = FALSE
+      )
     }, error = function(cond) {
       return(list("adj_rand" = NA))
     })
@@ -136,7 +145,11 @@ results_grid <- results_grid %>%
 
 # save 
 # TODO: Change to csv file!
-saveRDS(results_grid, file = "data/js_grid_search_res.RDS")
+saveRDS(
+  results_grid, 
+  # file = paste0("data/js_grid_search_res_dqu_", kl_prob, ".RDS")
+  file = paste0("data/js_grid_search_res_dqu_", kl_prob, "_marg_0.9.RDS")
+)
 # results_grid <- readRDS("data/js_grid_search_res.RDS")
 
 
@@ -163,7 +176,13 @@ p1 <- results_grid %>%
   theme(axis.text.x = element_text(angle = 45, vjust = 0.5))
 p1
 
-ggsave(plot = p1, "plots/01b_js_sensitivity.png")
+# ggsave(plot = p1, "plots/01b_js_sensitivity.png")
+ggsave(
+  plot = p1, 
+  # paste0("plots/01b_js_sensitivity_dqu_", kl_prob, ".png")
+  paste0("plots/01b_js_sensitivity_dqu_", kl_prob, "_marg_0.9.png")
+)
+
 
 #### Compare to Vignotto ####
 
@@ -178,6 +197,8 @@ preprocess_fun <- \(x, name) {
 }
 
 results_grid_join <- preprocess_fun(results_grid, "rand_js") %>% 
+  # kl probs may not match
+  dplyr::select(-kl_prob) %>% 
   left_join(preprocess_fun(results_grid_vig, "rand_vig")) %>% 
   pivot_longer(contains("rand_"))
 
@@ -192,3 +213,12 @@ p2 <- results_grid_join %>%
   theme(axis.text.x = element_text(angle = 45, vjust = 0.5)) + 
   ggsci::scale_colour_nejm()
 p2
+
+ggsave(
+  plot = p2, 
+  # paste0("plots/01c_sensitivity_dqu_", kl_prob, ".png")
+  paste0("plots/01c_sensitivity_dqu_", kl_prob, "_marg_0.9.png")
+)
+
+
+#### Compare sensitivity of Jensen-Shannon method for different quantiles ####

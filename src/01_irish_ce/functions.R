@@ -397,7 +397,8 @@ emp_kl_div <- \(x, y, convert_pareto = TRUE, prob = 0.9, print = TRUE, plot = FA
 js_clust <- \(
   data_mix, 
   vars = c("rain", "wind_speed"), 
-  prob = 0.9,
+  marg_prob = 0.9,
+  cond_prob = 0.9,
   f = list(excess ~ name, ~ 1), # keep shape constant for now
   nclust = 3,
   cluster_mem = NULL,
@@ -424,7 +425,7 @@ js_clust <- \(
   }
   
   # First, calculate threshold (90th quantile across all locations)
-  thresh <- apply(data_df[, 1:2], 2, quantile, prob)
+  thresh <- apply(data_df[, 1:2], 2, quantile, marg_prob)
 
   # for each variable, calculate excess over threshold
   data_thresh <- lapply(vars, \(x) {
@@ -470,7 +471,7 @@ js_clust <- \(
   # Calculate dependence from marginals
   dependence <- fit_texmex_dep(
     marginal, 
-    mex_dep_args = list(dqu = prob), 
+    mex_dep_args = list(dqu = cond_prob), 
     fit_no_keef = TRUE # TODO: Had to unconstrain for some locations!
   )
   

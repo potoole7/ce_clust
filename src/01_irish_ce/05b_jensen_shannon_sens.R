@@ -43,7 +43,7 @@ mix_p <- c("gauss_cop" = 0.5, "t_cop" = 0.5) # mixture percentages
 scale_gpd <- 1
 shape_gpd <- -0.05
 marg_prob <- 0.9
-kl_prob <- 0.99
+kl_prob <- 0.85
 
 # Number of cores to use for parallel computation
 n_cores <- detectCores() - 1 
@@ -84,7 +84,7 @@ grid <- tidyr::crossing(
   )
 
 # run kl_sim_eval for each row in grid
-n_times <- 100
+n_times <- 1
 set.seed(seed_number)
 # results_grid <- bind_rows(lapply(seq_len(nrow(grid)), \(i) {
 results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
@@ -98,6 +98,7 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
   row <- grid[i, , drop = FALSE]
   results_vec <- vector(length = n_times)
   for (j in seq_len(n_times)) {
+    # generate simulation data for given parameter set
     data_mix <- with(row, sim_cop_dat(
       n          = 1e3,
       cor_gauss  = c(cor_gauss1, cor_gauss2),
@@ -108,16 +109,14 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
     ))$data_mix
     
     js_clust <- tryCatch({
-      # kl_sim_eval(data_mix, kl_prob = row$kl_prob, cluster_mem = cluster_mem)
       # if an error is produced, return a dummy list
-      js_clust(
+      dependence <- fit_ce(
         data_mix, 
         marg_prob   = marg_prob,
         cond_prob   = row$kl_prob,
-        nclust      = 2, 
-        cluster_mem = cluster_mem, 
         split_data  = FALSE
       )
+      js_clust(dependence, nclust = 2, cluster_mem = cluster_mem)
     }, error = function(cond) {
       return(list("adj_rand" = NA))
     })
@@ -222,3 +221,34 @@ ggsave(
 
 
 #### Compare sensitivity of Jensen-Shannon method for different quantiles ####
+
+# pull relative files
+files <- list.files("data", pattern = "_marg_", full.names = TRUE)
+stopifnot(length(files) == 6)
+
+# pull marginal probabilities for each (not labelled in data)
+marg_probs <- as.numeric(vapply(stringr::str_split(files, "_marg_"), \(x) {
+  stringr::str_remove(x[[2]], ".RDS")
+}, character(1)))
+
+# pull data, labelling marginal probabilities
+data_js <- bind_rows(lapply(seq_along(files), \(i){
+  mutate(readRDS(files[[i]]), "marg_prob" = marg_probs[i])
+}))
+
+# plot
+data_js %>% 
+  dplyr::select(-adj_rand) %>% 
+  distinct() %>% 
+  mutate(indicator = paste0("dqu = ", kl_prob, ", mqu = ", marg_prob)) %>% 
+  # ggplot(aes(x = cor_gauss1, y = value, colour = indicator)) + 
+  ggplot(aes(x = cor_gauss1, y = mean_rand, colour = indicator)) + 
+  geom_point(size = 2) + 
+  geom_line(linewidth = 1.2) + 
+  facet_grid(cor_t1 ~ cor_t2) + 
+  labs(y = "Adjusted Rand Index", x = "Gaussian corr") + 
+  theme + 
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.5)) + 
+  ggsci::scale_colour_nejm()
+  
+# tabulate which is best in every case

@@ -394,91 +394,15 @@ emp_kl_div <- \(x, y, convert_pareto = TRUE, prob = 0.9, print = TRUE, plot = FA
 
 # Function to calculate and cluster on the Jensen-Shannon Divergence for 
 # the conditional extremes model
+# TODO: functionalise n_dat
 js_clust <- \(
-  data_mix, 
-  vars = c("rain", "wind_speed"), 
-  marg_prob = 0.9,
-  cond_prob = 0.9,
-  f = list(excess ~ name, ~ 1), # keep shape constant for now
+  dependence,
   nclust = 3,
-  cluster_mem = NULL,
-  split_data = TRUE
+  cluster_mem = NULL
 ) {
   
-  # convert to dataframe
-  # TODO: Tidy up, quite verbose
-  if (split_data) {
-    data_df <- bind_rows(lapply(seq_along(data_mix), \(i) {
-      n <- length(data_mix[[i]])
-      data.frame(
-        "rain"       = data_mix[[i]][1:(n / 2)],
-        "wind_speed" = data_mix[[i]][((n / 2) + 1):n]
-      ) %>% 
-        mutate(name = paste0("location_", i))
-    }))
-  } else {
-    data_df <- bind_rows(lapply(seq_along(data_mix), \(i) {
-      as.data.frame(data_mix[[i]]) %>% 
-        mutate(name = paste0("location_", i))
-    }))
-    names(data_df)[1:2] <- c("rain", "wind_speed")
-  }
-  
-  # First, calculate threshold (90th quantile across all locations)
-  thresh <- apply(data_df[, 1:2], 2, quantile, marg_prob)
-
-  # for each variable, calculate excess over threshold
-  data_thresh <- lapply(vars, \(x) {
-    data_df %>% 
-      dplyr::select(matches(x), name) %>% 
-      mutate(
-        thresh = thresh[x],
-        excess = !!sym(x) - thresh
-      ) %>% 
-      filter(excess > 0)
-  })
-  
-  # Now fit evgam model for each marginal
-  # TODO: Is just fitting different models by loc appropriate? (Yes I think!)
-  evgam_fit <- lapply(data_thresh, \(x) {
-    fit_evgam(
-      data = x, 
-      pred_data = x,
-      # model scale and shape for each location
-      # f = list(excess ~ name, ~ name) 
-      f = f 
-    )
-  })
-  
-  # Join scale and shape estimates into data
-  # TODO: Functionalise to work with > 2 variables
-  data_gpd <- distinct(data_df, name) %>% 
-    bind_cols(
-      rename(
-        distinct(evgam_fit[[1]]$predictions), 
-        scale_rain = scale, 
-        shape_rain = shape),
-      rename(
-        distinct(evgam_fit[[2]]$predictions), 
-        scale_ws = scale, 
-        shape_ws = shape),
-    )
-  
-  # Now convert marginals to migpd (i.e. texmex format)
-  marginal <- gen_marg_migpd(data_gpd, data_df)
-  names(marginal) <- paste0(data_gpd$name, " - ", data_gpd$county)
-  
-  # Calculate dependence from marginals
-  dependence <- fit_texmex_dep(
-    marginal, 
-    mex_dep_args = list(dqu = cond_prob), 
-    fit_no_keef = TRUE # TODO: Had to unconstrain for some locations!
-  )
-  
-  # check that all dependence models have run successfully
-  # TODO: Turn into test
-  # sapply(dependence, \(x) lapply(x, length))
-  
+  # TODO: Add stopifnot clause for class of dependence
+   
   # pull parameter values for each location
   params <- lapply(dependence, pull_params)
   
@@ -531,6 +455,86 @@ js_clust <- \(
   return(ret)
 }
 
+# Function to fit CE model
+fit_ce <- \(
+  data_mix, 
+  vars = c("rain", "wind_speed"), 
+  marg_prob = 0.9,
+  cond_prob = 0.9,
+  f = list(excess ~ name, ~ 1), # keep shape constant for now
+  split_data = TRUE
+) {
+  
+  # convert to dataframe
+  # TODO: Tidy up, quite verbose
+  if (split_data) {
+    data_df <- bind_rows(lapply(seq_along(data_mix), \(i) {
+      n <- length(data_mix[[i]])
+      data.frame(
+        "rain"       = data_mix[[i]][1:(n / 2)],
+        "wind_speed" = data_mix[[i]][((n / 2) + 1):n]
+      ) %>% 
+        mutate(name = paste0("location_", i))
+    }))
+  } else {
+    data_df <- bind_rows(lapply(seq_along(data_mix), \(i) {
+      as.data.frame(data_mix[[i]]) %>% 
+        mutate(name = paste0("location_", i))
+    }))
+    names(data_df)[1:2] <- c("rain", "wind_speed")
+  }
+  
+  # First, calculate threshold (90th quantile across all locations)
+  thresh <- apply(data_df[, 1:2], 2, quantile, marg_prob)
+  
+  # for each variable, calculate excess over threshold
+  data_thresh <- lapply(vars, \(x) {
+    data_df %>% 
+      dplyr::select(matches(x), name) %>% 
+      mutate(
+        thresh = thresh[x],
+        excess = !!sym(x) - thresh
+      ) %>% 
+      filter(excess > 0)
+  })
+  
+  # Now fit evgam model for each marginal
+  # TODO: Is just fitting different models by loc appropriate? (Yes I think!)
+  evgam_fit <- lapply(data_thresh, \(x) {
+    fit_evgam(
+      data = x, 
+      pred_data = x,
+      # model scale and shape for each location
+      # f = list(excess ~ name, ~ name) 
+      f = f 
+    )
+  })
+  
+  # Join scale and shape estimates into data
+  # TODO: Functionalise to work with > 2 variables
+  data_gpd <- distinct(data_df, name) %>% 
+    bind_cols(
+      rename(
+        distinct(evgam_fit[[1]]$predictions), 
+        scale_rain = scale, 
+        shape_rain = shape),
+      rename(
+        distinct(evgam_fit[[2]]$predictions), 
+        scale_ws = scale, 
+        shape_ws = shape),
+    )
+  
+  # Now convert marginals to migpd (i.e. texmex format)
+  marginal <- gen_marg_migpd(data_gpd, data_df)
+  names(marginal) <- paste0(data_gpd$name, " - ", data_gpd$county)
+  
+  # Calculate dependence from marginals
+  return(fit_texmex_dep(
+    marginal, 
+    mex_dep_args = list(dqu = cond_prob), 
+    fit_no_keef = TRUE 
+  ))
+}
 
 # function to fit varying threshold using quantile regression
 # https://empslocal.ex.ac.uk/people/staff/by223/software/gpd.R

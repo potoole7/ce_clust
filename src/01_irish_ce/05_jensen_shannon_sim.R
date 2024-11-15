@@ -153,4 +153,4 @@ clust_rand <- lapply(js_clust, \(x) {
 unlist(clust_rand)
 
 # can also use function based on above code!
-js_clust(data_mix, cluster_mem = cluster_mem)
+js_clust(dependence, cluster_mem = cluster_mem)

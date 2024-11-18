@@ -1,4 +1,4 @@
-#### Simulation sensitivity analysis of Vignotto 2021 ####
+#### Simulation sensitivity analysis of Jensen-Shannon divergence method ####
 
 #### libs ####
 

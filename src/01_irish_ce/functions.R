@@ -398,7 +398,9 @@ emp_kl_div <- \(x, y, convert_pareto = TRUE, prob = 0.9, print = TRUE, plot = FA
 js_clust <- \(
   dependence,
   nclust = 3,
-  cluster_mem = NULL
+  cluster_mem = NULL,
+  dat_max_mult = 2,
+  n_dat = 10
 ) {
   
   # TODO: Add stopifnot clause for class of dependence
@@ -422,8 +424,8 @@ js_clust <- \(
       params[[i]], 
       method = js_div, 
       thresh_max = thresh_max[[i]], 
-      data_max = 2 * thresh_max[[i]], 
-      n_dat = 10
+      data_max = dat_max_mult * thresh_max[[i]], 
+      n_dat = n_dat
     )
   })
   

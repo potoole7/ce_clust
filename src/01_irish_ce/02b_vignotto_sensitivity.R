@@ -259,7 +259,7 @@ results_grid <- results_grid %>%
 
 # save
 saveRDS(results_grid, file = "data/vignotto_grid_search_res.RDS")
-# results_grid <- readRDS("data/vignotto_grid_search_res.RDS")
+results_grid <- readRDS("data/vignotto_grid_search_res.RDS")
 
 
 #### Plot ####

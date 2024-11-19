@@ -1,6 +1,6 @@
 #### Functions ####
 
-#### Closed form normal-normal KL/Jensen-Shannon Divegence ####
+#### Closed form normal-normal KL/Jensen-Shannon Divergence ####
 
 # pull a, b, mu, sigma for a given location
 # dep - List of mex objects (i.e. CE models for each var) for single location
@@ -50,8 +50,11 @@ js_gauss <- \(mu1, mu2, var1, var2) {
   var_m <- (var1 + var2) / 4
   
   # calculate JS(P||Q) = ((KL(P||M)) + KL(Q||M))/2
+  # TODO: Check that this is right, shouldn't it be var2 for second kl_gauss?
+  # TODO: Unit test this is symmetric, previously wasn't (?)
   return(
-    (kl_gauss(mu1, mu_m, var1, var_m) + kl_gauss(mu2, mu_m, var1, var_m)) / 2
+    # (kl_gauss(mu1, mu_m, var1, var_m) + kl_gauss(mu2, mu_m, var1, var_m)) / 2
+    (kl_gauss(mu1, mu_m, var1, var_m) + kl_gauss(mu2, mu_m, var2, var_m)) / 2
   )
 }
 
@@ -268,9 +271,9 @@ partition_max <- \(x, prob, plot = FALSE) {
   # partition into 3 subsets
   df <- df %>% 
     mutate(extreme = case_when(
-      rain > qu & wind_speed > qu ~ "both",
-      rain > qu                    ~ "rain",
-      wind_speed > qu              ~ "wind_speed",
+      rain > qu & wind_speed > qu   ~ "both",
+      rain > qu                     ~ "rain",
+      wind_speed > qu               ~ "wind_speed",
       TRUE                          ~ NA
     ))
   
@@ -394,7 +397,6 @@ emp_kl_div <- \(x, y, convert_pareto = TRUE, prob = 0.9, print = TRUE, plot = FA
 
 # Function to calculate and cluster on the Jensen-Shannon Divergence for 
 # the conditional extremes model
-# TODO: functionalise n_dat
 js_clust <- \(
   dependence,
   nclust = 3,
@@ -659,8 +661,6 @@ fit_texmex_dep <- \(
   dependence <- lapply(seq_along(marginal), \(i) {
     # fit for rain and wind speed
     ret <- lapply(vars, \(col) {
-      # TODO: Can you supply threshold yourself? or match to thresholding value?
-      # TODO: Plot profile likelihood of dependence model parameters?
       mod <- do.call(
         texmex::mexDependence, 
         args = c(list(x = marginal[[i]], which = col), mex_dep_args)
@@ -776,9 +776,7 @@ plt_clust <- \(pts, clust_obj) {
   }
   
   pts_plt <- cbind(pts, data.frame("clust" = clust_obj[[clust_element]])) %>% 
-    mutate(
-      row = row_number()
-    ) %>% 
+    mutate(row = row_number()) %>% 
     mutate(mediod = ifelse(row %in% medoids, TRUE, FALSE))
   
   ggplot(areas) + 

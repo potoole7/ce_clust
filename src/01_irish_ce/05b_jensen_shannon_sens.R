@@ -57,15 +57,12 @@ grid <- tidyr::crossing(
   cor_gauss2 = seq(0, 1, by = 0.1),
   # cor_gauss1 = 0.1,
   # cor_gauss2 = 0.1,
-  # cor_gauss = seq(0, 1, by = 0.1),
   # t-copula correlation
   cor_t1    = seq(0.1, 0.9, by = 0.2),
   cor_t2    = seq(0, 1, by = 0.2),
   # Degrees of freedom for t-copula
   # df_t1     = c(1, 5, 10),
   # df_t2     = c(1, 5, 10),
-  # df_t1   = 1,
-  # df_t2   = 1,
   df_t1   = 3,
   df_t2   = 3,
   # mixture percentages (must sum to 1)
@@ -145,12 +142,12 @@ results_grid <- results_grid %>%
 # TODO: Change to csv file!
 saveRDS(
   results_grid, 
-  # file = paste0("data/js_grid_search_res_dqu_", kl_prob, ".RDS")
-  file = paste0("data/js_grid_search_res_dqu_", kl_prob, "_marg_0.9.RDS")
+  file = paste0("data/js_grid_search_res_dqu_", kl_prob, ".RDS")
+  # file = paste0("data/js_grid_search_res_dqu_", kl_prob, "_marg_0.9.RDS")
 )
-results_grid <- readRDS(
-  paste0("data/js_grid_search_res_dqu_", kl_prob, "_marg_0.9.RDS")
-)
+# results_grid <- readRDS(
+#   paste0("data/js_grid_search_res_dqu_", kl_prob, "_marg_0.9.RDS")
+# )
 
 
 #### Plot ####
@@ -179,8 +176,8 @@ p1
 # ggsave(plot = p1, "plots/01b_js_sensitivity.png")
 ggsave(
   plot = p1, 
-  # paste0("plots/01b_js_sensitivity_dqu_", kl_prob, ".png")
-  paste0("plots/01b_js_sensitivity_dqu_", kl_prob, "_marg_0.9.png")
+  paste0("plots/01b_js_sensitivity_dqu_", kl_prob, ".png")
+  # paste0("plots/01b_js_sensitivity_dqu_", kl_prob, "_marg_0.9.png")
 )
 
 
@@ -216,43 +213,45 @@ p2
 
 ggsave(
   plot = p2, 
-  # paste0("plots/01c_sensitivity_dqu_", kl_prob, ".png")
-  paste0("plots/01c_sensitivity_dqu_", kl_prob, "_marg_0.9.png")
+  paste0("plots/01c_sensitivity_dqu_", kl_prob, ".png"), 
+  # paste0("plots/01c_sensitivity_dqu_", kl_prob, "_marg_0.9.png")
+  width = 10, 
+  height = 7
 )
 
 
 #### Compare sensitivity of Jensen-Shannon method for different quantiles ####
 
 # pull relative files
-files <- list.files("data", pattern = "_marg_", full.names = TRUE)
-stopifnot(length(files) == 6)
-
-# pull marginal probabilities for each (not labelled in data)
-marg_probs <- as.numeric(vapply(stringr::str_split(files, "_marg_"), \(x) {
-  stringr::str_remove(x[[2]], ".RDS")
-}, character(1)))
-
-# pull data, labelling marginal probabilities
-data_js <- bind_rows(lapply(seq_along(files), \(i){
-  mutate(readRDS(files[[i]]), "marg_prob" = marg_probs[i])
-})) %>% 
-  mutate(indicator = paste0("dqu = ", kl_prob, ", mqu = ", marg_prob))
-
-# plot
-data_js %>% 
-  dplyr::select(-adj_rand) %>% 
-  distinct() %>% 
-  filter(kl_prob != 0.99) %>% 
-  # ggplot(aes(x = cor_gauss1, y = value, colour = indicator)) + 
-  ggplot(aes(x = cor_gauss1, y = mean_rand, colour = indicator)) + 
-  geom_point(size = 2) + 
-  geom_line(linewidth = 1.2) + 
-  facet_grid(cor_t1 ~ cor_t2) + 
-  labs(y = "Adjusted Rand Index", x = "Gaussian corr") + 
-  theme + 
-  theme(axis.text.x = element_text(angle = 45, vjust = 0.5)) + 
-  ggsci::scale_colour_nejm()
-  
+# files <- list.files("data", pattern = "_marg_", full.names = TRUE)
+# stopifnot(length(files) == 6)
+# 
+# # pull marginal probabilities for each (not labelled in data)
+# marg_probs <- as.numeric(vapply(stringr::str_split(files, "_marg_"), \(x) {
+#   stringr::str_remove(x[[2]], ".RDS")
+# }, character(1)))
+# 
+# # pull data, labelling marginal probabilities
+# data_js <- bind_rows(lapply(seq_along(files), \(i){
+#   mutate(readRDS(files[[i]]), "marg_prob" = marg_probs[i])
+# })) %>% 
+#   mutate(indicator = paste0("dqu = ", kl_prob, ", mqu = ", marg_prob))
+# 
+# # plot
+# data_js %>% 
+#   dplyr::select(-adj_rand) %>% 
+#   distinct() %>% 
+#   filter(kl_prob != 0.99) %>% 
+#   # ggplot(aes(x = cor_gauss1, y = value, colour = indicator)) + 
+#   ggplot(aes(x = cor_gauss1, y = mean_rand, colour = indicator)) + 
+#   geom_point(size = 2) + 
+#   geom_line(linewidth = 1.2) + 
+#   facet_grid(cor_t1 ~ cor_t2) + 
+#   labs(y = "Adjusted Rand Index", x = "Gaussian corr") + 
+#   theme + 
+#   theme(axis.text.x = element_text(angle = 45, vjust = 0.5)) + 
+#   ggsci::scale_colour_nejm()
+#   
 # tabulate which is best in every case (i.e. every box)
 # data_js %>% 
 #   dplyr::select(-adj_rand) %>% 

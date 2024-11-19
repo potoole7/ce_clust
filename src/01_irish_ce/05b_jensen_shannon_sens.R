@@ -43,7 +43,7 @@ mix_p <- c("gauss_cop" = 0.5, "t_cop" = 0.5) # mixture percentages
 scale_gpd <- 1
 shape_gpd <- -0.05
 marg_prob <- 0.9
-kl_prob <- 0.85
+kl_prob <- 0.9
 
 # Number of cores to use for parallel computation
 n_cores <- detectCores() - 1 
@@ -51,7 +51,6 @@ n_cores <- detectCores() - 1
 #### Grid search ####
 
 # create grid 
-# TODO: Reduce number of parameters (Currently 128k, can't possibly run so many times)
 grid <- tidyr::crossing(
   # Don't need all cor_vals for both (i.e. (0.3, 0.8) is the same as (0.8, 0.3)
   cor_gauss1 = seq(0, 1, by = 0.1),
@@ -84,7 +83,7 @@ grid <- tidyr::crossing(
   )
 
 # run kl_sim_eval for each row in grid
-n_times <- 1
+n_times <- 100
 set.seed(seed_number)
 # results_grid <- bind_rows(lapply(seq_len(nrow(grid)), \(i) {
 results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
@@ -149,7 +148,9 @@ saveRDS(
   # file = paste0("data/js_grid_search_res_dqu_", kl_prob, ".RDS")
   file = paste0("data/js_grid_search_res_dqu_", kl_prob, "_marg_0.9.RDS")
 )
-# results_grid <- readRDS("data/js_grid_search_res.RDS")
+results_grid <- readRDS(
+  paste0("data/js_grid_search_res_dqu_", kl_prob, "_marg_0.9.RDS")
+)
 
 
 #### Plot ####
@@ -234,13 +235,14 @@ marg_probs <- as.numeric(vapply(stringr::str_split(files, "_marg_"), \(x) {
 # pull data, labelling marginal probabilities
 data_js <- bind_rows(lapply(seq_along(files), \(i){
   mutate(readRDS(files[[i]]), "marg_prob" = marg_probs[i])
-}))
+})) %>% 
+  mutate(indicator = paste0("dqu = ", kl_prob, ", mqu = ", marg_prob))
 
 # plot
 data_js %>% 
   dplyr::select(-adj_rand) %>% 
   distinct() %>% 
-  mutate(indicator = paste0("dqu = ", kl_prob, ", mqu = ", marg_prob)) %>% 
+  filter(kl_prob != 0.99) %>% 
   # ggplot(aes(x = cor_gauss1, y = value, colour = indicator)) + 
   ggplot(aes(x = cor_gauss1, y = mean_rand, colour = indicator)) + 
   geom_point(size = 2) + 
@@ -251,4 +253,11 @@ data_js %>%
   theme(axis.text.x = element_text(angle = 45, vjust = 0.5)) + 
   ggsci::scale_colour_nejm()
   
-# tabulate which is best in every case
+# tabulate which is best in every case (i.e. every box)
+# data_js %>% 
+#   dplyr::select(-adj_rand) %>% 
+#   distinct() %>% 
+#   group_by(cor_t1, cor_t2) %>% 
+#   filter(mean_rand == max(mean_rand, na.rm = FALSE)) %>% 
+#   ungroup() %>% 
+#   dplyr::count(cor_t1, cor_t2, indicator)

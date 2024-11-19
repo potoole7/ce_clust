@@ -1,4 +1,4 @@
-#### Investigatory clustering on a & b vals for CE model ####
+#### Conditional Extremes clustering for Irish data ####
 
 # Note: Doesn't work for fixed b when keeping b values, so remove
 
@@ -104,6 +104,7 @@ ab_df_wide <- ab_df %>%
 
 # Perform PAM and k-means clustering, as an exploratory analysis
 
+
 # pull parameter values for each location
 params <- lapply(dependence, pull_params)
 
@@ -127,32 +128,40 @@ dist_mats <- lapply(seq_along(params), \(i) {
  )
 })
 
+# Sum distance matrices for different variables
+dist_mat <- do.call(`+`, dist_mats)
+
 # scree plots
-lapply(dist_mats, scree_plot) # looks to be 3 clusters for both
-lapply(dist_mats, scree_plot, fun = kmeans) 
+scree_plot(dist_mat)
+scree_plot(dist_mat, fun = kmeans)
 
 # plot clustering for both rain and wind speed
-ire_clust_plots <- lapply(dist_mats, \(x) {
-  # for rain or wind speed, plot clustering based on PAM and k-means
-  lapply(c(pam, kmeans), \(fun) {
-    plt_clust(pts, fun(x, 3))
-  })
+# ire_clust_plots <- lapply(dist_mats, \(x) {
+#   # for rain or wind speed, plot clustering based on PAM and k-means
+#   lapply(c(pam, kmeans), \(fun) {
+#     plt_clust(pts, fun(x, 3))
+#   })
+# })
+# TODO: Any way to plot how likely points are to be in other clusters?
+# Silhoutte plot??
+ire_clust_plots <- lapply(c(pam, kmeans), \(fun) {
+    plt_clust(pts, fun(dist_mat, 3))
 })
 
 # cluster adjacent sites only
-dist_mats_adj <- lapply(dist_mats, \(x) {
-  ret <- as.matrix(x)
-  ret[adj_mat == 0] <- 1e9
-  return(ret)
+#dist_mats_adj <- lapply(dist_mats, \(x) {
+#  ret <- as.matrix(x)
+#  ret[adj_mat == 0] <- 1e9
+#  return(ret)
+#})
+dist_mat_adj <- dist_mat
+dist_mat_adj[adj_mat == 0] <- 1e9
+
+scree_plot(dist_mat_adj)
+scree_plot(dist_mat_adj, fun = kmeans)
+
+ire_clust_plots <- lapply(c(pam, kmeans), \(fun) {
+    plt_clust(pts, fun(dist_mat_adj, 3))
 })
 
-lapply(dist_mats_adj, scree_plot)
-lapply(dist_mats_adj, scree_plot, fun = kmeans)
-
-ire_clust_adj_plots <- lapply(dist_mats_adj, \(x) {
-  # for rain or wind speed, plot clustering based on PAM and k-means
-  lapply(c(pam, kmeans), \(fun) {
-    plt_clust(pts, fun(x, 3))
-  })
-})
 

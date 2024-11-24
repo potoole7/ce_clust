@@ -8,6 +8,7 @@
 #### Libs ####
 
 library(sf)
+library(evc)
 library(dplyr, quietly = TRUE)
 library(tidyr)
 library(ggplot2)
@@ -115,11 +116,11 @@ dist_mat_euc <- dist(ab_mat, method = "Euclidean")
 # fit PAM for k = 1:10
 scree_plot(dist_mat_euc)
 
-# Seems like there's a very slight elbow at k = 4
-pam_euclid_clust <- pam(dist_mat_euc, k = 4)
+# Seems like there's a very slight elbow at k = 3
+pam_euclid_clust <- pam(dist_mat_euc, k = 3)
 
 # plot
-plt_clust(pts, pam_euclid_clust)
+plt_clust(pts, areas, pam_euclid_clust)
 
 
 #### Cluster adjacent sites only ####
@@ -131,75 +132,13 @@ dist_euc_adj[adj_mat == 0] <- 1e9
 # scree plot
 scree_plot(dist_euc_adj)
 
-# Seems like there's a very slight elbow at k = 7 
-# (When largest cluster breaks up)
-pam_euc_adj_clust <- pam(dist_euc_adj, k = 7)
-
-plt_clust(pts, pam_euc_adj_clust)
+pam_euc_adj_clust <- pam(dist_euc_adj, k = 3)
+plt_clust(pts, areas, pam_euc_adj_clust)
 
 
 #### Vignotto 2021 KL divergence clustering ####
 
-# TODO: For pareto_transform, investigate why no observations appear to be 
-# extreme for both???
-# nrows for first place
-data %>% 
-  filter(name == data$name[[1]]) %>% 
-  nrow() # 693
-# nrows with high rain and wind speed at same time for first place
-data %>% 
-  filter(name == data$name[[1]]) %>% 
-  filter(rain > quantile(rain, 0.9), wind_speed > quantile(wind_speed, 0.9)) %>% 
-  nrow() # 13
-# same, but Pareto transformed
-data.frame(
-  "rain" = pareto_trans(data$rain[data$name == data$name[[1]]]), 
-  "wind_speed" = pareto_trans(data$wind_speed[data$name == data$name[1]])) %>% 
-  filter(rain > quantile(rain, 0.9), wind_speed > quantile(wind_speed, 0.9)) %>% 
-  nrow() # 4
-# None == 0, so why does this not carry through to below??
-
-# TODO: re colour points at original scale
-
-# test emp_kl_div for 2 locations
-emp_kl_div(
-  c(data$rain[data$name == data$name[[1]]], data$wind_speed[data$name == data$name[[1]]]),
-  # c(data$rain[data$name == "Portumna O.p.w."], data$wind_speed[data$name == "Portumna O.p.w."]),
-  c(data$rain[data$name == "Dublin (Ringsend)"], data$wind_speed[data$name == "Dublin (Ringsend)"]),
-  prob = 0.8
-)
-
-# create matrix of vals & calculate KL divergence distance matrix between them
-# TODO: Any way to do in a better way?
-# TODO: Inefficient as symmetric, only need upper triangular calculations
-# locs_mat <- outer(locs, locs, paste, sep = " <---> ")
-# kl_mat <- matrix(nrow = length(locs), ncol = length(locs))
-# seq <- seq_along(locs)
-# for (i in seq) {
-#   print(paste0("Complete: ", round((i / length(seq)) * 100, 3), "%"))
-#   for (j in seq) {
-#     if (i == j) {
-#       kl_mat[i, j] <- 0
-#       next
-#     # only need to calculate once
-#     } else if (i < j) {
-#       kl_mat[i, j] <- kl_mat[j, i]
-#       next
-#     }
-#     
-#     names <- stringr::str_split(locs_mat[i, j], " <---> ")[[1]]
-#     loc_data <- lapply(names, \(spec_name) {
-#       data %>% 
-#         filter(name == spec_name) %>% 
-#         dplyr::select(rain, wind_speed) %>% 
-#         stack() %>% 
-#         select(1) %>% 
-#         unlist(use.names = FALSE)    
-#     })
-#     kl_mat[i, j] <- do.call(emp_kl_div, c(loc_data, "prob" = 0.7))
-#     print(kl_mat[i, j])
-#   }
-# }
+# TODO: re colour points at original scale (?)
 
 # Split data into lists for each location as required by emp_kl_div
 data_lst <- data %>% 
@@ -212,38 +151,20 @@ data_lst <- data %>%
                as.vector() %>% 
                `[[`(1))
 
-# Calculate dissimilarity matrix 
-# TODO: Doesn't work for p = 0.9, some sites have no doubly extreme obs
-prob <- 0.99
-kl_mat <- dist(data_lst, method = emp_kl_div, print = FALSE, prob = prob)
+# scree plot, looks like k = 3
+prob <- 0.88 # fails for prob <- 0.9 
+# TODO: Investigate location?
+kl_mat <- kl_sim_eval(data_lst, prob, k = NULL)$kl_mat
 
-# check for NAs, reduce prob if required
-(nas <- apply(apply(kl_mat, 2, is.na), 2, sum))
-while (any(nas) > 0) {
-  prob <- prob - 0.05
-  print(paste0("prob = ", prob))
-  kl_mat <- dist(data_lst, method = emp_kl_div, print = FALSE, prob = prob)
-}
+pam_kl_clust <- kl_sim_eval(data_lst, prob, k = 3, kl_mat)
 
-# generate scree plot to decide on # clusters
-scree_plot(kl_mat) # obvious choice seems to be 3
-
-# cluster based on dissimilarity
-cluster::pam(kl_mat, 3, diss = TRUE)
-
-pam_kl_clust <- pam(kl_mat, k = 3, diss = TRUE)
-
-plt_clust(pts, pam_kl_clust)
+# plot results of clustering
+plt_clust(pts, areas, pam_kl_clust)
 
 # imposing adjacency
 kl_mat_adj <- as.matrix(kl_mat)
 kl_mat_adj[adj_mat == 0] <- 1e9
 
-scree_plot(kl_mat_adj) # no obvious choice, go with 3
-
-# pam_kl_clust_adj <- pam(kl_mat_adj, k = 3)
-plt_clust(pts, pam(kl_mat_adj, k = 3)) 
-plt_clust(pts, pam(kl_mat_adj, k = 4)) 
-# pretty good clustering solutions actually! No idea why, could be chance
-
-# TODO Test for simulation dataset, unsure if method is correct!
+# pretty good clustering! Could be down to chance though lol
+pam_kl_clust_adj <- kl_sim_eval(data_lst, prob, k = 3, kl_mat_adj)
+plt_clust(pts, areas, pam_kl_clust_adj)

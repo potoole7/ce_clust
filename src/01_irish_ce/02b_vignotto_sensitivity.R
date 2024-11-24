@@ -3,8 +3,8 @@
 #### libs ####
 
 library(copula)
+library(evc)
 library(evd)
-library(cluster)
 library(dplyr)
 library(tidyr)
 library(lcmix)
@@ -60,96 +60,7 @@ n_cores <- detectCores() - 1
 
 #### Simulate data and test clustering ####
 
-# simulate from Gaussian copula with GPD margins
-# (This will form asymptotically independent data)
-# TODO: How does using Gaussian copula differ from MVN distribution?
-# gauss_cop <- lapply(seq_len(n_locs), \(i){
-#   # cor <- cor_gauss[[1]]
-#   # if (i > floor(n_locs / 2)) {
-#   #   cor <- cor_gauss[[2]]
-#   # }
-#   
-#   # cop_norm <- normalCopula(cor, dim = n_vars, dispstr = "un")
-#   cop_norm <- normalCopula(cor_gauss, dim = 2, dispstr = "un")
-#   u <- rCopula(n, cop_norm)
-#   # return(qnorm(u, mean = mu, sd = sigma))
-#   evd::qgpd(
-#     p     = u,
-#     # loc   = max(gauss_cop[[i]]), 
-#     loc   = 0,
-#     scale = scale_gpd, 
-#     shape = shape_gpd
-#   )
-# })
-# 
-# # check correlation is correct
-# # vapply(gauss_cop, \(x) round(cor(x)[1, 2], 3), numeric(1))
-# par(mfrow = c(2, 2))
-# lapply(gauss_cop[c(1, 5, 7, 10)], plot)
-# par(mfrow = c(1, 1))
-# 
-# # simulate from t-Copula with GPD margins
-# t_cop <- lapply(seq_len(n_locs), \(i) {
-#   cor <- cor_t[[1]]
-#   df <- df_t[[1]]
-#   if (i > floor(n_locs / 2)) {
-#     cor <- cor_t[[2]]
-#     df <- df_t[[2]]
-#   }
-#   cop_t <- copula::tCopula(cor, dim = 2, df = df_t[[2]], dispstr = "un")
-#   u <- rCopula(n, cop_t)
-#   return(evd::qgpd(
-#     p     = u,
-#     # loc   = max(gauss_cop[[i]]), 
-#     loc   = 0,
-#     scale = scale_gpd, 
-#     shape = shape_gpd
-#   ))
-# })
-# 
-# vapply(t_cop, \(x) round(cor(x)[1, 2], 3), numeric(1))
-# par(mfrow = c(2, 2))
-# lapply(t_cop[c(1, 5, 7, 10)], plot)
-# par(mfrow = c(1, 1))
-# 
-# # mixture
-# # data_mix <- lapply(seq_len(n_locs), \(i){
-# #   mix_p[[1]] * gauss_cop[[i]] + mix_p[[2]] * t_cop[[i]]
-# # })
-# data_mix <- lapply(seq_len(n_locs), \(i) {
-#   x <- nrow(gauss_cop[[i]])
-#   y <- nrow(t_cop[[i]])
-#   # sample mix_p * nrow(gauss_cop) rows from gauss_cop (same for t_cop)
-#   rbind(
-#     gauss_cop[[i]][sample(seq_len(x), size = mix_p[[1]] * x), ],
-#     t_cop[[i]][sample(seq_len(y), size = mix_p[[2]] * y), ]
-#   )
-# })
-# 
-# vapply(data_mix, \(x) round(cor(x)[1, 2], 3), numeric(1))
-# par(mfrow = c(2, 2))
-# lapply(data_mix[c(1, 5, 7, 10)], plot)
-# par(mfrow = c(1, 1))
-# 
-# # test dissimilarity for one
-# emp_kl_div(
-#   data_mix[[1]], data_mix[[10]], prob = 0.95, plot = TRUE
-# )
-# 
-# # KL divergence between areas using Vignotto 2021 method
-# kl_mat <- proxy::dist(
-#   data_mix, method = emp_kl_div, print = FALSE, prob = 0.9
-# )
-# 
-# # clustering solution
-# pam_kl_clust <- pam(kl_mat, k = 2)
-# # evaluate quality
-# mclust::adjustedRandIndex(
-#   pam_kl_clust$clustering, 
-#   cluster_mem
-# )
-
-# test functionalised version of above code
+# test data simulation function
 set.seed(seed_number)
 data <- sim_cop_dat(
   n_locs = 12, 
@@ -207,8 +118,8 @@ grid <- tidyr::crossing(
 # TODO: Functionalise as used in other scripts
 n_times <- 100
 set.seed(seed_number)
-# results_grid <- lapply(seq_len(nrow(grid)), \(i) {
-# results_grid <- lapply(1:3, \(i) { # test
+# results_grid <- bind_rows(lapply(seq_len(nrow(grid)), \(i) {
+# results_grid <- bind_rows(mclapply(1:3, \(i) { # test
 results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
 
   print(paste0("Progress: ", round(i / nrow(grid), 3) * 100, "%"))
@@ -230,7 +141,9 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
     ))$data_mix
   
     kl_clust <- tryCatch({
-      kl_sim_eval(data_mix, kl_prob = row$kl_prob, cluster_mem = cluster_mem)
+      kl_sim_eval(
+        data_mix, kl_prob = row$kl_prob, k = 2, cluster_mem = cluster_mem
+      )
     # if an error is produced, return a dummy list
     }, error = function(cond) {
       return(list("adj_rand" = NA))

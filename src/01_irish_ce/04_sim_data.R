@@ -1,7 +1,8 @@
-#### Generate  simulated dataset ####
+#### Generate simulated dataset ####
 
 #### libs ####
 library(copula)
+library(evc)
 library(evd)
 library(cluster)
 library(dplyr)
@@ -190,37 +191,18 @@ vapply(data_mix, \(x) round(cor(x)[1, 2], 3), numeric(1))
 # split data into list of locations where variables are stacked
 data_lst <- lapply(data_mix, as.vector)
 
-# walk through function
-source("src/01_irish_ce/functions.R")
-emp_kl_div(
-  data_lst[[1]],
-  data_lst[[10]],
-  prob = 0.99,
-  plot = TRUE,
-  print = TRUE
-)
+# elbow plot
+kl_mat <- kl_sim_eval(data_lst, kl_prob = 0.9)[[1]] # clear elbow at k = 3
 
-# Calculate dissimilarity matrix 
-# prob <- 0.8
-prob <- 0.99
-kl_mat <- proxy::dist(
-  data_lst, method = emp_kl_div, print = FALSE, prob = prob
+# cluster at k = 3 and evaluate performance
+kl_sim_eval(
+  data_lst, 
+  kl_prob = 0.9, 
+  k = 3, 
+  dist_mat = kl_mat, 
+  cluster_mem = c(1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3)
 )
 
 # save data
 # saveRDS(data_lst, file = "data/sim_dat_2_clust.RDS")
 saveRDS(data_lst, file = "data/sim_dat_3_clust.RDS")
-
-scree_plot(kl_mat, 1:5) # choice of 2/3 seems correct
-
-# cluster based on dissimilarity
-set.seed(seed_number)
-# pam_kl_clust <- pam(kl_mat, k = 3)
-pam_kl_clust <- pam(kl_mat, k = 3)
-pam_kl_clust$clustering
-
-mclust::adjustedRandIndex(
-  pam_kl_clust$clustering, 
-  c(1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3)
-  # c(1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2)
-)

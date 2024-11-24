@@ -154,7 +154,7 @@ data_lst <- data %>%
 # scree plot, looks like k = 3
 prob <- 0.88 # fails for prob <- 0.9 
 # TODO: Investigate location?
-kl_mat <- kl_sim_eval(data_lst, prob, k = NULL)$kl_mat
+kl_mat <- kl_sim_eval(data_lst, prob, k = NULL)$dist_mat
 
 pam_kl_clust <- kl_sim_eval(data_lst, prob, k = 3, kl_mat)
 

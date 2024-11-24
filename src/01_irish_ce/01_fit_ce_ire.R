@@ -315,8 +315,10 @@ mod_fit <- fit_ce(
   # formula for evgam fit to excesses over threshold
   f = list(excess ~ s(lon, lat, k = 40), ~s(lon, lat, k = 40)), 
   split_data = FALSE, 
+  fit_no_keef = FALSE, # don't fit without Keef constraints
   output_all = TRUE
 )
+
 # outputs from function needed for checking/plotting:
 # thresholds for rain and windspeed
 data_rain <- mod_fit$thresh[[1]]
@@ -329,10 +331,9 @@ marginal <- mod_fit$marginal
 # dependence 
 dependence <- mod_fit$dependence
 
-
 #### Threshold selection ####
 
-data to plot u across space
+# data to plot u across space
 data_thresh <- data_rain %>%
   distinct(name, lon, lat, thresh_rain = thresh) %>%
   left_join(
@@ -1028,6 +1029,7 @@ save_bootstrap_plot <- \(bootstrap_thresh_plots, file) {
 
 # pull names of locations with NA for alpha 
 # col sums should equal 6 if dependence fit is valid for rain and wind
+# TODO: Fix, not working
 loc_nas <- names(marginal)[
   colSums(data.frame(
     # find length of both objects
@@ -1036,15 +1038,17 @@ loc_nas <- names(marginal)[
 ]
 
 # remove locations with NAs
-dependence <- dependence[!names(dependence) %in% loc_nas]
+if (length(loc_nas) > 0) {
+  dependence <- dependence[!names(dependence) %in% loc_nas]
+}
 
 # separate county name from names
-if (length(loc_nas) > 0) {
-  loc_nas <- vapply(
-    stringr::str_split(loc_nas, " - "), `[[`, 1, FUN.VALUE = character(1)
-  )
-}
-data_gpd <- data_gpd[!data_gpd$name %in% loc_nas, ]
+# if (length(loc_nas) > 0) {
+#   loc_nas <- vapply(
+#     stringr::str_split(loc_nas, " - "), `[[`, 1, FUN.VALUE = character(1)
+#   )
+# }
+# data_gpd <- data_gpd[!data_gpd$name %in% loc_nas, ] # needed?
 
 # save object
 saveRDS(dependence, file = "data/texmex_mexdep_obj.RDS")
@@ -1237,7 +1241,7 @@ ab_vals <- lapply(dependence, \(x) {
     # summary(dependence[[i]][[2]])$dependence[1:2]
   )
 })
-names(ab_vals) <- data_gpd$name
+# names(ab_vals) <- data_gpd$name
 
 # convert to dataframe
 ab_df <- bind_rows(lapply(seq_along(ab_vals), \(i) {
@@ -1260,9 +1264,11 @@ ab_df <- bind_rows(lapply(seq_along(ab_vals), \(i) {
 # join a and b values to elevation and distance to coast
 ab_df <- ab_df %>% 
   # left_join(distinct(data, name, county, dist2coast, alt, lat, lon))
-  left_join(data %>% 
-              group_by(name, county, dist2coast, alt, lat, lon) %>% 
-              summarise(wind_dir = max_density(wind_dir), .groups = "drop")
+  left_join(
+    data %>% 
+    # group_by(name, county, dist2coast, alt, lat, lon) %>% 
+    group_by(name, county, alt, lat, lon) %>% 
+    summarise(wind_dir = max_density(wind_dir), .groups = "drop")
   )
 
 # save for clustering

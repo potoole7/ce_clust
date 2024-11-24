@@ -51,7 +51,11 @@ data_df <- bind_rows(lapply(seq_along(data_mix), \(i) {
 #### Calculate Conditional Extremes parameters ####
 
 dependence <- fit_ce(
-  data_df, cond_prob = prob, split_data = TRUE, fit_no_keef = TRUE
+  data_df, 
+  marg_prob   = prob, 
+  cond_prob   = prob, 
+  split_data  = TRUE, 
+  fit_no_keef = TRUE
 )
 
 # check that all dependence models have run successfully

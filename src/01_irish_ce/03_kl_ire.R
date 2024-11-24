@@ -103,18 +103,66 @@ ab_df_wide <- ab_df %>%
 
 #### Clustering ####
 
-# scree plot (and distance matrix)
-dist_mat <- js_clust(dependence)$dist_mat 
-# no clear elbow unfortunately, go w/ k = 3
+# Perform PAM and k-means clustering, as an exploratory analysis
 
-# plot PAM clustering solution
-# TODO: Fix showing cluster centroid
-plt_clust(pts, areas, js_clust(dependence, k = 3, dist_mat = dist_mat)[[1]])
 
-# repeat for adjacent sites only
+# pull parameter values for each location
+params <- lapply(dependence, pull_params)
+
+# pull Laplace threshold values for each location
+thresh <- lapply(dependence, pull_thresh_trans)
+
+# take maximum Laplace thresholds; want to geenra
+# thresh_max <- apply(bind_rows(thresh), 2, max)
+thresh_max <- lapply(bind_rows(thresh), max)
+
+# list of locs -> list of len 2 of variables, each containing all locs
+params <- purrr::transpose(params)
+
+dist_mats <- lapply(seq_along(params), \(i) {
+ proxy::dist(
+   params[[i]], 
+   method = js_div, 
+   thresh_max = thresh_max[[i]], 
+   data_max = 2 * thresh_max[[i]], 
+   n_dat = 10
+ )
+})
+
+# Sum distance matrices for different variables
+dist_mat <- do.call(`+`, dist_mats)
+
+# scree plots
+scree_plot(dist_mat)
+scree_plot(dist_mat, fun = kmeans)
+
+# plot clustering for both rain and wind speed
+# ire_clust_plots <- lapply(dist_mats, \(x) {
+#   # for rain or wind speed, plot clustering based on PAM and k-means
+#   lapply(c(pam, kmeans), \(fun) {
+#     plt_clust(pts, fun(x, 3))
+#   })
+# })
+# TODO: Any way to plot how likely points are to be in other clusters?
+# Silhoutte plot??
+ire_clust_plots <- lapply(c(pam, kmeans), \(fun) {
+    plt_clust(pts, fun(dist_mat, 3))
+})
+
+# cluster adjacent sites only
+#dist_mats_adj <- lapply(dist_mats, \(x) {
+#  ret <- as.matrix(x)
+#  ret[adj_mat == 0] <- 1e9
+#  return(ret)
+#})
 dist_mat_adj <- as.matrix(dist_mat)
 dist_mat_adj[adj_mat == 0] <- 1e9
 
-plt_clust(
-  pts, areas, js_clust(dependence, k = 3, dist_mat = dist_mat_adj)[[1]]
-)
+scree_plot(dist_mat_adj)
+scree_plot(dist_mat_adj, fun = kmeans)
+
+ire_clust_adj_plots <- lapply(c(pam, kmeans), \(fun) {
+    plt_clust(pts, fun(dist_mat_adj, 3))
+})
+
+

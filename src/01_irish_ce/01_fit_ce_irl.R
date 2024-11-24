@@ -308,123 +308,123 @@ data_rain <- quantile_thresh(data, "rain")
 data_ws <- quantile_thresh(data, "wind_speed")
 
 # data to plot u across space
-data_thresh <- data_rain %>% 
-  distinct(name, lon, lat, thresh_rain = thresh) %>% 
-  left_join(
-    data_ws %>% 
-    distinct(name, lon, lat, thresh_ws = thresh)
-  ) %>% 
-  pivot_longer(contains("thresh"), names_to = "var") %>% 
-  st_to_sf()
-
-# function for plotting
-plot_thresh <- \(x, areas, scales = NULL) {
-  ggplot(areas) + 
-    geom_sf(colour = "black", fill = NA) +
-    geom_sf(
-      data = x,
-      # aes(fill = n, size = n),
-      aes(fill = value, size = value),
-      # size = 6,
-      stroke = 1,
-      pch = 21
-    ) +
-    # labs(fill = toupper(col)) +
-    scale_x_continuous(expand = c(0, 0)) +
-    scale_y_continuous(expand = c(0, 0)) +
-    # scale_fill_gradientn(
-    #   colours = RColorBrewer::brewer.pal(name = "Blues", n = 7),
-    #   breaks = scales,
-    #   labels = as.character(scales),
-    #   guide = "legend"
-    # ) +
-    viridis::scale_fill_viridis(
-      option = "A",
-      breaks = scales,
-      labels = as.character(scales),
-      guide = "legend"
-    ) + 
-    scale_size_continuous(
-      range = c(3, 8),
-      breaks = scales,
-      labels = as.character(scales),
-      guide = "legend"
-    ) +
-    labs(fill = "", size = "") + 
-    guides(fill = guide_legend(), size = guide_legend()) +
-    theme +
-    theme(
-      legend.position = "right",
-      axis.text = element_blank(),
-      axis.ticks = element_blank(),
-      legend.key = element_blank()
-    )
-}
-
-p_thresh_rain <- plot_thresh(
-  filter(data_thresh, var == "thresh_rain"), areas, seq(50, 150, by = 25)
-) +
-  labs(fill = "u for precipitation", size = "u for precipitation")
-
-p_thresh_ws <- plot_thresh(
-  # filter(data_thresh, var == "thresh_ws"), areas, seq(9, 15, by = 2)
-  filter(data_thresh, var == "thresh_ws"), areas, seq(8, 11, by = 0.5)
-) +
-  labs(fill = "u for wind speed", size = "u for wind speed")
-
-p_thresh <- p_thresh_rain | p_thresh_ws
-ggsave("latex/plots/031_thresh_plots.png", p_thresh, width = 6.3, height = 6, units = "in")
-
-# plot exceedances for each (~25-75/931-1462)
-data_thresh_plt <- data %>% 
-  distinct(name, lon, lat) %>% 
-  left_join(
-    count(data_rain, name) %>% 
-      rename(n_rain = n)
-  ) %>% 
-  left_join(
-    count(data_rain, name) %>% 
-      rename(n_wind = n)
-  ) %>% 
-  # mutate(across(contains("n_"), \(x) ifelse(is.na(x), 0, x))) %>% 
-  pivot_longer(n_rain:n_wind, names_to = "var", values_to = "n") %>% 
-  st_to_sf()
-
-ggplot(areas) +
-  geom_sf(colour = "black", fill = NA) +
-  geom_sf(
-    data = data_thresh_plt,
-    # aes(fill = n, size = n),
-    aes(fill = n),
-    size = 6,
-    stroke = 1,
-    pch = 21
-  ) +
-  # geom_sf_text(
-  #   data = data_thresh_plt,
-  #   aes(label = n), size = 6
-  # ) +
-  scale_x_continuous(expand = c(0, 0)) +
-  scale_y_continuous(expand = c(0, 0)) +
-  facet_wrap(~var) +
-  # scale_size_continuous(
-  #   # breaks = scales,
-  #   breaks = c(0, 50, 100, 150),
-  #   labels = as.character(c(0, 50, 100, 150)),
-  #   guide = "legend"
-  # ) +
-  # scale_fill_gradientn(
-  #   colours = RColorBrewer::brewer.pal(name = "Blues", n = 7),
-  #   na.value = "purple",
-  #   breaks = c(0, 50, 100, 150),
-  #   labels = as.character(c(0, 50, 100, 150)),
-  #   guide = "legend"
-  # ) +
-  # labs(fill = "", size = "") +
-  # guides(fill = guide_legend(), size = guide_legend()) +
-  theme +
-  theme(legend.position = "right") +
-  NULL
+# data_thresh <- data_rain %>% 
+#   distinct(name, lon, lat, thresh_rain = thresh) %>% 
+#   left_join(
+#     data_ws %>% 
+#     distinct(name, lon, lat, thresh_ws = thresh)
+#   ) %>% 
+#   pivot_longer(contains("thresh"), names_to = "var") %>% 
+#   st_to_sf()
+# 
+# # function for plotting
+# plot_thresh <- \(x, areas, scales = NULL) {
+#   ggplot(areas) + 
+#     geom_sf(colour = "black", fill = NA) +
+#     geom_sf(
+#       data = x,
+#       # aes(fill = n, size = n),
+#       aes(fill = value, size = value),
+#       # size = 6,
+#       stroke = 1,
+#       pch = 21
+#     ) +
+#     # labs(fill = toupper(col)) +
+#     scale_x_continuous(expand = c(0, 0)) +
+#     scale_y_continuous(expand = c(0, 0)) +
+#     # scale_fill_gradientn(
+#     #   colours = RColorBrewer::brewer.pal(name = "Blues", n = 7),
+#     #   breaks = scales,
+#     #   labels = as.character(scales),
+#     #   guide = "legend"
+#     # ) +
+#     viridis::scale_fill_viridis(
+#       option = "A",
+#       breaks = scales,
+#       labels = as.character(scales),
+#       guide = "legend"
+#     ) + 
+#     scale_size_continuous(
+#       range = c(3, 8),
+#       breaks = scales,
+#       labels = as.character(scales),
+#       guide = "legend"
+#     ) +
+#     labs(fill = "", size = "") + 
+#     guides(fill = guide_legend(), size = guide_legend()) +
+#     theme +
+#     theme(
+#       legend.position = "right",
+#       axis.text = element_blank(),
+#       axis.ticks = element_blank(),
+#       legend.key = element_blank()
+#     )
+# }
+# 
+# p_thresh_rain <- plot_thresh(
+#   filter(data_thresh, var == "thresh_rain"), areas, seq(50, 150, by = 25)
+# ) +
+#   labs(fill = "u for precipitation", size = "u for precipitation")
+# 
+# p_thresh_ws <- plot_thresh(
+#   # filter(data_thresh, var == "thresh_ws"), areas, seq(9, 15, by = 2)
+#   filter(data_thresh, var == "thresh_ws"), areas, seq(8, 11, by = 0.5)
+# ) +
+#   labs(fill = "u for wind speed", size = "u for wind speed")
+# 
+# p_thresh <- p_thresh_rain | p_thresh_ws
+# ggsave("latex/plots/031_thresh_plots.png", p_thresh, width = 6.3, height = 6, units = "in")
+# 
+# # plot exceedances for each (~25-75/931-1462)
+# data_thresh_plt <- data %>% 
+#   distinct(name, lon, lat) %>% 
+#   left_join(
+#     count(data_rain, name) %>% 
+#       rename(n_rain = n)
+#   ) %>% 
+#   left_join(
+#     count(data_rain, name) %>% 
+#       rename(n_wind = n)
+#   ) %>% 
+#   # mutate(across(contains("n_"), \(x) ifelse(is.na(x), 0, x))) %>% 
+#   pivot_longer(n_rain:n_wind, names_to = "var", values_to = "n") %>% 
+#   st_to_sf()
+# 
+# ggplot(areas) +
+#   geom_sf(colour = "black", fill = NA) +
+#   geom_sf(
+#     data = data_thresh_plt,
+#     # aes(fill = n, size = n),
+#     aes(fill = n),
+#     size = 6,
+#     stroke = 1,
+#     pch = 21
+#   ) +
+#   # geom_sf_text(
+#   #   data = data_thresh_plt,
+#   #   aes(label = n), size = 6
+#   # ) +
+#   scale_x_continuous(expand = c(0, 0)) +
+#   scale_y_continuous(expand = c(0, 0)) +
+#   facet_wrap(~var) +
+#   # scale_size_continuous(
+#   #   # breaks = scales,
+#   #   breaks = c(0, 50, 100, 150),
+#   #   labels = as.character(c(0, 50, 100, 150)),
+#   #   guide = "legend"
+#   # ) +
+#   # scale_fill_gradientn(
+#   #   colours = RColorBrewer::brewer.pal(name = "Blues", n = 7),
+#   #   na.value = "purple",
+#   #   breaks = c(0, 50, 100, 150),
+#   #   labels = as.character(c(0, 50, 100, 150)),
+#   #   guide = "legend"
+#   # ) +
+#   # labs(fill = "", size = "") +
+#   # guides(fill = guide_legend(), size = guide_legend()) +
+#   theme +
+#   theme(legend.position = "right") +
+#   NULL
 
 
 #### Fit evgam to rain #### 
@@ -441,6 +441,7 @@ data_rain_map <- data_rain %>%
   st_to_sf(remove = FALSE)
 
 # plot parameter values over space
+# TODO: Add to evc?
 # plot_scale <- \(areas, data_map, scales) {
 plot_param <- \(data_map, areas, scales, col = "scale") {
   col_sym <- sym(col)
@@ -511,41 +512,35 @@ plot_param <- \(data_map, areas, scales, col = "scale") {
   return(p)
 }
 
-# (p_scale_rain <- plot_param(areas, data_rain_map, seq(10, 30, by = 5)) + 
-# (p_scale_rain <- plot_param(areas, data_rain_map, seq(10, 40, by = 5)) + 
-# lab_scale_rain <- TeX(r"($\sigma_{rain}$)")
-lab_scale_rain <- "scale"
-p_scale_rain <- plot_param(data_rain_map, areas, seq(10, 45, by = 5)) + 
-    # ggtitle("GPD scale parameter for rain"))
-    # ggtitle("scale"))
-    labs(fill = lab_scale_rain, size = lab_scale_rain) + 
-    NULL
-
-# (p_shape_rain <- plot_param(areas, data_rain_map, seq(-0.05, 0.15, by = 0.04), "shape") + 
-# (p_shape_rain <- plot_param(areas, data_rain_map, seq(-0.1, 0.15, by = 0.04), "shape") + 
-# lab_shape_rain <- TeX(r"($\xi_{rain}$)")
-lab_shape_rain <- "shape"
-p_shape_rain <- plot_param(
-  # areas, data_rain_map, sort(c(0, c(0, seq(-0.1, 0.02, by = 0.03)))), "shape"
-  data_rain_map, areas, round(seq(-0.15, 0.15, by = 0.05), 2), "shape"
-) + 
-    labs(fill = lab_shape_rain, size = lab_shape_rain) + 
-    NULL
-    # theme(legend.title = element_text(size = 1))
-
-(p_mod_rain <- p_scale_rain + p_shape_rain)
-
-ggsave(
-  "latex/plots/032_gpd_rain.png", p_mod_rain, width = 6.3, height = 6, units = "in"
-)
-
-ggsave(
-  "plots/scale_rain_ire_weekly_winter.png", p_scale_rain, width = 6.3, height = 6, units = "in"
-)
-ggsave(
-  "plots/shape_rain_ire_weekly_winter.png", p_shape_rain, width = 6.3, height = 6, units = "in"
-)
-
+# lab_scale_rain <- "scale"
+# p_scale_rain <- plot_param(data_rain_map, areas, seq(10, 45, by = 5)) + 
+#     # ggtitle("GPD scale parameter for rain"))
+#     # ggtitle("scale"))
+#     labs(fill = lab_scale_rain, size = lab_scale_rain) + 
+#     NULL
+# 
+# lab_shape_rain <- "shape"
+# p_shape_rain <- plot_param(
+#   # areas, data_rain_map, sort(c(0, c(0, seq(-0.1, 0.02, by = 0.03)))), "shape"
+#   data_rain_map, areas, round(seq(-0.15, 0.15, by = 0.05), 2), "shape"
+# ) + 
+#     labs(fill = lab_shape_rain, size = lab_shape_rain) + 
+#     NULL
+#     # theme(legend.title = element_text(size = 1))
+# 
+# (p_mod_rain <- p_scale_rain + p_shape_rain)
+# 
+# ggsave(
+#   "latex/plots/032_gpd_rain.png", p_mod_rain, width = 6.3, height = 6, units = "in"
+# )
+# 
+# ggsave(
+#   "plots/scale_rain_ire_weekly_winter.png", p_scale_rain, width = 6.3, height = 6, units = "in"
+# )
+# ggsave(
+#   "plots/shape_rain_ire_weekly_winter.png", p_shape_rain, width = 6.3, height = 6, units = "in"
+# )
+# 
 
 #### Windspeeds ####
 
@@ -559,71 +554,57 @@ data_ws_map <- data_ws %>%
   ) %>%
   st_to_sf(remove = FALSE)
 
-# (p_scale_ws <- plot_scale(areas, data_ws_map, seq(0.6, 2, by = 0.1)) + 
-# (p_scale_ws <- plot_param(areas, data_ws_map, seq(0.6, 2, by = 0.2)) + 
-#     ggtitle(paste0(
-#       "GPD scale parameter for windspeed (shape = ", 
-#       round(evgam_ws$predictions$shape, 2), 
-#       ")"
-#     )) + 
-#     theme(plot.title = element_text(hjust = 0.5)))
+##  lab_scale_ws <- TeX(r"($\sigma_{wind}$)")
+# lab_scale_ws <- "scale"
+# p_scale_ws <- plot_param(data_ws_map, areas, seq(0.5, 0.8, by = 0.05)) + 
+#     labs(fill = lab_scale_ws, size = lab_scale_ws) + 
+#     NULL
+#  
+# 
+# # give same colour scheme as rain
+# # lab_shape_ws <- TeX(r"($\xi_{wind}$)")
+# lab_shape_ws <- "shape"
+# p_shape_ws <- plot_param(data_ws_map, areas, seq(-0.3, -0.1, by = 0.05), "shape") + 
+#     labs(fill = lab_shape_ws, size = lab_shape_ws) + 
+#     scale_fill_gradient2(
+#       low = "red3",
+#       high = "blue3",
+#       na.value = "grey",
+#       breaks = seq(-0.3, -0.1, by = 0.05),
+#       labels = as.character(seq(-0.3, -0.1, by = 0.05)),
+#       guide = "legend"
+#     )
 
-lab_scale_ws <- TeX(r"($\sigma_{wind}$)")
-lab_scale_ws <- "scale"
-# p_scale_ws <- plot_param(data_ws_map, areas, seq(0.5, 1, by = 0.1)) + 
-p_scale_ws <- plot_param(data_ws_map, areas, seq(0.5, 0.8, by = 0.05)) + 
-    # ggtitle("GPD scale parameter for wind speed")
-    labs(fill = lab_scale_ws, size = lab_scale_ws) + 
-    # theme(legend.title = element_text(size = 15))
-    NULL
- 
-# (p_shape_ws <- plot_param(areas, data_ws_map, seq(-0.35, -0.1, by = 0.05), "shape") + 
-# give same colour scheme as rain
-lab_shape_ws <- TeX(r"($\xi_{wind}$)")
-lab_shape_ws <- "shape"
-p_shape_ws <- plot_param(data_ws_map, areas, seq(-0.3, -0.1, by = 0.05), "shape") + 
-    # ggtitle("GPD shape parameter for wind speed") + 
-    labs(fill = lab_shape_ws, size = lab_shape_ws) + 
-    # theme(legend.title = element_text(size = 15)) + 
-    scale_fill_gradient2(
-      low = "red3",
-      high = "blue3",
-      na.value = "grey",
-      breaks = seq(-0.3, -0.1, by = 0.05),
-      labels = as.character(seq(-0.3, -0.1, by = 0.05)),
-      guide = "legend"
-    )
-
-p_mod_ws <- p_scale_ws + p_shape_ws
-
-ggsave(
-  "latex/plots/033_gpd_ws.png", p_mod_ws, width = 6.3, height = 6, units = "in"
-)
-
-ggsave(
-  "plots/scale_ws_ire_weekly_winter.png", p_scale_ws, width = 6.3, height = 6, units = "in"
-)
-ggsave(
-  "plots/shape_ws_ire_weekly_winter.png", p_shape_ws, width = 6.3, height = 6, units = "in"
-)
+# p_mod_ws <- p_scale_ws + p_shape_ws
+# 
+# ggsave(
+#   "latex/plots/033_gpd_ws.png", p_mod_ws, width = 6.3, height = 6, units = "in"
+# )
+# 
+# ggsave(
+#   "plots/scale_ws_ire_weekly_winter.png", p_scale_ws, width = 6.3, height = 6, units = "in"
+# )
+# ggsave(
+#   "plots/shape_ws_ire_weekly_winter.png", p_shape_ws, width = 6.3, height = 6, units = "in"
+# )
 
 #### Finite end points for wind speed ####
 
-scales <- seq(10, 25, by = 1)
-p_endpoint <- data_ws_map %>% 
-  mutate(end_point = thresh - (scale / shape)) %>% 
-  plot_param(areas, scales, "end_point") +
-  scale_size_continuous(
-    range = c(1.5, 10),
-    breaks = scales,
-    labels = as.character(scales),
-    guide = "legend"
-  ) + 
-  labs(fill = "endpoint (m/s)", size = "endpoint (m/s)")
-
-ggsave(
-  "latex/plots/034_ws_endpoint.png", p_endpoint, width = 6.3, height = 6, units = "in"
-)
+# scales <- seq(10, 25, by = 1)
+# p_endpoint <- data_ws_map %>% 
+#   mutate(end_point = thresh - (scale / shape)) %>% 
+#   plot_param(areas, scales, "end_point") +
+#   scale_size_continuous(
+#     range = c(1.5, 10),
+#     breaks = scales,
+#     labels = as.character(scales),
+#     guide = "legend"
+#   ) + 
+#   labs(fill = "endpoint (m/s)", size = "endpoint (m/s)")
+# 
+# ggsave(
+#   "latex/plots/034_ws_endpoint.png", p_endpoint, width = 6.3, height = 6, units = "in"
+# )
 
 
 #### Diagnostic plots (QQ, Probability) ####
@@ -678,25 +659,24 @@ pp_qq_plot <- \(evgam_fit, data_map, xlab = "Empirical") {
   return(pp + qq_p)
 }
 
-# TODO: Add uncertainty bounds! (See ITT2)
-pp_qq_rain <- pp_qq_plot(evgam_rain, data_rain_map)
-pp_qq_ws <- pp_qq_plot(evgam_ws, data_ws_map)
-
-pp_qq <- pp_qq_rain / pp_qq_ws
-
-ggsave(
-  "latex/plots/035_pp_qq.png", pp_qq, width = 6.3, height = 6, units = "in"
-)
-
-ggsave(
-  "plots/pp_qq_rain_winter.png", pp_qq_rain, width = 6.3, height = 6, units = "in"
-)
-ggsave(
-  "plots/pp_qq_wind_winter.png", pp_qq_ws, width = 6.3, height = 6, units = "in"
-)
+# # TODO: Add uncertainty bounds! (See ITT2)
+# pp_qq_rain <- pp_qq_plot(evgam_rain, data_rain_map)
+# pp_qq_ws <- pp_qq_plot(evgam_ws, data_ws_map)
+# 
+# pp_qq <- pp_qq_rain / pp_qq_ws
+# 
+# ggsave(
+#   "latex/plots/035_pp_qq.png", pp_qq, width = 6.3, height = 6, units = "in"
+# )
+# 
+# ggsave(
+#   "plots/pp_qq_rain_winter.png", pp_qq_rain, width = 6.3, height = 6, units = "in"
+# )
+# ggsave(
+#   "plots/pp_qq_wind_winter.png", pp_qq_ws, width = 6.3, height = 6, units = "in"
+# )
 
 #### Uncertainty in xi ####
-
 
 
 #### Return levels ####
@@ -757,148 +737,148 @@ names(marginal) <- paste0(data_gpd$name, " - ", data_gpd$county)
 # chi_test %>%   
 #   ggplot(main = c("ChiBar" = "", "Chi" = ""))
 
-# for each location, pull out 95th quantile for chibar
-# Colour chi grey if not valid
-# Plot on map
-names <- unique(data$name)
-chi_95_df <- bind_rows(lapply(names, \(x) {
-  print(paste0(
-    round(100 * which(names == x) / length(names), 2), "% completed"
-  ))
-  chi <- data %>% 
-    filter(name == x) %>% 
-    dplyr::select(rain, wind_speed) %>% 
-    chi()
-  
-  # whether to show chi or not, based on whether chibar upper extend crosses 1
-  show_chi <- !prod(tail(chi$chibar[, 3]) < 1)
-  
-  loc <- which.min(abs(chi$quantile - 0.95))
-  return(data.frame(
-    "name" = x,
-    "chi" = chi$chi[loc, 2, drop = TRUE], 
-    "chibar" = chi$chibar[loc, 2, drop = TRUE], 
-    "show_chi" = show_chi
-  ))
-}))
-rownames(chi_95_df) <- NULL
-
-# join in area statistics
-chi_95_sf <- chi_95_df %>% 
-  pivot_longer(c("chi", "chibar"), names_to = "var") %>% 
-  # always show chibar plot
-  mutate(show_chi = ifelse(value == "chibar", TRUE, show_chi)) %>% 
-  left_join(
-  distinct(data, name, lon, lat)
-) %>% 
-  st_to_sf()
-
-# plot for chibar (haven't time to functionalise!)
-scales_chibar <- seq(-0.1, 0.6, by = 0.1)
-# lab_chibar <- TeX(r"($\bar{\chi}(0.95)$)")
-# lab_chibar <-  expression(bar(chi)(u))
-lab_chibar <-  "chibar(0.95)"
-point_ranges <- c(2, 6)
-chibar_p <- ggplot(areas) +
-    geom_sf(colour = "black", fill = NA) +
-    geom_sf(
-      data = filter(chi_95_sf, var == "chibar"),
-      aes(fill = value, size = value),
-      stroke = 1,
-      pch = 21
-    ) +
-    # facet_wrap(~var) + 
-    scale_x_continuous(expand = c(0, 0)) +
-    scale_y_continuous(expand = c(0, 0)) +
-    # viridis::scale_fill_viridis(
-    #     option = "F",
-    #     breaks = scales_chibar,
-    #     labels = as.character(scales_chibar),
-    #     guide = "legend"
-    # ) + 
-    scale_fill_gradientn(
-      # colours = RColorBrewer::brewer.pal(name = "Blues", n = 7),
-      # colours = wesanderson::wes_palette("Zissou1", 8, type = "continuous"), 
-      colours = rev(heat.colors(7)),
-      breaks = scales_chibar,
-      labels = as.character(scales_chibar),
-      guide = "legend"
-    ) + 
-    scale_size_continuous(
-      range = point_ranges,
-      breaks = scales_chibar,
-      labels = as.character(scales_chibar),
-      guide = "legend"
-    ) +
-    labs(fill = lab_chibar, size = lab_chibar) + 
-    guides(fill = guide_legend(), size = guide_legend()) +
-    theme +
-    theme(
-      legend.position = "right",
-      axis.text = element_blank(),
-      axis.ticks = element_blank(),
-      legend.key = element_blank()
-    )
-
-# save to quickly test plot without killing R
-# sf::write_sf(chi_95_sf, "chi_95_sf.geojson")
-
-scales_chi <- seq(-0.1, 0.6, by = 0.1)
-# lab_chi <- TeX(r"($\chi$)")
-# lab_chi <- TeX(r"($\chi(0.95)$)")
-# lab_chi <- expression(chi(u))
-lab_chi <- "chi(0.95)"
-chi_p <- ggplot(areas) +
-    geom_sf(colour = "black", fill = NA) +
-    geom_sf(
-    # geom_sf_pattern(
-      data = filter(chi_95_sf, var == "chi") %>% 
-        mutate(show_chi = factor(ifelse(show_chi == TRUE, "yes", "no"))),
-      aes(fill = value, size = value),
-      # aes(fill = value, size = value, pattern = show_chi) # ,
-      stroke = 1,
-      pch = 21
-    ) +
-    # facet_wrap(~var) + 
-    scale_x_continuous(expand = c(0, 0)) +
-    scale_y_continuous(expand = c(0, 0)) +
-    # viridis::scale_fill_viridis(
-    #     option = "F",
-    #     breaks = scales_chibar,
-    #     labels = as.character(scales_chibar),
-    #     guide = "legend"
-    # ) + 
-    scale_fill_gradientn(
-      colours = RColorBrewer::brewer.pal(name = "Blues", n = 7),
-      # colours = wesanderson::wes_palette("Zissou1", 8, type = "continuous"), 
-      # colours = rev(heat.colors(7)),
-      breaks = scales_chi,
-      labels = as.character(scales_chi),
-      guide = "legend"
-    ) + 
-    scale_size_continuous(
-      range = point_ranges,
-      breaks = scales_chi,
-      labels = as.character(scales_chi),
-      guide = "legend"
-    ) +
-    # scale_pattern_manual(values = c("stripe", "none")) + 
-    # scale_pattern_manual(values = c("crosshatch", "none")) + 
-    # maximise plot within frame
-    coord_sf(expand = FALSE) + 
-    labs(fill = lab_chi, size = lab_chi) + 
-    guides(fill = guide_legend(), size = guide_legend(), pattern = "none") +
-    theme +
-    theme(
-      legend.position = "right",
-      axis.text = element_blank(),
-      axis.ticks = element_blank(),
-      legend.key = element_blank()
-    )
-
-(chi_plots <- chibar_p + chi_p)
-
-ggsave("latex/plots/041_chi_plots.png", chi_plots, width = 6.3, height = 6, units = "in")
+# # for each location, pull out 95th quantile for chibar
+# # Colour chi grey if not valid
+# # Plot on map
+# names <- unique(data$name)
+# chi_95_df <- bind_rows(lapply(names, \(x) {
+#   print(paste0(
+#     round(100 * which(names == x) / length(names), 2), "% completed"
+#   ))
+#   chi <- data %>% 
+#     filter(name == x) %>% 
+#     dplyr::select(rain, wind_speed) %>% 
+#     chi()
+#   
+#   # whether to show chi or not, based on whether chibar upper extend crosses 1
+#   show_chi <- !prod(tail(chi$chibar[, 3]) < 1)
+#   
+#   loc <- which.min(abs(chi$quantile - 0.95))
+#   return(data.frame(
+#     "name" = x,
+#     "chi" = chi$chi[loc, 2, drop = TRUE], 
+#     "chibar" = chi$chibar[loc, 2, drop = TRUE], 
+#     "show_chi" = show_chi
+#   ))
+# }))
+# rownames(chi_95_df) <- NULL
+# 
+# # join in area statistics
+# chi_95_sf <- chi_95_df %>% 
+#   pivot_longer(c("chi", "chibar"), names_to = "var") %>% 
+#   # always show chibar plot
+#   mutate(show_chi = ifelse(value == "chibar", TRUE, show_chi)) %>% 
+#   left_join(
+#   distinct(data, name, lon, lat)
+# ) %>% 
+#   st_to_sf()
+# 
+# # plot for chibar (haven't time to functionalise!)
+# scales_chibar <- seq(-0.1, 0.6, by = 0.1)
+# # lab_chibar <- TeX(r"($\bar{\chi}(0.95)$)")
+# # lab_chibar <-  expression(bar(chi)(u))
+# lab_chibar <-  "chibar(0.95)"
+# point_ranges <- c(2, 6)
+# chibar_p <- ggplot(areas) +
+#     geom_sf(colour = "black", fill = NA) +
+#     geom_sf(
+#       data = filter(chi_95_sf, var == "chibar"),
+#       aes(fill = value, size = value),
+#       stroke = 1,
+#       pch = 21
+#     ) +
+#     # facet_wrap(~var) + 
+#     scale_x_continuous(expand = c(0, 0)) +
+#     scale_y_continuous(expand = c(0, 0)) +
+#     # viridis::scale_fill_viridis(
+#     #     option = "F",
+#     #     breaks = scales_chibar,
+#     #     labels = as.character(scales_chibar),
+#     #     guide = "legend"
+#     # ) + 
+#     scale_fill_gradientn(
+#       # colours = RColorBrewer::brewer.pal(name = "Blues", n = 7),
+#       # colours = wesanderson::wes_palette("Zissou1", 8, type = "continuous"), 
+#       colours = rev(heat.colors(7)),
+#       breaks = scales_chibar,
+#       labels = as.character(scales_chibar),
+#       guide = "legend"
+#     ) + 
+#     scale_size_continuous(
+#       range = point_ranges,
+#       breaks = scales_chibar,
+#       labels = as.character(scales_chibar),
+#       guide = "legend"
+#     ) +
+#     labs(fill = lab_chibar, size = lab_chibar) + 
+#     guides(fill = guide_legend(), size = guide_legend()) +
+#     theme +
+#     theme(
+#       legend.position = "right",
+#       axis.text = element_blank(),
+#       axis.ticks = element_blank(),
+#       legend.key = element_blank()
+#     )
+# 
+# # save to quickly test plot without killing R
+# # sf::write_sf(chi_95_sf, "chi_95_sf.geojson")
+# 
+# scales_chi <- seq(-0.1, 0.6, by = 0.1)
+# # lab_chi <- TeX(r"($\chi$)")
+# # lab_chi <- TeX(r"($\chi(0.95)$)")
+# # lab_chi <- expression(chi(u))
+# lab_chi <- "chi(0.95)"
+# chi_p <- ggplot(areas) +
+#     geom_sf(colour = "black", fill = NA) +
+#     geom_sf(
+#     # geom_sf_pattern(
+#       data = filter(chi_95_sf, var == "chi") %>% 
+#         mutate(show_chi = factor(ifelse(show_chi == TRUE, "yes", "no"))),
+#       aes(fill = value, size = value),
+#       # aes(fill = value, size = value, pattern = show_chi) # ,
+#       stroke = 1,
+#       pch = 21
+#     ) +
+#     # facet_wrap(~var) + 
+#     scale_x_continuous(expand = c(0, 0)) +
+#     scale_y_continuous(expand = c(0, 0)) +
+#     # viridis::scale_fill_viridis(
+#     #     option = "F",
+#     #     breaks = scales_chibar,
+#     #     labels = as.character(scales_chibar),
+#     #     guide = "legend"
+#     # ) + 
+#     scale_fill_gradientn(
+#       colours = RColorBrewer::brewer.pal(name = "Blues", n = 7),
+#       # colours = wesanderson::wes_palette("Zissou1", 8, type = "continuous"), 
+#       # colours = rev(heat.colors(7)),
+#       breaks = scales_chi,
+#       labels = as.character(scales_chi),
+#       guide = "legend"
+#     ) + 
+#     scale_size_continuous(
+#       range = point_ranges,
+#       breaks = scales_chi,
+#       labels = as.character(scales_chi),
+#       guide = "legend"
+#     ) +
+#     # scale_pattern_manual(values = c("stripe", "none")) + 
+#     # scale_pattern_manual(values = c("crosshatch", "none")) + 
+#     # maximise plot within frame
+#     coord_sf(expand = FALSE) + 
+#     labs(fill = lab_chi, size = lab_chi) + 
+#     guides(fill = guide_legend(), size = guide_legend(), pattern = "none") +
+#     theme +
+#     theme(
+#       legend.position = "right",
+#       axis.text = element_blank(),
+#       axis.ticks = element_blank(),
+#       legend.key = element_blank()
+#     )
+# 
+# (chi_plots <- chibar_p + chi_p)
+# 
+# ggsave("latex/plots/041_chi_plots.png", chi_plots, width = 6.3, height = 6, units = "in")
 
 
 #### Compare to "out-of-box" texmex predictions ####
@@ -1032,34 +1012,34 @@ save_bootstrap_plot <- \(bootstrap_thresh_plots, file) {
 # )
 
 # reload bootstrap plots
-bootstrap_thresh_plots <- readRDS("bootstrap_thresh_plots.RDS")
-bootstrap_thresh_plots <- bootstrap_thresh_plots[
-  !rm_cnty(names(bootstrap_thresh_plots)) %in% loc_nas # remove problem sites
-]
-
-# plot for one area
-spec_plot <- bootstrap_thresh_plots$`Dublin (Ringsend) - Dublin`
-rain_plots <- (spec_plot[[2]][[1]] + 
-  labs(y = "a rain | wind speed", title = "")) / 
-(spec_plot[[2]][[2]] + 
-  labs(y = "b rain | wind speed", title = ""))
-
-wind_plots <- (spec_plot[[1]][[1]] + 
-  labs(y = "a wind speed | rain", title = "")) / 
-(spec_plot[[1]][[2]] + 
-  labs(y = "b wind speed | rain", title = ""))
-
-bootstrap_thresh_plot <- (rain_plots | wind_plots) + plot_layout(ncol = 2, nrow = 1)
-  
-ggsave("latex/plots/042_bootstrap_thresh.png", bootstrap_thresh_plot, width = 6.3, height = 6, units = "in")
-
-# for fixed b
-# bootstrap_thresh_plots_fixed_b <- create_bootstrap_plot(marginal, fixed_b = TRUE)
-# saveRDS(bootstrap_thresh_plots_fixed_b, "bootrstrap_thresh_plots_fixed_b.RDS")
-# save_bootstrap_plot(
-#   bootstrap_thresh_plots_fixed_b, 
-#   "plots/bootstrap_weekly_winter_fixed_b.pdf"
-# )
+# bootstrap_thresh_plots <- readRDS("bootstrap_thresh_plots.RDS")
+# bootstrap_thresh_plots <- bootstrap_thresh_plots[
+#   !rm_cnty(names(bootstrap_thresh_plots)) %in% loc_nas # remove problem sites
+# ]
+# 
+# # plot for one area
+# spec_plot <- bootstrap_thresh_plots$`Dublin (Ringsend) - Dublin`
+# rain_plots <- (spec_plot[[2]][[1]] + 
+#   labs(y = "a rain | wind speed", title = "")) / 
+# (spec_plot[[2]][[2]] + 
+#   labs(y = "b rain | wind speed", title = ""))
+# 
+# wind_plots <- (spec_plot[[1]][[1]] + 
+#   labs(y = "a wind speed | rain", title = "")) / 
+# (spec_plot[[1]][[2]] + 
+#   labs(y = "b wind speed | rain", title = ""))
+# 
+# bootstrap_thresh_plot <- (rain_plots | wind_plots) + plot_layout(ncol = 2, nrow = 1)
+#   
+# ggsave("latex/plots/042_bootstrap_thresh.png", bootstrap_thresh_plot, width = 6.3, height = 6, units = "in")
+# 
+# # for fixed b
+# # bootstrap_thresh_plots_fixed_b <- create_bootstrap_plot(marginal, fixed_b = TRUE)
+# # saveRDS(bootstrap_thresh_plots_fixed_b, "bootrstrap_thresh_plots_fixed_b.RDS")
+# # save_bootstrap_plot(
+# #   bootstrap_thresh_plots_fixed_b, 
+# #   "plots/bootstrap_weekly_winter_fixed_b.pdf"
+# # )
 
 #### Fit CE model ####
 

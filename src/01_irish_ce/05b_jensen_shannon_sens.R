@@ -3,6 +3,7 @@
 #### libs ####
 
 library(dplyr, quietly = TRUE)
+library(evc)
 library(tidyr)
 library(ggplot2)
 library(evd)
@@ -112,7 +113,7 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
         cond_prob   = row$kl_prob,
         split_data  = FALSE
       )
-      js_clust(dependence, nclust = 2, cluster_mem = cluster_mem)
+      js_clust(dependence, k = 2, cluster_mem = cluster_mem)
     }, error = function(cond) {
       return(list("adj_rand" = NA))
     })
@@ -145,9 +146,10 @@ saveRDS(
   file = paste0("data/js_grid_search_res_dqu_", kl_prob, ".RDS")
   # file = paste0("data/js_grid_search_res_dqu_", kl_prob, "_marg_0.9.RDS")
 )
-# results_grid <- readRDS(
-#   paste0("data/js_grid_search_res_dqu_", kl_prob, "_marg_0.9.RDS")
-# )
+results_grid <- readRDS(
+  paste0("data/js_grid_search_res_dqu_", kl_prob, ".RDS")
+  # paste0("data/js_grid_search_res_dqu_", kl_prob, "_marg_0.9.RDS")
+)
 
 
 #### Plot ####

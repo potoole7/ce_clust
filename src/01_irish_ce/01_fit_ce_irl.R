@@ -32,6 +32,7 @@
 #### Libs ####
 
 library(sf)
+library(evc)
 library(dplyr, quietly = TRUE)
 library(tidyr)
 library(ggplot2)
@@ -46,7 +47,6 @@ library(latex2exp)
 library(ggpattern)
 
 source("src/functions.R")
-source("src/01_irish_ce/functions.R")
 
 theme <- theme_bw() +
   theme(
@@ -132,131 +132,131 @@ data <- data %>%
 
 #### Calculate distance to coast for each site ####
 
-data <- dist2coast(data, areas)
+# data <- dist2coast(data, areas)
 # save
-readr::write_csv(data, "data/met_eireann/final/met_eir_preprocess.csv.gz")
+# readr::write_csv(data, "data/met_eireann/final/met_eir_preprocess.csv.gz")
 
 #### Motivating example plots ####
 
 # locations with highest and lowest rain, to specifically plot
-highest_lowest_rain <- data %>% 
-  group_by(name) %>% 
-  summarise(rain = mean(rain, na.rm = TRUE), .groups = "drop") %>% 
-  arrange(rain) %>% 
-  slice(c(1, n())) %>% 
-  pull(name)
-
-data_plot <- data %>% 
-  # mutate(indicator = ifelse(name %in% highest_lowest_rain, name, NA)) %>% 
-  mutate(indicator = ifelse(name %in% highest_lowest_rain, name, "other")) %>% 
-  arrange(desc(indicator)) %>% 
-  st_to_sf()
-
-# First, plot the location of each site
-p1 <- ggplot(areas) +
-  geom_sf(colour = "black", fill = NA) +
-  # points other than two sites
-  geom_sf(
-    data = filter(data_plot, indicator == "other"),
-    colour = "black",
-    size = 3,
-    alpha = 0.9,
-    show.legend = FALSE
-  ) +
-  # points for two sites with highest and lowest rain
-  geom_sf(
-    data = filter(data_plot, indicator != "other"),
-    # aes(colour = indicator, size = indicator),
-    colour = "black",
-    alpha = 0.9,
-    # show.legend = TRUE
-    show.legend = FALSE
-  ) +
-  scale_colour_manual(values = c(ggsci::pal_nejm()(2))) + 
-  scale_size_manual(values = c(4.5, 4.5)) + 
-  labs(colour = "", size = "") + 
-  theme + 
-  # remove axis text
-  theme(
-    axis.text = element_blank(),
-    axis.ticks = element_blank(),
-    legend.key = element_blank()
-  )
-
-cols <- ggsci::pal_nejm()(4)
-cols[2] <- "black"
-p21 <- data_plot %>% 
-  filter(name == highest_lowest_rain[2], rain > 0) %>% 
-  group_by(name) %>% 
-  mutate(across(c(rain, wind_speed), ~ quantile(.x, 0.95, na.rm = TRUE), .names = "quant_{.col}")) %>% 
-  ungroup() %>% 
-  mutate(col = case_when(
-    rain > quant_rain & wind_speed > quant_wind_speed ~ "Both",
-    rain > quant_rain & wind_speed <= quant_wind_speed ~ "Rain",
-    rain <= quant_rain & wind_speed > quant_wind_speed ~ "Wind",
-    TRUE ~ "Neither"
-  )) %>% 
-  ggplot(aes(x = rain, y = wind_speed)) + 
-  # geom_point(aes(colour = name), size = 1.5, alpha = 0.9) + 
-  geom_point(aes(colour = col), size = 1.5, alpha = 0.9) + 
-  geom_vline(aes(xintercept = quant_rain), linetype = "dashed") + 
-  geom_hline(aes(yintercept = quant_wind_speed), linetype = "dashed") + 
-  # facet_wrap(~ name, scales = "free_x") + 
-  scale_colour_manual(values = cols) + 
-  labs(
-    # x = "Weekly total precipitation (mm)", 
-    x = "precipitation (mm)", 
-    y = "wind speed (m/s)", # TODO: What is the unit of ws?
-    colour = ""
-  ) + 
-  guides(colour = "none") + 
-  theme + 
-  # remove facet labels, colour will do
-  theme(
-    strip.background = element_blank(),
-    strip.text.x = element_blank(), 
-    legend.key = element_blank()
-  )  
-
-# Second, plot wind speeds against rain for sites with the highest and lowest rainfall
-# TODO: Add 95% quantile lines for both (?)
-p2 <- data_plot %>% 
-  filter(name %in% highest_lowest_rain, rain > 0) %>% 
-  group_by(name) %>% 
-  mutate(across(c(rain, wind_speed), ~ quantile(.x, 0.95, na.rm = TRUE), .names = "quant_{.col}")) %>% 
-  ungroup() %>% 
-  ggplot(aes(x = rain, y = wind_speed)) + 
-  # geom_point(aes(colour = name), size = 1.5, alpha = 0.9) + 
-  geom_point(aes(colour = name), size = 1.5, alpha = 0.9) + 
-  # geom_vline(aes(xintercept = quant_rain)) + 
-  # geom_hline(aes(yintercept = quant_wind_speed)) + 
-  facet_wrap(~ name, scales = "free_x") + 
-  scale_colour_manual(values = c(ggsci::pal_nejm()(2))) + 
-  labs(
-    # x = "Weekly total precipitation (mm)", 
-    x = "precipitation (mm)", 
-    y = "wind speed (m/s)", # TODO: What is the unit of ws?
-    colour = ""
-  ) + 
-  theme + 
-  # remove facet labels, colour will do
-  theme(
-    strip.background = element_blank(),
-    strip.text.x = element_blank(), 
-    legend.key = element_blank()
-  )
-
-# join plots
-# TODO: Change size of first plot to be larger!
-p_sec_2 <- p1 + 
-  (p2 + guides(colour = "none", size = "none")) + 
-  # have common legends
-  plot_layout(guides = "collect") & 
-  theme(legend.position = "bottom")
-  
-ggsave("latex/plots/01_ire_plot.png", p1, width = 7, height = 6, units = "in")
-ggsave("latex/plots/021_mv_extreme.png", p21, width = 7, height = 6, units = "in")
-ggsave("latex/plots/02_mot_ex_plot.png", p_sec_2, width = 7, height = 6, units = "in")
+# highest_lowest_rain <- data %>% 
+#   group_by(name) %>% 
+#   summarise(rain = mean(rain, na.rm = TRUE), .groups = "drop") %>% 
+#   arrange(rain) %>% 
+#   slice(c(1, n())) %>% 
+#   pull(name)
+# 
+# data_plot <- data %>% 
+#   # mutate(indicator = ifelse(name %in% highest_lowest_rain, name, NA)) %>% 
+#   mutate(indicator = ifelse(name %in% highest_lowest_rain, name, "other")) %>% 
+#   arrange(desc(indicator)) %>% 
+#   st_to_sf()
+# 
+# # First, plot the location of each site
+# p1 <- ggplot(areas) +
+#   geom_sf(colour = "black", fill = NA) +
+#   # points other than two sites
+#   geom_sf(
+#     data = filter(data_plot, indicator == "other"),
+#     colour = "black",
+#     size = 3,
+#     alpha = 0.9,
+#     show.legend = FALSE
+#   ) +
+#   # points for two sites with highest and lowest rain
+#   geom_sf(
+#     data = filter(data_plot, indicator != "other"),
+#     # aes(colour = indicator, size = indicator),
+#     colour = "black",
+#     alpha = 0.9,
+#     # show.legend = TRUE
+#     show.legend = FALSE
+#   ) +
+#   scale_colour_manual(values = c(ggsci::pal_nejm()(2))) + 
+#   scale_size_manual(values = c(4.5, 4.5)) + 
+#   labs(colour = "", size = "") + 
+#   theme + 
+#   # remove axis text
+#   theme(
+#     axis.text = element_blank(),
+#     axis.ticks = element_blank(),
+#     legend.key = element_blank()
+#   )
+# 
+# cols <- ggsci::pal_nejm()(4)
+# cols[2] <- "black"
+# p21 <- data_plot %>% 
+#   filter(name == highest_lowest_rain[2], rain > 0) %>% 
+#   group_by(name) %>% 
+#   mutate(across(c(rain, wind_speed), ~ quantile(.x, 0.95, na.rm = TRUE), .names = "quant_{.col}")) %>% 
+#   ungroup() %>% 
+#   mutate(col = case_when(
+#     rain > quant_rain & wind_speed > quant_wind_speed ~ "Both",
+#     rain > quant_rain & wind_speed <= quant_wind_speed ~ "Rain",
+#     rain <= quant_rain & wind_speed > quant_wind_speed ~ "Wind",
+#     TRUE ~ "Neither"
+#   )) %>% 
+#   ggplot(aes(x = rain, y = wind_speed)) + 
+#   # geom_point(aes(colour = name), size = 1.5, alpha = 0.9) + 
+#   geom_point(aes(colour = col), size = 1.5, alpha = 0.9) + 
+#   geom_vline(aes(xintercept = quant_rain), linetype = "dashed") + 
+#   geom_hline(aes(yintercept = quant_wind_speed), linetype = "dashed") + 
+#   # facet_wrap(~ name, scales = "free_x") + 
+#   scale_colour_manual(values = cols) + 
+#   labs(
+#     # x = "Weekly total precipitation (mm)", 
+#     x = "precipitation (mm)", 
+#     y = "wind speed (m/s)", # TODO: What is the unit of ws?
+#     colour = ""
+#   ) + 
+#   guides(colour = "none") + 
+#   theme + 
+#   # remove facet labels, colour will do
+#   theme(
+#     strip.background = element_blank(),
+#     strip.text.x = element_blank(), 
+#     legend.key = element_blank()
+#   )  
+# 
+# # Second, plot wind speeds against rain for sites with the highest and lowest rainfall
+# # TODO: Add 95% quantile lines for both (?)
+# p2 <- data_plot %>% 
+#   filter(name %in% highest_lowest_rain, rain > 0) %>% 
+#   group_by(name) %>% 
+#   mutate(across(c(rain, wind_speed), ~ quantile(.x, 0.95, na.rm = TRUE), .names = "quant_{.col}")) %>% 
+#   ungroup() %>% 
+#   ggplot(aes(x = rain, y = wind_speed)) + 
+#   # geom_point(aes(colour = name), size = 1.5, alpha = 0.9) + 
+#   geom_point(aes(colour = name), size = 1.5, alpha = 0.9) + 
+#   # geom_vline(aes(xintercept = quant_rain)) + 
+#   # geom_hline(aes(yintercept = quant_wind_speed)) + 
+#   facet_wrap(~ name, scales = "free_x") + 
+#   scale_colour_manual(values = c(ggsci::pal_nejm()(2))) + 
+#   labs(
+#     # x = "Weekly total precipitation (mm)", 
+#     x = "precipitation (mm)", 
+#     y = "wind speed (m/s)", # TODO: What is the unit of ws?
+#     colour = ""
+#   ) + 
+#   theme + 
+#   # remove facet labels, colour will do
+#   theme(
+#     strip.background = element_blank(),
+#     strip.text.x = element_blank(), 
+#     legend.key = element_blank()
+#   )
+# 
+# # join plots
+# # TODO: Change size of first plot to be larger!
+# p_sec_2 <- p1 + 
+#   (p2 + guides(colour = "none", size = "none")) + 
+#   # have common legends
+#   plot_layout(guides = "collect") & 
+#   theme(legend.position = "bottom")
+#   
+# ggsave("latex/plots/01_ire_plot.png", p1, width = 7, height = 6, units = "in")
+# ggsave("latex/plots/021_mv_extreme.png", p21, width = 7, height = 6, units = "in")
+# ggsave("latex/plots/02_mot_ex_plot.png", p_sec_2, width = 7, height = 6, units = "in")
 
 
 #### Data Exploration ####
@@ -279,62 +279,27 @@ ggsave("latex/plots/02_mot_ex_plot.png", p_sec_2, width = 7, height = 6, units =
 
 # Plot for one site (Wexford?)
 # TODO: add threshold for Wexford?
-data %>% 
-  filter(name == "Wexford (Newtown W.w.)") %>% 
-  ggplot(aes(x = rain, y = wind_speed)) + 
-  geom_point() + 
-  geom_vline(xintercept = 67.1)
-
-data %>% 
-  filter(name == data$name[[1]]) %>% 
-  ggplot(aes(x = rain, y = wind_speed)) + 
-  geom_point() + 
-  geom_vline(xintercept = 67.1)
-
-
-# 2.7% of data kept, in line with quantile chosen
-nrow(with(data, data[name == "Wexford (Newtown W.w.)" & rain > 67.1, ])) /
-nrow(with(data, data[name == "Wexford (Newtown W.w.)", ]))
-
-# as a test, remove rain over 100 for Wexford
-# data <- data %>% 
-#   filter(!(name == "Wexford (Newtown W.w.)" & rain > 90))
-  
-
-# TODO: Plot chi for each location (texmex has function for this)
-# Follow Vignotto, Engelke code
-# chiO3 <- chi(winter[, c("O3", "NO")])
-# ggplot(chiO3, main =c("Chi" = "Chi: O3 and NO",
-#                      "ChiBar" = "Chi-bar: O3 and NO"))
+# data %>% 
+#   filter(name == "Wexford (Newtown W.w.)") %>% 
+#   ggplot(aes(x = rain, y = wind_speed)) + 
+#   geom_point() + 
+#   geom_vline(xintercept = 67.1)
+# 
+# data %>% 
+#   filter(name == data$name[[1]]) %>% 
+#   ggplot(aes(x = rain, y = wind_speed)) + 
+#   geom_point() + 
+#   geom_vline(xintercept = 67.1)
+# 
+# 
+# # 2.7% of data kept, in line with quantile chosen
+# nrow(with(data, data[name == "Wexford (Newtown W.w.)" & rain > 67.1, ])) /
+# nrow(with(data, data[name == "Wexford (Newtown W.w.)", ]))
 
 # TODO: Plot max weekly rainfall
 
 # TODO: Plot max mean wind speed
 
-#### Dealing with preferential sampling ####
-
-## Weighting by Poisson point process density
-# Assuming 'pp' is a point pattern object created from your data
-# pp <- spatstat.geom::ppp(
-#   x = data$lon, 
-#   y = data$lat, 
-#   window = spatstat.geom::owin(range(data$lon), range(data$lat))
-# )
-# 
-# # Calculate density
-# density <- density(pp)
-# 
-# # Assign weights inversely proportional to density
-# weights <- 1 / density[pp]
-
-## Kringing
-# data2 <- data %>% 
-#   mutate(rain = rain + rnorm(n(), 0, 1e-6))
-# # Define the gstat object
-# g <- gstat::gstat(formula = rain ~ date, locations = ~lon + lat, data = data2)
-# 
-# # Perform kriging
-# kriging_result <- predict(g, newdata = data2)
 
 #### Threshold selection ####
 

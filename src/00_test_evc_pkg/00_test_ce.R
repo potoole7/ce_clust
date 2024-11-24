@@ -5,7 +5,8 @@
 #### Libs ####
 
 library(dplyr)
-library(evc)
+# library(evc)
+devtools::load_all("../evc")
 
 # source("src/01_irish_ce/functions.R")
 
@@ -27,7 +28,12 @@ kl_sim_eval(
 
 dependence <- fit_ce(
   data_mix, 
-  marg_prob   = 0.9,
+  # marg_prob   = 0.9,
+  marg_prob = list(
+    f      = list("response ~ name", "~ name"), 
+    tau    = .95, 
+    jitter = TRUE
+  ),
   cond_prob   = 0.9,
   split_data  = TRUE 
 )

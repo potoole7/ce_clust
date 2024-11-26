@@ -156,13 +156,23 @@ pam_clust_adj2 <- js_clust(dependence, k = 2, dist_mat = dist_mat_adj)
 plt_clust_map(pts, areas, pam_clust_adj2[[1]])
 pam_clust_adj3 <- js_clust(dependence, k = 3, dist_mat = dist_mat_adj)
 plt_clust_map(pts, areas, pam_clust_adj3[[1]])
-pam_clust_adj6 <- js_clust(dependence, k = 6, dist_mat = dist_mat_adj)
-plt_clust_map(pts, areas, pam_clust_adj6[[1]])
+pam_clust_adj7 <- js_clust(dependence, k = 7, dist_mat = dist_mat_adj)
+plt_clust_map(pts, areas, pam_clust_adj7[[1]])
 
-sil_adj <- silhouette(pam_clust_adj[[1]])
+sil_adj <- silhouette(pam_clust_adj2[[1]])
 plot(sil_adj)
 summary(sil_adj)
 
-sil_obj <- data.frame(silhouette(pam_clust_adj3[[1]])) %>% 
-  arrange(rownames(.))
-plt_sil_map(pts, areas, sil_obj)
+plt_sil_map(
+  pts, 
+  areas, 
+  data.frame(silhouette(pam_clust_adj2[[1]])) %>% 
+    arrange(rownames(.))
+)
+
+plt_sil_map(
+  pts, 
+  areas, 
+  data.frame(silhouette(pam_clust_adj3[[1]])) %>% 
+    arrange(rownames(.))
+)

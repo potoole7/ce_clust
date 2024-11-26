@@ -195,13 +195,21 @@ data_lst <- lapply(data_mix, as.vector)
 kl_mat <- kl_sim_eval(data_lst, kl_prob = 0.9)[[1]] # clear elbow at k = 3
 
 # cluster at k = 3 and evaluate performance
-kl_sim_eval(
+(pam_clust <- kl_sim_eval(
   data_lst, 
   kl_prob = 0.9, 
   k = 3, 
   dist_mat = kl_mat, 
   cluster_mem = c(1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3)
-)
+))
+
+# also look at silhouette summary and plot of clustering solution
+sil <- silhouette(pam_clust$pam)
+summary(sil)
+plot(sil)
+
+# boxplot for silhouettes, shows k = 3 is best, as expected
+sil <- sil_boxplot(dist_mat, 2:5)
 
 # save data
 # saveRDS(data_lst, file = "data/sim_dat_2_clust.RDS")

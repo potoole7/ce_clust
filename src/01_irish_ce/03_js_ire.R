@@ -58,17 +58,25 @@ data %>%
   filter(rain < quantile(rain, 0.9), wind_speed < quantile(wind_speed, 0.9)) %>% 
   reframe(across(c("rain", "wind_speed"), \(x) c(mean(x), var(x))))
 
+# pull county for locations
+locs <- distinct(data, name, county)
+
 # load shapefile
 areas <- sf::read_sf("data/met_eireann/final/irl_shapefile.geojson")
 
 # Fitted conditional extremes models for each site
 dependence <- readRDS("data/texmex_mexdep_obj.RDS")
+# sort alphabetically by name
+dependence <- dependence[sort(names(dependence))]
 # dependence <- readRDS("data/texmex_mexdep_obj_fixed_b.RDS")
 
 # a and b values
-ab_df <- readr::read_csv("data/ab_vals.csv")
+ab_df <- readr::read_csv("data/ab_vals.csv") %>% 
+  arrange(name)
 # ab_df <- readr::read_csv("data/ab_vals_fixed_b.csv")
 
+# first check names for dependence are the same as in ab_df
+unique(ab_df$name) == names(dependence) 
 # extract point location of each station for plotting on map
 pts <- ab_df %>% 
   distinct(lon, lat) %>% 
@@ -105,16 +113,56 @@ ab_df_wide <- ab_df %>%
 
 # scree plot (and distance matrix)
 dist_mat <- js_clust(dependence)$dist_mat 
-# no clear elbow unfortunately, go w/ k = 3
+# no clear elbow unfortunately
 
-# plot PAM clustering solution
+# look at boxplot of silhoutte widths for different values of k
+sil_boxplot(dist_mat, k = 2:6) # looks like k = 2 is best!
+
+# plot PAM clustering solution (for k = 2 and k = 3)
 # TODO: Fix showing cluster centroid
-plt_clust(pts, areas, js_clust(dependence, k = 3, dist_mat = dist_mat)[[1]])
+pam_clust2 <- js_clust(dependence, k = 2, dist_mat = dist_mat)
+plt_clust_map(pts, areas, pam_clust2[[1]])
+pam_clust3 <- js_clust(dependence, k = 3, dist_mat = dist_mat)
+plt_clust_map(pts, areas, pam_clust3[[1]])
+
+# look at individual silhouettes
+plot(silhouette(pam_clust2[[1]]))
+plot(silhouette(pam_clust3[[1]]))
+
+# Plot silhoutte coefficients on map
+plt_sil_map(
+  pts, 
+  areas, 
+  sil_obj = data.frame(silhouette(pam_clust2[[1]])) %>% 
+    arrange(rownames(.))
+)
+
+plt_sil_map(
+  pts, 
+  areas, 
+  sil_obj = data.frame(silhouette(pam_clust3[[1]])) %>% 
+    arrange(rownames(.))
+)
 
 # repeat for adjacent sites only
 dist_mat_adj <- as.matrix(dist_mat)
 dist_mat_adj[adj_mat == 0] <- 1e9
 
-plt_clust(
-  pts, areas, js_clust(dependence, k = 3, dist_mat = dist_mat_adj)[[1]]
-)
+sil_boxplot(dist_mat_adj, k = 2:10)$plot + 
+  scale_y_continuous(limits = c(0, 0.25))
+# suggests k = 6! Valid to use for adjacent distance matrix?
+
+pam_clust_adj2 <- js_clust(dependence, k = 2, dist_mat = dist_mat_adj)
+plt_clust_map(pts, areas, pam_clust_adj2[[1]])
+pam_clust_adj3 <- js_clust(dependence, k = 3, dist_mat = dist_mat_adj)
+plt_clust_map(pts, areas, pam_clust_adj3[[1]])
+pam_clust_adj6 <- js_clust(dependence, k = 6, dist_mat = dist_mat_adj)
+plt_clust_map(pts, areas, pam_clust_adj6[[1]])
+
+sil_adj <- silhouette(pam_clust_adj[[1]])
+plot(sil_adj)
+summary(sil_adj)
+
+sil_obj <- data.frame(silhouette(pam_clust_adj3[[1]])) %>% 
+  arrange(rownames(.))
+plt_sil_map(pts, areas, sil_obj)

@@ -57,16 +57,19 @@ areas <- sf::read_sf("data/met_eireann/final/irl_shapefile.geojson")
 
 # Fitted conditional extremes models for each site
 dependence <- readRDS("data/texmex_mexdep_obj.RDS")
+# sort alphabetically by name
+dependence <- dependence[sort(names(dependence))]
 # dependence <- readRDS("data/texmex_mexdep_obj_fixed_b.RDS")
 
 # a and b values
-ab_df <- readr::read_csv("data/ab_vals.csv")
+ab_df <- readr::read_csv("data/ab_vals.csv") |>
+  arrange(name)
 # ab_df <- readr::read_csv("data/ab_vals_fixed_b.csv")
 
 # remove locations with NAs for a
-na_locs <- ab_df %>% 
-  filter(is.na(value)) %>% 
-  pull(name) %>% 
+na_locs <- ab_df %>%
+  filter(is.na(value)) %>%
+  pull(name) %>%
   unique()
 
 if (length(na_locs) > 0) {
@@ -77,20 +80,20 @@ if (length(na_locs) > 0) {
 }
 
 # remove locations with NAs from data
-data <- data %>% 
+data <- data %>%
   semi_join(ab_df, by = "name")
 
 # convert ab values to wide format
-ab_df_wide <- ab_df %>% 
-  mutate(col = paste0(var, "_", parameter)) %>% 
-  select(name, county, col, value) %>% 
+ab_df_wide <- ab_df %>%
+  mutate(col = paste0(var, "_", parameter)) %>%
+  select(name, county, col, value) %>%
   pivot_wider(names_from = col, values_from = value)
 
 #### Calculate Voronoi cells and adjacency matrix ####
 
 # extract point location of each station
-pts <- ab_df %>% 
-  distinct(lon, lat) %>% 
+pts <- ab_df %>%
+  distinct(lon, lat) %>%
   st_to_sf()
 
 # calculate adjacency matrix from Voronoi cells
@@ -120,12 +123,12 @@ scree_plot(dist_mat_euc)
 pam_euclid_clust <- pam(dist_mat_euc, k = 3)
 
 # plot
-plt_clust(pts, areas, pam_euclid_clust)
+plt_clust_map(pts, areas, pam_euclid_clust)
 
 
 #### Cluster adjacent sites only ####
 
-# apply adjacency matrix to dissimilarity matrix 
+# apply adjacency matrix to dissimilarity matrix
 dist_euc_adj <- as.matrix(dist_mat_euc)
 dist_euc_adj[adj_mat == 0] <- 1e9
 
@@ -133,7 +136,7 @@ dist_euc_adj[adj_mat == 0] <- 1e9
 scree_plot(dist_euc_adj)
 
 pam_euc_adj_clust <- pam(dist_euc_adj, k = 3)
-plt_clust(pts, areas, pam_euc_adj_clust)
+plt_clust_map(pts, areas, pam_euc_adj_clust)
 
 
 #### Vignotto 2021 KL divergence clustering ####
@@ -141,25 +144,25 @@ plt_clust(pts, areas, pam_euc_adj_clust)
 # TODO: re colour points at original scale (?)
 
 # Split data into lists for each location as required by emp_kl_div
-data_lst <- data %>% 
+data_lst <- data %>%
   # split data by location
-  group_split(name) %>% 
-  purrr::map(\(x) x %>% 
-               dplyr::select(rain, wind_speed) %>% 
-               stack() %>% 
-               dplyr::select(1) %>% 
-               as.vector() %>% 
+  group_split(name) %>%
+  purrr::map(\(x) x %>%
+               dplyr::select(rain, wind_speed) %>%
+               stack() %>%
+               dplyr::select(1) %>%
+               as.vector() %>%
                `[[`(1))
 
 # scree plot, looks like k = 3
-prob <- 0.88 # fails for prob <- 0.9 
+prob <- 0.88 # fails for prob <- 0.9
 # TODO: Investigate location?
 kl_mat <- kl_sim_eval(data_lst, prob, k = NULL)$dist_mat
 
 pam_kl_clust <- kl_sim_eval(data_lst, prob, k = 3, kl_mat)
 
 # plot results of clustering
-plt_clust(pts, areas, pam_kl_clust)
+plt_clust_map(pts, areas, pam_kl_clust)
 
 # imposing adjacency
 kl_mat_adj <- as.matrix(kl_mat)
@@ -167,4 +170,4 @@ kl_mat_adj[adj_mat == 0] <- 1e9
 
 # pretty good clustering! Could be down to chance though lol
 pam_kl_clust_adj <- kl_sim_eval(data_lst, prob, k = 3, kl_mat_adj)
-plt_clust(pts, areas, pam_kl_clust_adj)
+plt_clust_map(pts, areas, pam_kl_clust_adj)

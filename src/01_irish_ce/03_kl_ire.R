@@ -63,10 +63,13 @@ areas <- sf::read_sf("data/met_eireann/final/irl_shapefile.geojson")
 
 # Fitted conditional extremes models for each site
 dependence <- readRDS("data/texmex_mexdep_obj.RDS")
+# sort alphabetically by name
+dependence <- dependence[sort(names(dependence))]
 # dependence <- readRDS("data/texmex_mexdep_obj_fixed_b.RDS")
 
 # a and b values
-ab_df <- readr::read_csv("data/ab_vals.csv")
+ab_df <- readr::read_csv("data/ab_vals.csv") %>% 
+  arrange(name)
 # ab_df <- readr::read_csv("data/ab_vals_fixed_b.csv")
 
 # extract point location of each station for plotting on map
@@ -140,14 +143,19 @@ scree_plot(dist_mat, fun = kmeans)
 # ire_clust_plots <- lapply(dist_mats, \(x) {
 #   # for rain or wind speed, plot clustering based on PAM and k-means
 #   lapply(c(pam, kmeans), \(fun) {
-#     plt_clust(pts, fun(x, 3))
+#     plt_clust_map(pts, fun(x, 3))
 #   })
 # })
 # TODO: Any way to plot how likely points are to be in other clusters?
 # Silhoutte plot??
 ire_clust_plots <- lapply(c(pam, kmeans), \(fun) {
-    plt_clust(pts, fun(dist_mat, 3))
+    plt_clust_map(pts, fun(dist_mat, 3))
 })
+
+pam_clust2 <- kl_sim_eval(
+  dependence, kl_prob = 0.9, k = 2, dist_mat = dist_mat
+)
+plt_clust_map(pts, areas, pam_clust2)
 
 # cluster adjacent sites only
 #dist_mats_adj <- lapply(dist_mats, \(x) {
@@ -162,7 +170,7 @@ scree_plot(dist_mat_adj)
 scree_plot(dist_mat_adj, fun = kmeans)
 
 ire_clust_adj_plots <- lapply(c(pam, kmeans), \(fun) {
-    plt_clust(pts, fun(dist_mat_adj, 3))
+    plt_clust_map(pts, fun(dist_mat_adj, 3))
 })
 
 

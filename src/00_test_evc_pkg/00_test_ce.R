@@ -8,8 +8,6 @@ library(dplyr)
 # library(evc)
 devtools::load_all("../evc")
 
-# source("src/01_irish_ce/functions.R")
-
 #### Load Data ####
 
 data_mix <- readRDS("data/sim_dat_3_clust.RDS")

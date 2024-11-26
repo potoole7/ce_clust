@@ -11,7 +11,6 @@ library(evgam)
 devtools::load_all("texmex")
 
 source("src/functions.R")
-source("src/01_irish_ce/functions.R")
 
 theme <- theme_bw() +
   theme(

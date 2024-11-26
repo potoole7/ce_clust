@@ -11,7 +11,6 @@ library(lcmix)
 
 # source functions
 source("src/functions.R")
-source("src/01_irish_ce/functions.R")
 
 
 # Want to create a mixture of Gamma distributions and t-copula

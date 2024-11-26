@@ -16,7 +16,6 @@ library(parallel)
 
 # source functions
 source("src/functions.R")
-source("src/01_irish_ce/functions.R")
 
 theme <- theme_bw() +
   theme(

@@ -50,6 +50,7 @@ sf::sf_use_s2(FALSE)
 #### Load Data ####
 
 # load original dataset
+# TODO: Look at dist2coast and elevation for different clusters from this
 data <- readr::read_csv("data/met_eireann/final/met_eir_preprocess.csv.gz")
 # find rough mean and variance of bulk rain and wind data across Ireland
 data %>% 
@@ -120,9 +121,9 @@ sil_boxplot(dist_mat, k = 2:6) # looks like k = 2 is best!
 # plot PAM clustering solution (for k = 2 and k = 3)
 # TODO: Fix showing cluster centroid
 pam_clust2 <- js_clust(dependence, k = 2, dist_mat = dist_mat)
-plt_clust_map(pts, areas, pam_clust2[[1]])
+plt_clust_map(pts, areas, pam_clust2)
 pam_clust3 <- js_clust(dependence, k = 3, dist_mat = dist_mat)
-plt_clust_map(pts, areas, pam_clust3[[1]])
+plt_clust_map(pts, areas, pam_clust3)
 
 # look at individual silhouettes
 plot(silhouette(pam_clust2[[1]]))
@@ -152,11 +153,11 @@ sil_boxplot(dist_mat_adj, k = 2:10)$plot +
 # suggests k = 6! Valid to use for adjacent distance matrix?
 
 pam_clust_adj2 <- js_clust(dependence, k = 2, dist_mat = dist_mat_adj)
-plt_clust_map(pts, areas, pam_clust_adj2[[1]])
+plt_clust_map(pts, areas, pam_clust_adj2)
 pam_clust_adj3 <- js_clust(dependence, k = 3, dist_mat = dist_mat_adj)
-plt_clust_map(pts, areas, pam_clust_adj3[[1]])
+plt_clust_map(pts, areas, pam_clust_adj3)
 pam_clust_adj7 <- js_clust(dependence, k = 7, dist_mat = dist_mat_adj)
-plt_clust_map(pts, areas, pam_clust_adj7[[1]])
+plt_clust_map(pts, areas, pam_clust_adj7)
 
 sil_adj <- silhouette(pam_clust_adj2[[1]])
 plot(sil_adj)

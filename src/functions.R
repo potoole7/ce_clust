@@ -1,3 +1,31 @@
+#### Sensitivity analysis ####
+
+# TODO: Add shared plotting functions
+
+# function to calculate confidence interval for sensitivity analysis results
+summarise_sens_res <- \(results_grid, conf_level = 0.95) {
+  # z-score corresponding to confidence level
+  z <- qnorm((1 + conf_level) / 2)
+  
+  results_grid %>% 
+    # remove any previous summaries as they mess up grouping
+    dplyr::select(-(ends_with("_rand") & !matches("adj_rand"))) %>% 
+    relocate(adj_rand, .after = everything()) %>% # ensure is last col
+    group_by(across(1:last_col(1))) %>% 
+    summarise(
+      mean_rand  = mean(adj_rand, na.rm = TRUE), 
+      # (z score corresponding to confidence level) * standard error
+      marg_rand  = z * (sd(adj_rand, na.rm = TRUE) / sqrt(n())),
+      # CIs
+      lower_rand = mean_rand - marg_rand,
+      upper_rand = mean_rand + marg_rand,
+      .groups    = "drop"
+    ) %>% 
+    dplyr::select(-marg_rand) %>%  # not required for plotting
+    return()
+}
+
+
 #### Simulation functions ####
 
 # Function to generate copula data

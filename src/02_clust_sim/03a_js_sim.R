@@ -60,7 +60,6 @@ dependence <- fit_ce(
 # check that all dependence models have run successfully
 sapply(dependence, \(x) lapply(x, length))
 
-
 #### Calculate divergence upon which to cluster ####
 
 # Perform PAM and k-means clustering, as an exploratory analysis

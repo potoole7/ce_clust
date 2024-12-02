@@ -54,9 +54,9 @@ sim_cop_dat <- \(
     if (i > floor(n_locs / 2)) {
       cor <- cor_gauss[[2]]
     }
-    cop_norm <- normalCopula(cor, dim = 2, dispstr = "un")
+    cop_norm <- copula::normalCopula(cor, dim = 2, dispstr = "un")
     # cop_norm <- normalCopula(cor_mat, dim = 2, dispstr = "un")
-    u <- rCopula(n, cop_norm)
+    u <- copula::rCopula(n, cop_norm)
     # return(qnorm(u, mean = mu, sd = sigma))
     evd::qgpd(
       p     = u,
@@ -76,7 +76,7 @@ sim_cop_dat <- \(
       df <- df_t[[2]]
     }
     cop_t <- copula::tCopula(cor, dim = 2, df = df_t[[2]], dispstr = "un")
-    u <- rCopula(n, cop_t)
+    u <- copula::rCopula(n, cop_t)
     return(evd::qgpd(
       p     = u,
       # loc   = max(gauss_cop[[i]]), 

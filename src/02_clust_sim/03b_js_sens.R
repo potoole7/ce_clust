@@ -17,18 +17,6 @@ library(parallel)
 # source functions
 source("src/functions.R")
 
-theme <- theme_bw() +
-  theme(
-    legend.position = "bottom",
-    plot.title = element_text(size = 16, hjust = 0.5),
-    axis.text = element_text(size = 12),
-    axis.title = element_text(size = 14, face = "bold"),
-    legend.text = element_text(size = 12),
-    strip.text = element_text(size = 13, face = "bold"),
-    strip.background = element_rect(fill = NA, colour = "black"),
-    plot.tag = element_text(size = 16, face = "bold"),
-    panel.background = element_rect(fill = NA, colour = "black")
-  )
 
 
 #### Metadata ####
@@ -44,6 +32,7 @@ scale_gpd <- 1
 shape_gpd <- -0.05
 marg_prob <- 0.9
 kl_prob <- 0.9
+conf_level <- 0.95 # confidence level for CIs in plot
 
 # Number of cores to use for parallel computation
 n_cores <- detectCores() - 1 
@@ -81,6 +70,7 @@ grid <- tidyr::crossing(
 
 # run kl_sim_eval for each row in grid
 n_times <- 100
+results_vec <- vector(length = n_times)
 set.seed(seed_number)
 # results_grid <- bind_rows(lapply(seq_len(nrow(grid)), \(i) {
 results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
@@ -92,7 +82,6 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
   ))
   
   row <- grid[i, , drop = FALSE]
-  results_vec <- vector(length = n_times)
   for (j in seq_len(n_times)) {
     # generate simulation data for given parameter set
     data_mix <- with(row, sim_cop_dat(
@@ -104,7 +93,7 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
       mix_p      = c(0.5, 0.5)
     ))$data_mix
     
-    js_clust <- tryCatch({
+    clust_res <- tryCatch({
       # if an error is produced, return a dummy list
       dependence <- fit_ce(
         data_mix, 
@@ -116,7 +105,7 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
     }, error = function(cond) {
       return(list("adj_rand" = NA))
     })
-    results_vec[[j]] <- js_clust$adj_rand
+    results_vec[[j]] <- clust_res$adj_rand
   }
   
   # return(cbind(
@@ -130,13 +119,29 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
 # }))
 }, mc.cores = n_cores))
 
-# calculate means and add to results
-results_grid_mean <- results_grid %>% 
-  group_by(across(1:last_col(1))) %>% 
-  summarise(mean_rand = mean(adj_rand, na.rm = TRUE), .groups = "drop")
+# remove NAs, give warning
+nas <- is.na(results_grid$adj_rand)
+if (sum(nas) > 0) {
+  message(paste0("Warning: ", sum(nas), " NAs in results, removing"))
+  results_grid <- results_grid[!nas, ]
+}
 
+# Summarise results to add confidence levels to plot
+results_grid_sum <- summarise_sens_res(results_grid, conf_level = conf_level)
+# tally rand index occurrences for given parameter set
+results_grid_tally <- results_grid %>% 
+  # round so you don't have lots of similar values
+  # mutate(adj_rand_rnd = round(adj_rand, 2)) %>% 
+  # group_by(across(!contains("_rand")), adj_rand_rnd) %>% 
+  group_by(across(!contains("_rand")), adj_rand) %>% 
+  tally(name = "n_rand") %>% 
+  ungroup()
+# add both to results
 results_grid <- results_grid %>% 
-  left_join(results_grid_mean)
+  # for repeated joining
+  dplyr::select(-(ends_with("_rand") & !matches("adj_rand"))) %>% 
+  left_join(results_grid_sum) %>% 
+  left_join(results_grid_tally)
 
 # save 
 # TODO: Change to csv file!
@@ -145,36 +150,76 @@ saveRDS(
   file = paste0("data/js_grid_search_res_dqu_", kl_prob, ".RDS")
   # file = paste0("data/js_grid_search_res_dqu_", kl_prob, "_marg_0.9.RDS")
 )
-results_grid <- readRDS(
-  paste0("data/js_grid_search_res_dqu_", kl_prob, ".RDS")
-  # paste0("data/js_grid_search_res_dqu_", kl_prob, "_marg_0.9.RDS")
-)
+# # load data and redo results_grid_sum and results_grid_tally
+# # May be floating point error in some parameter values due to loading from RDS!
+# results_grid <- readRDS(
+#   paste0("data/js_grid_search_res_dqu_", kl_prob, ".RDS")
+#   # paste0("data/js_grid_search_res_dqu_", kl_prob, "_marg_0.9.RDS")
+# )
+# results_grid_sum <- summarise_sens_res(results_grid, conf_level = conf_level)
+# results_grid_tally <- results_grid %>%
+#   group_by(across(!contains("_rand")), adj_rand) %>%
+#   tally(name = "n_rand")
 
 
 #### Plot ####
+# remove unlikely scenario of having perfect t-copula correlation
+res_grid_sum_plt <- filter(results_grid_sum, cor_t1 < 1 & cor_t2 < 1)
+# don't want too many dots, round and sum up counts
+res_grid_tally_plt <- results_grid_tally %>% 
+  filter(cor_t1 < 1 & cor_t2 < 1) %>% 
+  mutate(adj_rand = round(adj_rand, 1)) %>% 
+  group_by(across(!contains("_rand")), adj_rand) %>% 
+  summarise(n_rand = sum(n_rand), .groups = "drop")
 
-p1 <- results_grid %>% 
+# p1 <- results_grid %>% 
+p1 <- res_grid_tally_plt %>% 
+  filter(cor_t1 < 1 & cor_t2 < 1) %>%  # corr = 1 isn't realistic
+  # mutate(adj_rand = round(adj_rand, 2)) %>% 
+  # TODO: Temp for fixing plots
+  # filter(cor_t1 == 0.7 & cor_t2 == 0.4) %>% 
   ggplot() + 
+  # geom_point(
+  #   aes(x = cor_gauss1, y = adj_rand), 
+  #   colour = "black", alpha = 0.05, size = 1
+  # ) +   
+  # TODO: Size background points by number of occurrences
+  # TODO: Or maybe do alpha by size?
+  # geom_boxplot(aes(x = factor(cor_gauss1), y = adj_rand)) + 
   geom_point(
-    aes(x = cor_gauss1, y = adj_rand), 
-    colour = "black", alpha = 0.05, size = 0.8
-  ) + 
-  geom_point(
-    aes(x = cor_gauss1, y = mean_rand), 
-    colour = "#BC3C29FF", 
+    aes(x = cor_gauss1, y = adj_rand, size = n_rand, stroke = 1.5), 
+    fill = "white",
+    colour = "black",
+    alpha = 0.4,
+    shape = 21
+  ) +
+  facet_grid(cor_t1 ~ cor_t2) + 
+  scale_y_continuous(breaks = seq(0, 1, by = 0.2))
+
+  # TODO: Add back in 
+  # Confidence intervals around mean line
+  geom_ribbon(
+    data = res_grid_sum_plt, # %>% filter(cor_t1 == 0.3, cor_t2 == 0.6),
+    aes(x = cor_gauss1, ymin = lower_rand, ymax = upper_rand), 
+    fill = "#C11432",
+    alpha = 0.3,
     size = 2
   ) + 
   geom_line(
+    data = res_grid_sum_plt, # %>% filter(cor_t1 == 0.3, cor_t2 == 0.6),
     aes(x = cor_gauss1, y = mean_rand), 
-    colour = "#BC3C29FF", linewidth = 1.2
+    colour = "#C11432",
+    linewidth = 1
   ) + 
-  facet_grid(cor_t1 ~ cor_t2) + 
+  facet_grid(cor_t1 ~ cor_t2) +  
   labs(y = "Adjusted Rand Index", x = "Gaussian corr") + 
-  theme + 
-  theme(axis.text.x = element_text(angle = 45, vjust = 0.5))
+  evc_theme() + 
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.5)) + 
+  ggsci::scale_fill_nejm() + 
+  ggsci::scale_colour_nejm()
+
 p1
 
-# ggsave(plot = p1, "plots/01b_js_sensitivity.png")
 ggsave(
   plot = p1, 
   paste0("plots/01b_js_sensitivity_dqu_", kl_prob, ".png")
@@ -207,7 +252,7 @@ p2 <- results_grid_join %>%
   geom_line(linewidth = 1.2) + 
   facet_grid(cor_t1 ~ cor_t2) + 
   labs(y = "Adjusted Rand Index", x = "Gaussian corr") + 
-  theme + 
+  evc_theme() + 
   theme(axis.text.x = element_text(angle = 45, vjust = 0.5)) + 
   ggsci::scale_colour_nejm()
 p2

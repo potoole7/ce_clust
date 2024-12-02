@@ -46,7 +46,7 @@ marg_prob <- 0.9
 kl_prob <- 0.9
 
 # Number of cores to use for parallel computation
-n_cores <- detectCores() - 1 
+n_cores <- detectCores() - 2
 
 #### Grid search ####
 
@@ -54,18 +54,13 @@ n_cores <- detectCores() - 1
 grid <- tidyr::crossing(
   cor_gauss1 = seq(0, 1, by = 0.1),
   cor_gauss2 = seq(0, 1, by = 0.1),
-  # cor_gauss1 = 0.5,
-  # cor_gauss2 = 0.5,
   # t-copula correlation
   # cor_t1    = seq(0.1, 0.9, by = 0.2),
   # cor_t2    = seq(0, 1, by = 0.2),
-  cor_t1 = 0.1,
-  cor_t2 = 0.8,
+  # TODO: More t-copula correlation values???
+  cor_t1 = 0.4,
+  cor_t2 = 0.7,
   # Degrees of freedom for t-copula
-  # df_t1     = c(1, 5, 10),
-  # df_t2     = c(1, 5, 10),
-  # df_t1   = 1,
-  # df_t2   = 1,
   df_t1   = 3,
   df_t2   = 3,
   # mixture percentages (must sum to 1)
@@ -77,7 +72,7 @@ grid <- tidyr::crossing(
   dat_max_mult = 2:5, 
   # n_dat = seq(10, 50, by = 10)
   # n_dat = seq(1, 9, by = 2)
-  n_dat = 2,
+  n_dat = c(1:5, 10, 20, 30)
   # n_dat <- c(seq(1, 9, by = 1), seq(10, 50, by = 10))
 ) %>% 
   filter(
@@ -88,6 +83,7 @@ grid <- tidyr::crossing(
   )
 
 n_times <- 100
+results_vec <- vector(length = n_times)
 set.seed(seed_number)
 # results_grid <- bind_rows(lapply(seq_len(nrow(grid)), \(i) {
 results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
@@ -99,7 +95,6 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
   ))
   
   row <- grid[i, , drop = FALSE]
-  results_vec <- vector(length = n_times)
   for (j in seq_len(n_times)) {
     # generate simulation data for given parameter set
     data_mix <- with(row, sim_cop_dat(
@@ -111,7 +106,7 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
       mix_p      = c(0.5, 0.5)
     ))$data_mix
     
-    js_clust <- tryCatch({
+    clust_res <- tryCatch({
       # if an error is produced, return a dummy list
       dependence <- fit_ce(
         data_mix, 
@@ -129,7 +124,7 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
     }, error = function(cond) {
       return(list("adj_rand" = NA))
     })
-    results_vec[[j]] <- js_clust$adj_rand
+    results_vec[[j]] <- clust_res$adj_rand
   }
   
   # return(cbind(
@@ -155,9 +150,8 @@ results_grid <- results_grid %>%
 # results_grid <- rbind(results_grid2, results_grid)
 
 # save 
-# TODO: Change to csv file!
-# saveRDS(results_grid, file = "data/js_grid_search_n_points.RDS")
-results_grid <- readRDS(file = "data/js_grid_search_n_points.RDS")
+saveRDS(results_grid, file = "data/js_grid_search_n_points.RDS")
+# results_grid <- readRDS(file = "data/js_grid_search_n_points.RDS")
 
 
 #### Plot ####
@@ -223,6 +217,7 @@ p3 <- results_grid %>%
   ) + 
   theme + 
   theme(axis.text.x = element_text(angle = 45, vjust = 0.5))
+p3
 
 p4 <- results_grid %>% 
   filter(n_dat %in% 1:10) %>% 

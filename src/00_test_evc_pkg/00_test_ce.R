@@ -24,6 +24,7 @@ kl_sim_eval(
 
 #### Fit CE model and cluster ####
 
+# TODO: Split here!
 dependence <- fit_ce(
   data_mix, 
   # marg_prob   = 0.9,
@@ -32,8 +33,7 @@ dependence <- fit_ce(
     tau    = .95, 
     jitter = TRUE
   ),
-  cond_prob   = 0.9,
-  split_data  = TRUE 
+  cond_prob   = 0.9
 )
 
 js_clust(

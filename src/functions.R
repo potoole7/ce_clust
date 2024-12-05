@@ -32,32 +32,45 @@ summarise_sens_res <- \(results_grid, conf_level = 0.95) {
 # TODO: Extend to simulate more than two variables
 # TODO: Extend to simulate more than two clusters
 sim_cop_dat <- \(
-  n_locs = 12,     # number of locations
-  n_vars = 2,      # number of variables at each location
-  n      = 1e4,    # number of simulations for each variable
-  cor_gauss,       # bulk correlation for two clusters from Gaussian copula
-  # params_norm,     # normal marginal parameters (same for both)
-  cor_t,           # extreme correlation for two clusters from t-copula
-  df_t,            # degrees of freedom for t-copula
-  params_gpd,      # GPD margin parameters
-  mix_p            # mixture weights
+  n_locs  = 12,        # number of locations
+  n_vars  = 2,         # number of variables at each location
+  n       = 1e4,       # number of simulations for each variable
+  n_clust = 2,         # number of clusters
+  cor_gauss,           # bulk correlation for n_clust clusters from Gaussian copula
+  # params_norm,         # normal marginal parameters (same for both)
+  cor_t,               # extreme correlation for n_clust clusters from t-copula
+  df_t,                # degrees of freedom for t-copula
+  params_gpd,          # GPD margin parameters
+  mix_p,               # mixture weights
+  perturb_cor = FALSE, # perturb correlation for each location within clusters
+  perturb_val = 0.05   # value to perturb by if desired
 ) {
-  # many arguments must be of length 2 for 2 clusters
-  # TODO: Change when extending to > 2 clusters (lengths must be equal)
+  # many arguments must be of length n_clust
   stopifnot(all(vapply(
-    list(cor_gauss, cor_t, df_t, params_gpd, mix_p), 
-    \(x) length(x) == 2, logical(1)
+    # list(cor_gauss, cor_t, df_t, params_gpd, mix_p), 
+    list(cor_gauss, cor_t, df_t), 
+    \(x) length(x) == n_clust, logical(1)
   )))
   stopifnot(sum(mix_p) == 1)
   
   # Simulate from Gaussian Copula with GPD margins
   gauss_cop <- lapply(seq_len(n_locs), \(i){
     # pull correlation specified for each cluster
-    cor <- cor_gauss[[1]]
-    # TODO: Change when number of clusters > 2
-    if (i > floor(n_locs / 2)) {
-      cor <- cor_gauss[[2]]
-    }
+    # cor <- cor_gauss[[1]]
+    # # TODO: Change when number of clusters > 2
+    # if (i > floor(n_locs / n_clust)) {
+    #   cor <- cor_gauss[[2]]
+    # }
+    group <- ceiling(i / (n_locs / n_clust))
+    # Assign the corresponding value to the result
+    cor <- cor_gauss[group]
+    
+    # optionally perturb correlation for each location within clusters
+    # if (perturb_cor) {
+    #   cor <- cor + runif(1, -perturb_val, perturb_val)
+    #   cor <- pmax(pmin(cor, 1), 0) # ensure within [0, 1]
+    # }
+    
     # set correlation matrix/vector with correct dimensions
     cor <- rep(cor, n_vars * (n_vars - 1) / 2)
     
@@ -78,15 +91,24 @@ sim_cop_dat <- \(
   # simulate from t-Copula with GPD margins
   # TODO: Functinoalise repeated behaviour here from above?
   t_cop <- lapply(seq_len(n_locs), \(i) {
-    cor <- cor_t[[1]]
-    df <- df_t[[1]]
-    if (i > floor(n_locs / 2)) {
-      cor <- cor_t[[2]]
-      df <- df_t[[2]]
+    # cor <- cor_t[[1]]
+    # df <- df_t[[1]]
+    # if (i > floor(n_locs / 2)) {
+    #   cor <- cor_t[[2]]
+    #   df <- df_t[[2]]
+    # }
+    group <- ceiling(i / (n_locs / n_clust))
+    # Assign the corresponding value to the result
+    cor <- cor_t[group]
+    df  <- df_t[group]
+    
+    # optionally perturb correlation for each location within clusters
+    if (perturb_cor) {
+      cor <- cor + runif(1, -perturb_val, perturb_val)
+      cor <- pmax(pmin(cor, 1), 0) # ensure within [0, 1]
     }
-    if (n_vars > 2) {
-      cor <- rep(cor, n_vars * (n_vars - 1) / 2)
-    }
+    
+    cor <- rep(cor, n_vars * (n_vars - 1) / 2)
     # cop_t <- copula::tCopula(cor, dim = 2, df = df, dispstr = "un")
     cop_t <- copula::tCopula(cor, dim = n_vars, df = df, dispstr = "un")
     u <- copula::rCopula(n, cop_t)

@@ -1,5 +1,7 @@
 #### Simulation sensitivity analysis of Jensen-Shannon divergence method ####
 
+# Testing for different # data points and multiples of maximum threshold values
+
 #### libs ####
 
 library(dplyr, quietly = TRUE)
@@ -44,6 +46,7 @@ scale_gpd <- 1
 shape_gpd <- -0.05
 marg_prob <- 0.9
 kl_prob <- 0.9
+conf_level <- 0.95 # confidence level for CIs
 
 # Number of cores to use for parallel computation
 n_cores <- detectCores() - 2
@@ -111,8 +114,7 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
       dependence <- fit_ce(
         data_mix, 
         marg_prob   = marg_prob,
-        cond_prob   = row$kl_prob,
-        split_data  = FALSE
+        cond_prob   = row$kl_prob
       )
       js_clust(
         dependence, 
@@ -138,107 +140,120 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
 # }))
 }, mc.cores = n_cores))
 
-# calculate means and add to results
-results_grid_mean <- results_grid %>% 
-  group_by(across(1:last_col(1))) %>% 
-  summarise(mean_rand = mean(adj_rand, na.rm = TRUE), .groups = "drop")
-
+# Summarise results to add confidence levels to plot
+results_grid_sum <- summarise_sens_res(results_grid, conf_level = conf_level)
+# tally rand index occurrences for given parameter set
+results_grid_tally <- results_grid %>% 
+  # round so you don't have lots of similar values
+  # mutate(adj_rand_rnd = round(adj_rand, 2)) %>% 
+  # group_by(across(!contains("_rand")), adj_rand_rnd) %>% 
+  group_by(across(!contains("_rand")), adj_rand) %>% 
+  tally(name = "n_rand") %>% 
+  ungroup()
+# add both to results
 results_grid <- results_grid %>% 
-  left_join(results_grid_mean)
-
-# TEMP: 
-# results_grid <- rbind(results_grid2, results_grid)
+  # for repeated joining
+  dplyr::select(-(ends_with("_rand") & !matches("adj_rand"))) %>% 
+  left_join(results_grid_sum) %>% 
+  left_join(results_grid_tally)
 
 # save 
-saveRDS(results_grid, file = "data/js_grid_search_n_points.RDS")
-# results_grid <- readRDS(file = "data/js_grid_search_n_points.RDS")
+# saveRDS(results_grid, file = "data/js_grid_search_n_points.RDS")
+results_grid <- readRDS(file = "data/js_grid_search_n_points.RDS")
+
+
+# remove NAs, give warning
+# TODO: Lots of NAs, investigate!!!!
+nas <- is.na(results_grid$adj_rand)
+if (sum(nas) > 0) {
+  message(paste0("Warning: ", sum(nas), " NAs in results, removing"))
+  results_grid <- results_grid[!nas, ]
+}
 
 
 #### Plot ####
 
+# TODO: Average by dat_max_mult, average by n_dat, plot
 p1 <- results_grid %>% 
+  group_by(cor_gauss1, dat_max_mult) %>% 
+  # summarise(mean_rand = mean(adj_rand, na.rm = TRUE), .groups = "drop") %>% 
+  summarise(
+    across(
+      ends_with("_rand") & !matches("adj_rand"), \(x) mean(x, na.rm = TRUE)
+    ),
+    .groups = "drop"
+  ) %>%
   ggplot() + 
-  geom_point(
-    aes(x = cor_gauss1, y = adj_rand), 
-    colour = "black", alpha = 0.05, size = 0.8
-  ) + 
-  geom_point(
-    aes(x = cor_gauss1, y = mean_rand), 
-    colour = "#BC3C29FF", 
-    size = 2
-  ) + 
+  # geom_point(
+  #   aes(x = cor_gauss1, y = mean_rand, colour = factor(dat_max_mult)), 
+  #   size = 2
+  # ) + 
+  # geom_ribbon(
+  #   aes(x = cor_gauss1, ymin = lower_rand, ymax = upper_rand, fill = factor(dat_max_mult)), 
+  #   alpha = 0.3,
+  #   linewidth = 2
+  # ) + 
   geom_line(
-    aes(x = cor_gauss1, y = mean_rand), 
-    colour = "#BC3C29FF", linewidth = 1.2
+    aes(x = cor_gauss1, y = mean_rand, colour = factor(dat_max_mult)), 
+    linewidth = 1.2, 
+    show.legend = FALSE
   ) + 
-  facet_grid(dat_max_mult ~ n_dat) + 
-  labs(y = "Adjusted Rand Index", x = "Gaussian corr") + 
+  ggsci::scale_colour_nejm() + 
+  labs(
+    y = "Adjusted Rand Index", 
+    x = "Gaussian corr", 
+    fill = "times threshold"
+  ) + 
   theme + 
+  guides(fill = guide_legend(override.aes = list(alpha = 1))) + 
   theme(axis.text.x = element_text(angle = 45, vjust = 0.5))
 p1
 
-p2 <- results_grid %>% 
-  mutate(indicator = paste(dat_max_mult, n_dat)) %>% 
+ggsave(
+  plot = p1, 
+  paste0("plots/01c_js_sens_times_thresh_dqu_", kl_prob, ".png")
+  # paste0("plots/01b_js_sensitivity_dqu_", kl_prob, "_marg_0.9.png")
+)
+
+
+p2 <- results_grid_sum %>% 
+  # filter(n_dat %in% 1:10) %>% 
+  group_by(cor_gauss1, n_dat) %>% 
+  summarise(
+    across(
+      ends_with("_rand") & !matches("adj_rand"), \(x) mean(x, na.rm = TRUE)
+    ),
+    .groups = "drop"
+  ) %>%
   ggplot() + 
-  geom_point(
-    aes(x = cor_gauss1, y = mean_rand, colour = indicator), 
-    size = 2
-  ) + 
+  # geom_point(
+  #   aes(x = cor_gauss1, y = mean_rand, colour = factor(n_dat)), 
+  #   size = 2
+  # ) + 
+  # geom_ribbon(
+  #   aes(x = cor_gauss1, ymin = lower_rand, ymax = upper_rand, fill = factor(n_dat)), 
+  #   alpha = 0.1,
+  #   linewidth = 2,
+  #   show.legend = FALSE
+  # ) +  
   geom_line(
-    aes(x = cor_gauss1, y = mean_rand, colour = indicator), 
-    linewidth = 1.2
+    aes(x = cor_gauss1, y = mean_rand, colour = factor(n_dat)), 
+    linewidth = 1.2, 
+    # show.legend = FALSE
   ) + 
-  # ggsci::scale_colour_nejm() + 
-  # facet_grid(dat_max_mult ~ n_dat) + 
-  labs(y = "Adjusted Rand Index", x = "Gaussian corr") + 
+  ggsci::scale_colour_nejm() + 
+  labs(
+    y = "Adjusted Rand Index", 
+    x = "Gaussian corr", 
+    fill = "# points"
+  ) + 
   theme + 
+  guides(fill = guide_legend(override.aes = list(alpha = 1))) + 
   theme(axis.text.x = element_text(angle = 45, vjust = 0.5))
 p2
 
-# TODO: Average by dat_max_mult, average by n_dat, plot
-p3 <- results_grid %>% 
-  group_by(cor_gauss1, dat_max_mult) %>% 
-  summarise(mean_rand = mean(adj_rand, na.rm = TRUE), .groups = "drop") %>% 
-  ggplot() + 
-  geom_point(
-    aes(x = cor_gauss1, y = mean_rand, colour = factor(dat_max_mult)), 
-    size = 2
-  ) + 
-  geom_line(
-    aes(x = cor_gauss1, y = mean_rand, colour = factor(dat_max_mult)), 
-    linewidth = 1.2, 
-    show.legend = FALSE
-  ) + 
-  ggsci::scale_colour_nejm() + 
-  labs(
-    y = "Adjusted Rand Index", 
-    x = "Gaussian corr", 
-    colour = "times threshold"
-  ) + 
-  theme + 
-  theme(axis.text.x = element_text(angle = 45, vjust = 0.5))
-p3
-
-p4 <- results_grid %>% 
-  filter(n_dat %in% 1:10) %>% 
-  group_by(cor_gauss1, n_dat) %>% 
-  summarise(mean_rand = mean(adj_rand, na.rm = TRUE), .groups = "drop") %>% 
-  ggplot() + 
-  geom_point(
-    aes(x = cor_gauss1, y = mean_rand, colour = factor(n_dat)), 
-    size = 2
-  ) + 
-  geom_line(
-    aes(x = cor_gauss1, y = mean_rand, colour = factor(n_dat)), 
-    linewidth = 1.2, 
-    show.legend = FALSE
-  ) + 
-  ggsci::scale_colour_nejm() + 
-  labs(
-    y = "Adjusted Rand Index", 
-    x = "Gaussian corr", 
-    colour = "# points"
-  ) + 
-  theme + 
-  theme(axis.text.x = element_text(angle = 45, vjust = 0.5))
-p4
+ggsave(
+  plot = p2, 
+  paste0("plots/01d_js_sens_n_dat_dqu_", kl_prob, ".png")
+  # paste0("plots/01b_js_sensitivity_dqu_", kl_prob, "_marg_0.9.png")
+)

@@ -1,5 +1,7 @@
 #### Apply Jensen-Shannon Divergence method to simulated data ####
 
+# Original analysis on only 2 vars, see `03d_js_test_sens_mult_var` for > 2
+
 #### Libs ####
 
 library(dplyr, quietly = TRUE)
@@ -50,11 +52,12 @@ data_df <- bind_rows(lapply(seq_along(data_mix), \(i) {
 #### Calculate Conditional Extremes parameters ####
 
 dependence <- fit_ce(
-  data_df, 
+  # data_mix, 
+  data_df,
   marg_prob   = prob, 
   cond_prob   = prob, 
-  split_data  = TRUE, 
-  fit_no_keef = TRUE
+  fit_no_keef = TRUE, 
+  ncores      = parallel::detectCores() - 1
 )
 
 # check that all dependence models have run successfully
@@ -65,7 +68,12 @@ sapply(dependence, \(x) lapply(x, length))
 # Perform PAM and k-means clustering, as an exploratory analysis
 
 # first, elbow plot
-js_mat <- js_clust(dependence)$dist_mat # suggests k = 3
+devtools::load_all("../evc")
+# debugonce(js_clust)
+# debugonce(js_div)
+js_mat <- js_clust(dependence, ncores = 7)$dist_mat # suggests k = 3
+# TODO: Investigate why k = 2 suggested here!!
+sil_boxplot(js_mat, k = 2:6)$plot 
 
 # cluster and assess performance
 js_clust(dependence, k = 3, dist_mat = js_mat, cluster_mem = cluster_mem)

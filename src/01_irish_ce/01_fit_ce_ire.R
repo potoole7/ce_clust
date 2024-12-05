@@ -314,7 +314,6 @@ mod_fit <- fit_ce(
   cond_prob = 0.7, # dqu
   # formula for evgam fit to excesses over threshold
   f = list(excess ~ s(lon, lat, k = 40), ~s(lon, lat, k = 40)), 
-  split_data = FALSE, 
   fit_no_keef = FALSE, # don't fit without Keef constraints
   output_all = TRUE
 )

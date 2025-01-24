@@ -51,56 +51,114 @@ summarise_sens_res <- \(results_grid, conf_level = 0.95) {
 }
 
 
+#### Plotting functions ####
+
+# plot clustering vs dist2coast and altitude
+covar_plt <- \(pts, clust_obj, data_full, areas) {
+  plt_dat <- pts %>% 
+    st_drop_geometry() %>%
+    mutate(clust = clust_obj$clustering) %>% 
+    left_join(
+      data_full %>% 
+        # average wind direction across locations
+        group_by(name) %>% 
+        mutate(
+          wind_dir = as.numeric(mean(circular(
+            wind_dir, type = "angles", units = "degrees", modulo = "2pi"
+          )))
+        ) %>% 
+        ungroup() %>% 
+        select(name, dist2coast, wind_dir, alt) %>% 
+        distinct()
+    ) %>% 
+    # pivot_longer(dist2coast:alt, names_to = "var", values_to = "value") %>% 
+    identity()
+  
+  # histogram of different variables for different clusters
+  # TODO: add uncertainty bounds based on variability
+  p1 <- plt_dat %>% 
+    group_by(clust) %>%
+    # summarise(value = mean(value), .groups = "drop") %>%
+    summarise(
+      across(c("dist2coast", "alt"), mean),
+      wind_dir = as.numeric(mean(circular(
+        wind_dir, type = "angles", units = "degrees", modulo = "2pi"
+      ))),
+      .groups = "drop"
+    ) %>% 
+    pivot_longer(dist2coast:wind_dir, names_to = "var", values_to = "value") %>% 
+    ggplot() +
+    geom_bar(
+      aes(x = factor(clust), y = value, fill = factor(clust)),
+      stat = "identity"
+    ) +
+    facet_wrap(~ var, scales = "free") + 
+    labs(x = "Cluster", fill = "Cluster") + 
+    ggsci::scale_fill_nejm() + 
+    evc_theme()
+  
+  # plot density of different variables for both clusters
+  p2 <- plt_dat %>% 
+    pivot_longer(dist2coast:alt, names_to = "var", values_to = "value") %>% 
+    ggplot() + 
+    geom_density(
+      aes(x = value, fill = factor(clust)), 
+      alpha = 0.5
+    ) +
+    facet_wrap(~ var, scales = "free") + 
+    evc_theme() + 
+    labs(fill = "Cluster") + 
+    guides(fill = guide_legend(override.aes = list(alpha = 1))) + 
+    ggsci::scale_fill_nejm()
+  
+  return(list("hist" = p1, "density" = p2)) 
+}
+
+
 #### Simulation functions ####
 
 # Function to generate copula data
 # TODO: Extend to simulate more than two variables
 # TODO: Extend to simulate more than two clusters
 sim_cop_dat <- \(
-  n_locs  = 12,        # number of locations
-  n_vars  = 2,         # number of variables at each location
-  n       = 1e4,       # number of simulations for each variable
-  n_clust = 2,         # number of clusters
+  n_locs      = 12,    # number of locations
+  n_vars      = 2,     # number of variables at each location
+  n           = 1e4,   # number of simulations for each variable
+  n_clust     = 2,     # number of clusters
+  cluster_mem = NULL,  # desired membership, if NULL then evenly split
   cor_gauss,           # bulk correlation for n_clust clusters from Gaussian copula
   # params_norm,         # normal marginal parameters (same for both)
   cor_t,               # extreme correlation for n_clust clusters from t-copula
   df_t,                # degrees of freedom for t-copula
   params_gpd,          # GPD margin parameters
-  mix_p,               # mixture weights
+  mix_p = c(0.5, 0.5), # mixture weights
   perturb_cor = FALSE, # perturb correlation for each location within clusters
   perturb_val = 0.05   # value to perturb by if desired
 ) {
   # many arguments must be of length n_clust
-  stopifnot(all(vapply(
-    # list(cor_gauss, cor_t, df_t, params_gpd, mix_p), 
-    list(cor_gauss, cor_t, df_t), 
-    \(x) length(x) == n_clust, logical(1)
-  )))
-  stopifnot(sum(mix_p) == 1)
+  # stopifnot(all(vapply(
+  #   # list(cor_gauss, cor_t, df_t, params_gpd, mix_p), 
+  #   list(cor_gauss, cor_t, df_t), 
+  #   \(x) length(x) == n_clust, logical(1)
+  # )))
+  # stopifnot(sum(mix_p) == 1)
   
   # Simulate from Gaussian Copula with GPD margins
   gauss_cop <- lapply(seq_len(n_locs), \(i){
     # pull correlation specified for each cluster
-    # cor <- cor_gauss[[1]]
-    # # TODO: Change when number of clusters > 2
-    # if (i > floor(n_locs / n_clust)) {
-    #   cor <- cor_gauss[[2]]
-    # }
-    group <- ceiling(i / (n_locs / n_clust))
+    # if membership unspecified, assign equal membership to each cluster
+    if (is.null(cluster_mem)) {
+      group <- ceiling(i / (n_locs / n_clust))
+    } else {
+      group <- cluster_mem[i]
+    }
     # Assign the corresponding value to the result
     cor <- cor_gauss[group]
-    
-    # optionally perturb correlation for each location within clusters
-    # if (perturb_cor) {
-    #   cor <- cor + runif(1, -perturb_val, perturb_val)
-    #   cor <- pmax(pmin(cor, 1), 0) # ensure within [0, 1]
-    # }
     
     # set correlation matrix/vector with correct dimensions
     cor <- rep(cor, n_vars * (n_vars - 1) / 2)
     
     # create (Gaussian) copula object
-    # cop_norm <- copula::normalCopula(cor, dim = n_vars, dispstr = "un")
     cop_norm <- copula::normalCopula(cor, dim = n_vars, dispstr = "un")
     # simulate uniform draws from copula
     u <- copula::rCopula(n, cop_norm)
@@ -108,21 +166,19 @@ sim_cop_dat <- \(
     evd::qgpd(
       p     = u,
       loc   = 0,
-      scale = scale_gpd, 
-      shape = shape_gpd
+      scale = params_gpd[1], 
+      shape = params_gpd[2] 
     )
   })
   
   # simulate from t-Copula with GPD margins
   # TODO: Functinoalise repeated behaviour here from above?
   t_cop <- lapply(seq_len(n_locs), \(i) {
-    # cor <- cor_t[[1]]
-    # df <- df_t[[1]]
-    # if (i > floor(n_locs / 2)) {
-    #   cor <- cor_t[[2]]
-    #   df <- df_t[[2]]
-    # }
-    group <- ceiling(i / (n_locs / n_clust))
+    if (is.null(cluster_mem)) {
+      group <- ceiling(i / (n_locs / n_clust))
+    } else {
+      group <- cluster_mem[i]
+    }
     # Assign the corresponding value to the result
     cor <- cor_t[group]
     df  <- df_t[group]
@@ -134,14 +190,13 @@ sim_cop_dat <- \(
     }
     
     cor <- rep(cor, n_vars * (n_vars - 1) / 2)
-    # cop_t <- copula::tCopula(cor, dim = 2, df = df, dispstr = "un")
     cop_t <- copula::tCopula(cor, dim = n_vars, df = df, dispstr = "un")
     u <- copula::rCopula(n, cop_t)
     return(evd::qgpd(
       p     = u,
       loc   = 0,
-      scale = scale_gpd, 
-      shape = shape_gpd
+      scale = params_gpd[1], 
+      shape = params_gpd[2] 
     ))
   })
   

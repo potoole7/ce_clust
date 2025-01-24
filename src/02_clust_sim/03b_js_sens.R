@@ -1,6 +1,7 @@
 #### Simulation sensitivity analysis of Jensen-Shannon divergence method ####
 
 # Original analysis on only 2 vars, see `03d_js_test_sens_mult_var` for > 2
+# Results are compared to Vignotto, which is useful
 
 #### libs ####
 
@@ -71,10 +72,12 @@ grid <- tidyr::crossing(
   )
 
 # run kl_sim_eval for each row in grid
-n_times <- 100
-results_vec <- vector(length = n_times)
+# n_times <- 100
+n_times <- 10
+results_vec <- lri_vec <- lri_mean_vec <- vector(length = n_times)
 set.seed(seed_number)
 # results_grid <- bind_rows(lapply(seq_len(nrow(grid)), \(i) {
+grid <- grid[c(1:50), ]
 results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
   
   print(paste0("Progress: ", round(i / nrow(grid), 3) * 100, "%"))
@@ -100,24 +103,32 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
       dependence <- fit_ce(
         data_mix, 
         marg_prob   = marg_prob,
-        cond_prob   = row$kl_prob
+        cond_prob   = row$kl_prob,
+        fit_no_keef = TRUE
       )
       js_clust(dependence, k = 2, cluster_mem = cluster_mem)
     }, error = function(cond) {
       return(list("adj_rand" = NA))
     })
     results_vec[[j]] <- clust_res$adj_rand
+    
+    # also calculate local rand index
+    lri <- local_rand_index(kl_clust$pam$clustering, cluster_mem)
+    # concatonate to string to store in vector
+    lri_vec[[j]] <- paste0(lri, collapse = "-")
+    # also average by cluster
+    lri_mean_vec[[j]] <- paste0(vapply(unique(cluster_mem), \(x) {
+      mean(lri[cluster_mem == x])
+    }, numeric(1)), collapse = "-")
   }
   
-  # return(cbind(
-  #   row,
-  #   data.frame(
-  #     "adj_rand" = kl_clust$adj_rand, 
-  #     "membership" = paste0(kl_clust$pam$clustering, collapse = "-")
-  #   )
-  # ))
-  return(cbind(row, "adj_rand" = results_vec))
-# }))
+  # return(cbind(row, "adj_rand" = results_vec))
+  return(cbind(
+    row, 
+    "adj_rand"        = results_vec, 
+    "local_rand"      = lri_vec,
+    "mean_local_rand" = lri_mean_vec 
+  ))
 }, mc.cores = n_cores))
 
 # remove NAs, give warning

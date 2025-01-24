@@ -116,6 +116,7 @@ grid <- tidyr::crossing(
 # run kl_sim_eval for each row in grid
 # TODO: Functionalise as used in other scripts
 n_times <- 100
+results_vec <- lri_vec <- lri_mean_vec <- vector(length = n_times)
 set.seed(seed_number)
 # results_grid <- bind_rows(lapply(seq_len(nrow(grid)), \(i) {
 # results_grid <- bind_rows(mclapply(1:3, \(i) { # test
@@ -128,7 +129,6 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
   ))
   
   row <- grid[i, , drop = FALSE]
-  results_vec <- vector(length = n_times)
   for (j in seq_len(n_times)) {
     data_mix <- with(row, sim_cop_dat(
       n          = 1e3,
@@ -148,16 +148,24 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
       return(list("adj_rand" = NA))
     })
     results_vec[[j]] <- kl_clust$adj_rand
+    
+    # also calculate local rand index
+    lri <- local_rand_index(kl_clust$pam$clustering, cluster_mem)
+    # concatonate to string to store in vector
+    lri_vec[[j]] <- paste0(lri, collapse = "-")
+    # also average by cluster
+    lri_mean_vec[[j]] <- paste0(vapply(unique(cluster_mem), \(x) {
+      mean(lri[cluster_mem == x])
+    }, numeric(1)), collapse = "-")
   }
   
-  # return(cbind(
-  #   row,
-  #   data.frame(
-  #     "adj_rand" = kl_clust$adj_rand, 
-  #     "membership" = paste0(kl_clust$pam$clustering, collapse = "-")
-  #   )
-  # ))
-  return(cbind(row, "adj_rand" = results_vec))
+  # return(cbind(row, "adj_rand" = results_vec))
+  return(cbind(
+    row, 
+    "adj_rand"        = results_vec, 
+    "local_rand"      = lri_vec,
+    "mean_local_rand" = lir_mean_vec 
+  ))
 # })
 }, mc.cores = n_cores))
 

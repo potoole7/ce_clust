@@ -24,8 +24,13 @@ source("src/functions.R")
 
 seed_number <- 123
 n <- 1e3 # number of samples to take
-n_locs <- 12 # number of "locations"
-cluster_mem <- sort(rep(1:2, n_locs / 2)) # two clusters for half of locations each
+# n_locs <- 12 # number of "locations"
+n_locs <- 60 # number of "locations" (needs got be higher for more clusters)
+# n_clust <- 2
+# n_clust <- 5
+n_clust <- 11
+# cluster_mem <- sort(rep(1:2, n_locs / 2)) # two clusters for half of locations each
+cluster_mem <- ceiling(1:60 / (n_locs / n_clust))
 n_vars <- 2 # number of variables per location
 mix_p <- c("gauss_cop" = 0.5, "t_cop" = 0.5) # mixture percentages
 # GPD parameters
@@ -41,72 +46,70 @@ n_cores <- detectCores() - 1
 
 #### Grid search ####
 
-# create grid 
-grid <- tidyr::crossing(
-  # Don't need all cor_vals for both (i.e. (0.3, 0.8) is the same as (0.8, 0.3)
-  cor_gauss1 = seq(0, 1, by = 0.1),
-  cor_gauss2 = seq(0, 1, by = 0.1),
-  # cor_gauss1 = 0.1,
-  # cor_gauss2 = 0.1,
-  # t-copula correlation
-  cor_t1    = seq(0.1, 0.9, by = 0.2),
-  cor_t2    = seq(0, 1, by = 0.2),
-  # Degrees of freedom for t-copula
-  # df_t1     = c(1, 5, 10),
-  # df_t2     = c(1, 5, 10),
-  df_t1   = 3,
-  df_t2   = 3,
-  # mixture percentages (must sum to 1)
-  mix_p1  = 0.5,
-  mix_p2  = 0.5,
-  # extremal quantiles
-  # kl_prob = c(0.9, 0.95, 0.99)
-  kl_prob = kl_prob
-) %>% 
-  filter(
-    # use same correlation in both clusters for Gaussian copula
-    cor_gauss1 == cor_gauss2,
-    # mixture weights must sum to 1
-    mix_p1 + mix_p2 == 1
+# create grid of correlations for 
+# TODO: Remove duplicates
+# grid <- do.call(tidyr::crossing, lapply(seq_len(n_clust), \(x) {
+#   seq(0, 1, by = 1 / n_clust)
+# })) %>% 
+#   setNames(paste0("cor_t", seq_len(n_clust))) %>% 
+#   # take only unique rows, don't want where clusters have same t-copula corr
+#   filter(apply(., 1, \(row) length(unique(row)) == ncol(.))) %>% 
+#   # other values
+grid <- t(seq(0, 1, length = n_clust)) %>% 
+  `colnames<-`(paste0("cor_t", seq_len(n_clust))) %>% 
+  as.data.frame() %>% 
+  mutate(
+    cor_gauss = 0.3, # keep constant
+    # Degrees of freedom for t-copula
+    df_t   = 3,
+    # mixture percentages (must sum to 1)
+    mix_p  = 0.5,
+    # extremal quantiles
+    kl_prob = kl_prob
   )
 
 # run kl_sim_eval for each row in grid
-n_times <- 50
+n_times <- 500
 results_vec <- vector(length = n_times)
 set.seed(seed_number)
 results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
 # results_grid <- bind_rows(mclapply(c(1, 50, 100, 150, 200, 250, 300), \(i) {
   
-  print(paste0("Progress: ", round(i / nrow(grid), 3) * 100, "%"))
-  system(sprintf(
-    'echo "\n%s\n"', 
-    paste0(round(i / nrow(grid), 3) * 100, "% completed", collapse = "")
-  ))
-  
   row <- grid[i, , drop = FALSE]
   for (j in seq_len(n_times)) {
+    print(paste0("Progress: ", round(j / n_times, 3) * 100, "%"))
+    system(sprintf(
+      'echo "\n%s\n"', 
+      paste0(round(i / n_times, 3) * 100, "% completed", collapse = "")
+    ))
     # generate simulation data for given parameter set
     data_mix <- with(row, sim_cop_dat(
-      n          = 1e3,
-      cor_gauss  = c(cor_gauss1, cor_gauss2),
-      cor_t      = c(cor_t1, cor_t2),
-      df_t       = c(df_t1, df_t2),
-      params_gpd = c(scale_gpd, shape_gpd),
-      mix_p      = c(0.5, 0.5)
+      n           = 1e3, 
+      n_locs      = n_locs, 
+      n_clust     = n_clust,
+      cor_gauss   = rep(cor_gauss, n_clust),
+      # cor_t       = c(cor_t1, cor_t2, cor_t3, cor_t4, cor_t5),
+      cor_t       = c(cor_t1, cor_t2, cor_t3, cor_t4, cor_t5, cor_t6, cor_t7, cor_t8, cor_t9, cor_t10, cor_t11),
+      df_t        = rep(df_t, n_clust),
+      params_gpd  = c(scale_gpd, shape_gpd),
+      mix_p       = c(0.5, 0.5), 
+      cluster_mem = cluster_mem
     ))$data_mix
     
     sil_res <- tryCatch({
       # Fit CE model, if an error is produced, return a dummy list
       dependence <- fit_ce(
         data_mix, 
+        vars = paste0("col_", seq_len(n_vars)), 
         marg_prob   = marg_prob,
         cond_prob   = row$kl_prob, 
-        fit_no_keef = TRUE
+        fit_no_keef = TRUE, 
+        output_all = FALSE
       )
       # find JS distance matrix
-      dist <- js_clust(dependence)$dist_mat
+      dist <- js_clust(dependence, scree_k = 1:15)$dist_mat
       # Calculate silhouette coefficient for 2-10 clusters
-      sil <- sil_boxplot(dist, k = 2:10, show_plt = FALSE)$sil
+      sil <- sil_boxplot(dist, k = 2:15, show_plt = FALSE)$sil
       # Find best number of clusters
       sil %>% 
         group_by(k) %>% 
@@ -120,15 +123,7 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
     results_vec[[j]] <- sil_res
   }
   
-  # return(cbind(
-  #   row,
-  #   data.frame(
-  #     "adj_rand" = kl_clust$adj_rand, 
-  #     "membership" = paste0(kl_clust$pam$clustering, collapse = "-")
-  #   )
-  # ))
   return(cbind(row, "sil_k" = results_vec))
-# }))
 }, mc.cores = n_cores))
 
 # remove NAs, give warning
@@ -140,7 +135,12 @@ if (sum(nas) > 0) {
 
 # Save object
 # saveRDS(results_grid, file = paste0("data/js_sil_best_k.RDS"))
-results_grid <- readRDS(paste0("data/js_sil_best_k.RDS"))
+# saveRDS(results_grid, file = paste0("data/js_sil_best_k_clust_5.RDS"))
+saveRDS(results_grid, file = paste0("data/js_sil_best_k_clust_11.RDS"))
+# results_grid <- readRDS(paste0("data/js_sil_best_k_clust_5.RDS"))
+# results_grid <- readRDS(paste0("data/js_sil_best_k_clust_5.RDS"))
+
+table(results_grid$sil_k)
 
 
 #### Plot ####

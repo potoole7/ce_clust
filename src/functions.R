@@ -1,5 +1,30 @@
 #### Sensitivity analysis ####
 
+# calculate local rand index 
+# (from https://github.com/Xuanjie-Shao/NonStaExtDep/blob/main/Functions/Utils.R)
+local_rand_index <- \(P0, P1) {
+  # for each partition P1, true partition P0
+  if (length(P0) == length(P1)) {
+    D <- length(P0)
+  } else { 
+    return(0) 
+  }
+  beta.all <- vector(length = D)
+  for (i in seq_len(D)){
+    betai <- num_ss <- num_dd <- 0
+    for (j in seq_len(D)[-i]) {
+      if (P0[i] == P0[j] && P1[i] == P1[j]) {
+        num_ss <- num_ss + 1
+      } else if (P0[i] != P0[j] && P1[i] != P1[j]) {
+        num_dd <- num_dd + 1
+      }
+    }
+    betai <- num_ss + num_dd
+    beta.all[i] <- betai
+  }
+  return(beta.all/D)
+}
+
 # TODO: Add shared plotting functions
 
 # function to calculate confidence interval for sensitivity analysis results

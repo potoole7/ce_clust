@@ -32,8 +32,8 @@
 #### Libs ####
 
 library(sf)
-# library(evc)
-devtools::load_all("../evc")
+library(evc)
+# devtools::load_all("../evc")
 library(dplyr, quietly = TRUE)
 library(tidyr)
 library(ggplot2)
@@ -304,8 +304,9 @@ nrow(with(data, data[name == "Wexford (Newtown W.w.)" & rain > 67.1, ])) /
 #### Fit Model ####
 
 # fit model to output thresholds and evgam, marginal and dependence objects
+# devtools::load_all("../evc")
 mod_fit <- fit_ce(
-  data = data, 
+  data = data,
   vars = c("rain", "wind_speed"), 
   # arguments to `quantile_thresh`
   marg_prob = list(
@@ -314,9 +315,17 @@ mod_fit <- fit_ce(
   cond_prob = 0.7, # dqu
   # formula for evgam fit to excesses over threshold
   f = list(excess ~ s(lon, lat, k = 40), ~s(lon, lat, k = 40)), 
+  ncores = max(1, parallel::detectCores() - 2),
   fit_no_keef = FALSE, # don't fit without Keef constraints
   output_all = TRUE
 )
+
+# remove locations where there are any NAs and re-fit the CE model
+# (this removes influence of these locations on the marginal fits)
+# TODO: Add warning if any locations are removed 
+na_locs <- sapply(mod_fit$dependence, \(x) {
+  any(is.na(unlist(x)))
+})
 
 # outputs from function needed for checking/plotting:
 # thresholds for rain and windspeed
@@ -330,7 +339,10 @@ marginal <- mod_fit$marginal
 # dependence 
 dependence <- mod_fit$dependence
 
-#### Threshold selection ####
+# save marginal
+saveRDS(marginal, file = "data/texmex_marginal_obj.RDS")
+
+#### Threshold plots ####
 
 # data to plot u across space
 data_thresh <- data_rain %>%
@@ -1234,10 +1246,10 @@ sum(vapply(tests, \(x) x$wind_speed$b, logical(1)))
 ab_vals <- lapply(dependence, \(x) {
   # ab_vals <- lapply(seq_along(dependence), \(i) {
   list(
-    summary(x[[1]])$dependence[1:2],
-    # summary(dependence[[i]][[1]])$dependence[1:2],
-    summary(x[[2]])$dependence[1:2]
-    # summary(dependence[[i]][[2]])$dependence[1:2]
+    # summary(x[[1]])$dependence[1:2],
+    x[[1]][1:2],
+    # summary(x[[2]])$dependence[1:2]
+    x[[2]][1:2]
   )
 })
 # names(ab_vals) <- data_gpd$name

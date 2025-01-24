@@ -114,7 +114,8 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
       dependence <- fit_ce(
         data_mix, 
         marg_prob   = marg_prob,
-        cond_prob   = row$kl_prob
+        cond_prob   = row$kl_prob,
+        fit_no_keef = TRUE
       )
       js_clust(
         dependence, 

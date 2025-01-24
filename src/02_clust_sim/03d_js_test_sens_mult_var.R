@@ -3,8 +3,8 @@
 #### Libs ####
 
 library(dplyr, quietly = TRUE)
-# library(evc)
-devtools::load_all("../evc")
+library(evc)
+# devtools::load_all("../evc")
 library(tidyr)
 library(ggplot2)
 library(cluster)
@@ -25,7 +25,7 @@ n_locs <- 12
 # vars <- c("rain", "wind_speed")
 vars <- c("rain", "wind_speed", "temperature") # TODO: Required?
 n_vars <- length(vars)
-prob <- 0.9 # TODO: May have to lower for more than two variables?
+prob <- kl_prob <- 0.9 # TODO: May have to lower for more than two variables?
 cluster_mem <- sort(rep(c(1, 2), 6)) # known cluster membership
 n <- 1e4 # number of samples to take
 mix_p <- c("gauss_cop" = 0.5, "t_cop" = 0.5) # mixture percentages
@@ -205,14 +205,14 @@ saveRDS(
 )
 # # load data and redo results_grid_sum and results_grid_tally
 # # May be floating point error in some parameter values due to loading from RDS!
-# results_grid <- readRDS(
-#   paste0("data/js_grid_search_res_dqu_", kl_prob, ".RDS")
-#   # paste0("data/js_grid_search_res_dqu_", kl_prob, "_marg_0.9.RDS")
-# )
-# results_grid_sum <- summarise_sens_res(results_grid, conf_level = conf_level)
-# results_grid_tally <- results_grid %>%
-#   group_by(across(!contains("_rand")), adj_rand) %>%
-#   tally(name = "n_rand")
+results_grid <- readRDS(
+  paste0("data/js_grid_search_res_dqu_", kl_prob, ".RDS")
+  # paste0("data/js_grid_search_res_dqu_", kl_prob, "_marg_0.9.RDS")
+)
+results_grid_sum <- summarise_sens_res(results_grid, conf_level = conf_level)
+results_grid_tally <- results_grid %>%
+  group_by(across(!contains("_rand")), adj_rand) %>%
+  tally(name = "n_rand")
 
 #### Plot ####
 

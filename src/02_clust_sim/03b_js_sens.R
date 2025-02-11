@@ -6,12 +6,13 @@
 #### libs ####
 
 library(dplyr, quietly = TRUE)
-library(evc)
+# library(evc)
+devtools::load_all("../evc")
 library(tidyr)
 library(ggplot2)
 library(evd)
 library(evgam)
-devtools::load_all("texmex")
+# devtools::load_all("texmex")
 library(cluster)
 library(lcmix)
 library(copula)
@@ -77,7 +78,7 @@ n_times <- 10
 results_vec <- lri_vec <- lri_mean_vec <- vector(length = n_times)
 set.seed(seed_number)
 # results_grid <- bind_rows(lapply(seq_len(nrow(grid)), \(i) {
-grid <- grid[c(1:50), ]
+# grid <- grid[c(1:50), ]
 results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
   
   print(paste0("Progress: ", round(i / nrow(grid), 3) * 100, "%"))
@@ -113,9 +114,9 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
     results_vec[[j]] <- clust_res$adj_rand
     
     # also calculate local rand index
-    lri <- local_rand_index(kl_clust$pam$clustering, cluster_mem)
+    lri <- local_rand_index(clust_res$pam$clustering, cluster_mem)
     # concatonate to string to store in vector
-    lri_vec[[j]] <- paste0(lri, collapse = "-")
+    lri_vec[[j]] <- paste0(lri, collapse = "_")
     # also average by cluster
     lri_mean_vec[[j]] <- paste0(vapply(unique(cluster_mem), \(x) {
       mean(lri[cluster_mem == x])
@@ -176,6 +177,9 @@ results_grid_tally <- results_grid %>%
 
 
 #### Plot ####
+
+# TODO Add visualisations for Local Rand Index!
+
 # remove unlikely scenario of having perfect t-copula correlation
 results_grid_plt <- filter(results_grid, cor_t1 < 1, cor_t2 < 1)
 res_grid_sum_plt <- filter(results_grid_sum, cor_t1 < 1, cor_t2 < 1)

@@ -24,7 +24,6 @@ source("src/functions.R")
 #### Metadata ####
 
 seed_number <- 123
-n <- 1e3 # number of samples to take
 n_locs <- 60 # number of "locations" (needs got be higher for more clusters)
 n_clust <- 11
 # cluster_mem <- ceiling(1:n_locs / (n_locs / n_clust))
@@ -36,6 +35,9 @@ shape_gpd <- -0.05
 marg_prob <- 0.9 # marginal threshold quantile 
 # kl_prob <- 0.9 # conditional threshold quantile
 kl_prob <- seq(0.85, 0.975, by = 0.025) # conditional threshold quantiles
+# n <- 1e3 # number of samples to take
+n_exceed <- 100 # number of exceedances to have for each conditional threshold
+n <- round(n_exceed / (1 - kl_prob))
 conf_level <- 0.95 # confidence level for CIs in plot
 # try values of k from 2 to max_clust
 max_clust <- 15

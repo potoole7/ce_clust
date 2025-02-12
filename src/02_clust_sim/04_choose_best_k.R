@@ -1,6 +1,7 @@
 #### Choose the best k for PAM clustering algorithm ####
 
 # TODO Change kl_prob as well! Want to see how well algorithm does for diff dqu
+# TODO Why doesn't silhouette work? Need different definition
 
 #### Libs ####
 
@@ -32,8 +33,9 @@ mix_p <- c("gauss_cop" = 0.5, "t_cop" = 0.5) # mixture percentages
 # GPD parameters
 scale_gpd <- 1
 shape_gpd <- -0.05
-marg_prob <- 0.9
-kl_prob <- 0.9
+marg_prob <- 0.9 # marginal threshold quantile 
+# kl_prob <- 0.9 # conditional threshold quantile
+kl_prob <- seq(0.85, 0.975, by = 0.025) # conditional threshold quantiles
 conf_level <- 0.95 # confidence level for CIs in plot
 # try values of k from 2 to max_clust
 max_clust <- 15
@@ -41,18 +43,18 @@ max_clust <- 15
 # Number of cores to use for parallel computation
 n_cores <- detectCores() - 1 
 
-#### Functions ####
 
+#### Functions ####
 # TODO Move to functions file and/or `evc` package
 # TODO Ensure functions are "pure"
 
 # choose optimal k (from http://sherrytowers.com/2013/10/24/k-means-clustering/)
-opt_k <- \(x) {
-  v = -diff(x)
-  nv = length(v)
-  fom = v[1:(nv-1)]/v[2:nv]
-  return(which.max(fom) + 1)
-}
+# opt_k <- \(x) {
+#   v = -diff(x)
+#   nv = length(v)
+#   fom = v[1:(nv-1)]/v[2:nv]
+#   return(which.max(fom) + 1)
+# }
 
 # calculate AIC for a given CE fit
 # TODO Add BIC
@@ -124,17 +126,20 @@ grid <- bind_rows(lapply(2:n_clust, \(i) {
     # cor_gauss = 0.1, # 0.3, # keep constant
     # Degrees of freedom for t-copula
     df_t   = 3,
-    # mixture percentages (must sum to 1)
-    mix_p  = 0.5,
     # extremal quantiles
-    kl_prob = kl_prob
-  )
+    # kl_prob = kl_prob,
+    # mixture percentages (must sum to 1)
+    mix_p  = 0.5
+  ) %>% 
+  # extremal quantiles and sample sizes
+  crossing(kl_prob = kl_prob, n = n)
+# crossing inverts grid for some reason, undo
+grid <- grid[nrow(grid):1, ]
+
 
 # run kl_sim_eval for each row in grid
 # TODO Increase n_times to 500!
-# n_times <- 100
-n_times <- 500
-# n_times <- 500
+n_times <- 10
 # initialise vectors to store results for each repetition of simulations
 # elb_vec <- sil_vec <- aic_vec <- vector(length = n_times)
 results_vec <- mem_vec <- vector(length = n_times)
@@ -144,6 +149,7 @@ elb_vec <- sil_vec <- aic_vec <- vector(length = n_times)
 #   mode = "list", length = nrow(grid)
 # )
 # i <- 3
+# i <- 13
 set.seed(seed_number)
 results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
 # results_grid <- bind_rows(lapply(seq_len(nrow(grid)), \(i) {
@@ -171,7 +177,7 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
     
     # generate simulation data for given parameter set
     data_mix <- with(row, sim_cop_dat(
-      n           = 1e3, 
+      n           = n,
       n_locs      = n_locs, 
       n_clust     = n_cor,
       # cor_gauss   = rep(cor_gauss, n_cor),
@@ -184,7 +190,7 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
       cluster_mem = cluster_mem
     ))$data_mix
     
-    # see how different they are
+    # see how different they are (works for 4 clusters)
     # plot(data_mix[[1]])
     # plot(data_mix[[46]])
     # lapply(data_mix[c(1, 46)], as.data.frame) %>%
@@ -317,9 +323,10 @@ if (sum(nas) > 0) {
 }
 
 # save 
-saveRDS(results_grid, file = paste0("data/js_sil_best_k_clust_11.RDS"))
+# saveRDS(results_grid, file = paste0("data/js_best_k_clust_11.RDS"))
+saveRDS(results_grid, file = paste0("data/js_best_k_clust_11_dqu.RDS"))
 # results_grid <- readRDS(paste0("data/js_sil_best_k_clust_11.RDS"))
-
+# results_grid <- readRDS(paste0("data/js_best_k_clust_11_dqu.RDS"))
 
 #### Plotting ####
 
@@ -365,13 +372,21 @@ pull_elb_aic <- \(x) {
 }
 
 # extract AIC and TWGSS values across all simulations for all true k
-aic_elb_vals_lst <- mclapply(k_vals, \(k) {
-  results_grid %>% 
-    filter(k_true == k) %>% 
-    # simulation number, indicating each unique simulation performed
-    mutate(sim_n = row_number()) %>% 
-    pull_elb_aic()
-}, mc.cores = n_cores)
+# aic_elb_vals_lst <- mclapply(k_true_vals, \(k) {
+#   results_grid %>% 
+#     filter(k_true == k) %>% 
+#     # simulation number, indicating each unique simulation performed
+#     mutate(sim_n = row_number()) %>% 
+#     pull_elb_aic()
+# }, mc.cores = n_cores)
+aic_elb_vals_lst <- results_grid %>% 
+  group_split(k_true, kl_prob, .keep = TRUE) %>%
+  mclapply(\(df) {
+    df %>% 
+      # simulation number, indicating each unique simulation performed
+      mutate(sim_n = row_number()) %>% 
+      pull_elb_aic()
+  }, mc.cores = n_cores)
 
 # plot for each true value of k
 # TODO: Functionalise? Pretty nice plot!
@@ -393,8 +408,11 @@ plots <- mclapply(aic_elb_vals_lst, \(x) {
         "Elbow Plots for AIC and TWGSS, true k = ", 
         k_true, 
         ", ", 
-        n_times, 
-        " simulations"
+        "DQU = ",
+        x$kl_prob[1] * 100,
+        "%, ",
+        "n_sim = ", 
+        n_times
       ),
       x     = "k", 
       y     = ""
@@ -404,11 +422,11 @@ plots <- mclapply(aic_elb_vals_lst, \(x) {
     ggsci::scale_colour_nejm()
 }, mc.cores = n_cores)
 
-pdf("plots/aic_twgss_elb_plots.pdf", width = 10, height = 10)
+# pdf("plots/aic_twgss_elb_plots.pdf", width = 10, height = 10)
+pdf("plots/aic_twgss_elb_plots_dqu.pdf", width = 10, height = 10)
 plots
 dev.off()
 
 # TODO: Visualise Rand Index (get from 03b_js_sens.R)
 
-
-# TODO: Visualise Local Rand Index
+# TODO: Visualise Local Rand Index (needed??)

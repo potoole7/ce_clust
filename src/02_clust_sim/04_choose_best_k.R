@@ -45,6 +45,19 @@ max_clust <- 15
 # Number of cores to use for parallel computation
 n_cores <- detectCores() - 1 
 
+# Change name of saved files depending on options chosen above
+save_file <- paste0("data/js_best_k_clust_", n_clust)
+plot_file <- paste0("plots/js_best_k_clust_", n_clust)
+if (length(kl_prob) > 1) {
+  save_file <- paste0(save_file, "_dqu")
+  plot_file <- paste0(plot_file, "_dqu")
+}
+if (length(n) > 1) { 
+  save_file <- paste0(save_file, "_eq_n_exceed")  
+  plot_file <- paste0(plot_file, "_eq_n_exceed")
+}
+save_file <- paste0(save_file, ".RDS")
+plot_file <- paste0(plot_file, ".pdf")
 
 #### Functions ####
 # TODO Move to functions file and/or `evc` package
@@ -325,10 +338,9 @@ if (sum(nas) > 0) {
 }
 
 # save 
-# saveRDS(results_grid, file = paste0("data/js_best_k_clust_11.RDS"))
-saveRDS(results_grid, file = paste0("data/js_best_k_clust_11_dqu.RDS"))
-# results_grid <- readRDS(paste0("data/js_sil_best_k_clust_11.RDS"))
-# results_grid <- readRDS(paste0("data/js_best_k_clust_11_dqu.RDS"))
+saveRDS(results_grid, file = save_file)
+# results_grid <- readRDS(save_file)
+
 
 #### Plotting ####
 
@@ -424,11 +436,10 @@ plots <- mclapply(aic_elb_vals_lst, \(x) {
     ggsci::scale_colour_nejm()
 }, mc.cores = n_cores)
 
-# pdf("plots/aic_twgss_elb_plots.pdf", width = 10, height = 10)
-pdf("plots/aic_twgss_elb_plots_dqu.pdf", width = 10, height = 10)
+pdf(file = plot_file, width = 10, height = 10)
 plots
 dev.off()
 
-# TODO: Visualise Rand Index (get from 03b_js_sens.R)
+# TODO: Visualise Rand Index (get from 03b_js_sens.R) (needed??)
 
 # TODO: Visualise Local Rand Index (needed??)

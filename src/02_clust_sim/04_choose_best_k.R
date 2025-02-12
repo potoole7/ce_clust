@@ -42,6 +42,9 @@ conf_level <- 0.95 # confidence level for CIs in plot
 # try values of k from 2 to max_clust
 max_clust <- 15
 
+# dataframe with number of sims required for each dqu to have 100 exceedances
+exceed_df <- data.frame("kl_prob" = kl_prob, "n" = n)
+
 # Number of cores to use for parallel computation
 n_cores <- detectCores() - 1 
 
@@ -147,22 +150,19 @@ grid <- bind_rows(lapply(2:n_clust, \(i) {
     mix_p  = 0.5
   ) %>% 
   # extremal quantiles and sample sizes
-  crossing(kl_prob = kl_prob, n = n)
+  crossing(kl_prob = kl_prob) %>% 
+  left_join(exceed_df, by = "kl_prob")
 # crossing inverts grid for some reason, undo
 grid <- grid[nrow(grid):1, ]
 
 
 # run kl_sim_eval for each row in grid
 # TODO Increase n_times to 500!
-n_times <- 10
+n_times <- 2
 # initialise vectors to store results for each repetition of simulations
 # elb_vec <- sil_vec <- aic_vec <- vector(length = n_times)
 results_vec <- mem_vec <- vector(length = n_times)
 elb_vec <- sil_vec <- aic_vec <- vector(length = n_times)
-# list to store images in
-# image_lst <- elbow_lst <- sil_lst <- aic_lst <- vector(
-#   mode = "list", length = nrow(grid)
-# )
 # i <- 3
 # i <- 13
 set.seed(seed_number)

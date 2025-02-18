@@ -157,8 +157,8 @@ grid <- grid[nrow(grid):1, ]
 
 
 # run kl_sim_eval for each row in grid
-# TODO Increase n_times to 500!
-n_times <- 2
+# TODO Increase n_times to 500
+n_times <- 100
 # initialise vectors to store results for each repetition of simulations
 # elb_vec <- sil_vec <- aic_vec <- vector(length = n_times)
 results_vec <- mem_vec <- vector(length = n_times)

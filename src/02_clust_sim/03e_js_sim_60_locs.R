@@ -5,6 +5,8 @@
 # - 3 clusters (for 20 locations each)
 # - Add perturbation to copula correlation parameters
 
+# TODO Change saved file name
+
 #### libs ####
 
 library(dplyr, quietly = TRUE)

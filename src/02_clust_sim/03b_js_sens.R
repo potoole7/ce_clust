@@ -158,22 +158,20 @@ results_grid <- results_grid %>%
 
 # save 
 # TODO: Change to csv file!
-saveRDS(
-  results_grid, 
-  file = paste0("data/js_grid_search_res_dqu_", kl_prob, ".RDS")
-  # file = paste0("data/js_grid_search_res_dqu_", kl_prob, "_marg_0.9.RDS")
-)
+# saveRDS(
+#   results_grid, 
+#   file = paste0("data/js_grid_search_res_dqu_", kl_prob, ".RDS")
+# )
 
 # # load data and redo results_grid_sum and results_grid_tally
 # # May be floating point error in some parameter values due to loading from RDS!
-results_grid <- readRDS(
-  paste0("data/js_grid_search_res_dqu_", kl_prob, ".RDS")
-  # paste0("data/js_grid_search_res_dqu_", kl_prob, "_marg_0.9.RDS")
-)
-results_grid_sum <- summarise_sens_res(results_grid, conf_level = conf_level)
-results_grid_tally <- results_grid %>%
-  group_by(across(!contains("_rand")), adj_rand) %>%
-  tally(name = "n_rand")
+# results_grid <- readRDS(
+#   paste0("data/js_grid_search_res_dqu_", kl_prob, ".RDS")
+# )
+# results_grid_sum <- summarise_sens_res(results_grid, conf_level = conf_level)
+# results_grid_tally <- results_grid %>%
+#   group_by(across(!contains("_rand")), adj_rand) %>%
+#   tally(name = "n_rand")
 
 
 #### Plot ####

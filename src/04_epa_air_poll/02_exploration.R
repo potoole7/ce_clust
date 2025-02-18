@@ -1,8 +1,11 @@
 #### Exploration of US air pollution data ####
 
+# TODO Plot chi-squared on map for different variables
+
 #### Libs ####
 
-library(tigris)
+# library(tigris)
+library(USAboundaries)
 library(sf)
 library(evc)
 # devtools::load_all("../evc")
@@ -20,21 +23,10 @@ library(ggpattern)
 
 source("src/functions.R")
 
-theme <- theme_bw() +
-  theme(
-    legend.position = "bottom",
-    plot.title = element_text(size = 16, hjust = 0.5),
-    axis.text = element_text(size = 12),
-    axis.title = element_text(size = 14, face = "bold"),
-    legend.text = element_text(size = 12),
-    strip.text = element_text(size = 13, face = "bold"),
-    strip.background = element_rect(fill = NA, colour = "black"),
-    plot.tag = element_text(size = 16, face = "bold"),
-    panel.background = element_rect(fill = NA, colour = "black")
-  )
+theme <- evc::evc_theme()
 
 sf::sf_use_s2(FALSE)
-options(tigris_class = "sf")
+# options(tigris_class = "sf")
 
 
 #### Metadata ####
@@ -51,14 +43,20 @@ cities <- c(
 #### Load Data ####
 
 data <- readr::read_csv("data/epa_air_pollution_data.csv") %>% 
+# data <- readr::read_csv("data/epa_air_pollution_data_2.csv") %>% 
   filter(
-    city %in% cities, 
-    !variable %in% c("Carbon monoxide", "PM10-2.5 STP")
-  )
+    # !variable %in% c("Carbon monoxide", "PM10-2.5 STP"),
+    city %in% cities
+  ) %>% 
+  mutate(variable = ifelse(variable == "PM10-2.5 STP", "PM10", variable)) %>%
+  # remove duplicates
+  # TODO: Investigate further why these exist
+  distinct(variable, date, mean, state, city, latitude, longitude)
   
 # pull shapefile for continental US
-areas <- states() %>% 
-  filter(!STUSPS %in% c("HI", "AK", "AS", "GU", "MP", "PR", "VI"))
+areas <- us_states() %>% 
+# areas <- USAboundaries::us_counties() %>% 
+  filter(!state_abbr %in% c("HI", "AK", "AS", "GU", "MP", "PR", "VI"))
 
 # # convert to sf 
 # data_sf <- data %>% 
@@ -81,7 +79,6 @@ data %>%
 
 # plot time series for each county and variable
 data %>%
-  filter(city %in% cities) %>%
   ggplot(aes(x = date, y = mean, colour = variable)) +
   geom_line() +
   facet_wrap(~city, scales = "free_y") +
@@ -111,6 +108,7 @@ ggplot(areas) +
   ) + 
   theme
 
+
 #### Investigate multiple sites for each city ####
 
 # add unique identifiers for each site within each city
@@ -139,30 +137,39 @@ ts_plts <- lapply(cities, \(x) {
       colour = "Site"
     )
 })
+
 # save all plots in pdf
 pdf("plots/01_ts_sites.pdf", width = 8, height = 6)
+# pdf("plots/01_ts_sites_2.pdf", width = 8, height = 6)
 ts_plts
 dev.off()
 
-# Tabulate percentage of data available for each site, plot as barchart
+# Tabulate percentage of data available for each site, plot as bar chart
+# TODO Fix this, consistently incorrect
 data_tbl <- data %>% 
   left_join(
-    # find number of unique dates 
+    # find # unique dates for each city (across all vars, not individually)
     data %>% 
       group_by(city) %>% 
-      summarise(n_obs = n_distinct(date), .groups = "drop")
-  ) %>% 
-  left_join(
-    # find how many of these dates have observations for a given site
-    data %>% 
-      filter(!is.na(mean)) %>% 
-      group_by(city, variable, site) %>% 
-      # summarise(n_non_na = n_distinct(date), .groups = "drop")
-      # take difference in dates from first to last
       summarise(
-        n_non_na = as.numeric(last(date) - first(date)), 
+        n_obs = as.numeric(max(data$date) - min(data$date)), 
         .groups = "drop"
       )
+  ) %>% 
+  left_join(
+    # find how many of these dates have valid obs for a given/each site
+    data %>% 
+      filter(!is.na(mean)) %>% 
+      # remove duplicates
+      # TODO: Look into why these still persist!
+      distinct(site, city, variable, date) %>%
+      # group_by(city, variable, site) %>% 
+      # summarise(
+      #   n_non_na = as.numeric(max(data$date) - min(data$date)), 
+      #   .groups = "drop"
+      # ) %>% 
+      count(city, variable, site, name = "n_non_na") %>% 
+      identity()
   ) %>% 
   mutate(completeness = n_non_na / n_obs)
 
@@ -191,38 +198,69 @@ pdf("plots/02_bar_sites.pdf", width = 8, height = 6)
 bar_plts
 dev.off()
 
-# also do for every city
+# also do for every city (ignoring site)
+# TODO: Functionalise above, repeated twice!
+
 data_tbl_city <- data %>% 
+  # left_join(
+  #   # find number of unique dates 
+  #   data %>% 
+  #     group_by(city, variable) %>% 
+  #     summarise(n_obs = n_distinct(date), .groups = "drop")
+  # ) %>% 
+  # left_join(
+  #   # find how many of these dates have observations for a given site
+  #   data %>% 
+  #     filter(!is.na(mean)) %>% 
+  #     group_by(city, variable) %>% 
+  #     summarise(n_non_na = n_distinct(date), .groups = "drop")
+  # ) %>% 
   left_join(
-    # find number of unique dates 
+    # find # unique dates for each city (across all vars, not individually)
     data %>% 
       group_by(city, variable) %>% 
-      summarise(n_obs = n_distinct(date), .groups = "drop")
+      summarise(
+        n_obs = as.numeric(max(data$date) - min(data$date)), 
+        .groups = "drop"
+      )
   ) %>% 
   left_join(
-    # find how many of these dates have observations for a given site
+    # find how many of these dates have valid obs for a given/each site
     data %>% 
       filter(!is.na(mean)) %>% 
-      group_by(city, variable) %>% 
-      summarise(n_non_na = n_distinct(date), .groups = "drop")
-  ) %>% 
+      # remove duplicates
+      # TODO: Look into why these still persist!
+      distinct(city, variable, date) %>%
+      count(city, variable, name = "n_non_na") %>% 
+      identity()
+  ) %>%  
   mutate(completeness = n_non_na / n_obs)
 
-data_tbl %>% 
-  select(variable, city, completeness) %>% 
-  group_by(variable, city) %>% 
-  filter(completeness == max(completeness)) %>% 
-  slice(1) %>% 
-  ungroup() %>% 
-  pivot_wider(names_from = variable, values_from = completeness) %>% 
-  View()
+# data_tbl %>% 
+#   select(variable, city, completeness) %>% 
+#   group_by(variable, city) %>% 
+#   filter(completeness == max(completeness)) %>% 
+#   slice(1) %>% 
+#   ungroup() %>% 
+#   pivot_wider(names_from = variable, values_from = completeness) %>% 
+#   View()
 
 data_plt2 <- data_tbl_city %>% 
   distinct(city, variable, completeness)
   
-data_plt2 %>% 
-  ggplot(aes(x = city, y = completeness, fill = factor(city))) +
-  facet_wrap(~variable) +
+p <- data_plt2 %>% 
+  # ggplot(aes(x = city, y = completeness, fill = factor(city))) +
+  # facet_wrap(~variable) +
+  # make variable names shorter for plotting
+  # TODO: Functionalise
+  mutate(variable = case_when(
+    grepl("NO2", variable) ~ "NO2",
+    grepl("Benzene", variable) ~ "HC",
+    grepl("Sulfur dioxide", variable) ~ "SO2",
+    TRUE ~ variable
+  )) %>% 
+  ggplot(aes(x = variable, y = completeness, fill = factor(variable))) +
+  facet_wrap(~city) +
   scale_y_continuous(limits = c(0, 1)) + 
   geom_col() + 
   guides(fill = "none") +
@@ -231,16 +269,11 @@ data_plt2 %>%
     x = "City",
     y = "% Completeness",
     fill = "Site"
-  )
+  ) + 
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.5))
 
+ggsave("plots/03_bar_cities.pdf", p, width = 8, height = 6)
 
-# pdf("plots/02_bar_sites.pdf", width = 8, height = 6)
-# bar_plts
-# dev.off()
-
-
-
-# tabulate for each city, "joining" sites
 
 #### OLD OLD OLD ####
 

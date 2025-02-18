@@ -1,6 +1,8 @@
 #### Fit CE model to Los Angles and San Francisco NO2 and PM10 ####
 
 # As a simplification, take max obs across sites
+# TODO Plot ACF and PACF
+# TODO Block bootstrap for uncertainty
 
 #### Libraries ####
 
@@ -23,7 +25,9 @@ sf::sf_use_s2(FALSE)
 
 # cities and variables over which to test CE model
 cities <- c("Los Angeles", "San Francisco")
-variables <- c("Nitrogen dioxide (NO2)", "PM10", "Sulfur dioxide")
+variables <- c(
+  "NO2" = "Nitrogen dioxide (NO2)", "PM10" = "PM10", "SO2" = "Sulfur dioxide"
+)
 
 
 #### Load Data ####
@@ -68,6 +72,38 @@ data_wide <- data_city %>%
 
 # 5,532 records, not bad considering!
   
+#### Plotting ####
+
+# plot ACF and PACF
+ts_plot <- \(x, city, var, type = c("ACF", "PACF")) {
+  # use either acf or pacf function depending on choice
+  fun <- acf
+  if (type == "PACF") {
+    fun <- pacf
+  }
+  # filter data for specific city
+  x_spec <- x %>%
+    # filter(name == city)
+    filter(city == !!city, variable == var)
+  # ts_spec <- fun(x_spec[[tolower(var)]], plot = FALSE)
+  ts_spec <- fun(x_spec$mean, plot = FALSE)
+  with(ts_spec, data.frame(lag, acf)) %>% 
+    ggplot(aes(lag, acf)) +
+    geom_hline(aes(yintercept = 0)) +
+    geom_segment(mapping = aes(xend = lag, yend = 0)) + 
+    theme + 
+    labs(y = type, x = "Lag", title = paste0(type, ", ", city, ", ", var))
+}
+
+# plot for each city and variable
+ts_plots <- lapply(cities, function(city) {
+  lapply(names(variables), function(var) {
+    list(
+      "acf"  = ts_plot(data_city, city, var, "ACF"),
+      "pacf" = ts_plot(data_city, city, var, "PACF")
+    )
+  })
+})
 
 #### Fit CE ####
 
@@ -95,3 +131,5 @@ fit$dependence$`San Francisco`
 # strong positive extremal dependence between air pollution variables
 
 # Odd one out is SO2 for LA, doesn't have extremal dependence with PM10
+
+#### Block boostrapping uncertainty ####

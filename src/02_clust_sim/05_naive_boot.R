@@ -1,68 +1,20 @@
 #### See how uncertainty changes with bootstrapping ####
 
+# TODO: Need to use `sim` = "balanced"
+
 #### libs ####
 
 devtools::load_all("../evc")
 library(dplyr)
 library(boot)
 library(parallel)
+library(ggplot2)
+library(tidyr)
 
 # source simulation functions
 source("src/functions.R")
 
-#### Functions ####
-
-# TODO Would be much easier if fit_ce returns an object with methods!!
-# TODO Look at texmex package for implementation
-# TODO Ensure extreme observations in sample, sometimes not (see texmex)
-# TODO Change pipes
-boot_ce <- \(data, indices) {
-  
-  # subset and split by location
-  # TODO Anyway to take same subset of indices for each location?
-  data_subset <- data[indices, ] %>% 
-    group_split(name) %>% 
-    # convert back to matrix
-    lapply(\(x) as.matrix(x[, -ncol(x)]))
-  
-  # parameters of interest
-  pars <- c("a", "b")
-  n_par <- length(pars) # n_pars
-  n_par_per_var <- n_par * ncol(data_subset[[1]]) # n_pars * n_vars
-  
-  # fit CE
-  # TODO Where do names "rain" and "wind speed" come from???
-  # TODO Add tryCatch for when fit_ce fails
-  dependence <- fit_ce(
-    data_subset, 
-    # marg_prob   = 0.9,
-    marg_prob = list(
-      f = list("response ~ name", "~ name"), tau = 0.9, jitter = TRUE
-    ),
-    cond_prob   = 0.9,
-    fit_no_keef = TRUE
-  )
-  
-  # extract a and b parameter values
-  # TODO Add method in package
-  param_vals <- as.vector(vapply(dependence, \(x) {
-    as.vector(vapply(x, \(y) {
-      y[pars, ]
-    }, numeric(n_par)))
-  }, numeric(n_par_per_var)))
-  
-  # label appropriately
-  names(param_vals) <- paste(
-    # location names
-    # names(dependence), 
-    rep(names(dependence), each = n_par_per_var),
-    # parameter names pasted to variable names
-    as.vector(outer(pars, names(dependence[[1]]), paste, sep = "_")), 
-    sep = "_"
-  )
-  return(param_vals)
-}
-
+ncores <- detectCores() - 1
 
 #### Metadata ####
 
@@ -75,8 +27,10 @@ mix_p <- c("gauss_cop" = 0.5, "t_cop" = 0.5) # mixture percentages
 # GPD parameters
 scale_gpd <- 1
 shape_gpd <- -0.05
-marg_prob <- 0.9
-kl_prob <- 0.9
+# marg_prob <- 0.9
+marg_prob <- 0.95
+# cond_prob <- 0.9
+cond_prob <- 0.95
 conf_level <- 0.95 # confidence level for CIs in plot
 
 # Number of cores to use for parallel computation
@@ -88,75 +42,132 @@ n_cores <- detectCores() - 1
 set.seed(seed_number)
 data_mix <- sim_cop_dat(
   n          = n,
-  cor_gauss  = c(0.7, 0.7),
+  # cor_gauss  = c(0.7, 0.7),
+  cor_gauss  = c(0.4, 0.4),
   cor_t      = c(0.1, 0.9),
   df_t       = c(3, 3),
   params_gpd = c(scale_gpd, shape_gpd),
   mix_p      = c(0.5, 0.5)
 )$data_mix
 
-# convert data to dataframe as required by boot (split within boot_ce, by loc)
-data_mix_df = bind_rows(lapply(seq_along(data_mix), \(i) {
-  ret <- data.frame(data_mix[[i]])
-  ret$name <- paste0("location_", i)
-  return(ret)
-}))
-
-# bootstrap CE fit to this data
-# TODO Look into the different options for boot
-# R = 100: ~64.7s, R = 500: ~ 349s (6 mins), R = 1000 ~ 680s (11 mins) (linear)
-debugonce(boot_ce)
-boot_res <- boot(
-  data = data_mix_df, 
-  statistic = boot_ce, 
-  R = 100,
-  # R = 1000,
-  parallel = "multicore", 
-  ncpus = n_cores
-)
-
-# Extract parameter estimates and related bca confidence intervals
-param_est <- boot_res$t0
-
-# TODO Look into confidence interval for first parameter
-# TODO Look into why bca not working (may just be too difficult!)
-(ci1 <- boot.ci(boot_res, type = c("norm", "perc", "basic"), index = 1))
-
-
-
-
-# extract confidence intervals
-conf_int <- mclapply(seq_along(param_est), function(i) {
-  # Get the BCa confidence intervals for the i-th coefficient
-  # TODO Parallelise
-  # ci <- boot.ci(boot_res, type = "norm", index = i)
-  # ci <- boot.ci(boot_res, type = "perc", index = i)
-  ci <- boot.ci(boot_res, type = c("norm", "perc"), index = i)
-  
-  # Return the lower and upper bounds for both confidence intervals
-  return(c(ci$normal[4:5], ci$percent[4:5]))
-})
-
-
-# Now, fit CE to this data and cluster (k known to be 2)
-dependence <- fit_ce(
+# fit CE
+ce_fit <- fit_ce(
   data_mix, 
-  marg_prob   = 0.9,
-  cond_prob   = 0.9,
-  fit_no_keef = TRUE
+  marg_prob   = marg_prob,
+  cond_prob   = cond_prob,
+  fit_no_keef = TRUE, 
+  output_all  = TRUE
 )
-clust <- js_clust(dependence, k = 2, cluster_mem = cluster_mem)
+
+# run bootstrap
+bootstrap_res <- boot_ce(
+  ce_fit, 
+  R = 100, 
+  trace = 10, 
+  ncores = ncores
+)
+
+# plot margins for both theoretical clusters
+plot_marg <- \(x) {
+  x |> 
+    ggplot(aes(x = value, fill = parameter)) +
+    # ggplot(aes(x = value, fill = factor(cluster))) +
+    # also add histograms
+    geom_histogram(aes(y = ..density..), bins = 30, alpha = 0.7) +
+    geom_density(alpha = 0.5) +
+    # facet_wrap(~ parameter + vars, scales = "free", nrow = 2) +
+    facet_wrap(~ cluster + parameter + vars, scales = "free", nrow = 2) +
+    # facet_grid(vars ~ parameter, scales = "free") +
+    evc::evc_theme() + 
+    theme(axis.text.x = element_text(angle = 45, vjust = 0.5))
+}
+bootstrap_res$marginal |> 
+  mutate(
+    cluster = ifelse(name %in% paste0("location_", 1:6), "cor_t = 0.1", "cor_t = 0.9")
+  ) |> 
+  plot_marg()
+  
+# do the same with dependence
+# TODO Very interesting that some results for no corr give 1 and -1! Say to C
+plot_dep <- \(x) {
+  x |> 
+    ggplot(aes(x = value, fill = parameter)) +
+    geom_histogram(aes(y = ..density..), bins = 30, alpha = 0.7) +
+    geom_density(alpha = 0.5) +
+    facet_wrap(~ cluster + parameter + vars, scales = "free", nrow = 2) +
+    scale_x_continuous(limits = c(-1, 1)) +
+    evc::evc_theme() + 
+    theme(axis.text.x = element_text(angle = 45, vjust = 0.5))
+}
+bootstrap_res$dependence |> 
+  mutate(
+    cluster = ifelse(name %in% paste0("location_", 1:6), "cor_t = 0.1", "cor_t = 0.9"), 
+    vars = paste0(vars, " | ", cond_var)
+  ) |> 
+  plot_dep()
+  
+
+#### Bootstrap on clustered observations ####
+
+# cluster for k = 2
+k <- 2
+clust <- js_clust(ce_fit$dependence, k = k, cluster_mem = cluster_mem)
 # check clustering perfect
 clust$adj_rand == 1
 
-# TODO assign data based on clustering results to cluster centroids
-# data_mix_clust...
+# assign data based on clustering results to cluster centroids
+data_mix_clust <- lapply(seq_len(k), \(x) {
+  do.call(rbind, data_mix[clust$pam$clustering == x])
+})
 
 # TODO repeat bootstrapping and parameter extraction process
+evc_fit_clust <- fit_ce(
+  data_mix_clust, 
+  marg_prob   = marg_prob,
+  cond_prob   = cond_prob,
+  fit_no_keef = TRUE, 
+  output_all  = TRUE
+)
+bootstrap_res_clust <- boot_ce(
+  evc_fit_clust, 
+  R = 100, 
+  trace = 10, 
+  ncores = ncores
+)
 
-# TODO Compare results (does clustering improve parameter estimates?)
+bootstrap_res_clust$marginal |> 
+  mutate(
+    cluster = ifelse(name == "location_1", "clust_1", "clust_2")
+  ) |> 
+  plot_marg()
+
+# dramatically better! But median of densities seems pretty similar?!
+plt_dep_data_clust <- bootstrap_res_clust$dependence |>
+  mutate(
+    cluster = ifelse(name == "location_1", "clust_1", "clust_2"), 
+    vars = paste0(vars, " | ", cond_var)
+  )
+plot_dep(plt_dep_data_clust)
+
+# yep, alpha values very similar!!
+# Better when using cond_prob = 0.95 rather than 0.9
+plt_dep_data_clust |> 
+  group_by(cluster, vars, parameter) |> 
+  summarise(value = median(value, na.rm = TRUE), .groups = "drop") |> 
+  pivot_wider(names_from = cluster, values_from = value) |> 
+  arrange(parameter, vars)
+
+par(mfrow = c(1, 2))
+plot(evc_fit_clust$transformed$location_1, main = "cor_t = 0.1")
+plot(evc_fit_clust$transformed$location_2, main = "cor_t = 0.9")
+par(mfrow = c(1, 1))
+
+# TODO plot dependence parameter confidence intervals for both
+conf_level <- 0.95
+z <- qnorm((1 + conf_level) / 2)
 
 
 #### Grid search ####
 
-# TODO Do for a number of simulations!! (Maybe show Christian results of this first?)
+# TODO Do for a number of simulations!! 
+# Needed?? Maybe just doing this once is sufficient? Show Christian anyway!

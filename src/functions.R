@@ -1,3 +1,250 @@
+#### Bootstrapping ####
+
+# function to perform bootstrapping for CE model
+# TODO Move to package
+boot_ce <- \(fit, R = 100, trace = 10, ncores = 1) {
+  
+  # check if fit has correct structure
+  stopifnot(
+    "fit must be an object returned by fit_ce with output_all = TRUE" = 
+      all(c("marginal", "arg_vals") %in% names(fit))
+  )
+  
+  # Temp: only works for ismev fit currently
+  # stopifnot("Currently only supported for ")
+  
+  # pull data
+  arg_vals    <- fit$arg_vals       # original arguments to fit_ce object
+  marginal    <- fit$marginal       # marginal GPDs
+  orig        <- fit$original       # original data
+  transformed <- fit$transformed    # Laplace transformed data
+  dependence <-  fit$dependence     # dependence parameters
+  
+  # extract marginal and dependence thresholds
+  # TODO Implement for multiple locations
+  thresh_dep <- lapply(dependence, \(x) {
+    vapply(x, \(y) {
+      y[rownames(y) == "dth", ]
+    }, numeric(length(marginal[[1]]) - 1))[1, ]
+  })
+  
+  # TODO Temp: Same thresh for each location
+  thresh_marg <- lapply(marginal, \(x) {
+    vapply(x, `[[`, "thresh", FUN.VALUE = numeric(1))
+  })
+  thresh_marg <- thresh_marg[[1]]
+  
+  # Parallel setup
+  # TODO Implement below, not using now
+  apply_fun <- ifelse(ncores == 1, lapply, parallel::mclapply)
+  ext_args <- NULL
+  if (ncores > 1) {
+    ext_args <- list(mc.cores = ncores)
+  }
+  loop_fun <- \(...) {
+    do.call(apply_fun, c(list(...), ext_args))
+  }
+
+  # Pull start values 
+  # TODO Make `coef` method for dependence, would be much easier than this loop!
+  start <- lapply(dependence, \(x) {
+    lapply(x, \(y) {
+      # scale back towards zero in case point est on edge of original parameter 
+      # space and falls off edge of constrained space for bootstrap sample 
+      y[c("a", "b"), ] * 0.75
+    })
+  })
+  
+  # TODO Temp: remove
+  # marg_loc  <- marginal[[1]]
+  # trans_loc <- transformed[[1]]
+  # dep_loc   <- dependence[[1]]
+  # orig_loc <- orig[[1]]
+  # cond_var <- "O3"
+  # n_pass <- 3
+  # Function to prepare bootstrapped data for each location and conditioned var
+  prep_boot_loc_dat <- \(
+    marg_loc, trans_loc, dep_loc, orig_loc, thresh_dep, n_pass = 3
+    # marg_loc, trans_loc, dep_loc, orig_loc, cond_var, thresh_dep, n_pass = 3
+  ) {
+    # pull bootstrap sample 
+    # (must be different for each loc as nrows may differ)
+    indices <- sample(seq_len(nrow(trans_loc)), replace = TRUE)
+    trans_loc_boot <- trans_loc[indices, ]
+    
+    # TODO test this to see if it ever fails?
+    stopifnot(names(thresh_dep) == colnames(trans_loc))
+    
+    # Reorder bootstrap sample to have the same order as original data
+    test <- FALSE
+    # which <- which(names(marg_loc) %in% cond_var)
+    while (test == FALSE) {
+      # for (j in 1:(dim(g)[[2]])){ # loop across columns
+      for (j in seq_along(marg_loc)) {
+        # replace ordered Yi with ordered sample from standard Laplace CDF
+        u <- matrix(runif(nrow(trans_loc_boot)))
+        trans_loc_boot[
+          order(trans_loc_boot[, j]), j
+        ] <- sort(laplace_trans(u)[, 1])
+      }
+      # need exceedance in cond. var, and also in other vars for these rows
+      # TODO I fit CE for every variable, not a specific one; how to handle?
+      # TODO Is this correct???
+      # if (sum(trans_loc_boot[, which] > thresh_dep[which]) > 1 && 
+      #     all(trans_loc_boot[trans_loc_boot[, which] > thresh_dep[which], which] > 0)) {
+      #   test <- TRUE 
+      # }
+      if (any(colSums(sweep(trans_loc_boot, 2, thresh_dep, FUN = ">")) > 0)) {
+        test <- TRUE
+      }
+    }
+    
+    # convert variables to original scale
+    # TODO Check if this is correct! Look at plots for texmex version
+    orig_loc_boot <- inv_semi_par_cdf(
+      # inverse Laplace transform to CDF
+      inv_laplace_trans(trans_loc_boot), 
+      # original data for where semiparametric thresholding occurs
+      select(orig_loc, -matches("name")), 
+      marg_loc  # marginal GPD parameters
+    )
+    colnames(orig_loc_boot) <- names(marg_loc)
+    
+    # test for no marg exceedances over sampled points, if so resample w/ nPass
+    max_vals <- apply(orig_loc_boot, 2, max, na.rm = TRUE)
+    marg_thresh <- vapply(marg_loc, `[[`, "thresh", FUN.VALUE = numeric(1))
+    if (!all(max_vals > marg_thresh)) {
+      return(list(NA))
+    }
+   return(orig_loc_boot)
+  }
+  
+  # perform bootstrapping
+  # TODO Allow parallel computation
+  # boot_fits <- lapply(seq_len(R), \(i) {
+  boot_fits <- loop_fun(seq_len(R), \(i) {
+    if (i %% trace == 0) {
+      system(sprintf("echo %s", paste(i, "replicates done")))
+    }
+    dat_boot <- lapply(seq_along(marginal), \(j) { # loop through locations
+      # prepare bootstrapped data for location j
+      dat_spec <- prep_boot_loc_dat(
+        marginal[[j]], 
+        transformed[[j]], 
+        dependence[[j]], 
+        orig[[j]], 
+        thresh_dep[[j]]
+      )
+      # check if NA, if so then rerun
+      if (all(is.na(dat_spec)) && n_pass > 1) {
+        for (i in seq_len(n_pass - 1)) {
+          dat_spec <- prep_boot_loc_dat(
+            marginal[[j]], transformed[[j]], dependence[[j]]
+          )
+          if (!all(is.na(dat_spec))) {
+            break
+          }
+        }
+      } else if (all(is.na(dat_spec))) {
+        stop(paste0(
+          "Failed to generate bootstrapped data after ", n_pass, " attempts"
+        ))
+      }
+      # label data with locations  
+      as_tibble(dat_spec) |> 
+        mutate(name = names(marginal)[j])
+    })
+    names(dat_boot) <- names(marginal)
+    
+    # refit CE model using same parameters as before, force output_all = TRUE
+    fit_boot <- do.call(
+      fit_ce, 
+      c(
+        # TODO Investigate why this won't work without bind_rows
+        # TODO Add fixed values for dependence and marginal thresholds
+        list(
+          data = bind_rows(dat_boot), 
+          start = start, 
+          # start = c("a" = 0.01, "b" = 0.01),
+          # TODO Implement arg_val for different locations in fit_ce
+          marg_val = thresh_marg,
+          marg_prob = NULL
+        ), 
+        arg_vals[names(arg_vals) != "marg_prob"], 
+        output_all = TRUE
+      )
+    )
+    return(list(
+      # extract a and b, all that's important
+      "dependence" = lapply(fit_boot$dependence, \(x) {
+        lapply(x, \(y) {
+          y[c("a", "b"), ]
+        })
+      }), 
+      # extract xi and sigma
+      "marginal" = lapply(fit_boot$marginal, \(x) {
+        lapply(x, \(y) unlist(y[!names(y) == "thresh"]))
+      })
+    ))
+  })
+  
+  # extract a and b parameters for dependence and xi and sigma for marginal
+  # into nice structure:
+  
+  # for marginal, want df with locs and vars and sigma and xi estimates for each
+  marg_out <- lapply(boot_fits, `[[`, "marginal") |> 
+    # Extract location and parameters from each list element
+    purrr::map_df(~{
+      purrr::map_dfr(.x, \(loc_data) {
+        # Create a tidy data frame for each location's parameters, keeping location as it is
+        loc_data |> 
+          purrr::map_dfr(~ tibble(
+            parameter = names(.x), 
+            value = .x
+          ), .id = "vars")
+      }, .id = "name")
+    })
+  
+  # TODO Describe dep_out, reduce Chat GPT comments
+  # TODO Fix for > 1 location
+  # Assuming dep_boot is your list of bootstrap samples
+  dep_out <- lapply(boot_fits, `[[`, "dependence") |> 
+    lapply(\(boot_sample) {
+    
+      # For each bootstrap sample, iterate over each location (e.g., location_1, location_2, etc.)
+      location_data <- purrr::map_dfr(names(boot_sample), function(loc_name) {
+        
+        # Get the data for this location (e.g., location_1)
+        loc <- boot_sample[[loc_name]]
+        
+        # Iterate over each pollutant (e.g., O3, NO2, etc.)
+        purrr::map_dfr(names(loc), function(cond_var) {
+          
+          # Get the matrix for the current conditioning variable
+          var_matrix <- loc[[cond_var]]
+          
+          # Create a tidy data frame for this location's matrix
+          tibble(
+            parameter = rep(c("a", "b"), each = ncol(var_matrix)),
+            vars      = rep(colnames(var_matrix), times = 2),
+            value     = c(var_matrix["a", ], var_matrix["b", ]),
+            cond_var  = rep(cond_var, ncol(var_matrix) * 2),
+            name      = rep(loc_name, ncol(var_matrix) * 2)
+          )
+        })
+      })
+    })
+  
+  # Combine all the lists of data frames into one final data frame
+  dep_out <- bind_rows(dep_out)
+  
+  return(list("marginal" = marg_out, "dependence" = dep_out))
+}
+
+
+
+
+
 #### Sensitivity analysis ####
 
 # calculate local rand index 

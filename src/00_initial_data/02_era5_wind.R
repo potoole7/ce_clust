@@ -35,6 +35,9 @@ files <- list.files("data", pattern = ".nc", full.names = TRUE)
 
 # load weather station data
 met_eir <- readr::read_csv("data/met_eireann/final/met_eir.csv.gz")
+# add rain data for weather stations in six counties as well!
+ceda <- readr::read_csv("data/ceda_open/ceda_rain.csv.gz")
+met_eir <- bind_rows(met_eir, ceda)
 # take locations only to match to grid points
 met_eir_sf <- met_eir %>% 
   distinct(name, county, province, lon, lat) %>% 
@@ -48,13 +51,12 @@ max_density <- \(vec) {
   return(with(density(vec), x[which.max(y)]))
 }
 
-
 # function to perform preprocessing on single dataset
 preprocess_netcdf <- \(file) {
   
   # load netcdf, convert to dataframe
+  print(paste("Loading", file))
   data <- load_netcdf(file)
-  print(paste("Loaded", file))
   gc()
   
   # take daily maximum windspeeds
@@ -80,6 +82,7 @@ preprocess_netcdf <- \(file) {
   return(data) 
 }
 
+# don't run in parallel, uses too much memory
 data <- bind_rows(lapply(files, preprocess_netcdf))
 
 #### Triangulate to weather stations ####

@@ -22,10 +22,20 @@ boot_ce <- \(fit, R = 100, trace = 10, ncores = 1) {
   
   # extract marginal and dependence thresholds
   # TODO Implement for multiple locations
+  # thresh_dep <- lapply(dependence, \(x) {
+  #   vapply(x, \(y) {
+  #     y[rownames(y) == "dth", ]
+  #   }, numeric(length(marginal[[1]]) - 1))[1, ]
+  # })
   thresh_dep <- lapply(dependence, \(x) {
-    vapply(x, \(y) {
-      y[rownames(y) == "dth", ]
-    }, numeric(length(marginal[[1]]) - 1))[1, ]
+    res <- vapply(x, \(y) {
+      y[rownames(y) == "dth", , drop = FALSE]
+    }, numeric(length(x) - 1))
+    if (!is.matrix(res)) {
+      res <- matrix(res, nrow = 1)
+      colnames(res) <- names(x)
+    }
+    res[1, , drop = FALSE]
   })
   
   # TODO Temp: Same thresh for each location
@@ -51,7 +61,7 @@ boot_ce <- \(fit, R = 100, trace = 10, ncores = 1) {
     lapply(x, \(y) {
       # scale back towards zero in case point est on edge of original parameter 
       # space and falls off edge of constrained space for bootstrap sample 
-      y[c("a", "b"), ] * 0.75
+      y[c("a", "b"), , drop = FALSE] * 0.75
     })
   })
   
@@ -192,12 +202,17 @@ boot_ce <- \(fit, R = 100, trace = 10, ncores = 1) {
   # into nice structure:
   
   # for marginal, want df with locs and vars and sigma and xi estimates for each
+  
+  # pull margins for each bootstrap sample
   marg_out <- lapply(boot_fits, `[[`, "marginal") |> 
     # Extract location and parameters from each list element
+    # for each bootstrap margin
     purrr::map_df(~{
+      # loop through locations
       purrr::map_dfr(.x, \(loc_data) {
         # Create a tidy data frame for each location's parameters, keeping location as it is
         loc_data |> 
+          # loop through variables, extract parameters and name accordingly
           purrr::map_dfr(~ tibble(
             parameter = names(.x), 
             value = .x
@@ -207,29 +222,39 @@ boot_ce <- \(fit, R = 100, trace = 10, ncores = 1) {
   
   # TODO Describe dep_out, reduce Chat GPT comments
   # TODO Fix for > 1 location
-  # Assuming dep_boot is your list of bootstrap samples
+  # extract dependence from each bootstrap sample
   dep_out <- lapply(boot_fits, `[[`, "dependence") |> 
-    lapply(\(boot_sample) {
-    
-      # For each bootstrap sample, iterate over each location (e.g., location_1, location_2, etc.)
-      location_data <- purrr::map_dfr(names(boot_sample), function(loc_name) {
+    # lapply(\(boot_sample) {
+    loop_fun(\(boot_sample) {
+      # boot_sample <- lapply(boot_fits, `[[`, "dependence")[[1]]
+      # again, loop through locations for a given bootstrap sample
+      purrr::map_dfr(names(boot_sample), function(loc_name) {
         
-        # Get the data for this location (e.g., location_1)
+        # loc <- boot_sample[[1]]
         loc <- boot_sample[[loc_name]]
         
-        # Iterate over each pollutant (e.g., O3, NO2, etc.)
+        # loop over variables
         purrr::map_dfr(names(loc), function(cond_var) {
           
           # Get the matrix for the current conditioning variable
-          var_matrix <- loc[[cond_var]]
+          var_mat <- loc[[cond_var]]
+          
+          # be careful if var_mat is not a matrix
+          if (is.matrix(var_mat)) {
+            var_names <- colnames(var_mat)
+          } else {
+            var_names <- names(loc)[!names(loc) == cond_var]
+            var_mat <- as.matrix(var_mat)
+          }
           
           # Create a tidy data frame for this location's matrix
           tibble(
-            parameter = rep(c("a", "b"), each = ncol(var_matrix)),
-            vars      = rep(colnames(var_matrix), times = 2),
-            value     = c(var_matrix["a", ], var_matrix["b", ]),
-            cond_var  = rep(cond_var, ncol(var_matrix) * 2),
-            name      = rep(loc_name, ncol(var_matrix) * 2)
+            parameter = rep(c("a", "b"), each = ncol(var_mat)),
+            # vars      = rep(colnames(var_mat), times = 2),
+            vars      = rep(var_names, times = 2),
+            value     = c(var_mat["a", ], var_mat["b", ]),
+            cond_var  = rep(cond_var, ncol(var_mat) * 2),
+            name      = rep(loc_name, ncol(var_mat) * 2)
           )
         })
       })
@@ -269,7 +294,7 @@ local_rand_index <- \(P0, P1) {
     betai <- num_ss + num_dd
     beta.all[i] <- betai
   }
-  return(beta.all/D)
+  return(beta.all / D)
 }
 
 # TODO: Add shared plotting functions

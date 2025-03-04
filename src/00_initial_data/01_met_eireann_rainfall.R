@@ -1,21 +1,5 @@
 #### Download Met Eireann Rainfall Data ####
 
-# Met Eireann:
-# Feeling is that scedastic function will be similar, but extremal index may 
-# differ
-# Ensure there are no missing values, need data for last 10/20 years
-# Using 50 years would smooth too much over skedastic function
-# May be difference between East-West, will turn up in extremal index?
-# Maybe do 20 or so weather stations
-# https://www.met.ie/climate/available-data/historical-data
-# Shouldn't be more than 3 clusters
-
-# Questions: 
-# - Should I look at yearly (rather than daily) data, 
-# to avoid temporal correlation? (mean/max/sum?)
-# - What to do about missing data? Looking at yearly means would avoid
-#   Ignore for now, just plotting, Christian back next week
-
 #### Libs ####
 
 library(stringr)
@@ -25,10 +9,16 @@ library(lubridate)
 library(sf)
 library(ggplot2)
 
+sf_use_s2(FALSE)
+
 
 #### Metadata ####
 
-sf_use_s2(FALSE)
+# set max and min dates over which to look at data
+min_date <- as_date("1980-01-01")
+max_date <- as_date("2022-12-31")
+
+# Only take stations with start date before 1980
 
 # Have we already downloaded the data?
 downloaded <- TRUE 
@@ -164,11 +154,9 @@ met_eir <- met_eir %>%
   select(-c(ind, month))
 
 # only take stations with max date = 2022-12-31 (many with end dates in 2023)
-max_date <- as_date("2022-12-31")
 met_eir <- filter(met_eir, date < max_date)
 
 # Only take stations with start date before 1980
-min_date <- as_date("1980-01-01")
 station_first_dates <- met_eir %>% 
   group_by(name) %>% 
   slice(1) %>% 

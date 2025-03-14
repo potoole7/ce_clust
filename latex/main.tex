@@ -1,0 +1,178 @@
+\documentclass{article}
+
+\usepackage[top=3cm, bottom=3cm, left=3.5cm,right=3.5cm]{geometry}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage{graphicx}
+\usepackage{bm}
+\usepackage{titlesec}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{natbib} % print author's name and year when citing
+\usepackage{bbm}
+\usepackage{todonotes}
+\usepackage{pdflscape}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{authblk}
+\usepackage{pdfpages}
+\usepackage{setspace} 
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{tikz}
+\usepackage[colorlinks=true,citecolor=blue, linkcolor=blue]{hyperref}
+\usepackage{multirow}
+\usepackage{todonotes}
+\setlength{\tabcolsep}{5pt}
+%%\setlength{\parindent}{0pt}
+\usepackage[parfill]{parskip}
+\renewcommand{\arraystretch}{1.5}
+
+\setcounter{tocdepth}{2}
+
+% Define a custom note command for general notes
+\newcommand{\mynote}[1]{\todo[color=yellow!40,inline]{#1}}
+
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+% Nature Bibliography style
+% \usepackage[backend=biber,style=nature]{biblatex}
+% \addbibresource{library.bib} 
+\bibliographystyle{unsrtnat}
+
+% number equations by section
+\numberwithin{equation}{section}
+
+\title{A clustering framework for conditional extremes models}
+\thispagestyle{empty}
+\author{Patrick O'Toole, Christian Rohrbeck, Jordan Richards}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+% \newpage
+
+\begin{abstract}
+  % Intro
+ Conditional extreme value models have proven useful for analysing the joint tail behaviour of random vectors. 
+ Conditional extreme value models describe the distribution of components of a random vector conditional on at least one exceeding a suitably high threshold, and they can flexibly capture a variety of structures in the distribution tails.
+ One drawback of these methods is that model estimates tend to be highly uncertain due to the natural scarcity of extreme data. 
+ This motivates the development of clustering methods for this class of models; pooling similar within-cluster data drastically reduces parameter estimation uncertainty.
+ 
+ While an extensive amount of work to estimate conditional extremes models exists in multivariate and spatial applications, the prospect of clustering for models of this type has not yet been explored. 
+ As a motivating example, we explore tail dependence of meteorological variables across multiple spatial locations and seek to identify sites which exhibit similar multivariate tail behaviour. 
+ To this end, we introduce a clustering framework for conditional extremes models which provides a novel and principled, parametric methodology for summarising multivariate extremal dependence.
+ 
+ % Outline of model
+ In a first step, we define a dissimilarity measure for conditional extremes models based on the Jensen-Shannon divergence and common working assumptions made when fitting these models. 
+ One key advantage of our measure is that it can be applied in arbitrary dimension and, as opposed to existing methods for clustering extremal dependence, is not restricted to a bivariate setting. 
+ Clustering is then performed by applying the k-medoids algorithm to our novel dissimilarity matrix, which collects the dissimilarity between all pairs of spatial sites. 
+ 
+ % Simulation
+ A detailed simulation study shows our technique to be superior to the leading competitor in the bivariate case across a range of possible dependence structures and uniquely provides a tool for clustering in the multivariate extremal dependence setting. 
+ We also outline a methodology for selecting the number of clusters to use in a given application.  Finally, we apply our clustering framework to meteorological data from Ireland and air pollution data in cities across the US ( United States). 
+
+\end{abstract}
+
+\newpage
+
+\tableofcontents
+
+\newpage
+
+\section{Introduction}\label{sec:intro}
+\todo{Where to describe Vignotto method? in introduction?}
+
+\section{Motivating examples}
+\subsection{Ireland}
+
+\begin{itemize}
+    \item 
+\end{itemize}
+
+\subsection{US}
+
+\begin{itemize}
+    \item 
+\end{itemize}
+
+\section{Methods}
+\todo{Or call subsections Marginal and dependence modelling? See other papers on CE}
+\subsection{Peaks-over-threshold}
+\subsection{Conditional Extremes}
+
+\subsection{Jensen-Shannon Divergence}
+\subsection{Clustering}
+
+\section{Simulation study}\label{sec:sim}
+\todo{May not be subsections, but will form }
+
+\subsection{Simulation design}
+
+\begin{itemize}
+    \item Simulate data from mixture of normal and t-copulas, both with GPD margins with shape = ?, scale = ?.
+    \item Idea: Gaussian copula will generate variables with extremal independence, while t-copula will generate variables with extremal dependence. 
+    \item Can generate several ``locations'' using this method with the same and different correlation parameter in the Gaussian and t-copulas, the knowledge of which will provide our ``known'' clustering solution. 
+    \item Can see how well our clustering algorithm performs under various dependence scenarios.
+    \item However, while simulation is easy, it is difficult (impossible?) to ascertain what the ``true'' dependence parameters from the CE model for these datasets are. 
+\end{itemize}
+
+\subsection{Comparison to competing methods}
+
+\begin{itemize}
+    \item Compared to method from \cite{Vignotto2021} for two dimensions. 
+    \item Compared using Adjusted Rand Index (ARI) (\todo{cite!}), which compares a clustering solution
+    \item Shown to be an improvement over this method for the overwhelming majority of simulations. 
+    \item \todo{Make interesting comments about how clustering performs better when Gaussian copula correlation is higher!}
+\end{itemize}
+
+\subsection{Extension to $>2$ dimensions}
+
+\begin{itemize}
+    \item Also shown to work well for three dimensions ...
+\end{itemize}
+
+\subsection{More realistic example}
+
+\begin{itemize}
+    \item Generated more realistic example to somewhat match the structure of the Irish dataset. 
+    \item ? locations, ... \todo{fill in}
+\end{itemize}
+
+\subsection{Parameter estimation pre- and post-clustering}
+
+\begin{itemize}
+    \item Desire to ascertain whether dependence parameters are less uncertain after clustering. 
+    \item Can bootstrap using scheme in \cite{Heffernan2004} to determine uncertainty in parameter estimates. 
+    \item Post clustering, can see that uncertainty is vastly reduced for both $\alpha$ and $\beta$ parameters in this simulation study. 
+\end{itemize}
+
+\subsection{Choosing the number of clusters}
+
+\begin{itemize}
+    \item \todo{Describe TWGSS}
+    \item \todo{Describe AIC}
+\end{itemize}
+
+\section{Application to Irish meteorological data}
+
+\begin{itemize}
+    \item 
+\end{itemize}
+
+\section{Application to US city air pollution data}
+
+\begin{itemize}
+    \item 
+\end{itemize}
+
+\section*{Code Availability}
+
+\newpage
+\bibliography{library}
+
+\end{document}

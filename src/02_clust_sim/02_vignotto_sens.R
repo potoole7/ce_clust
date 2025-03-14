@@ -101,7 +101,7 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
   for (j in seq_len(n_times)) {
     # generate simulation data
     data_mix <- with(row, sim_cop_dat(
-      n          = 1e3,
+      n          = n,
       cor_gauss  = c(cor_gauss1, cor_gauss2),
       cor_t      = c(cor_t1, cor_t2),
       df_t       = c(df_t1, df_t2),

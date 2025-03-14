@@ -122,7 +122,7 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
 
     # calculate local rand index
     lri <- local_rand_index(kl_clust$pam$clustering, cluster_mem)
-    # concatonate to string to store in vector
+    # concatenate to string to store in vector
     lri_vec[[j]] <- paste0(lri, collapse = "-")
     # also average lri by cluster
     lri_mean_vec[[j]] <- paste0(vapply(unique(cluster_mem), \(x) {
@@ -134,9 +134,8 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
     row,
     "adj_rand"        = results_vec,
     "local_rand"      = lri_vec,
-    "mean_local_rand" = lir_mean_vec
+    "mean_local_rand" = lri_mean_vec
   ))
-  # })
 }, mc.cores = n_cores))
 
 # calculate means and add to results

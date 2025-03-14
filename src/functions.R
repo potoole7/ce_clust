@@ -3,23 +3,22 @@
 # function to perform bootstrapping for CE model
 # TODO Move to package
 boot_ce <- \(fit, R = 100, trace = 10, ncores = 1) {
-  
   # check if fit has correct structure
   stopifnot(
-    "fit must be an object returned by fit_ce with output_all = TRUE" = 
+    "fit must be an object returned by fit_ce with output_all = TRUE" =
       all(c("marginal", "arg_vals") %in% names(fit))
   )
-  
+
   # Temp: only works for ismev fit currently
   # stopifnot("Currently only supported for ")
-  
+
   # pull data
-  arg_vals    <- fit$arg_vals       # original arguments to fit_ce object
-  marginal    <- fit$marginal       # marginal GPDs
-  orig        <- fit$original       # original data
-  transformed <- fit$transformed    # Laplace transformed data
-  dependence <-  fit$dependence     # dependence parameters
-  
+  arg_vals <- fit$arg_vals # original arguments to fit_ce object
+  marginal <- fit$marginal # marginal GPDs
+  orig <- fit$original # original data
+  transformed <- fit$transformed # Laplace transformed data
+  dependence <- fit$dependence # dependence parameters
+
   # extract marginal and dependence thresholds
   # TODO Implement for multiple locations
   # thresh_dep <- lapply(dependence, \(x) {
@@ -37,13 +36,13 @@ boot_ce <- \(fit, R = 100, trace = 10, ncores = 1) {
     }
     res[1, , drop = FALSE]
   })
-  
-  # TODO Temp: Same thresh for each location
+
+  # TODO Temp: Using same thresh for each location, need to expand!
   thresh_marg <- lapply(marginal, \(x) {
     vapply(x, `[[`, "thresh", FUN.VALUE = numeric(1))
   })
   thresh_marg <- thresh_marg[[1]]
-  
+
   # Parallel setup
   # TODO Implement below, not using now
   apply_fun <- ifelse(ncores == 1, lapply, parallel::mclapply)
@@ -55,16 +54,16 @@ boot_ce <- \(fit, R = 100, trace = 10, ncores = 1) {
     do.call(apply_fun, c(list(...), ext_args))
   }
 
-  # Pull start values 
+  # Pull start values
   # TODO Make `coef` method for dependence, would be much easier than this loop!
   start <- lapply(dependence, \(x) {
     lapply(x, \(y) {
-      # scale back towards zero in case point est on edge of original parameter 
-      # space and falls off edge of constrained space for bootstrap sample 
+      # scale back towards zero in case point est on edge of original parameter
+      # space and falls off edge of constrained space for bootstrap sample
       y[c("a", "b"), , drop = FALSE] * 0.75
     })
   })
-  
+
   # TODO Temp: remove
   # marg_loc  <- marginal[[1]]
   # trans_loc <- transformed[[1]]
@@ -77,14 +76,14 @@ boot_ce <- \(fit, R = 100, trace = 10, ncores = 1) {
     marg_loc, trans_loc, dep_loc, orig_loc, thresh_dep, n_pass = 3
     # marg_loc, trans_loc, dep_loc, orig_loc, cond_var, thresh_dep, n_pass = 3
   ) {
-    # pull bootstrap sample 
+    # pull bootstrap sample
     # (must be different for each loc as nrows may differ)
     indices <- sample(seq_len(nrow(trans_loc)), replace = TRUE)
     trans_loc_boot <- trans_loc[indices, ]
-    
+
     # TODO test this to see if it ever fails?
     stopifnot(names(thresh_dep) == colnames(trans_loc))
-    
+
     # Reorder bootstrap sample to have the same order as original data
     test <- FALSE
     # which <- which(names(marg_loc) %in% cond_var)
@@ -100,35 +99,35 @@ boot_ce <- \(fit, R = 100, trace = 10, ncores = 1) {
       # need exceedance in cond. var, and also in other vars for these rows
       # TODO I fit CE for every variable, not a specific one; how to handle?
       # TODO Is this correct???
-      # if (sum(trans_loc_boot[, which] > thresh_dep[which]) > 1 && 
+      # if (sum(trans_loc_boot[, which] > thresh_dep[which]) > 1 &&
       #     all(trans_loc_boot[trans_loc_boot[, which] > thresh_dep[which], which] > 0)) {
-      #   test <- TRUE 
+      #   test <- TRUE
       # }
       if (any(colSums(sweep(trans_loc_boot, 2, thresh_dep, FUN = ">")) > 0)) {
         test <- TRUE
       }
     }
-    
+
     # convert variables to original scale
     # TODO Check if this is correct! Look at plots for texmex version
     orig_loc_boot <- inv_semi_par_cdf(
       # inverse Laplace transform to CDF
-      inv_laplace_trans(trans_loc_boot), 
+      inv_laplace_trans(trans_loc_boot),
       # original data for where semiparametric thresholding occurs
-      select(orig_loc, -matches("name")), 
-      marg_loc  # marginal GPD parameters
+      select(orig_loc, -matches("name")),
+      marg_loc # marginal GPD parameters
     )
     colnames(orig_loc_boot) <- names(marg_loc)
-    
+
     # test for no marg exceedances over sampled points, if so resample w/ nPass
     max_vals <- apply(orig_loc_boot, 2, max, na.rm = TRUE)
     marg_thresh <- vapply(marg_loc, `[[`, "thresh", FUN.VALUE = numeric(1))
     if (!all(max_vals > marg_thresh)) {
       return(list(NA))
     }
-   return(orig_loc_boot)
+    return(orig_loc_boot)
   }
-  
+
   # perform bootstrapping
   # TODO Allow parallel computation
   # boot_fits <- lapply(seq_len(R), \(i) {
@@ -139,10 +138,10 @@ boot_ce <- \(fit, R = 100, trace = 10, ncores = 1) {
     dat_boot <- lapply(seq_along(marginal), \(j) { # loop through locations
       # prepare bootstrapped data for location j
       dat_spec <- prep_boot_loc_dat(
-        marginal[[j]], 
-        transformed[[j]], 
-        dependence[[j]], 
-        orig[[j]], 
+        marginal[[j]],
+        transformed[[j]],
+        dependence[[j]],
+        orig[[j]],
         thresh_dep[[j]]
       )
       # check if NA, if so then rerun
@@ -160,27 +159,27 @@ boot_ce <- \(fit, R = 100, trace = 10, ncores = 1) {
           "Failed to generate bootstrapped data after ", n_pass, " attempts"
         ))
       }
-      # label data with locations  
-      as_tibble(dat_spec) |> 
+      # label data with locations
+      as_tibble(dat_spec) |>
         mutate(name = names(marginal)[j])
     })
     names(dat_boot) <- names(marginal)
-    
+
     # refit CE model using same parameters as before, force output_all = TRUE
     fit_boot <- do.call(
-      fit_ce, 
+      fit_ce,
       c(
         # TODO Investigate why this won't work without bind_rows
         # TODO Add fixed values for dependence and marginal thresholds
         list(
-          data = bind_rows(dat_boot), 
-          start = start, 
+          data = bind_rows(dat_boot),
+          start = start,
           # start = c("a" = 0.01, "b" = 0.01),
           # TODO Implement arg_val for different locations in fit_ce
           marg_val = thresh_marg,
           marg_prob = NULL
-        ), 
-        arg_vals[names(arg_vals) != "marg_prob"], 
+        ),
+        arg_vals[names(arg_vals) != "marg_prob"],
         output_all = TRUE
       )
     )
@@ -190,55 +189,53 @@ boot_ce <- \(fit, R = 100, trace = 10, ncores = 1) {
         lapply(x, \(y) {
           y[c("a", "b"), ]
         })
-      }), 
+      }),
       # extract xi and sigma
       "marginal" = lapply(fit_boot$marginal, \(x) {
         lapply(x, \(y) unlist(y[!names(y) == "thresh"]))
       })
     ))
   })
-  
+
   # extract a and b parameters for dependence and xi and sigma for marginal
   # into nice structure:
-  
+
   # for marginal, want df with locs and vars and sigma and xi estimates for each
-  
+
   # pull margins for each bootstrap sample
-  marg_out <- lapply(boot_fits, `[[`, "marginal") |> 
+  marg_out <- lapply(boot_fits, `[[`, "marginal") |>
     # Extract location and parameters from each list element
     # for each bootstrap margin
-    purrr::map_df(~{
+    purrr::map_df(~ {
       # loop through locations
       purrr::map_dfr(.x, \(loc_data) {
         # Create a tidy data frame for each location's parameters, keeping location as it is
-        loc_data |> 
+        loc_data |>
           # loop through variables, extract parameters and name accordingly
           purrr::map_dfr(~ tibble(
-            parameter = names(.x), 
+            parameter = names(.x),
             value = .x
           ), .id = "vars")
       }, .id = "name")
     })
-  
+
   # TODO Describe dep_out, reduce Chat GPT comments
   # TODO Fix for > 1 location
   # extract dependence from each bootstrap sample
-  dep_out <- lapply(boot_fits, `[[`, "dependence") |> 
+  dep_out <- lapply(boot_fits, `[[`, "dependence") |>
     # lapply(\(boot_sample) {
     loop_fun(\(boot_sample) {
       # boot_sample <- lapply(boot_fits, `[[`, "dependence")[[1]]
       # again, loop through locations for a given bootstrap sample
       purrr::map_dfr(names(boot_sample), function(loc_name) {
-        
         # loc <- boot_sample[[1]]
         loc <- boot_sample[[loc_name]]
-        
+
         # loop over variables
         purrr::map_dfr(names(loc), function(cond_var) {
-          
           # Get the matrix for the current conditioning variable
           var_mat <- loc[[cond_var]]
-          
+
           # be careful if var_mat is not a matrix
           if (is.matrix(var_mat)) {
             var_names <- colnames(var_mat)
@@ -246,7 +243,7 @@ boot_ce <- \(fit, R = 100, trace = 10, ncores = 1) {
             var_names <- names(loc)[!names(loc) == cond_var]
             var_mat <- as.matrix(var_mat)
           }
-          
+
           # Create a tidy data frame for this location's matrix
           tibble(
             parameter = rep(c("a", "b"), each = ncol(var_mat)),
@@ -259,10 +256,10 @@ boot_ce <- \(fit, R = 100, trace = 10, ncores = 1) {
         })
       })
     })
-  
+
   # Combine all the lists of data frames into one final data frame
   dep_out <- bind_rows(dep_out)
-  
+
   return(list("marginal" = marg_out, "dependence" = dep_out))
 }
 
@@ -272,17 +269,17 @@ boot_ce <- \(fit, R = 100, trace = 10, ncores = 1) {
 
 #### Sensitivity analysis ####
 
-# calculate local rand index 
+# calculate local rand index
 # (from https://github.com/Xuanjie-Shao/NonStaExtDep/blob/main/Functions/Utils.R)
 local_rand_index <- \(P0, P1) {
   # for each partition P1, true partition P0
   if (length(P0) == length(P1)) {
     D <- length(P0)
-  } else { 
-    return(0) 
+  } else {
+    return(0)
   }
   beta.all <- vector(length = D)
-  for (i in seq_len(D)){
+  for (i in seq_len(D)) {
     betai <- num_ss <- num_dd <- 0
     for (j in seq_len(D)[-i]) {
       if (P0[i] == P0[j] && P1[i] == P1[j]) {
@@ -303,22 +300,22 @@ local_rand_index <- \(P0, P1) {
 summarise_sens_res <- \(results_grid, conf_level = 0.95) {
   # z-score corresponding to confidence level
   z <- qnorm((1 + conf_level) / 2)
-  
-  results_grid %>% 
+
+  results_grid %>%
     # remove any previous summaries as they mess up grouping
-    dplyr::select(-(ends_with("_rand") & !matches("adj_rand"))) %>% 
+    dplyr::select(-(ends_with("_rand") & !matches("adj_rand"))) %>%
     relocate(adj_rand, .after = everything()) %>% # ensure is last col
-    group_by(across(1:last_col(1))) %>% 
+    group_by(across(1:last_col(1))) %>%
     summarise(
-      mean_rand  = mean(adj_rand, na.rm = TRUE), 
+      mean_rand  = mean(adj_rand, na.rm = TRUE),
       # (z score corresponding to confidence level) * standard error
       marg_rand  = z * (sd(adj_rand, na.rm = TRUE) / sqrt(n())),
       # CIs
       lower_rand = mean_rand - marg_rand,
       upper_rand = mean_rand + marg_rand,
       .groups    = "drop"
-    ) %>% 
-    dplyr::select(-marg_rand) %>%  # not required for plotting
+    ) %>%
+    dplyr::select(-marg_rand) %>% # not required for plotting
     return()
 }
 
@@ -327,63 +324,65 @@ summarise_sens_res <- \(results_grid, conf_level = 0.95) {
 
 # plot clustering vs dist2coast and altitude
 covar_plt <- \(pts, clust_obj, data_full, areas) {
-  plt_dat <- pts %>% 
+  plt_dat <- pts %>%
     st_drop_geometry() %>%
-    mutate(clust = clust_obj$clustering) %>% 
+    mutate(clust = clust_obj$clustering) %>%
     left_join(
-      data_full %>% 
+      data_full %>%
         # average wind direction across locations
-        group_by(name) %>% 
+        group_by(name) %>%
         mutate(
           wind_dir = as.numeric(mean(circular(
-            wind_dir, type = "angles", units = "degrees", modulo = "2pi"
+            wind_dir,
+            type = "angles", units = "degrees", modulo = "2pi"
           )))
-        ) %>% 
-        ungroup() %>% 
-        select(name, dist2coast, wind_dir, alt) %>% 
+        ) %>%
+        ungroup() %>%
+        select(name, dist2coast, wind_dir, alt) %>%
         distinct()
-    ) %>% 
-    # pivot_longer(dist2coast:alt, names_to = "var", values_to = "value") %>% 
+    ) %>%
+    # pivot_longer(dist2coast:alt, names_to = "var", values_to = "value") %>%
     identity()
-  
+
   # histogram of different variables for different clusters
   # TODO: add uncertainty bounds based on variability
-  p1 <- plt_dat %>% 
+  p1 <- plt_dat %>%
     group_by(clust) %>%
     # summarise(value = mean(value), .groups = "drop") %>%
     summarise(
       across(c("dist2coast", "alt"), mean),
       wind_dir = as.numeric(mean(circular(
-        wind_dir, type = "angles", units = "degrees", modulo = "2pi"
+        wind_dir,
+        type = "angles", units = "degrees", modulo = "2pi"
       ))),
       .groups = "drop"
-    ) %>% 
-    pivot_longer(dist2coast:wind_dir, names_to = "var", values_to = "value") %>% 
+    ) %>%
+    pivot_longer(dist2coast:wind_dir, names_to = "var", values_to = "value") %>%
     ggplot() +
     geom_bar(
       aes(x = factor(clust), y = value, fill = factor(clust)),
       stat = "identity"
     ) +
-    facet_wrap(~ var, scales = "free") + 
-    labs(x = "Cluster", fill = "Cluster") + 
-    ggsci::scale_fill_nejm() + 
+    facet_wrap(~var, scales = "free") +
+    labs(x = "Cluster", fill = "Cluster") +
+    ggsci::scale_fill_nejm() +
     evc_theme()
-  
+
   # plot density of different variables for both clusters
-  p2 <- plt_dat %>% 
-    pivot_longer(dist2coast:alt, names_to = "var", values_to = "value") %>% 
-    ggplot() + 
+  p2 <- plt_dat %>%
+    pivot_longer(dist2coast:alt, names_to = "var", values_to = "value") %>%
+    ggplot() +
     geom_density(
-      aes(x = value, fill = factor(clust)), 
+      aes(x = value, fill = factor(clust)),
       alpha = 0.5
     ) +
-    facet_wrap(~ var, scales = "free") + 
-    evc_theme() + 
-    labs(fill = "Cluster") + 
-    guides(fill = guide_legend(override.aes = list(alpha = 1))) + 
+    facet_wrap(~var, scales = "free") +
+    evc_theme() +
+    labs(fill = "Cluster") +
+    guides(fill = guide_legend(override.aes = list(alpha = 1))) +
     ggsci::scale_fill_nejm()
-  
-  return(list("hist" = p1, "density" = p2)) 
+
+  return(list("hist" = p1, "density" = p2))
 }
 
 
@@ -393,28 +392,28 @@ covar_plt <- \(pts, clust_obj, data_full, areas) {
 # TODO: Extend to simulate more than two variables
 # TODO: Extend to simulate more than two clusters
 sim_cop_dat <- \(
-  n_locs      = 12,    # number of locations
-  n_vars      = 2,     # number of variables at each location
-  n           = 1e4,   # number of simulations for each variable
-  n_clust     = 2,     # number of clusters
-  cluster_mem = NULL,  # desired membership, if NULL then evenly split
-  cor_gauss,           # bulk correlation for n_clust clusters from Gaussian copula
+  n_locs = 12, # number of locations
+  n_vars = 2, # number of variables at each location
+  n = 1e4, # number of simulations for each variable
+  n_clust = 2, # number of clusters
+  cluster_mem = NULL, # desired membership, if NULL then evenly split
+  cor_gauss, # bulk correlation for n_clust clusters from Gaussian copula
   # params_norm,         # normal marginal parameters (same for both)
-  cor_t,               # extreme correlation for n_clust clusters from t-copula
-  df_t,                # degrees of freedom for t-copula
-  params_gpd,          # GPD margin parameters
+  cor_t, # extreme correlation for n_clust clusters from t-copula
+  df_t, # degrees of freedom for t-copula
+  params_gpd, # GPD margin parameters
   mix_p = c(0.5, 0.5), # mixture weights
   perturb_cor = FALSE, # perturb correlation for each location within clusters
-  perturb_val = 0.05   # value to perturb by if desired
+  perturb_val = 0.05 # value to perturb by if desired
 ) {
   # many arguments must be of length n_clust
   # stopifnot(all(vapply(
-  #   # list(cor_gauss, cor_t, df_t, params_gpd, mix_p), 
-  #   list(cor_gauss, cor_t, df_t), 
+  #   # list(cor_gauss, cor_t, df_t, params_gpd, mix_p),
+  #   list(cor_gauss, cor_t, df_t),
   #   \(x) length(x) == n_clust, logical(1)
   # )))
   # stopifnot(sum(mix_p) == 1)
-  
+
   # Simulate from Gaussian Copula with GPD margins
   gauss_cop <- lapply(seq_len(n_locs), \(i){
     # pull correlation specified for each cluster
@@ -426,10 +425,10 @@ sim_cop_dat <- \(
     }
     # Assign the corresponding value to the result
     cor <- cor_gauss[group]
-    
+
     # set correlation matrix/vector with correct dimensions
     cor <- rep(cor, n_vars * (n_vars - 1) / 2)
-    
+
     # create (Gaussian) copula object
     cop_norm <- copula::normalCopula(cor, dim = n_vars, dispstr = "un")
     # simulate uniform draws from copula
@@ -438,11 +437,11 @@ sim_cop_dat <- \(
     evd::qgpd(
       p     = u,
       loc   = 0,
-      scale = params_gpd[1], 
-      shape = params_gpd[2] 
+      scale = params_gpd[1],
+      shape = params_gpd[2]
     )
   })
-  
+
   # simulate from t-Copula with GPD margins
   # TODO: Functinoalise repeated behaviour here from above?
   t_cop <- lapply(seq_len(n_locs), \(i) {
@@ -453,25 +452,25 @@ sim_cop_dat <- \(
     }
     # Assign the corresponding value to the result
     cor <- cor_t[group]
-    df  <- df_t[group]
-    
+    df <- df_t[group]
+
     # optionally perturb correlation for each location within clusters
     if (perturb_cor) {
       cor <- cor + runif(1, -perturb_val, perturb_val)
       cor <- pmax(pmin(cor, 1), 0) # ensure within [0, 1]
     }
-    
+
     cor <- rep(cor, n_vars * (n_vars - 1) / 2)
     cop_t <- copula::tCopula(cor, dim = n_vars, df = df, dispstr = "un")
     u <- copula::rCopula(n, cop_t)
     return(evd::qgpd(
       p     = u,
       loc   = 0,
-      scale = params_gpd[1], 
-      shape = params_gpd[2] 
+      scale = params_gpd[1],
+      shape = params_gpd[2]
     ))
   })
-  
+
   # mixture
   data_mix <- lapply(seq_len(n_locs), \(i) {
     x <- nrow(gauss_cop[[i]])
@@ -483,7 +482,7 @@ sim_cop_dat <- \(
     )
   })
   return(list(
-    "gauss_cop" = gauss_cop, 
+    "gauss_cop" = gauss_cop,
     "t_cop"     = t_cop,
     "data_mix"  = data_mix
   ))
@@ -494,7 +493,7 @@ sim_cop_dat <- \(
 
 # convert df to sf
 st_to_sf <- function(dat, coords = c("lon", "lat"), crs = "WGS84", ...) {
-  out <- dat %>% 
+  out <- dat %>%
     st_as_sf(coords = coords, ...)
   st_crs(out) <- crs
   return(out)
@@ -507,17 +506,17 @@ dist2coast <- \(dat, areas, convert_to_coastline = TRUE) {
   if (convert_to_coastline) {
     coastline <- st_union(coastline)
     coastline <- st_cast(coastline, "MULTILINESTRING")
-  } 
-   
+  }
+
   # locations to find distance to coast for
-  locs <- data %>% 
-    distinct(name, lon, lat) %>% 
+  locs <- data %>%
+    distinct(name, lon, lat) %>%
     st_to_sf()
 
   distances <- as.numeric(st_distance(locs, coastline))
-  
-  data %>% 
-    left_join(data.frame("name" = locs$name, "dist2coast" = distances)) %>% 
+
+  data %>%
+    left_join(data.frame("name" = locs$name, "dist2coast" = distances)) %>%
     return()
 }
 
@@ -526,7 +525,6 @@ dist2coast <- \(dat, areas, convert_to_coastline = TRUE) {
 
 # load netcdf and return as data.table object
 load_netcdf <- function(file) {
-
   # open connection to file
   nc_connection <- nc_open(file)
   # load all data from netcdf file
@@ -535,6 +533,9 @@ load_netcdf <- function(file) {
   })
   gc()
   names(data) <- names(nc_connection$var)
+
+  data <- data[!names(data) %in% c("number", "expver")]
+
 
   # data[[1]][, , 1] %>%
   #   as.matrix() %>%
@@ -549,8 +550,11 @@ load_netcdf <- function(file) {
   lon_vals <- nc_connection$dim$longitude$vals
   lat_vals <- nc_connection$dim$latitude$vals
   if (is.null(lon_vals)) {
-    lon_vals <-  nc_connection$dim$lon$vals
+    lon_vals <- nc_connection$dim$lon$vals
     lat_vals <- nc_connection$dim$lat$vals
+  }
+  if ("valid_time" %in% names(nc_connection$dim)) {
+    nc_connection$dim$time <- nc_connection$dim$valid_time
   }
   time_vals <- nc_connection$dim$time$vals
   # ret <- data.table(
@@ -580,39 +584,47 @@ load_netcdf <- function(file) {
       value.name = names(data)[i]
     )
   })
-  rm(data); gc()
+  rm(data)
+  gc()
 
   # (specific to wind speed) Join list variables
   if ("u10" %in% as.vector(vapply(ret, names, character(ncol(ret[[1]]))))) {
-    ret <- ret[[1]] %>% 
+    ret <- ret[[1]] %>%
       bind_cols(select(ret[[2]], "v10")) %>%
       # bind_cols(select(ret[[3]], "msl")) %>%
-      # filter(time == 1) %>% 
-      # filter(time == 920424) %>% 
-      # ggplot() + 
+      # filter(time == 1) %>%
+      # filter(time == 920424) %>%
+      # ggplot() +
       # geom_raster(aes(x = longitude, y = latitude, fill = u10))
       identity()
   } else {
     ret <- ret[[1]]
   }
-  
+
   # add data to this data.table
   # for (i in seq_len(length(data))) {
-    # ret[, (3 + i)] <- as.vector(matrix(
-      # data[[i]], nrow = dim(data[[i]])[3], byrow = TRUE
-    # ))
-    # data[[i]] <- NA
-    # gc()
+  # ret[, (3 + i)] <- as.vector(matrix(
+  # data[[i]], nrow = dim(data[[i]])[3], byrow = TRUE
+  # ))
+  # data[[i]] <- NA
+  # gc()
   # }
   # rm(data); gc()
 
   # preprocess time
   # time since this date
   if (!is.null(time_vals)) {
+    units <- nc_connection$dim$time$units
     reference_date <- as.POSIXct(
-      substr(nc_connection$dim$time$units, 13, 31), tz = "UTC"
+      # substr(nc_connection$dim$time$units, 13, 31), tz = "UTC"
+      gsub(".*?(\\d{4}-\\d{2}-\\d{2}).*", "\\1", units),
+      tz = "UTC"
     )
-    ret$time <- reference_date + ret$time * 3600
+    if (grepl("seconds", units)) {
+      ret$time <- reference_date + ret$time
+    } else if (grepl("hours", units)) {
+      ret$time <- reference_date + ret$time * 3600
+    }
   }
 
   ret <- setDT(ret)
@@ -625,16 +637,16 @@ load_netcdf <- function(file) {
 
 # create matrix, as required by extremis
 create_matrix <- function(dat, col) {
-  ret <- dat %>% 
-    select(name, date, !!col) %>% 
-    pivot_wider(names_from = name, values_from = !!col, id_cols = date) %>% 
+  ret <- dat %>%
+    select(name, date, !!col) %>%
+    pivot_wider(names_from = name, values_from = !!col, id_cols = date) %>%
     drop_na()
-  
+
   dates <- unique(ret$date)
-  
-  ret <- ret %>% 
-    select(-date) %>% 
+
+  ret <- ret %>%
+    select(-date) %>%
     as.matrix()
- rownames(ret) <- as.character(dates)
- return(ret)
+  rownames(ret) <- as.character(dates)
+  return(ret)
 }

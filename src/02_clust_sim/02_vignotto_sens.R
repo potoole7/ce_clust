@@ -1,5 +1,9 @@
 #### Simulation sensitivity analysis of Vignotto 2021 ####
 
+# Assess performance of Vignotto clustering algorithm on simulation dataset
+# consisting of mixture of Gaussian and t-copulas with GPD margins, through
+# a grid search of reasonable parameter values (particularly copula corr pars)
+
 #### libs ####
 
 library(dplyr)

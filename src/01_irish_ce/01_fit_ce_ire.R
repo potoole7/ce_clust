@@ -2,6 +2,7 @@
 
 # following https://empslocal.ex.ac.uk/people/staff/by223/software/gpd.R
 # In paper https://www.tandfonline.com/doi/full/10.1080/01621459.2018.1529596
+# For TFR project!
 
 # TODO: make master plotting function for Ireland, lots of code is repeated!
 
@@ -32,8 +33,8 @@
 #### Libs ####
 
 library(sf)
-library(evc)
-# devtools::load_all("../evc")
+# library(evc)
+devtools::load_all("../evc")
 library(dplyr, quietly = TRUE)
 library(tidyr)
 library(ggplot2)
@@ -49,18 +50,7 @@ library(ggpattern)
 
 source("src/functions.R")
 
-theme <- theme_bw() +
-  theme(
-    legend.position = "bottom",
-    plot.title = element_text(size = 16, hjust = 0.5),
-    axis.text = element_text(size = 12),
-    axis.title = element_text(size = 14, face = "bold"),
-    legend.text = element_text(size = 12),
-    strip.text = element_text(size = 13, face = "bold"),
-    strip.background = element_rect(fill = NA, colour = "black"),
-    plot.tag = element_text(size = 16, face = "bold"),
-    panel.background = element_rect(fill = NA, colour = "black")
-  )
+theme <- evc::evc_theme()
 
 sf::sf_use_s2(FALSE)
 
@@ -72,6 +62,8 @@ rm_cnty <- \(x) {
 
 #### Metadata ####
 
+# dqu <- 0.7 # dependence threshold
+dqu <- 0.9 # dependence threshold
 min_max_dates <- as_date(c("1990-01-01", "2020-12-31"))
 all_dates <- seq.Date(min_max_dates[1], min_max_dates[2], by = "day")
 
@@ -312,7 +304,8 @@ mod_fit <- fit_ce(
   marg_prob = list(
     f = list("response ~ s(lon, lat, k = 50)", "~ s(lon, lat, k = 40)")
   ), 
-  cond_prob = 0.7, # dqu
+  # cond_prob = 0.7, # dqu
+  cond_prob = dqu, 
   # formula for evgam fit to excesses over threshold
   f = list(excess ~ s(lon, lat, k = 40), ~s(lon, lat, k = 40)), 
   ncores = max(1, parallel::detectCores() - 2),
@@ -326,14 +319,20 @@ mod_fit <- fit_ce(
 na_locs <- sapply(mod_fit$dependence, \(x) {
   any(is.na(unlist(x)))
 })
+print(paste0(
+  "Removing ", sum(na_locs), " locations with NAs: ", 
+  paste0(names(na_locs)[na_locs], collapse = ", ")
+))
 
 # outputs from function needed for checking/plotting:
 # thresholds for rain and windspeed
 data_rain <- mod_fit$thresh[[1]]
 data_ws <- mod_fit$thresh[[2]]
 # evgam predictions
-pred_rain <- mod_fit$evgam[[1]]
-pred_ws <- mod_fit$evgam[[2]]
+# pred_rain <- mod_fit$evgam[[1]]
+pred_rain <- mod_fit$evgam_fit[[1]]
+# pred_ws <- mod_fit$evgam[[2]]
+pred_ws <- mod_fit$evgam_fit[[2]]
 # marginal fits
 marginal <- mod_fit$marginal
 # dependence 
@@ -468,14 +467,16 @@ ggplot(areas) +
 
 # Fit evgam model with spline for spatial location, create predictions
 # predict on thresholded data, not all
+# TODO: Change to function to make predictions more generally, not just evgam
 evgam_rain <- fit_evgam(data_rain, data_rain) 
 
 # TODO: Functionalise 
 data_rain_map <- data_rain %>%
-  mutate(
-    scale = evgam_rain$predictions$scale,
-    shape = evgam_rain$predictions$shape
-  ) %>%
+  # mutate(
+  #   scale = evgam_rain$predictions$scale,
+  #   shape = evgam_rain$predictions$shape
+  # ) %>%
+  left_join(evgam_rain$predictions) %>% 
   st_to_sf(remove = FALSE)
 
 # plot parameter values over space
@@ -586,10 +587,11 @@ evgam_ws <- fit_evgam(data_ws, data_ws)
 
 data_ws_map <- data_ws %>%
   # mutate(scale = evgam_ws$predictions$scale) %>%
-  mutate(
-    scale = evgam_ws$predictions$scale,
-    shape = evgam_ws$predictions$shape
-  ) %>%
+  # mutate(
+  #   scale = evgam_ws$predictions$scale,
+  #   shape = evgam_ws$predictions$shape
+  # ) %>%
+  left_join(evgam_ws$predictions) %>%
   st_to_sf(remove = FALSE)
 
 #  lab_scale_ws <- TeX(r"($\sigma_{wind}$)")
@@ -693,10 +695,11 @@ pp_qq_plot <- \(evgam_fit, data_map, xlab = "Empirical") {
     scale_y_continuous(limits = c(0, 6)) +
     labs(x = xlab, y = "")
   
+  # TODO Perhaps should just return the ggplot objects? Can add after
   return(pp + qq_p)
 }
 
-# # TODO: Add uncertainty bounds! (See ITT2)
+# TODO Add uncertainty bounds! (See ITT2)
 # pp_qq_rain <- pp_qq_plot(evgam_rain, data_rain_map)
 # pp_qq_ws <- pp_qq_plot(evgam_ws, data_ws_map)
 # 
@@ -1038,14 +1041,14 @@ save_bootstrap_plot <- \(bootstrap_thresh_plots, file) {
 
 #### Cleanup CE model ####
 
-# pull names of locations with NA for alpha 
-# col sums should equal 6 if dependence fit is valid for rain and wind
+# pull names of locations with NA for param values
 # TODO: Fix, not working
 loc_nas <- names(marginal)[
   colSums(data.frame(
     # find length of both objects
-    vapply(dependence, \(x) vapply(x, length, numeric(1)), numeric(2))
-  )) < 6 # test it is the correct size
+    # vapply(dependence, \(x) vapply(x, length, numeric(1)), numeric(2))
+    sapply(dependence, \(x) sapply(x, \(y) sum(is.na(y))))
+  )) > 1
 ]
 
 # remove locations with NAs
@@ -1074,7 +1077,8 @@ mex_cloone <- mexDependence(
   # x, 
   marginal$`Cloone Lake (Caragh River Area) - Kerry`,
   which = "rain", 
-  dqu = 0.7, 
+  # dqu = 0.7, 
+  dqu = dqu,
   nOptim = 2, 
   fixed_b = FALSE, 
   PlotLikDo = TRUE, 
@@ -1248,8 +1252,10 @@ ab_vals <- lapply(dependence, \(x) {
   list(
     # summary(x[[1]])$dependence[1:2],
     x[[1]][1:2],
+    # x[[1]][c("a", "b"), ],
     # summary(x[[2]])$dependence[1:2]
     x[[2]][1:2]
+    # x[[2]][c("a", "b"), ]
   )
 })
 # names(ab_vals) <- data_gpd$name
@@ -1294,7 +1300,7 @@ readr::write_csv(ab_df, "data/ab_vals.csv")
 pred_dat <- ab_df %>% 
   filter(parameter == "a") %>% 
   filter(value < 0.99) %>% 
-  dplyr::select(-c(dist2coast, alt, wind_dir)) %>% 
+  dplyr::select(-any_of(c("dist2coast", "alt", "wind_dir"))) %>% 
   pivot_longer(
     # c("alt", "dist2coast", "lat", "lon"), 
     c("lat", "lon"), 
@@ -1545,6 +1551,7 @@ ggsave("latex/plots/045_alpha_map.png", p_lst[[1]], width = 6.3, height = 6, uni
 # generate plots
 # Add county name to location, helps interpretation (done)
 # TODO: Investigate where a is NA in dependence!
+# TODO Reimplement in evc
 plots <- lapply(seq_along(dependence), \(i) { # each location
   lapply(seq_along(dependence[[i]]), \(j) { # rainfall and wind speed
     # print(paste0(i, "-", j))

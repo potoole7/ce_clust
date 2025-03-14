@@ -20,7 +20,8 @@ source("src/functions.R")
 
 #### Load Data ####
 
-# TODO: Extend to all files
+# ERA5 files downloaded from https://cds.climate.copernicus.eu/datasets/reanalysis-era5-single-levels?tab=overview
+# 10m u and v wind speed and direction, area: [56, -11, 51, -4]
 # file <- "data/download.nc"
 files <- list.files("data", pattern = ".nc", full.names = TRUE)
 
@@ -117,5 +118,13 @@ met_eir_wind <- left_join(met_eir, data_lbl) %>%
 
 
 #### Save ####
+
+# met_eir_wind_old <- readr::read_csv("data/met_eireann/final/met_eir_wind.csv.gz")
+# met_eir_wind <- bind_rows(
+# bind_rows(
+#   met_eir_wind, 
+#   select(met_eir_wind_old, -matches("wind_dir"))
+# ) |> 
+#   arrange(name, date)
 
 readr::write_csv(met_eir_wind, "data/met_eireann/final/met_eir_wind.csv.gz")

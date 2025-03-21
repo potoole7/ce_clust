@@ -3,6 +3,8 @@
 # Want to see if our clustering improves the conditional extremes parameter
 # uncertainty by bootstrapping the estimates from our simulation example
 
+# What will plot be in paper???
+
 #### libs ####
 
 devtools::load_all("../evc")
@@ -25,6 +27,12 @@ n_locs <- 12 # number of "locations"
 cluster_mem <- sort(rep(1:2, n_locs / 2)) # two clusters for half of locations each
 n_vars <- 2 # number of variables per location
 mix_p <- c("gauss_cop" = 0.5, "t_cop" = 0.5) # mixture percentages
+# t-copula df
+df_t <- 3
+# Gaussian and t-copula correlation parameters
+# Choose nice values where we know the model should work well
+cor_gauss_ex <- 0.5
+cor_t_ex <- c(0.1, 0.9)
 # GPD parameters
 scale_gpd <- 1
 shape_gpd <- -0.05
@@ -37,16 +45,16 @@ cond_prob_clust <- 0.9
 # Number of cores to use for parallel computation
 n_cores <- detectCores() - 1
 
-#### Test ####
+
+#### Bootstrap alpha and beta parameter values before clustering ####
 
 # generate simulation data where we know model works well
 set.seed(seed_number)
 data_mix <- sim_cop_dat(
   n          = n,
-  # cor_gauss  = c(0.7, 0.7),
-  cor_gauss  = c(0.4, 0.4),
-  cor_t      = c(0.1, 0.9),
-  df_t       = c(3, 3),
+  cor_gauss  = c(cor_gauss_ex, cor_gauss_ex),
+  cor_t      = cor_t_ex,
+  df_t       = c(df_t, df_t),
   params_gpd = c(scale_gpd, shape_gpd),
   mix_p      = c(0.5, 0.5)
 )$data_mix
@@ -71,15 +79,19 @@ bootstrap_res <- boot_ce(
 )
 
 # plot margins for both theoretical clusters
+# TODO organise facets better
+# TODO Change facet titles to show symbols
 plot_marg <- \(x) {
   x |>
-    ggplot(aes(x = value, fill = parameter)) +
+    # ggplot(aes(x = value, fill = parameter)) +
+    ggplot(aes(x = value, fill = cluster)) +
     # also add histograms
-    geom_histogram(aes(y = ..density..), bins = 30, alpha = 0.7) +
-    geom_density(alpha = 0.5) +
-    facet_wrap(~ cluster + parameter + vars, scales = "free", nrow = 2) +
+    geom_histogram(aes(y = ..density..), bins = 30, alpha = 0.5) +
+    geom_density(alpha = 0.5, alpha = 0.5) +
+    # facet_wrap(~ cluster + parameter + vars, scales = "free", nrow = 2) +
+    facet_wrap(~ parameter + vars, scales = "free", nrow = 2) +
     evc::evc_theme() +
-    guides(fill = "none") +
+    # guides(fill = "none") +
     theme(axis.text.x = element_text(angle = 45, vjust = 0.5))
 }
 bootstrap_res$marginal |>
@@ -113,7 +125,7 @@ plt_dep_data <- bootstrap_res$dependence |>
 # ggsave(paste0("plots/ce_estimates_marg_", marg_prob, "_cond_", cond_prob, ".png"), p_dep)
 
 
-#### Bootstrap on clustered observations ####
+#### Bootstrap alpha and beta parameter values **after** clustering ####
 
 # cluster for k = 2
 k <- 2

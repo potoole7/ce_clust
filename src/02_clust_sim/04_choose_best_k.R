@@ -3,6 +3,8 @@
 # TODO Change kl_prob as well! Want to see how well algorithm does for diff dqu
 # TODO Why doesn't silhouette work? Need different definition
 
+# TODO Save plot(s) as 01_e ...
+
 #### Libs ####
 
 library(dplyr, quietly = TRUE)
@@ -21,6 +23,7 @@ library(parallel)
 # source functions
 source("src/functions.R")
 
+
 #### Metadata ####
 
 seed_number <- 123
@@ -32,7 +35,7 @@ mix_p <- c("gauss_cop" = 0.5, "t_cop" = 0.5) # mixture percentages
 # GPD parameters
 scale_gpd <- 1
 shape_gpd <- -0.05
-marg_prob <- 0.9 # marginal threshold quantile 
+marg_prob <- 0.9 # marginal threshold quantile
 # kl_prob <- 0.9 # conditional threshold quantile
 kl_prob <- seq(0.85, 0.975, by = 0.025) # conditional threshold quantiles
 # n <- 1e3 # number of samples to take
@@ -46,7 +49,7 @@ max_clust <- 15
 exceed_df <- data.frame("kl_prob" = kl_prob, "n" = n)
 
 # Number of cores to use for parallel computation
-n_cores <- detectCores() - 1 
+n_cores <- detectCores() - 1
 
 # Change name of saved files depending on options chosen above
 save_file <- paste0("data/js_best_k_clust_", n_clust)
@@ -55,10 +58,10 @@ if (length(kl_prob) > 1) {
   save_file <- paste0(save_file, "_dqu")
   plot_file <- paste0(plot_file, "_dqu")
 }
-if (length(n) > 1) { 
-  save_file <- paste0(save_file, "_eq_n_exceed")  
-  plot_file <- paste0(plot_file, "_eq_n_exceed")
-}
+# if (length(n) > 1) {
+#   save_file <- paste0(save_file, "_eq_n_exceed")
+#   plot_file <- paste0(plot_file, "_eq_n_exceed")
+# }
 save_file <- paste0(save_file, ".RDS")
 plot_file <- paste0(plot_file, ".pdf")
 
@@ -77,9 +80,8 @@ plot_file <- paste0(plot_file, ".pdf")
 # calculate AIC for a given CE fit
 # TODO Add BIC
 calc_inf <- \(ll, n_par, n = NULL, type = "AIC") {
-  return(switch(
-    type, 
-    "AIC"  = (-2 * ll) + (2 * n_par) # ,
+  return(switch(type,
+    "AIC" = (-2 * ll) + (2 * n_par) # ,
     # "BIC"  = (-2 * ll) + (log(n) * n_par)
   ))
 }
@@ -115,24 +117,24 @@ fit_ce_clust <- \(clust_mem, data_mix) {
     do.call(rbind, data_mix[clust_mem == x])
   })
 
-  # refit model and return 
+  # refit model and return
   return(fit_ce(
-    data_mix_clust, 
-    vars = paste0("col_", seq_len(n_vars)), 
+    data_mix_clust,
+    vars = paste0("col_", seq_len(n_vars)),
     # TODO Functionalise these inputs, may want to vary kl_prob!
-    marg_prob   = marg_prob,
-    cond_prob   = kl_prob, 
+    marg_prob = marg_prob,
+    cond_prob = kl_prob,
     # f           = NULL, # fit models with ismev
-    fit_no_keef = TRUE, 
-    output_all  = FALSE
+    fit_no_keef = TRUE,
+    output_all = FALSE
   ))
 }
- 
+
 
 #### Grid search ####
 
 # TODO: Write note to explain grid setup
-# setup grid 
+# setup grid
 grid <- bind_rows(lapply(2:n_clust, \(i) {
   # data.frame(t(c(seq(0, 1, length.out = i), rep(NA, times = n_clust - i))))
   data.frame(t(c(seq(0, 0.95, length.out = i), rep(NA, times = n_clust - i))))
@@ -148,9 +150,9 @@ grid <- bind_rows(lapply(2:n_clust, \(i) {
     # kl_prob = kl_prob,
     # mixture percentages (must sum to 1)
     mix_p  = 0.5
-  ) %>% 
+  ) %>%
   # extremal quantiles and sample sizes
-  crossing(kl_prob = kl_prob) %>% 
+  crossing(kl_prob = kl_prob) %>%
   left_join(exceed_df, by = "kl_prob")
 # crossing inverts grid for some reason, undo
 grid <- grid[nrow(grid):1, ]
@@ -167,20 +169,20 @@ elb_vec <- sil_vec <- aic_vec <- vector(length = n_times)
 # i <- 13
 set.seed(seed_number)
 results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
-# results_grid <- bind_rows(lapply(seq_len(nrow(grid)), \(i) {
-  
+  # results_grid <- bind_rows(lapply(seq_len(nrow(grid)), \(i) {
+
   print(paste0("Progress: ", round(i / nrow(grid), 3) * 100, "%"))
   system(sprintf(
-    'echo "\n%s\n"', 
+    'echo "\n%s\n"',
     paste0(round(i / nrow(grid), 3) * 100, "% completed", collapse = "")
   ))
-  
+
   # pull specific row
   row <- grid[i, , drop = FALSE]
   print(row)
   # pull correlations in row which are non NA
   cor_t <- row[, grepl("cor_t", names(row))]
-  cor_t <- gauss_t <- cor_t[!is.na(cor_t)] 
+  cor_t <- gauss_t <- cor_t[!is.na(cor_t)]
   n_cor <- length(cor_t)
   # cluster membership known to split locations evenly
   cluster_mem <- ceiling(seq_len(n_locs) / (n_locs / n_cor))
@@ -189,11 +191,10 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
   #   cor_t <- c(0, 0.4, 0.7, 0.9)
   # }
   for (j in seq_len(n_times)) {
-    
     # generate simulation data for given parameter set
     data_mix <- with(row, sim_cop_dat(
       n           = n,
-      n_locs      = n_locs, 
+      n_locs      = n_locs,
       n_clust     = n_cor,
       # cor_gauss   = rep(cor_gauss, n_cor),
       # Important: set cor_gauss same as cor_t, to have more pronounced diffs
@@ -201,10 +202,10 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
       cor_t       = cor_t,
       df_t        = rep(df_t, n_cor),
       params_gpd  = c(scale_gpd, shape_gpd),
-      mix_p       = c(0.5, 0.5), 
+      mix_p       = c(0.5, 0.5),
       cluster_mem = cluster_mem
     ))$data_mix
-    
+
     # see how different they are (works for 4 clusters)
     # plot(data_mix[[1]])
     # plot(data_mix[[46]])
@@ -216,22 +217,25 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
     #   evc::evc_theme()
 
     # Fit CE model, if an error is produced, return a dummy list and skip
-    dependence <- tryCatch({
-      fit_ce(
-        data_mix, 
-        vars = paste0("col_", seq_len(n_vars)), 
-        marg_prob   = marg_prob,
-        cond_prob   = row$kl_prob, 
-        # f           = NULL, # fit models with ismev
-        fit_no_keef = TRUE, 
-        output_all  = FALSE
-      )
-    }, error = function(cond) {
-      # TODO: Fill in what goes here
-      return(1)
-    })
+    dependence <- tryCatch(
+      {
+        fit_ce(
+          data_mix,
+          vars = paste0("col_", seq_len(n_vars)),
+          marg_prob = marg_prob,
+          cond_prob = row$kl_prob,
+          # f           = NULL, # fit models with ismev
+          fit_no_keef = TRUE,
+          output_all = FALSE
+        )
+      },
+      error = function(cond) {
+        # TODO: Fill in what goes here
+        return(1)
+      }
+    )
     # If "true" k was known, how well would clustering do?
-    clust_res <- js_clust(dependence, k = n_cor, cluster_mem =  cluster_mem)
+    clust_res <- js_clust(dependence, k = n_cor, cluster_mem = cluster_mem)
     results_vec[[j]] <- clust_res$adj_rand
     # store clustering membership (true values known as cluster_mem)
     mem_vec[[j]] <- NA
@@ -242,7 +246,7 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
     # Pull JS distance matrix
     # TODO: Don't return plot
     dist <- js_clust(dependence, scree_k = 1:max_clust)$dist_mat
-    
+
     # check for three clusters that distances are distinct
     # plot(dist)
     # summary(as.matrix(dist)[, 1][2:20])
@@ -264,24 +268,25 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
     # TODO Find better method of "algorithmically" choosing k from elbow
     # elb_vec[[j]] <- opt_k(twgss)
     elb_vec[[j]] <- paste0(round(twgss, 2), collapse = "_")
-    
+
     # NOTE Silhouette is not correctly implemented for this method; ignore
     # # Calculate silhouette coefficient for 2-max_clust clusters
     # sil_boxplot(dist, k = 2:max_clust, show_plt = TRUE)$plot
     # sil <- sil_boxplot(dist, k = 2:max_clust, show_plt = FALSE)$sil
     # # Find silhouette coefficient for different clusterings
-    # sil_vec[[j]] <- sil %>% 
-    #   group_by(k) %>% 
-    #   summarise(mean = mean(sil_width, na.rm = TRUE), .groups = "drop") %>% 
-    #   filter(mean == max(mean)) %>% 
+    # sil_vec[[j]] <- sil %>%
+    #   group_by(k) %>%
+    #   summarise(mean = mean(sil_width, na.rm = TRUE), .groups = "drop") %>%
+    #   filter(mean == max(mean)) %>%
     #   pull(k)
-       
+
     # cluster for different values of k, refit CE model and calculate AIC
     aic <- vapply(2:max_clust, \(k) {
-    # aic <- lapply(2:max_clust, \(k) {
+      # aic <- lapply(2:max_clust, \(k) {
       # cluster
       pam_fit <- js_clust(
-        dependence, dist_mat = dist, k = k, return_dist = TRUE
+        dependence,
+        dist_mat = dist, k = k, return_dist = TRUE
       )
       # refit CE model
       # TODO Investigate no exceedances message from this! May just be wrong
@@ -289,10 +294,10 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
       # calculate AIC
       ce_aic(dependence_clust)
     }, numeric(1))
-    
+
     # aic_vec[[j]] <- opt_k(aic)
     aic_vec[[j]] <- paste0(round(aic, 0), collapse = "_")
-    
+
     # # plot for multiple aic values per k
     # bind_rows(
     #   lapply(aic, \(x) data.frame("aic" = x)),
@@ -306,7 +311,7 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
     #   # geom_boxplot(aes(x = k, y = -aic, group = k)) +
     #   geom_line(aes(x = row, y = -aic, colour = factor(k)), size = 2) +
     #   evc::evc_theme()
-    # 
+    #
     # vapply(aic, sum, numeric(1)) %>%
     #   as.data.frame() %>%
     #   setNames("aic") %>%
@@ -317,18 +322,18 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
 
     # plot(-aic, type = "b")
   }
-  
+
   # return(cbind(row, "sil_k" = sil_vec, "elb_k" = elb_vec, "aic_k" = aic_vec))
   # TODO Add local rand index
   return(cbind(
-    row,  
+    row,
     "adj_rand" = results_vec,
     "membership" = mem_vec,
     # "k_true"   = n_cor, # true number of clusters
-    "elb"      = elb_vec, 
-    "aic"      = aic_vec
+    "elb" = elb_vec,
+    "aic" = aic_vec
   ))
-} , mc.cores = n_cores))
+}, mc.cores = n_cores))
 
 # remove NAs, give warning
 nas <- is.na(results_grid$adj_rand)
@@ -337,9 +342,10 @@ if (sum(nas) > 0) {
   results_grid <- results_grid[!nas, ]
 }
 
-# save 
+# save
 saveRDS(results_grid, file = save_file)
-# results_grid <- readRDS(save_file)
+results_grid <- readRDS(save_file)
+
 
 
 #### Plotting ####
@@ -353,13 +359,13 @@ par(mfrow = c(1, 2))
 plot(
   as.numeric(stringr::str_split(
     results_grid[results_grid$k_true == k, ]$elb[1], "_"
-  )[[1]]), 
+  )[[1]]),
   type = "b", ylab = paste0("TWGSS (k_true = ", k, ")")
 )
 plot(
   -as.numeric(stringr::str_split(
     results_grid[results_grid$k_true == k, ]$aic[1], "_"
-  )[[1]]), 
+  )[[1]]),
   type = "b", ylab = paste0("-AIC (k_true = ", k, ")")
 )
 par(mfrow = c(1, 1))
@@ -376,10 +382,10 @@ pull_elb_aic <- \(x) {
     # AIC
     aic <- c(NA, as.numeric(stringr::str_split(x$aic[i], "_")[[1]]))
     return(cbind(
-      dplyr::select(x[i, , drop = FALSE], -c(elb, aic)), 
-      "elb" = elb, 
-      "aic" = aic, 
-      "k"   = seq_along(elb),
+      dplyr::select(x[i, , drop = FALSE], -c(elb, aic)),
+      "elb" = elb,
+      "aic" = aic,
+      "k" = seq_along(elb),
       row.names = NULL
     ))
   }))
@@ -387,18 +393,18 @@ pull_elb_aic <- \(x) {
 
 # extract AIC and TWGSS values across all simulations for all true k
 # aic_elb_vals_lst <- mclapply(k_true_vals, \(k) {
-#   results_grid %>% 
-#     filter(k_true == k) %>% 
+#   results_grid %>%
+#     filter(k_true == k) %>%
 #     # simulation number, indicating each unique simulation performed
-#     mutate(sim_n = row_number()) %>% 
+#     mutate(sim_n = row_number()) %>%
 #     pull_elb_aic()
 # }, mc.cores = n_cores)
-aic_elb_vals_lst <- results_grid %>% 
+aic_elb_vals_lst <- results_grid %>%
   group_split(k_true, kl_prob, .keep = TRUE) %>%
   mclapply(\(df) {
-    df %>% 
+    df %>%
       # simulation number, indicating each unique simulation performed
-      mutate(sim_n = row_number()) %>% 
+      mutate(sim_n = row_number()) %>%
       pull_elb_aic()
   }, mc.cores = n_cores)
 
@@ -406,33 +412,33 @@ aic_elb_vals_lst <- results_grid %>%
 # TODO: Functionalise? Pretty nice plot!
 plots <- mclapply(aic_elb_vals_lst, \(x) {
   k_true <- x$k_true[1]
-  x %>% 
+  x %>%
     pivot_longer(cols = c("elb", "aic")) %>%
     mutate(
       value = ifelse(name == "aic", -value, value),
       name = ifelse(name == "elb", "TWGSS", "-AIC")
-    ) %>% 
-    ggplot(aes(x = k, y = value, colour = name, group = sim_n)) + 
-    geom_line(alpha = 0.2) + 
+    ) %>%
+    ggplot(aes(x = k, y = value, colour = name, group = sim_n)) +
+    geom_line(alpha = 0.2) +
     geom_vline(xintercept = k_true, linetype = "dashed") +
-    facet_wrap(~name, scales = "free_y") + 
-    evc::evc_theme() + 
+    facet_wrap(~name, scales = "free_y") +
+    evc::evc_theme() +
     labs(
       title = paste0(
-        "Elbow Plots for AIC and TWGSS, true k = ", 
-        k_true, 
-        ", ", 
+        "Elbow Plots for AIC and TWGSS, true k = ",
+        k_true,
+        ", ",
         "DQU = ",
         x$kl_prob[1] * 100,
         "%, ",
-        "n_sim = ", 
+        "n_sim = ",
         n_times
       ),
-      x     = "k", 
-      y     = ""
-    ) + 
-    scale_x_continuous(breaks = 1:max_clust, limits = c(1, max_clust)) + 
-    guides(colour = "none") + 
+      x = "k",
+      y = ""
+    ) +
+    scale_x_continuous(breaks = 1:max_clust, limits = c(1, max_clust)) +
+    guides(colour = "none") +
     ggsci::scale_colour_nejm()
 }, mc.cores = n_cores)
 

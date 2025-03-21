@@ -93,7 +93,7 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
           marg_prob   = marg_prob,
           cond_prob   = row$kl_prob,
           fit_no_keef = TRUE
-        )
+        )$dependence
         # "true" number of clusters known from simulation design
         js_clust(dependence, k = n_clust, cluster_mem = cluster_mem)
       },
@@ -157,6 +157,11 @@ results_grid_sum <- summarise_sens_res(results_grid, conf_level = conf_level)
 results_grid_tally <- results_grid %>%
   group_by(across(!contains("_rand")), adj_rand) %>%
   tally(name = "n_rand")
+# add both to results, as before
+results_grid <- results_grid %>%
+  dplyr::select(-(ends_with("_rand") & !matches("adj_rand"))) %>%
+  left_join(results_grid_sum) %>%
+  left_join(results_grid_tally)
 
 
 #### Plot ####
@@ -167,48 +172,9 @@ results_grid_tally <- results_grid %>%
 results_grid_plt <- filter(results_grid, cor_t1 < 1, cor_t2 < 1)
 res_grid_sum_plt <- filter(results_grid_sum, cor_t1 < 1, cor_t2 < 1)
 
+# TODO Improvements to plotting labels
 # library(latex2exp)
 # library(ggtext)
-
-# Function to add common plot items to each plot
-# common_plot_items <- \(p) {
-common_plot_items <- \(p) {
-  p +
-    facet_grid(cor_t1 ~ cor_t2) +
-    scale_x_continuous(
-      sec.axis = sec_axis(
-        ~.,
-        name = expression(rho[t[1]]),
-        breaks = NULL,
-        labels = NULL
-      )
-    ) +
-    # scale_y_continuous(breaks = seq(0, 1, by = 0.2)) +
-    scale_y_continuous(
-      sec.axis = sec_axis(
-        ~.,
-        name = expression(rho[t[2]]),
-        breaks = NULL,
-        labels = NULL
-      ),
-      breaks = seq(0, 1, by = 0.2)
-    ) +
-    labs(
-      x      = expression(rho["Gauss"]),
-      # x = TeX("$\\rho_{t_1}$"),
-      # y = "Adjusted Rand Index",
-      y      = "ARI",
-      fill   = "",
-      colour = ""
-    ) +
-    evc_theme() +
-    theme(
-      axis.text.x = element_text(angle = 45, vjust = 0.5),
-      # axis.title = element_markdown(size = 12, family = "serif")
-    ) +
-    ggsci::scale_fill_nejm() +
-    ggsci::scale_colour_nejm()
-}
 
 # TODO How to structure confidence intervals? CLI, credible interval? LOESS?
 # TODO How to label facets? If with maths symbols? How to match LaTeX font?
@@ -255,7 +221,8 @@ p1 <- results_grid_plt |>
 
 ggsave(
   plot = common_plot_items(p1),
-  paste0("plots/01b_js_sensitivity_dqu_", kl_prob, ".png"),
+  # paste0("plots/01b_js_sensitivity_dqu_", kl_prob, ".png"),
+  paste0("latex/plots/sim_01a_js_sensitivity_dqu_", kl_prob, ".png"),
   width = 10,
   height = 7
 )
@@ -328,7 +295,7 @@ p2 <- results_grid_join %>%
 ggsave(
   plot = common_plot_items(p2),
   # paste0("plots/01c_sensitivity_dqu_", kl_prob, ".png"),
-  paste0("latex/plots/sim_01_ce_vs_vi_dqu_", kl_prob, ".png"),
+  paste0("latex/plots/sim_01b_ce_vs_vi_dqu_", kl_prob, ".png"),
   width = 10,
   height = 7
 )

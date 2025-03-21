@@ -1,7 +1,59 @@
+#### Simulation plots  ####
+
+# Function to add common plot items to each plot of adjusted rand index
+common_plot_items <- \(
+  p,
+  xlab = expression(rho["Gauss"]),
+  x_sec_lab = expression(rho[t[1]]),
+  y_sec_lab = expression(rho[t[2]]),
+  facet_form = (cor_t1 ~ cor_t2)
+) {
+  p +
+    # facet_grid(cor_t1 ~ cor_t2) +
+    facet_grid(facet_form) +
+    scale_x_continuous(
+      sec.axis = sec_axis(
+        ~.,
+        # name = expression(rho[t[1]]),
+        name   = x_sec_lab,
+        breaks = NULL,
+        labels = NULL
+      )
+    ) +
+    scale_y_continuous(
+      sec.axis = sec_axis(
+        ~.,
+        # name = expression(rho[t[2]]),
+        name   = y_sec_lab,
+        breaks = NULL,
+        labels = NULL
+      ),
+      breaks = seq(0, 1, by = 0.2)
+    ) +
+    labs(
+      # x = expression(rho["Gauss"]),
+      # x = TeX("$\\rho_{t_1}$"),
+      x = xlab,
+      # y = "Adjusted Rand Index",
+      y = "ARI",
+      fill = "",
+      colour = ""
+    ) +
+    evc_theme() +
+    theme(
+      axis.text.x = element_text(angle = 45, vjust = 0.5),
+      # axis.title = element_markdown(size = 12, family = "serif")
+    ) +
+    ggsci::scale_fill_nejm() +
+    ggsci::scale_colour_nejm()
+}
+
+
 #### Bootstrapping ####
 
 # function to perform bootstrapping for CE model
 # TODO Move to package
+# TODO Have work for > 2 variables
 boot_ce <- \(fit, R = 100, trace = 10, ncores = 1) {
   # check if fit has correct structure
   stopifnot(
@@ -297,9 +349,10 @@ local_rand_index <- \(P0, P1) {
 # TODO: Add shared plotting functions
 
 # function to calculate confidence interval for sensitivity analysis results
+# Calculated as credible interval, rather than from CLT and normality assumption
 summarise_sens_res <- \(results_grid, conf_level = 0.95) {
   # z-score corresponding to confidence level
-  z <- qnorm((1 + conf_level) / 2)
+  # z <- qnorm((1 + conf_level) / 2)
 
   results_grid %>%
     # remove any previous summaries as they mess up grouping
@@ -307,15 +360,19 @@ summarise_sens_res <- \(results_grid, conf_level = 0.95) {
     relocate(adj_rand, .after = everything()) %>% # ensure is last col
     group_by(across(1:last_col(1))) %>%
     summarise(
-      mean_rand  = mean(adj_rand, na.rm = TRUE),
-      # (z score corresponding to confidence level) * standard error
-      marg_rand  = z * (sd(adj_rand, na.rm = TRUE) / sqrt(n())),
-      # CIs
-      lower_rand = mean_rand - marg_rand,
-      upper_rand = mean_rand + marg_rand,
-      .groups    = "drop"
+      mean_rand    = mean(adj_rand, na.rm = TRUE),
+      # need median to give central estimate for confidence interval!
+      median_rand  = median(adj_rand, na.rm = TRUE),
+      # # (z score corresponding to confidence level) * standard error
+      # marg_rand  = z * (sd(adj_rand, na.rm = TRUE) / sqrt(n())),
+      # # CIs
+      # lower_rand = mean_rand - marg_rand,
+      # upper_rand = mean_rand + marg_rand,
+      lower_rand   = quantile(adj_rand, (1 - conf_level) / 2, na.rm = TRUE),
+      upper_rand   = quantile(adj_rand, 1 - (1 - conf_level) / 2, na.rm = TRUE),
+      .groups      = "drop"
     ) %>%
-    dplyr::select(-marg_rand) %>% # not required for plotting
+    # dplyr::select(-marg_rand) %>% # not required for plotting
     return()
 }
 
@@ -389,8 +446,8 @@ covar_plt <- \(pts, clust_obj, data_full, areas) {
 #### Simulation functions ####
 
 # Function to generate copula data
-# TODO: Extend to simulate more than two variables
-# TODO: Extend to simulate more than two clusters
+# Extend to simulate more than two variables (done)
+# Extend to simulate more than two clusters (done)
 sim_cop_dat <- \(
   n_locs = 12, # number of locations
   n_vars = 2, # number of variables at each location

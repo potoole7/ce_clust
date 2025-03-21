@@ -140,31 +140,29 @@
 \subsection{Simulation design} \label{subsec:sim_design}
 
 \todo{Mention how we use the same Gaussian copula correlation for both "clusters", (to reduce grid search size)}
-\todo{May want figure with wind speed vs rain for locations with different t-copula correlations}
+\todo{May want figure with e.g. wind speed vs rain for locations with different t-copula correlations? Just simple faceted plot really}
 \todo{How best to describe?}
+\todo{Say that we do not include any spatial smoothing or anything}
 
+% Single location
+Our simulation design for a single dataset, which we refer to as a ``location'' to match the spatial nature of our applications, is as follows:
 \begin{itemize}
-  \item Our simulation design was as follows:
-  \begin{itemize}
-    \item We simulate data from a mixture of normal and t-copulas, whose correlation parameters we can control.
-    \item For both, we generate GPD margins with shape = -0.05, scale = 1. \todo{Justify use of these parameters, negative shape gives more predictable behaviour(?)}
-    \item The idea is that the Gaussian copula will generate variables exhibiting extremal independence, while the t-copula will generate variables with extremal dependence, the strength of which is determined by their respective correlation parameters.
-    \todo{Here! Anything below hasn't been finished}
-    \item 
-    \item We can generate several ``locations'' using this method with the same and different correlation parameters in the Gaussian and t-copulas, the knowledge of which will provide our ``known'' clustering solution. 
-    \item We use the same Gaussian copula correlation for both ``clusters'' to reduce the size of the grid search.
-    \item For example, we could generate data for 
-    \item We can see how well our clustering algorithm performs under various dependence scenarios.
-    \item However, while simulation is easy, it is difficult (impossible?) to ascertain what the ``true'' dependence parameters from the CE model for these datasets are.
-
+  \item We generate multivariate data from a mixture of Gaussian and t-copulas, where we control the dependence structure through their respective correlation parameters. \todo{Mixture is technically of GPDs after sampling from copulas... need to say this?}
+  \item Each variable in this multivariate dataset may represent, for example, a meteorological or air pollution variable at a given location.
+  \item For simplicity, we sample from each of these copulas and transform to GPD margins with shape $\xi = -0.05$, scale $\sigma = 1$, and take the mixture of these as our variables. \todo{Justify use of these parameters, negative shape gives more predictable behaviour(?)} 
+  \item Throughout these simulations, we take an equal mixture from the margins of each copula. 
+  \item In this way, the Gaussian copula generates observations exhibiting extremal independence, whereas the t-copula induces extremal dependence, the strength of which is determined by their respective correlation parameters.
+  \item We can use the CE model to estimate the multivariate extremal dependence structure of this data.
+  \item One downside of this design is that while simulation is easy, it is not possible to ascertain what the ``true'' CE parameters are. \todo{Include here? Maybe discussion point..}
 \end{itemize}
 
+% Multiple locations
 \begin{itemize}
-    \item Simulate data from mixture of normal and t-copulas, both with GPD margins with shape = ?, scale = ?.
-    \item Idea: Gaussian copula will generate variables with extremal independence, while t-copula will generate variables with extremal dependence. 
-    \item Can generate several ``locations'' using this method with the same and different correlation parameter in the Gaussian and t-copulas, the knowledge of which will provide our ``known'' clustering solution. 
-    \item Can see how well our clustering algorithm performs under various dependence scenarios.
-    \item However, while simulation is easy, it is difficult (impossible?) to ascertain what the ``true'' dependence parameters from the CE model for these datasets are. 
+  \item We can easily extend this design by generating multiple locations with the same and different correlation parameters in the Gaussian and t-copulas.
+  \item The knowledge of these parameters provides our ``known'' clustering solution.
+  \item For example, we could generate data for four locations, where two have a Gaussian copula correlation of 0.5 and a t-copula correlation of 0.9, and the other two have a Gaussian copula correlation of 0.5 and a t-copula correlation of 0.1. \todo{Plot such an example? Also is there a need?} \todo{Replace Gaussian copula correlation with symbol throughout, like in plots?}
+  \item We can use the CE model to estimate the multivariate extremal dependence structure at each location, and then apply the JS divergence to cluster these locations based on the similarity of the estimated CE parameters. 
+  \item Using this method, we can evaluate the ARI against the known clustering solution to see how well our clustering algorithm performs under various dependence scenarios.
 \end{itemize}
 
 \subsection{Comparison to competing methods} \label{subsec:sim_competing_methods}

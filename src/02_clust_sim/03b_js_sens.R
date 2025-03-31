@@ -81,8 +81,10 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
       cor_gauss  = c(cor_gauss1, cor_gauss2),
       cor_t      = c(cor_t1, cor_t2),
       df_t       = c(df_t1, df_t2),
-      params_gpd = c(scale_gpd, shape_gpd),
-      mix_p      = c(0.5, 0.5)
+      # params_gpd = c(scale_gpd, shape_gpd),
+      mix_p      = c(0.5, 0.5),
+      qfun       = evd::qgpd,
+      qargs      = c("scale" = scale_gpd, "shape" = shape_gpd)
     ))$data_mix
 
     clust_res <- tryCatch(

@@ -51,12 +51,14 @@ n_cores <- detectCores() - 1
 # generate simulation data where we know model works well
 set.seed(seed_number)
 data_mix <- sim_cop_dat(
-  n          = n,
-  cor_gauss  = c(cor_gauss_ex, cor_gauss_ex),
-  cor_t      = cor_t_ex,
-  df_t       = c(df_t, df_t),
-  params_gpd = c(scale_gpd, shape_gpd),
-  mix_p      = c(0.5, 0.5)
+  n = n,
+  cor_gauss = c(cor_gauss_ex, cor_gauss_ex),
+  cor_t = cor_t_ex,
+  df_t = c(df_t, df_t),
+  # params_gpd = c(scale_gpd, shape_gpd),
+  mix_p = c(0.5, 0.5),
+  qfun = evd::qgpd,
+  qargs = c("scale" = scale_gpd, "shape" = shape_gpd)
 )$data_mix
 
 # fit CE

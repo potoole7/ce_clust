@@ -184,7 +184,7 @@ p <- bind_rows(
   geom_density(aes(fill = ind), alpha = 0.5) +
   facet_wrap(
     ~cluster,
-    scales = "free",
+    scales = "free_y",
     labeller = labeller(cluster = \(x) {
       return(ifelse(x == 0.1, "rho[t] == 0.1", "rho[t] == 0.9"))
     }, .default = label_parsed)
@@ -193,5 +193,6 @@ p <- bind_rows(
   guides(fill = guide_legend(override.aes = list(alpha = 1))) +
   evc::evc_theme() +
   ggsci::scale_fill_nejm()
+p
 
 ggsave("latex/plots/sim_01e_bootstrap.png", p, width = 8, height = 5)

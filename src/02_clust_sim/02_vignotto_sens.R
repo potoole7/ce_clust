@@ -52,8 +52,10 @@ data <- sim_cop_dat(
   cor_gauss  = rep(cor_gauss_ex, 2),
   cor_t      = cor_t_ex,
   df_t       = rep(df_t, 2),
-  params_gpd = c(1, -0.05),
-  mix_p      = c(0.5, 0.5)
+  # params_gpd = c(1, -0.05),
+  mix_p      = c(0.5, 0.5),
+  qfun       = evd::qgpd,
+  qargs      = c("scale" = scale_gpd, "shape" = shape_gpd)
 )
 data_mix <- data$data_mix
 # cluster using Vignotto 2021 method (implemented in evc package)
@@ -105,8 +107,10 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
       cor_gauss  = c(cor_gauss1, cor_gauss2),
       cor_t      = c(cor_t1, cor_t2),
       df_t       = c(df_t1, df_t2),
-      params_gpd = c(scale_gpd, shape_gpd),
-      mix_p      = c(0.5, 0.5)
+      # params_gpd = c(scale_gpd, shape_gpd),
+      mix_p      = c(0.5, 0.5),
+      qfun       = evd::qgpd,
+      qargs      = c("scale" = scale_gpd, "shape" = shape_gpd)
     ))$data_mix
 
     # Perform Vignotto clustering

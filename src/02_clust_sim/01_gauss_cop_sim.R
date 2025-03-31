@@ -569,6 +569,12 @@ clust_assign |>
   nrow() %>%
   `/`(nrow(clust_assign))
 
+# of those with "well spaced" correlations, how many are misclassified?
+clust_misclass |>
+  filter(cor_gauss1 == 0.9, cor_gauss2 == 0.5, cor_gauss3 == 0.1) |>
+  nrow() %>%
+  `/`(nrow(clust_misclass)) # 0.07692308% (just once!)
+
 
 # function to produce parsible title from grid search parameters
 # TODO CHange from here to reflect addition of fixed_b and n_clust
@@ -612,6 +618,7 @@ title_func <- \(y) {
   ))
 }
 # dens_plot_fun <- \(x, title_fun = \(y) parse(text = unique(y$grid))) {
+# TODO Add cond_prob to title
 dens_plot_fun <- \(x, title_fun = title_func) {
   # remove bs if fixed, pointless plotting exercise
   if (all(x$fixed_b == TRUE)) {
@@ -685,6 +692,7 @@ p_combined
 dev.off()
 
 # also want to produce boxplots
+# TODO Add cond_prob to title
 boxplot_fun <- \(x, title_fun = title_func) {
   if (all(x$fixed_b == TRUE)) {
     x <- x |>
@@ -747,9 +755,10 @@ results_clust_boxplt <- lab_grid(results_clust) |>
   # group_split(fixed_b, n_clust, cond_prob)
   group_split(fixed_b, n_clust, grid)
 
-# TODO Latex font doesn't match eslewhere, so annoying!
-# TODO Add vertical lines for true values, rather than x's
+# TODO Latex font doesn't match elsewhere, so annoying!
+# Add vertical lines for true values, rather than x's (done)
 # TODO Functionalise!
+# TODO Add fill legend for Gauss correlation
 p_box_full <- lapply(seq_along(results_orig_boxplt), \(i) {
   results_orig_boxplt[[i]] |>
     mutate(ind = "Pre-clustering") |>
@@ -780,11 +789,16 @@ p_box_full <- lapply(seq_along(results_orig_boxplt), \(i) {
         cond_prob = factor(paste0(cond_prob * 100, "%"))
       ) |>
       # only show lower and upper dependence quantile, to highlight differences
-      filter(cond_prob %in% c("90%", "99%"))
+      filter(cond_prob %in% c("90%", "99%")) |>
+      mutate(cluster = case_when(
+        cluster == 1 ~ cor_gauss1,
+        cluster == 2 ~ cor_gauss2,
+        TRUE ~ cor_gauss3
+      ))
 
     p <- x_plot |>
       ggplot(aes(x = cond_prob, y = value, fill = factor(cluster))) +
-      geom_boxplot(outliers = FALSE) +
+      geom_boxplot(outliers = FALSE, key_glyph = "rect") +
       # add true values (as x's)
       # geom_point(
       #   # aes(x = grid, y = value_true),
@@ -811,17 +825,21 @@ p_box_full <- lapply(seq_along(results_orig_boxplt), \(i) {
         linewidth = 1,
         alpha = 0.7
       ) +
+      scale_y_continuous(n.breaks = 5) +
       # add true value for beta (same, at 1/2)
       # scale_x_discrete(labels = function(x) parse(text = x)) +
       # labs(x = parse(text = "rho[Gauss]")) +
       labs(
-        title = parse(text = unique(x$grid)),
+        # title = parse(text = unique(x$grid)),
         x = "Dependence Quantile",
-        y = "Parameter value"
+        # y = "Parameter value",
+        y = "",
+        fill = parse(text = "rho[Gauss]")
       ) +
       evc::evc_theme() +
-      theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-      guides(fill = "none", colour = "none") +
+      # theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+      # guides(fill = "none", colour = "none") +
+      guides(colour = "none") +
       ggsci::scale_fill_nejm() +
       ggsci::scale_colour_nejm()
 
@@ -852,17 +870,43 @@ pdf(boxplot_full_file, width = 8, height = 5)
 p_box_full
 dev.off()
 
+# just save the one with most spaced out correlations (no fixed beta) for paper
+custom_breaks <- \(x) {
+  if (min(x, na.rm = TRUE) < -1) {
+    seq(-2, 1, by = 1)
+  } else {
+    seq(-1, 1, by = 1)
+  }
+}
+custom_lims <- \(x) {
+  if (min(x, na.rm = TRUE) < -1) {
+    c(-2, 1)
+  } else {
+    c(-1, 1)
+  }
+}
 
-# Notes:
-# For varying b:
-# - Seems like pre- and post-clustering, alpha and beta estimates are very similar,
-# but variance is reduced, naturally as sample size increases considerably
-# - In general, alpha is quite well estimated, but beta is not as well estimated
-# - Beta is better estimated for higher rho_gauss values, while for lower ones
-# alpha (i.e. the relationship) is quite small and thus it might be hard to
-# estimate beta?
-# As highlighted above, what would happen if we fixed beta??
-# - Does lots better! But still not great for smaller alpha/independence
-# - Particularly does better post- clustering
-# - However, density is slightly less "peaked", as model might be exploring
-# more of the parameter space for a?
+
+ggsave(
+  "latex/plots/sim_01_gauss_cop.png",
+  p_box_full[[8]] +
+    scale_y_continuous(breaks = custom_breaks, limits = custom_lims),
+  width = 8, height = 5
+)
+
+# for this plot, work out the bias (difference from true value) and
+# variance
+p_box_full[[8]]$data |>
+  group_by(parameter, cluster, cond_prob, ind) |>
+  summarise(
+    bias = mean(value - value_true),
+    var = var(value),
+    .groups = "drop"
+  ) |>
+  arrange(parameter, cond_prob, cluster, ind)
+# Main effects:
+# Bias and variance gets smaller post-clustering
+# Bias is smaller for larger quantile, but variance is smaller for lower
+# quantile (asymptotical guarantees vs more data, bias-variance tradeoff v
+# clear here!)
+# Also, bias around beta is less for higher values of rho_gauss, as expected

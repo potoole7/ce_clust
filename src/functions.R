@@ -205,6 +205,175 @@ common_plot_items <- \(
 
 #### Bootstrapping ####
 
+# function to perform bootstrapping for CE model for just dependence object
+# (doesn't refit marginals)
+# Too lazy to change boot_ce function to work for just dependence object
+# TODO Check semi_par_cdf where there are no values below threshold
+# WARNING Only works if marginal distributions are the same at every location
+boot_ce_dep <- \(
+  dep,
+  orig,
+  transformed,
+  marg_pars = c(loc = 0, scale = 1, shape = -0.05),
+  cond_prob = 0.9,
+  marg_prob = 0.98, # marginal quantile to calculate expectation after boots
+  R = 100,
+  trace = 10,
+  ncores = 1
+) {
+  # pull data
+  arg_vals <- list("cond_prob" = cond_prob) # TODO Add any others here
+  dependence <- dep # dependence parameters
+  # calculate marginal threshold
+  # TODO Will have to change for real data, as can't use qgpd
+  marg_val <- do.call(evd::qgpd, c(list(marg_prob), marg_pars))
+
+  # extract marginal and dependence thresholds
+  # TODO Implement for multiple locations
+  thresh_dep <- lapply(dependence, \(x) {
+    res <- vapply(x, \(y) {
+      y[rownames(y) == "dth", , drop = FALSE]
+    }, numeric(length(x) - 1))
+    if (!is.matrix(res)) {
+      res <- matrix(res, nrow = 1)
+      colnames(res) <- names(x)
+    }
+    res[1, , drop = FALSE]
+  })
+
+  # Parallel setup
+  # TODO Implement below, not using now
+  apply_fun <- ifelse(ncores == 1, lapply, parallel::mclapply)
+  ext_args <- NULL
+  if (ncores > 1) {
+    ext_args <- list(mc.cores = ncores)
+  }
+  loop_fun <- \(...) {
+    do.call(apply_fun, c(list(...), ext_args))
+  }
+
+  # Pull start values
+  # TODO Make `coef` method for dependence, would be much easier than this loop!
+  start <- lapply(dependence, \(x) {
+    lapply(x, \(y) {
+      # scale back towards zero in case point est on edge of original parameter
+      # space and falls off edge of constrained space for bootstrap sample
+      y[c("a", "b"), , drop = FALSE] * 0.75
+    })
+  })
+
+  # Function to prepare bootstrapped data for each location and conditioned var
+  prep_boot_loc_dat <- \(
+    dep_loc, trans_loc, orig_loc, thresh_dep, n_pass = 3
+  ) {
+    # pull bootstrap sample
+    # (must be different for each loc as nrows may differ)
+    indices <- sample(seq_len(nrow(trans_loc)), replace = TRUE)
+    trans_loc_boot <- trans_loc[indices, ]
+
+    # Reorder bootstrap sample to have the same order as original data
+    test <- FALSE
+    # which <- which(names(marg_loc) %in% cond_var)
+    while (test == FALSE) {
+      for (j in seq_along(dep_loc)) {
+        # replace ordered Yi with ordered sample from standard Laplace CDF
+        u <- matrix(runif(nrow(trans_loc_boot)))
+        trans_loc_boot[
+          order(trans_loc_boot[, j]), j
+        ] <- sort(laplace_trans(u)[, 1])
+      }
+      # need exceedance in cond. var, and also in other vars for these rows
+      if (any(colSums(sweep(trans_loc_boot, 2, thresh_dep, FUN = ">")) > 0)) {
+        test <- TRUE
+      }
+    }
+
+    # convert variables to original scale
+    orig_loc_boot <- inv_semi_par_cdf(
+      # inverse Laplace transform to CDF
+      inv_laplace_trans(trans_loc_boot),
+      # original data for where semiparametric thresholding occurs
+      orig_loc,
+      # TODO Have to change if parameters are different
+      lapply(seq_len(ncol(orig_loc)), \(i) {
+        setNames(marg_pars[c("scale", "shape", "loc")], c("sigma", "xi", "thresh"))
+      })
+    )
+
+    # test for no marg exceedances over sampled points, if so resample w/ nPass
+    max_vals <- apply(orig_loc_boot, 2, max, na.rm = TRUE)
+    marg_thresh <- marg_val # TODO Will have to change if vars don't have same margins
+    if (!all(max_vals > marg_thresh)) {
+      return(list(NA))
+    }
+    return(orig_loc_boot)
+  }
+
+  # perform bootstrapping
+  boot_fits <- loop_fun(seq_len(R), \(i) {
+    if (i %% trace == 0) {
+      system(sprintf("echo %s", paste(i, "replicates done")))
+    }
+    dat_boot <- lapply(seq_along(dependence), \(j) { # loop through locations
+      # prepare bootstrapped data for location j
+      # TODO Change argument order
+      dat_spec <- prep_boot_loc_dat(
+        dependence[[j]],
+        transformed[[j]],
+        orig[[j]],
+        thresh_dep[[j]]
+      )
+      # check if NA, if so then rerun
+      if (all(is.na(dat_spec)) && n_pass > 1) {
+        for (i in seq_len(n_pass - 1)) {
+          dat_spec <- prep_boot_loc_dat(
+            marginal[[j]], transformed[[j]], dependence[[j]]
+          )
+          if (!all(is.na(dat_spec))) {
+            break
+          }
+        }
+      } else if (all(is.na(dat_spec))) {
+        stop(paste0(
+          "Failed to generate bootstrapped data after ", n_pass, " attempts"
+        ))
+      }
+      return(dat_spec)
+    })
+
+    # transform from GPD to Laplace margins
+    # TODO Change if margins are different
+    dat_boot_trans <- lapply(dat_boot, \(x) {
+      laplace_trans(do.call(evd::pgpd, c(list(x), marg_pars)))
+    })
+
+    # refit CE model using same dependence quantile
+    fit_boot <- lapply(seq_along(dat_boot_trans), \(j) {
+      print(j)
+      o <- ce_optim(
+        Y = dat_boot_trans[[j]],
+        dqu = cond_prob,
+        start = start[[j]],
+        control = list(maxit = 1e6),
+        constrain = FALSE
+      )
+    })
+
+    # extract just parameters
+    fit_boot_pars <- lapply(fit_boot, \(x) lapply(x, `[[`, "params"))
+
+    # Calculate conditional expectation at marg_val
+    return(lapply(fit_boot_pars, \(x) {
+      lapply(x, \(y) {
+        y["a", ] * marg_val + (marg_val^(y["b", ])) * y["m", ]
+      })
+    }))
+  })
+
+  return(boot_fits)
+}
+
+
 # function to perform bootstrapping for CE model
 # TODO Move to package
 # TODO Have work for > 2 variables
@@ -670,7 +839,7 @@ sim_cop_dat <- \(
       if (is.null(qargs)) {
         return(do.call(qfun, list(u)))
       } else {
-        return(do.call(qfun, list(u, qargs)))
+        return(do.call(qfun, c(list(u), qargs)))
       }
     })
     return(gauss_cop)
@@ -722,7 +891,7 @@ sim_cop_dat <- \(
       if (is.null(qargs)) {
         return(do.call(qfun, list(u)))
       } else {
-        return(do.call(qfun, list(u, qargs)))
+        return(do.call(qfun, c(list(u), qargs)))
       }
     })
     return(t_cop)

@@ -37,7 +37,7 @@ scale_gpd <- 1
 shape_gpd <- -0.05
 marg_prob <- 0.9 # marginal threshold quantile
 # kl_prob <- 0.9 # conditional threshold quantile
-kl_prob <- seq(0.85, 0.975, by = 0.025) # conditional threshold quantiles
+cond_prob <- seq(0.85, 0.975, by = 0.025) # conditional threshold quantiles
 # n <- 1e3 # number of samples to take
 n_exceed <- 100 # number of exceedances to have for each conditional threshold
 n <- round(n_exceed / (1 - kl_prob))
@@ -77,58 +77,6 @@ plot_file <- paste0(plot_file, ".pdf")
 #   return(which.max(fom) + 1)
 # }
 
-# calculate AIC for a given CE fit
-# TODO Add BIC
-calc_inf <- \(ll, n_par, n = NULL, type = "AIC") {
-  return(switch(type,
-    "AIC" = (-2 * ll) + (2 * n_par) # ,
-    # "BIC"  = (-2 * ll) + (log(n) * n_par)
-  ))
-}
-
-# Function to calculate AIC from CE model output
-ce_aic <- \(dependence) {
-  # pull LLs for each model
-  lls <- vapply(dependence, \(x) {
-    vapply(x, `[`, "ll", , FUN.VALUE = numeric(1))
-  }, numeric(length(dependence[[1]])))
-  # number of parameters = 4 * number of clusters * number of variables
-  # TODO Will this number of larger for > 2 variables? for 3 it'll be 6!
-  # TODO Test for 3 variables before putting in package or anything
-  n_par <- 4 * length(dependence) * length(dependence[[1]])
-  # n par for different AICs per model
-  # n_par <- 4 * length(dependence[[1]])
-  # combined_ll
-  ll <- sum(lls)
-  # ll <- mean(lls)
-  # return AIC
-  return(calc_inf(ll, n_par))
-  # calculate AIC for each model
-  # return(vapply(lls, \(x) {
-  #   calc_inf(x, n_par)
-  # }, numeric(1)))
-}
-
-# fun to refit CE model with given clustering
-fit_ce_clust <- \(clust_mem, data_mix) {
-  clusts <- unique(clust_mem)
-  # create new data_mix with cluster membership
-  data_mix_clust <- lapply(clusts, \(x) {
-    do.call(rbind, data_mix[clust_mem == x])
-  })
-
-  # refit model and return
-  return(fit_ce(
-    data_mix_clust,
-    vars = paste0("col_", seq_len(n_vars)),
-    # TODO Functionalise these inputs, may want to vary kl_prob!
-    marg_prob = marg_prob,
-    cond_prob = kl_prob,
-    # f           = NULL, # fit models with ismev
-    fit_no_keef = TRUE,
-    output_all = FALSE
-  ))
-}
 
 
 #### Grid search ####
@@ -193,17 +141,19 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
   for (j in seq_len(n_times)) {
     # generate simulation data for given parameter set
     data_mix <- with(row, sim_cop_dat(
-      n           = n,
-      n_locs      = n_locs,
-      n_clust     = n_cor,
+      n = n,
+      n_locs = n_locs,
+      n_clust = n_cor,
       # cor_gauss   = rep(cor_gauss, n_cor),
       # Important: set cor_gauss same as cor_t, to have more pronounced diffs
-      cor_gauss   = cor_t,
-      cor_t       = cor_t,
-      df_t        = rep(df_t, n_cor),
-      params_gpd  = c(scale_gpd, shape_gpd),
-      mix_p       = c(0.5, 0.5),
-      cluster_mem = cluster_mem
+      cor_gauss = cor_t,
+      cor_t = cor_t,
+      df_t = rep(df_t, n_cor),
+      # params_gpd  = c(scale_gpd, shape_gpd),
+      mix_p = c(0.5, 0.5),
+      cluster_mem = cluster_mem,
+      qfun = evd::qgpd,
+      qargs = c("scale" = scale_gpd, "shape" = shape_gpd)
     ))$data_mix
 
     # see how different they are (works for 4 clusters)
@@ -290,6 +240,7 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
       )
       # refit CE model
       # TODO Investigate no exceedances message from this! May just be wrong
+      # TODO Must add cond_prob argument!!
       dependence_clust <- fit_ce_clust(pam_fit$pam$clustering, data_mix)
       # calculate AIC
       ce_aic(dependence_clust)

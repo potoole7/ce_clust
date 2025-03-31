@@ -97,19 +97,19 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
   row <- grid[i, , drop = FALSE]
   for (j in seq_len(n_times)) {
     # generate simulation data for given parameter set
-    # source("src/functions.R")
-    # debugonce(sim_cop_dat)
     data_mix <- with(row, sim_cop_dat(
-      n           = 1e3,
-      n_locs      = n_locs,
-      n_clust     = n_clust,
+      n = 1e3,
+      n_locs = n_locs,
+      n_clust = n_clust,
       cluster_mem = cluster_mem,
-      cor_gauss   = rep(cor_gauss, n_clust),
-      cor_t       = c(cor_t1, cor_t2, cor_t3),
-      df_t        = rep(df_t, n_clust),
-      params_gpd  = c(scale_gpd, shape_gpd),
-      mix_p       = c(0.5, 0.5),
-      perturb_cor = perturb_cor # perturb cor for different locations
+      cor_gauss = rep(cor_gauss, n_clust),
+      cor_t = c(cor_t1, cor_t2, cor_t3),
+      df_t = rep(df_t, n_clust),
+      # params_gpd  = c(scale_gpd, shape_gpd),
+      mix_p = c(0.5, 0.5),
+      perturb_cor = perturb_cor, # perturb cor for different locations
+      qfun = evd::qgpd,
+      qargs = c("scale" = scale_gpd, "shape" = shape_gpd)
     ))$data_mix
 
     clust_res <- tryCatch(

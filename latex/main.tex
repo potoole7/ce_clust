@@ -158,6 +158,8 @@ Our Gaussian copula simulation design for a single ``location'', nomenclature ch
   \item We can then transform the Laplace margins and use the CE model to estimate the multivariate extremal dependence structure at this location.
 \end{itemize}
 
+\vspace{1cm}
+
 % Multiple locations
 \begin{itemize}
   \item We can easily extend this design by generating multiple locations with the same and different $\rho_{\text{Gauss}}$.
@@ -298,7 +300,7 @@ Our Gaussian copula simulation design for a single ``location'', nomenclature ch
   \item As we are estimating two parameters, $\alpha$ and $\beta$, for which we do not know the true values, it may be that although our uncertainty is diminished post-clustering, the estimates may still be biased, with the parameters unidentifiable.
   \item There are also many possible combinations of $\alpha$ and $\beta$ that could give the same conditional estimates, and so the estimates may be biased in this sense as well.
   \item To avoid this, we adopt the approach of \cite{Richards2021-qm} in calculating the conditional expectation of one variable given the other is at the $98\%$ marginal quantile $u$, given by
-  \begin{equation}
+  \begin{equation} \label{eq:boot}
     \mathbb{E}[X_1 | X_2 = u] = \hat{\alpha} u + u^{\hat{\beta}} \hat{\mu},
   \end{equation}
   where ($\hat{\alpha}, \hat{\beta}, \hat{\mu}$) are the estimated CE model parameters.
@@ -308,7 +310,22 @@ Our Gaussian copula simulation design for a single ``location'', nomenclature ch
 % Results
 \begin{itemize}
   \item We take an example for which we know the clustering algorithm performs well, namely the same simulation design as in \ref{subsubsec:sim_competing_methods}, with $\rho_{\text{Gauss}} = 0.5$, and $\rho_{t} = 0.1$ and $0.9$ for the two clusters.
+  \item We estimate the CE model parameters pre- and post-clustering, and bootstrap the conditional expectation of one variable given the other is at the $98\%$ marginal quantile using equation \ref{eq:boot}.
+  \item The results are plotted in figure \ref{fig:04_bootstrap}.
+  \item We can see that the uncertainty the bootstrapped estimates is vastly reduced post-clustering, as desired.
+  \item The conditional expectation is higher for the higher t-copula correlation cluster, as expected.
+
 \end{itemize}
+
+\todo{Write caption}
+\todo{Note that because margins are the same, can group both variables together}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width = 0.9\linewidth]{plots/sim_01e_bootstrap.png}
+    \caption{\emph{caption}}
+    \label{fig:04_bootstrap}
+\end{figure}
+
 
 \section{Applications}
 \subsection{Irish meteorological data} \label{subsec:app_irl}

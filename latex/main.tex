@@ -119,30 +119,18 @@
 \section{Simulation study}\label{sec:sim}
 \todo{May not be subsections, but will form structure of this section}
 \todo{Do I want to add any visualisations of LRI here? Any ideas there?}
+\todo{Do I need to go into specifics about numbers in reduction of variation etc? Or are the plots self-evident?}
 \todo{May want tables instead of figures for some/all simulation results}
-\todo{How do I get the $\rho$ in ggplot to match the font used in $\LaTeX$? and not clip?}
-\todo{Should I smooth across points in sum plots with geomsmooth?}
-
-% \todo{Introduce each section}
-% \todo{Change to not all be ``in section 3''}
-% \begin{itemize}
-%   \item Throughout this section, we evaluate the effectiveness of our clustering method using a simulation study.
-%   \item In \ref{subsec:sim_design}, we describe the mixture of normal and t-copulas used to generate the data for our simulated experiments. 
-%   \item \ref{subsec:sim_competing_methods} compares our method to the leading competitor in the bivariate case, \cite{Vignotto2021}.
-%   % In \item \ref{subsec:sim_extension}, we extend our method to three dimensions, showing how our model can uniquely cluster in the multivariate extremal dependence setting.
-%   \item \ref{subsec:sim_extension} shows how our method can be extended to three dimensions, and uniquely cluster in the multivariate extremal dependence setting.
-%   \item In \ref{subsec:sim_realistic}, we apply our method to a more realistic example, with the simulation study designed to somewhat mimic the structure of the Irish dataset introduced in \ref{subsec:mot_irl}.
-%   \item In \ref{subsec:sim_refit}, we evaluate the uncertainty in parameter estimates pre- and post-clustering using the bootstrapping scheme from \cite{Heffernan2004}.
-%   \item Finally, \ref{subsec:sim_n_clust} outlines a methodology for selecting the number of clusters to use in a given application, and show it's effectiveness using our simulated data. \todo{May have to move to methods, do we want results for this?}
-% \end{itemize}
+\todo{How do I get the rho in ggplot to match the font used in LaTeX? and not clip?}
+\todo{Should I smooth across points in sum plots with geom smooth? Or continue to use 90\% credible interval (which would improve for 500 simulations vs 200 I've provisionally used}
 
 % Introduce section
 \begin{itemize}
   \item Throughout this section, we evaluate the effectiveness of our clustering method using a simulation study.
-  \item In \ref{subsec:sim_gauss}, we describe a simple simulation design using a Gaussian copula to generate data.
-  This data has the advantage of having theoretical asymptotic values for the CE model parameters, to which we can directly compare our estimates.
+  \item In \ref{subsec:sim_gauss}, a simple simulation design using a Gaussian copula to generate data is described. 
+  This data has the advantage of having theoretical asymptotic values for the CE parameters, to which we can directly compare our finite simulation estimates, as a test to ensure that our clustering is working as desired, reducing uncertainty in parameter estimates. 
   \item In \ref{subsec:sim_mixture}, we extend this study to a more complex simulation design using a mixture of Gaussian and t-copulas, for a variety of simple and more complex dependence structures and scenarios. 
-  We evaluate our clustering solution using the ARI, and ascertain the improvement of parameter estimation post-clustering using a bootstrapping scheme. \todo{Rewrite}
+  \item We evaluate our clustering solution using the ARI, and in \ref{subsubsec:boot} ascertain the improvement of parameter estimation post-clustering using a bootstrapping scheme. \todo{Rewrite}
 \end{itemize}
 
 \subsection{Gaussian copula} \label{subsec:sim_gauss}
@@ -151,19 +139,19 @@
 Our Gaussian copula simulation design for a single ``location'', nomenclature chosen to match the spatial nature of our applications, is as follows:
 \begin{itemize}
   \item We generate multivariate data from a bivariate Gaussian copula, where we control the dependence structure through its correlation parameter, $\rho_{N}$. 
-    \cite{Keef2019} show that for a bivariate Gaussian copula, the asymptotic CE parameters are $\alpha = \sign(\rho_{\text{Gauss}} \rho_{\text{Gauss}}^2, \beta = \frac{1}{2}$, indicating extremal independence. \todo{Fix citations}
-  \item We sample from this copula and transform to GPD margins with shape $\xi = -0.05$, scale $\sigma = 1$, giving us our variables. \todo{mention why we chose these?}
+    \cite{Keef2013} show that for a bivariate Gaussian copula, the asymptotic CE parameters are $\alpha = \text{sign}(\rho_{\text{Gauss}}) \rho_{\text{Gauss}}^2, \beta = 1/2$, indicating asymptotic independence. \todo{Fix citations}
+  \item We sample from this copula and transform to GPD margins with shape $\xi = -0.05$, scale $\sigma = 1$, to generate our data. \todo{mention why we chose these?}
   \item Each variable in this multivariate dataset may represent, for example, a meteorological or air pollution variable at a given location.
-  \item We can then transform the Laplace margins and use the CE model to estimate the multivariate extremal dependence structure at this location.
+  \item We can then transform to Laplace margins and use the CE model to estimate the multivariate extremal dependence structure at this location.
 \end{itemize}
 
 \vspace{1cm}
 
 % Multiple locations
 \begin{itemize}
-  \item We can easily extend this design by generating multiple locations with the same and different $\rho_{\text{Gauss}}$.
+  \item We can easily extend this design by generating multiple locations with the same and different $\rho_{\text{Gauss}}$ values.
   \item The knowledge of these parameters provides our ``known'' clustering solution.
-  \item For example, we could generate data for four locations, two of which have $\rho_{\text{Gauss}} = 0.1$, and the other two have $\rho_{\text{Gauss}} = 0.9$. 
+  \item For example, we could generate data for four locations, the first cluster being two locations with $\rho_{\text{Gauss}} = 0.1$, and the second having $\rho_{\text{Gauss}} = 0.9$ for its two locations.
   \item We can use the CE model to estimate the multivariate extremal dependence structure at each location, and then apply the JS divergence to cluster these locations based on the similarity of the estimated CE parameters. 
   \item These simulations can be repeated many times and we can evaluate the clustering solution using the ARI, and evaluate the bias and variance of our estimates around their theoretical values.
 \end{itemize}
@@ -174,20 +162,20 @@ Our Gaussian copula simulation design for a single ``location'', nomenclature ch
   \item Three known clusters were designated by having $\rho_{\text{Gauss}}$ values of 0.1, 0.5, and 0.9 respectively for four locations each.
   \item Conditional dependence quantiles of 0.9 and 0.99 were used to estimate the CE model parameters before and after clustering. 
   \item The number of clusters $k$ was ascertained using the method described in ? \todo{reference part of methods that describes this}
-  \item Simulations were repeated 500 times, and the results are plotted in figure \ref{fig:00_gauss_cop}.
-  \item The estimation of $k$ and the ARI for this simple example were perfect across all simulations.
-  \item Several interesting points can be made from this simulation study.
-  \item Pre-clustering, the CE model estimates are more uncertain, especially for $\beta$, where the bias is also larger.
-  \item This is especially the case for the higher dependence quantile, where data is scarcer, although this also corresponds to less bias, as we take our data from further into the tail. 
-  \item Bias and variance are lower for higher $\rho_{\text{Gauss}}$, which appears to be associated with better convergence to the theoretical asymptotic values.
-  \item Post-clustering, the same patterns emerge, but the variability in the estimates is reduced, as desired. \todo{Quote any specific values?}
+  \item Simulations were repeated 500 times, and the results are shown in figure \ref{fig:00_gauss_cop}.
+  \item The estimation of $k$ and the ARI for this simple, well-defined example were perfect across all simulations. \todo{double check this assertion!}
+  \item Several interesting points can be made from the results.
+  \item Pre-clustering, the CE model estimates have greater uncertainty, especially for $\beta$, where the bias is also larger.
+  \item This is especially the case for the higher dependence quantile, where data is scarcer, although this also corresponds to less bias, with the true values often lying within the first and third quantiles of each boxplot, as we take our data from further into the tail, where convergence to the asymptotic values is better.
+  \item Bias and variance are lower for higher $\rho_{\text{Gauss}}$, which appears to also be associated with better convergence to the theoretical asymptotic values.
+  \item Post-clustering, the same patterns emerge, but the variability in the estimates is reduced, especially in the problematic cases of estimating $\beta$ and for the higher conditional quantile level, as desired. \todo{Quote any specific values? Or are plots self-evident?}
 \end{itemize}
 
 \todo{Stop alpha and beta facet labels from clipping}
 \begin{figure}[H]
     \centering
     \includegraphics[width = 0.9\linewidth]{plots/sim_01_gauss_cop.png}
-    \caption{Boxplots of \emph{$\alpha$ and $\beta$ parameter estimates for the conditional extremes model pre- and post-clustering for a Gaussian copula simulation of 12 datasets, or ``locations'' belonging equally to three known clusters. Simulations were repeated 500 times. The x-axis represents the conditional quantile used to fit the conditional extremes model, and the boxes are coloured by their Gaussian copula correlation parameter, $\rho_{\text{Gauss}}$. Dotted horizontal lines indicate the theoretical asymptotic values of $\alpha$ and $\beta$ for a bivariate Gaussian copula, coloured by the same $\rho_{\text{Gauss}}$ values for $\alpha$ and black for $\beta$ to indicate the same value across all clusters, at $1/2$.}}
+    \caption{Boxplots of \emph{$\alpha$ and $\beta$ parameter estimates for the conditional extremes model pre- and post-clustering for a bivariate Gaussian copula simulation of 12 datasets, or ``locations'', each with 1000 observations of each variable, belonging equally to three known clusters. Simulations were repeated 500 times. The x-axis represents the conditional quantile used to fit the conditional extremes model, and the boxes are coloured by their Gaussian copula correlation parameter, $\rho_{\text{Gauss}}$. Dotted horizontal lines indicate the theoretical asymptotic values of $\alpha$ and $\beta$ for a bivariate Gaussian copula, coloured by the same $\rho_{\text{Gauss}}$ values for $\alpha$ and black for $\beta$ to indicate the same value across all clusters, at $1/2$.}}
     \label{fig:00_gauss_cop}
 \end{figure}
 
@@ -197,37 +185,31 @@ Our Gaussian copula simulation design for a single ``location'', nomenclature ch
 \begin{itemize}
   \item In this section, we extend our simulation design to a mixture of Gaussian and t-copulas, where we control the dependence structure through their respective correlation parameters, $\rho_{\text{Gauss}}$ and $\rho_{t}$, with each t-copula having 3 degrees of freedom.
   \item The idea behind this design is that the Gaussian copula generates observations exhibiting extremal independence, whereas the t-copula induces extremal dependence, the strength of which is determined by their respective correlation parameters.
-  \item While there are no theoretical guarantees about our estimates, we can still evaluate our clustering solution using the ARI.
-  \item We can also evaluate the improvement in parameter estimation post-clustering using the bootstrapping scheme described in \cite{Heffernan2004}.
-  \item Below, we will describe the results of this simulation study in a variety of scenarios.
+  \item While there are no theoretical guarantees about our estimates, we can still evaluate our clustering solution for this more difficult setting using the ARI.
+  \item Below, we will describe the results of this simulation study in a variety of scenarios, as defined by a grid search over possible $\rho_{\text{Gauss}}$ and $\rho_{t}$ values. 
+  \item In \ref{subsubsec:sim_competing_methods}, we compare our method to the leading competitor in the bivariate case, \cite{Vignotto2021}, and also show how our clustering algorithm uniquely provides a tool for clustering in the multivariate extremal dependence setting in \ref{subsubsec:sim_extension}.
+  \item A more realistic setting is also considered in \ref{subsubsec:sim_realistic}, where we simulate data from 60 locations with three unequally sized clusters, and perturb the correlation parameters to make the clustering solution more challenging.
+  \item We can also evaluate the improvement in parameter estimation post-clustering using the bootstrapping scheme described in \cite{Heffernan2004}, as done in \ref{subsubsec:boot}.
 \end{itemize}
 
 \subsubsection{Comparison to competing methods} \label{subsubsec:sim_competing_methods}
 
-\todo{Say that we used the max risk function in Vignotto}
-
-% \begin{itemize}
-%     \item Compared to method from \cite{Vignotto2021} for two dimensions. 
-%     \item Compared using Adjusted Rand Index (ARI) (\todo{cite!}), which compares a clustering solution
-%     \item Shown to be an improvement over this method for the overwhelming majority of simulations. 
-%     \item \todo{Make interesting comments about how clustering performs better when Gaussian copula correlation is higher!}
-% \end{itemize}
-
+\todo{Extend to 500 simulations, only ran 200 times\!}
 \begin{itemize}
   \item We compared our method to the leading competitor in the bivariate case, \cite{Vignotto2021}, using the maximum risk function.
-  \item As in \ref{subsec:sim_gauss}, for 500 simulations we generated data for 12 locations each with 1000 observations of two variables, but this time using a mixture of Gaussian and t-copulas with GPD margins. \todo{Extend to 500 simulations, only ran 200 times\!}
-  \item Two known clusters were defined using different values of $\rho_t$, keeping $\rho_{\text{Gauss}}$ the same for both (but varying across simulations).
+  \item As in \ref{subsec:sim_gauss}, we generated data for 12 locations each with 1000 observations of two variables, but this time using a mixture of Gaussian and t-copulas with GPD margins. 
+  \item Two known clusters were defined using different values of $\rho_t$, keeping $\rho_{\text{Gauss}}$ the same for both clusters (but varying across simulations).
   \item The CE model was fit at the 90th dependence quantile. 
-  \item The clustering solutions were evaluated using the ARI, and the results are plotted in figure \ref{fig:01_ce_vs_vi}.
-  \item The proposed method is shown to be superior to the leading competitor in the bivariate case, \cite{Vignotto2021}, across a range of possible dependence structures.
-  \item Both models perform better when the difference in the t-copula correlation parameters between the two clusters is larger.
-  \item Both models also perform better when Gaussian and t-copula correlation are higher, as the signal of extremal dependence is stronger. 
+  \item The clustering solutions were evaluated using the ARI, with results shown in figure \ref{fig:01_ce_vs_vi} for a grid search over different $\rho_{\text{Gauss}}$ and $\rho_{t}$ values, with 500 simulations for each point.
+  \item The proposed method is shown to be superior to the method of \cite{Vignotto2021}, across a range of possible bivariate dependence structures, as defined by $\rho_t$.
+  \item Both models perform better when the difference in the t-copula correlation parameters between the two clusters is larger, as the clusters are naturally more distinct when there is greater disparity in dependence.
+  \item Both models also perform better when Gaussian and t-copula correlation are higher, as the signal of extremal dependence is stronger, with more extremal data available.
 \end{itemize}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width = 0.9\linewidth]{plots/sim_01b_ce_vs_vi_dqu_0.9.png}
-    \caption{\emph{Comparison of clustering methods for two variables and two equally sized clusters for simulations of 12 ``locations'' from a mixture of Normal and Gaussian copulas. A grid search was performed,  with the x-axis representing the Gaussian correlation parameter used for both clusters, and the facet labels showing the t-copula correlation parameters for each ``known'' cluster. This grid search was repeated 500 times. The lines show the median of the Adjusted Rand Index for both clustering methods, with uncertainty coming from the 90\% credible interval.}} % The proposed method is shown to be superior to the leading competitor in the bivariate case, that of \cite{Vignotto2021}. Both models perform better when the difference in the t-copula correlation parameters between the two clusters is larger, and when Gaussian correlation is higher.}}
+    \caption{\emph{Comparison of clustering methods for two variables and two equally sized clusters for simulations of 12 ``locations'', each with 1000 observations of each variable, from a mixture of Normal and Gaussian copulas. A grid search was performed,  with the x-axis representing the Gaussian correlation parameter used for both clusters, and the facet labels showing the t-copula correlation parameters for each ``known'' cluster. This grid search was repeated 500 times. The lines show the median of the Adjusted Rand Index for both clustering methods, with uncertainty coming from the 90\% credible interval.}} % The proposed method is shown to be superior to the leading competitor in the bivariate case, that of \cite{Vignotto2021}. Both models perform better when the difference in the t-copula correlation parameters between the two clusters is larger, and when Gaussian correlation is higher.}}
     \label{fig:01_ce_vs_vi}
 \end{figure}
 
@@ -239,18 +221,17 @@ Our Gaussian copula simulation design for a single ``location'', nomenclature ch
 % \end{itemize}
 
 \begin{itemize}
-  \item While the \cite{Vignotto2021} method is restricted to two dimensions, our method can be extended to three dimensions and beyond.
-  \item To illustrate this, we can repeat this simulation study, but with three variables. 
-  \item The results are plotted in figure \ref{fig:02_3d}.
-  \item The proposed method is shown to work well for three dimensions, and the same patterns emerge as in the bivariate case.
+  \item While the method in \cite{Vignotto2021} is restricted to two dimensions, our method can be extended to three dimensions and beyond.
+  \item To illustrate this, we can repeat the simulation study and grid search of \ref{subsubsec:sim_competing_methods}, but now for three variables, the results of which are shown in figure \ref{fig:02_3d}.
+  \item The proposed method is shown to work well for three dimensions, and the same patterns in the ARI emerge as in the bivariate case.
   \item The method is shown to actually perform better in three dimensions than in two.
-  \item This comes with the caveat that the variables all have the same GPD marginal distribution, and so including three variables naturally increases the amount of data available to estimate the same dependence structure as in the bivariate case. 
+  \item This comes with the caveat that in these simulations, the variables all have the same GPD margins, and so including three variables naturally increases the amount of data available to estimate the same dependence structure as in the bivariate case, and does not introduce additional noise which might be present in real multivariate applications.
 \end{itemize}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width = 0.9\linewidth]{plots/sim_01c_js_sens_3_var_dqu_0.9.png}
-    \caption{\emph{Evaluation of clustering performance for three variables and two equally sized clusters for simulations of 12 ``locations'' from a mixture of Normal and Gaussian copulas. A grid search was performed,  with the x-axis representing the Gaussian correlation parameter used for both clusters, and the facet labels showing the t-copula correlation parameters for each ``known'' cluster. This grid search was repeated 500 times. The lines show the median of the Adjusted Rand Index for both clustering methods, with uncertainty coming from the 90\% credible interval. Points show individual values of the ARI for a given simulation.}} 
+    \caption{\emph{Evaluation of clustering performance for three variables and two equally sized clusters for simulations of 12 ``locations'', each with 1000 observations for each variable, from a mixture of Normal and Gaussian copulas. A grid search was performed,  with the x-axis representing the Gaussian correlation parameter used for both clusters, and the facet labels showing the t-copula correlation parameters for each ``known'' cluster. This grid search was repeated 500 times. The lines show the median of the Adjusted Rand Index for both clustering methods, with uncertainty coming from the 90\% credible interval. Points show individual values of the ARI for a given simulation.}} 
     \label{fig:02_3d}
 \end{figure}
 
@@ -262,23 +243,25 @@ Our Gaussian copula simulation design for a single ``location'', nomenclature ch
 % \end{itemize}
 
 \begin{itemize}
-  \item We generated a more realistic example to somewhat mimic the structure of the Irish dataset introduced in \ref{subsec:mot_irl}.
+  \item We also design a more realistic example to somewhat mimic the structure of the Irish dataset introduced in \ref{subsec:mot_irl}.
   \item We generated data from 60 locations, each with 1000 observations of two variables, using a mixture of Gaussian and t-copulas with GPD margins.
-  \item The 60 locations had three known clusters, with 30, 20, and 10 locations in each cluster respectively.
+  \item The 60 locations had three known clusters, with 10, 20, and 30 locations in each cluster, respectively.
+  \item A constant $\rho_{\text{Gauss}}$ of 0.5 was used for all locations and simulations, to reduce the dimensionality of the grid search.
   \item A slight perturbation via a uniform sample between $-0.05$ and $0.05$ was added to the correlation parameters of the t-copula for each location, to make the clustering solution more challenging.
-  \item Again, clustering was done on the CE model parameters using the JS divergence, the results of which are shown in figure \ref{fig:03_realistic}.
-  \item The algorithm is again shown to perform well, particularly where the difference in the t-copula correlation parameters between the clusters is largest. 
+  \item Again, clustering was done on the CE model parameters using the JS divergence, and the ARI for a grid search over different $\rho_t$ values is shown in figure \ref{fig:03_realistic}.
+  \item The algorithm is again shown to perform well, particularly where the difference in the t-copula correlation parameters between the clusters is largest, as expected.
+  \item The variability in the ARI across simulations is also quite low, indicating that the clustering solution is robust.
 \end{itemize}
 
 \todo{Check facet and x-axis labels}
 \begin{figure}[H]
     \centering
     \includegraphics[width = 0.9\linewidth]{plots/sim_01d_js_sens_3_var_dqu_0.9.png}
-    \caption{\emph{Evaluation of clustering performance for two variables and three clusters for simulations from a mixture of Normal and Gaussian copulas. 60 locations were simulated with 10, 20 and 30 belonging to each respective cluster. A grid search was performed,  with the x-axis and facet labels showing the t-copula correlation parameters for each of the three ``known'' clusters, for a Gaussian copula correlation of 0.5. Perturbations were added to these parameters. This grid search was repeated 500 times. The line shows the median of the Adjusted Rand Index for both clustering methods, with uncertainty coming from the 90\% credible interval. Points show individual values of the ARI for a given simulation.}} 
+    \caption{\emph{Evaluation of clustering performance for two variables and three clusters for simulations from a mixture of Normal and Gaussian copulas in a more realistic clustering setting. 60 locations with 1000 observations for each variable were simulated, with 10, 20 and 30 belonging to each respective cluster. A grid search was performed, with the x-axis and facet labels showing the t-copula correlation parameters for each of the three ``known'' clusters, for a Gaussian copula correlation of 0.5. Perturbations were added to these parameters. This grid search was repeated 500 times. The line shows the median of the Adjusted Rand Index for both clustering methods, with uncertainty coming from the 90\% credible interval. Points show individual values of the ARI for a given simulation.}} 
     \label{fig:03_realistic}
 \end{figure}
 
-\subsubsection{Parameter estimation pre- and post-clustering} \label{subsubsec:sim_refit}
+\subsubsection{Parameter estimation pre- and post-clustering} \label{subsubsec:boot}
 
 % \begin{itemize}
 %     \item Desire to ascertain whether dependence parameters are less uncertain after clustering. 
@@ -288,26 +271,26 @@ Our Gaussian copula simulation design for a single ``location'', nomenclature ch
 
 % Describe bootstrapping
 \begin{itemize}
-  \item Finally, we recall that a reason for clustering might be to reduce the uncertainty in parameter estimates by grouping similar data together.
+  \item Finally, we recall that an important reason for spatial clustering is to reduce the uncertainty in parameter estimates while minimising the introduction of bias by grouping similar locations together.
   \item To this end, we desired to ascertain whether the estimates of our dependence parameters were less uncertain after clustering.
-  \item We can bootstrap using the scheme described in \cite{Heffernan2004} to determine the uncertainty in our parameter estimates. \todo{Describe scheme, how it preserves the dependence structure of the data?}
+  \item We can use the bootstrapping scheme described in \cite{Heffernan2004} to determine the uncertainty in our parameter estimates. \todo{Do I need to describe this scheme and how it preserves the dependence structure of the data?}
   \item As we are estimating two parameters, $\alpha$ and $\beta$, for which we do not know the true values, it may be that although our uncertainty is diminished post-clustering, the estimates may still be biased, with the parameters unidentifiable.
   \item There are also many possible combinations of $\alpha$ and $\beta$ that could give the same conditional estimates, and so the estimates may be biased in this sense as well.
-  \item To avoid this, we adopt the approach of \cite{Richards2021-qm} in calculating the conditional expectation of one variable given the other is at the $98\%$ marginal quantile $u$, given by
+  \item To avoid this, we adopt the approach of \cite{Richards2021-qm} in calculating the conditional expectation of one variable given the other at the $98\%$ marginal quantile $u$ for the conditioning variable, given by
   \begin{equation} \label{eq:boot}
     \mathbb{E}[X_1 | X_2 = u] = \hat{\alpha} u + u^{\hat{\beta}} \hat{\mu},
   \end{equation}
   where ($\hat{\alpha}, \hat{\beta}, \hat{\mu}$) are the estimated CE model parameters.
-  \item We can bootstrap this conditional expectation to quantify the reduction in uncertainty post-clustering. \todo{Tense consistency}
+  \item We can bootstrap this conditional expectation to evaluate the reduction in uncertainty post-clustering. \todo{Tense consistency}
 \end{itemize}
 
 % Results
 \begin{itemize}
   \item We take an example for which we know the clustering algorithm performs well, namely the same simulation design as in \ref{subsubsec:sim_competing_methods}, with $\rho_{\text{Gauss}} = 0.5$, and $\rho_{t} = 0.1$ and $0.9$ for the two clusters.
-  \item We estimate the CE model parameters pre- and post-clustering, and bootstrap the conditional expectation of one variable given the other is at the $98\%$ marginal quantile using equation \ref{eq:boot}.
+  \item We estimate the CE model parameters pre- and post-clustering, and generate 500 bootstrap samples for  the conditional expectation of \ref{eq:boot}.
   \item The results are plotted in figure \ref{fig:04_bootstrap}.
   \item We can see that the uncertainty in the bootstrapped estimates is vastly reduced post-clustering, as desired.
-  \item The conditional expectation is higher for the higher t-copula correlation cluster, as expected.
+  \item The conditional expectation is higher for the higher t-copula correlation cluster, as expected. \todo{Anything else need to be said here? Be more specific with results?}
 
 \end{itemize}
 
@@ -315,7 +298,7 @@ Our Gaussian copula simulation design for a single ``location'', nomenclature ch
 \begin{figure}[H]
     \centering
     \includegraphics[width = 0.9\linewidth]{plots/sim_01e_bootstrap_box.png}
-    \caption{\emph{Boxplots of 500 bootstrapped conditional expectations of one variable given the other is at the $98\%$ marginal quantile $u$, pre- and post-clustering for a simulation of 12 ``locations'' from a mixture of Normal and Gaussian copulas, with the Gaussian correlation set to 0.5. The t-copula correlation parameters for the two clusters were set to 0.1 and 0.9, as shown on the x-axis.}}
+    \caption{\emph{Boxplots of 500 bootstrapped conditional expectations of one variable given the other is at the $98\%$ marginal quantile $u$, pre- and post-clustering for a simulation of 12 ``locations'', each with 1000 observations for each variable, from a mixture of Normal and Gaussian copulas, with the Gaussian correlation set to 0.5. The t-copula correlation parameters for the two clusters were set to 0.1 and 0.9, as shown on the x-axis.}}
     \label{fig:04_bootstrap}
 \end{figure}
 

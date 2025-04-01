@@ -160,8 +160,55 @@ A framework which provides a more flexible approach to modelling extremal depend
 
 % Define KL divergence, show closed form for two normals, then JS divergence
 
+% Intro: CE gives distributions, which need to be compared
 \begin{itemize}
-  \item 
+  % \item \citet{Heffernan2004} shows that inference can be made about the extremal dependence structure of a multivariate distribution by conditioning on the exceedance of a high threshold by at least one of the variables, using that 
+ \item \citet{Heffernan2004} shows that inference can be made about the extremal dependence of a variable $Y_j$ on another variable $Y_i$ by conditioning on the exceedance of a high threshold by $Y_i$, using that
+    \begin{equation} \label{eq:ce_norm}
+      % \bm{Y}_{-i} \mid \bm{Y}_i = y_i \sim N\left(\bm{\alpha}_{\mid i} y_i + y_i^{\bm{\beta}_i} \bm{\mu}_{\mid i}, y_i^{\bm{\beta}_i} \bm{\sigma_{\mid i}}\right), 
+      Y_{j} \mid Y_{i} = y_i \sim N\left(\alpha_{j \mid i} y_i + y_i^{\beta_i} \mu_{j \mid i}, y_i^{\beta_i} \sigma_{j \mid i}\right),
+    \end{equation}
+for $Y_i > u$.
+  \item Therefore, when hoping to compare the extremal dependence structure of two locations, a sensible approach might be to compare the conditional distributions given by equation \ref{eq:ce_norm} for each variable. 
+\end{itemize}
+
+\vspace{1cm}
+
+% KL Divergence
+\begin{itemize}
+  \item One common measure of dissimilarity between two distributions $P$ and $Q$ is the Kullback-Leibler (KL) divergence, defined as
+    \begin{equation} \label{eq:kl}
+      D_{KL}(P \mid\mid Q) = \int_{-\infty}^{\infty} p(y) \log\left(\frac{p(y)}{q(y)}\right) dy.
+    \end{equation}
+    where $p(y)$ and $q(y)$ are the densities of $P$ and $Q$, respectively \citet{Kullback1951}.
+  \item The dissimilarity of two distributions can be measured using the KL divergence, which is always non-negative and zero if and only if $P = Q$.
+  \item In this case, $P$ and $Q$ are the conditional distribution given by equation \ref{eq:ce_norm} for any two locations.
+  % \item It can be shown that if $P$ and $Q$, which in this case will specify the conditional distributions in equation \ref{eq:kl} for two locations, are both normal, then the KL divergence has a closed form solution.
+  \item Generally speaking, if we define $P$ and $Q$ as being normal distributions with means $\mu_1$ and $\mu_2$ and standard deviations $\sigma_1$ and $\sigma_2$, then the KL divergence has a closed form solution which is given by
+    \begin{equation} \label{eq:kl_norm}
+      D_{KL}(P \mid\mid Q) = \frac{1}{2} \left( \frac{(\mu_2 - \mu_1)^2}{\sigma_2^2} + \frac{\sigma_1^2}{\sigma_2^2} - \log{(\frac{\sigma_1^2}{\sigma_2^2})} - 1 \right),
+    \end{equation}
+    as shown in \citet{Soch2020_norm_kl}.
+  % \item If we say that $Y_j \mid \Y_i \sim P$ and $Y_j \mid Y_i \sim Q$ for two locations, then we can calculate the KL divergence between these two conditional distributions by plugging in means and standard deviations of the normal distributions into 
+  \item We can then calculate the KL divergence between the conditional distributions given by equation \ref{eq:ce_norm} for two locations by plugging in the means and standard deviations of the normal distributions into equation \ref{eq:kl_norm}. \todo{Do I need to actually show this calculation? Easy enough}
+  \item This closed form solution means that the JS divergence can be easily and efficiently calculated.
+  \item One question to answer is the values to use for $y_i$ in equation \ref{eq:ce_norm}, which should be the same for both locations, to assess whether the extremal dependence structure at the same conditioning level is similar.
+  \item One somewhat arbitrary approach is to take the maximum threshold between the two CE fits, and then use 10 points between this threshold and twice its value, calculating the JS divergence between these points.
+\end{itemize}
+
+\vspace{1cm}
+
+% JS Divergence
+\begin{itemize}
+  \item One limitation of the KL divergence is that it is not symmetric, making it a poor choice as a dissimilarity measure for clustering. 
+  \item The Jensen-Shannon (JS) divergence is a simple extension of the JS divergence which provides a symmetric measure of dissimilarity between two distributions, defined as \todo{reference JS divergence}
+    \begin{equation} \label{eq:js}
+      D_{JS}(P \mid\mid Q) = \frac{1}{2} D_{KL}(P \mid\mid M) + \frac{1}{2} D_{KL}(Q \mid\mid M),
+    \end{equation}
+    where $M = \frac{1}{2}(P + Q)$ \citep{Lin1991}.
+  \item Since we have a closed form for the KL divergence when both $P$ and $Q$ are normal, we also have a closed form for the JS divergence.
+  \item Hence, we have a simple and interpretable measure of dissimilarity between two conditional distributions given by equation \ref{eq:ce_norm} for two locations, with which we can cluster locations based on their extremal dependence structure.
+  \item This measure can be applied in arbitrary dimension, by simply summing the JS divergence across all variables, and is not restricted to a bivariate setting, as is \cite{Vignotto2021}.
 \end{itemize}
 
 \subsection{Clustering}

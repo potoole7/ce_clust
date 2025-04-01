@@ -115,47 +115,41 @@
 
 \subsection{Extremal dependence}
 
-% In order to characterise the dependence between extremes, we must introduce the concepts of asymptotic dependence and independence, as described in \citet{Coles1999}.
-% % The coefficient of asymptotic dependence, $\chi \in [0, 1]$, measures the degree of asymptotic dependence between two random variables $X_1$ and $X_2$ with corresponding CDFs $F_1$ and $F_2$, under the class of asymptotically dependent distributions.
-% The coefficient of dependence, $\chi \in [0, 1]$, measures the degree of extremal dependence between two random variables $X_1$ and $X_2$ with corresponding CDFs $F_1$ and $F_2$, under the class of asymptotically dependent distributions.
-% It is defined as $\chi = \lim_{u \rightarrow 1}{\chi(u)}$, where
-% % \[
-% %   \chi(u) = \mathbb{P}\left( F_1(X_1) > u \mid F_2(X_2) > u \right), u \in [0, 1].
-% % \]
+\todo{Coppied straight from TFR, may have to cut down}
+
+In order to characterise the dependence between extremes, we must introduce the concepts of asymptotic dependence and independence, as described in \citet{Coles1999}.
+% The coefficient of asymptotic dependence, $\chi \in [0, 1]$, measures the degree of asymptotic dependence between two random variables $X_1$ and $X_2$ with corresponding CDFs $F_1$ and $F_2$, under the class of asymptotically dependent distributions.
+The coefficient of dependence, $\chi \in [0, 1]$, measures the degree of extremal dependence between two random variables $X_1$ and $X_2$ with corresponding CDFs $F_1$ and $F_2$, under the class of asymptotically dependent distributions. \todo{expand CDF?}
+It is defined as $\chi = \lim_{u \rightarrow 1}{\chi(u)}$, where
 % \[
-% \chi(u) = 2 - \frac{\log\left(\mathbb{P}(F_1(X_1) < u, F_2(X_2) < u)\right)}{\log \left(\mathbb{P}(F_1(X_1) < u)\right)}
+%   \chi(u) = \mathbb{P}\left( F_1(X_1) > u \mid F_2(X_2) > u \right), u \in [0, 1].
 % \]
-% 
-% If $\chi = 0$, then $X_1$ and $X_2$ are said to be asymptotically independent, while for $\chi > 0$, they are asymptotically dependent, with greater magnitude as $\chi$ increases \citep{Coles1999}.
-% Thus, $\chi$ gives the limit probability of $X_1$ being extreme given that $X_2$ is extreme, and we expect the joint probability of observing extremal events in both variables to be greater where $\chi$ is higher \citep{Rohrbeck2021}.
-% Furthermore, $\chi$ is symmetric in $X_1$ and $X_2$.
-% Two variables can be asymptotically dependent even if they are not dependent in the classical sense.
-% % Another coefficient, $\bar{\chi} \in [-1, 1]$, is used to measure the strength of dependence in the case of asymptotically independent distributions, where $\chi = 0$.
-% Another coefficient, $\bar{\chi} \in [-1, 1]$, measures the extremal or tail dependence between two variables where $\chi = 0$, in the case of asymptotically independent variables.
-% This coefficient is defined as $\bar{\chi} = \lim_{u \rightarrow 1}{\bar{\chi}(u)}$, where
-% \[
-%   \bar{\chi}(u) = \lim_{u \rightarrow 1} \frac{2\log\mathbb{P}(F_1(X_1) > u)}{ \log{\mathbb{P}(F_1(X_1) > u, F_2(X_2) > u)}} - 1.
-% \]
-% For asymptotic dependence, $\bar{\chi} = 1$.
-% Under asymptotic independence, $\bar{\chi} = 0$, with $\bar{\chi}$ increasing in magnitude as the variables become more positively (for $\bar{\chi} > 0$) or negatively (for $\bar{\chi} < 0$) dependent in their extremes \citep{Vignotto2021}.
-% 
-% 
-% Together, $(\chi, \bar{\chi})$ provide a useful summary of extremal dependence for any pair of random variables.
-% However, they do not fully describe the dependence structure of a multivariate distribution.
-% For example, probabilities of jointly extreme events for two or more variables cannot be calculated from these coefficients.
-% For this, we require a model for extremal dependence.
-% Various approaches to this problem have included max-stable processes, Pareto processes, Gaussian processes and copulas.
-% However, these models are limited in their ability to model dependence and their computational feasibility, and are often conceptually quite difficult. 
+\[
+\chi(u) = 2 - \frac{\log\left(\mathbb{P}(F_1(X_1) < u, F_2(X_2) < u)\right)}{\log \left(\mathbb{P}(F_1(X_1) < u)\right)}.
+\]
+
+If $\chi = 0$, then $X_1$ and $X_2$ are said to be asymptotically independent, while for $\chi > 0$, they are asymptotically dependent, with greater magnitude as $\chi$ increases.
+Thus, $\chi$ gives the limit probability of $X_1$ being extreme given that $X_2$ is extreme, and we expect the joint probability of observing extremal events in both variables to be greater where $\chi$ is higher \citep{Rohrbeck2021}.
+Furthermore, $\chi$ is symmetric in $X_1$ and $X_2$.
+Two variables can be asymptotically dependent even if they are not dependent in the classical sense.
+% Another coefficient, $\bar{\chi} \in [-1, 1]$, is used to measure the strength of dependence in the case of asymptotically independent distributions, where $\chi = 0$.
+Another coefficient, $\bar{\chi} \in [-1, 1]$, measures the tail dependence between two variables where $\chi = 0$, in the case of asymptotically independent variables.
+This coefficient is similarly defined as $\bar{\chi} = \lim_{u \rightarrow 1}{\bar{\chi}(u)}$, where
+\[
+  \bar{\chi}(u) = \lim_{u \rightarrow 1} \frac{2\log\mathbb{P}(F_1(X_1) > u)}{ \log{\mathbb{P}(F_1(X_1) > u, F_2(X_2) > u)}} - 1.
+\]
+For asymptotic dependence, $\bar{\chi} = 1$.
+Under asymptotic independence, $\bar{\chi} = 0$, with $\bar{\chi}$ increasing in magnitude as the variables become more positively (for $\bar{\chi} > 0$) or negatively (for $\bar{\chi} < 0$) dependent in their extremes \citep{Vignotto2021}.
+
+Together, $(\chi, \bar{\chi})$ provide a useful summary of extremal dependence for any pair of random variables.
+However, they do not fully describe the dependence structure of a multivariate distribution.
+For example, probabilities of jointly extreme events for two or more variables cannot be calculated from these coefficients.
+For this, we require a model for extremal dependence.
+Various approaches to this problem have been proposed, including max-stable processes, Pareto processes, Gaussian processes and copulas.
+However, these models are limited in their ability to model dependence and their computational feasibility, and are often conceptually difficult. 
 % For example, max-stable processes can only model $\mathbb{P}(\bm{X} \in \bm{C})$ under asymptotic dependence between each pair of variables in $\bm{X}$, while in contrast Gaussian processes can only model asymptotic independence \citep{Tawn2018, Huser2024}.
 % Max-stable processes are also quite computationally expensive and conceptually difficult to derive, and so are often not feasible for large datasets.
-% A model which provides a more flexible approach to modelling extremal dependence is the conditional extremes model of \citet{Heffernan2004}.
-
-% Vignotto point
-% Note that in this latter case, not all the considered variables need to lay in the tail region since the only one explicitly modeled as extreme is the conditioning variable (
-% Heffernan and Tawn, 2004
-% ). 
-
-
+A framework which provides a more flexible approach to modelling extremal dependence is the CE model of \citet{Heffernan2004}.
 
 \subsection{Conditional extremes}
 
@@ -175,9 +169,13 @@
 % Describe clustering process via JS divergence and k-medoids/PAM algorithm (give?
 % See Vignotto)
 
+% PAM (K-means not suitable as clusters cannot be assumed to be spherical)
+\begin{itemize}
+\end{itemize}
+
 \subsubsection{Choice of k}
 
-% Describe methods for choosing k
+% Describe methods for choosing k (AIC, TWGSS) (silhouette not suitable)
 
 \section{Simulation study}\label{sec:sim}
 \todo{May not be subsections, but will form structure of this section}

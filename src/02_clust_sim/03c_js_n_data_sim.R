@@ -166,7 +166,22 @@ results_grid <- results_grid %>%
 # save
 # saveRDS(results_grid, file = "data/js_grid_search_n_points.RDS")
 results_grid <- readRDS(file = "data/js_grid_search_n_points.RDS")
-
+# Summarise results to add confidence levels to plot
+results_grid_sum <- summarise_sens_res(results_grid, conf_level = conf_level)
+# tally rand index occurrences for given parameter set
+results_grid_tally <- results_grid %>%
+  # round so you don't have lots of similar values
+  # mutate(adj_rand_rnd = round(adj_rand, 2)) %>%
+  # group_by(across(!contains("_rand")), adj_rand_rnd) %>%
+  group_by(across(!contains("_rand")), adj_rand) %>%
+  tally(name = "n_rand") %>%
+  ungroup()
+# add both to results
+results_grid <- results_grid %>%
+  # for repeated joining
+  dplyr::select(-(ends_with("_rand") & !matches("adj_rand"))) %>%
+  left_join(results_grid_sum) %>%
+  left_join(results_grid_tally)
 
 # remove NAs, give warning
 # TODO: Lots of NAs, investigate!!!!

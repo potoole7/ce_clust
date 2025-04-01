@@ -41,6 +41,8 @@ shape_gpd <- -0.05
 cond_prob <- 0.9
 cond_prob_clust <- 0.9
 marg_prob <- 0.98 # marginal quantile to calculate expectation in bootstrap
+# R <- 100
+R <- 500 # number of bootstrap samples
 
 # Number of cores to use for parallel computation
 n_cores <- detectCores() - 1
@@ -61,7 +63,7 @@ data_mix <- sim_cop_dat(
 )$data_mix
 
 # Function to transform data, fit CE and perform bootstrapping
-fit_boot <- \(data_mix, ncores = 1) {
+fit_boot <- \(data_mix, ncores = 1, ret_ce = FALSE) {
   # transform to Laplace margins
   data_mix_trans <- lapply(data_mix, \(x) {
     laplace_trans(evd::pgpd(x, loc = 0, scale = scale_gpd, shape = shape_gpd))
@@ -91,13 +93,19 @@ fit_boot <- \(data_mix, ncores = 1) {
     marg_pars = list(loc = 0, scale = scale_gpd, shape = shape_gpd),
     cond_prob = cond_prob,
     marg_prob = 0.98,
-    R = 100,
+    R = R,
     trace = 10,
     ncores = ncores
   )
+  if (ret_ce) {
+    return(list(bootstrap_res, ce_fit))
+  }
+  return(bootstrap_res)
 }
 
-bootstrap_res <- fit_boot(data_mix, ncores = ncores)
+bootstrap_res <- fit_boot(data_mix, ncores = ncores, ret_ce = TRUE)
+ce_fit <- bootstrap_res[[2]]
+bootstrap_res <- bootstrap_res[[1]]
 
 # extract the bootstrapped data for each cluster
 boot_est <- purrr::transpose(lapply(bootstrap_res, \(x) { # loop through bootstrap samples
@@ -137,7 +145,7 @@ plot_boot <- \(boot_est_df) {
 plot_boot(boot_est_df)
 
 
-#### Bootstrap alpha and beta parameter values **after** clustering ####
+#### Bootstrap **after** clustering ####
 
 # cluster for k = 2
 k <- n_clust
@@ -167,7 +175,7 @@ boot_est_clust_df <- bind_cols(lapply(boot_est_clust, unlist)) |>
 # plot just the clustered data
 plot_boot(boot_est_clust_df)
 
-p <- bind_rows(
+p_dat <- bind_rows(
   boot_est_df,
   boot_est_clust_df,
   .id = "ind" # pre vs post-clustering
@@ -178,7 +186,8 @@ p <- bind_rows(
       ind == 1 ~ "Pre-clustering",
       TRUE ~ "Post-clustering"
     ), levels = c("Pre-clustering", "Post-clustering"))
-  ) |>
+  )
+p <- p_dat |>
   ggplot(aes(x = value)) +
   # geom_histogram(aes(y = ..density.., fill = ind), bins = 30, alpha = 0.5) +
   geom_density(aes(fill = ind), alpha = 0.5) +
@@ -196,3 +205,14 @@ p <- bind_rows(
 p
 
 ggsave("latex/plots/sim_01e_bootstrap.png", p, width = 8, height = 5)
+
+# also do boxplot
+p_box <- p_dat |>
+  ggplot(aes(x = cluster, y = value, fill = ind)) +
+  geom_boxplot(width = 1, outliers = FALSE, key_glyph = "rect") +
+  labs(x = parse(text = "rho[t]"), y = "Conditional Expectation", fill = "") +
+  evc::evc_theme() +
+  ggsci::scale_fill_nejm() +
+  scale_x_discrete(expand = c(0.25, 0.25))
+p_box
+ggsave("latex/plots/sim_01e_bootstrap_box.png", p_box, width = 8, height = 5)

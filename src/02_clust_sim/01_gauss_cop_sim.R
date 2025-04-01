@@ -531,7 +531,7 @@ file <- "data/sim_gauss_cop_grid.RDS"
 results_grid <- readRDS(file)
 
 
-#### Analyse Simulations ###
+#### Analyse Simulations ####
 
 # How to analyse?
 # 1) Check for where clustering wasn't perfect (should be close cor_gauss vals)
@@ -886,12 +886,11 @@ custom_lims <- \(x) {
   }
 }
 
-
 ggsave(
   "latex/plots/sim_01_gauss_cop.png",
   p_box_full[[8]] +
     scale_y_continuous(breaks = custom_breaks, limits = custom_lims),
-  width = 8, height = 5
+  width = 6, height = 5
 )
 
 # for this plot, work out the bias (difference from true value) and

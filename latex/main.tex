@@ -205,7 +205,8 @@ for $Y_i > u$.
     \begin{equation} \label{eq:js}
       D_{JS}(P \mid\mid Q) = \frac{1}{2} D_{KL}(P \mid\mid M) + \frac{1}{2} D_{KL}(Q \mid\mid M),
     \end{equation}
-    where $M = \frac{1}{2}(P + Q)$ \citep{Lin1991}.
+    where $M = \frac{1}{2}(P + Q)$ \citep{Lin1991}. \todo{IMPORTANT: Check with Christian if this is a mixture distribution or an ``average'' of the two, if mixture then JS is not closed!}
+    \todo{May have to use the geometric JS divergence instead! Everything included in https://pmc.ncbi.nlm.nih.gov/articles/PMC7514974/#sec4dot1dot2-entropy-21-00485}
   \item Since we have a closed form for the KL divergence when both $P$ and $Q$ are normal, we also have a closed form for the JS divergence.
   \item Hence, we have a simple and interpretable measure of dissimilarity between two conditional distributions given by equation \ref{eq:ce_norm} for two locations, with which we can cluster locations based on their extremal dependence structure.
   \item This measure can be applied in arbitrary dimension, by simply summing the JS divergence across all variables, and is not restricted to a bivariate setting, as is \cite{Vignotto2021}.
@@ -248,10 +249,11 @@ for $Y_i > u$.
 Our Gaussian copula simulation design for a single ``location'', nomenclature chosen to match the spatial nature of our applications, is as follows:
 \begin{itemize}
   \item We generate multivariate data from a bivariate Gaussian copula, where we control the dependence structure through its correlation parameter, $\rho_{N}$. 
-    \cite{Keef2013} show that for a bivariate Gaussian copula, the asymptotic CE parameters are $\alpha = \text{sign}(\rho_{\text{Gauss}}) \rho_{\text{Gauss}}^2, \beta = 1/2$, indicating asymptotic independence. \todo{Fix citations}
-  \item We sample from this copula and transform to GPD margins with shape $\xi = -0.05$, scale $\sigma = 1$, to generate our data. \todo{mention why we chose these?}
-  \item Each variable in this multivariate dataset may represent, for example, a meteorological or air pollution variable at a given location.
-  \item We can then transform to Laplace margins and use the CE model to estimate the multivariate extremal dependence structure at this location.
+    \cite{Keef2013} show that for a bivariate Gaussian copula, the asymptotic CE parameters are $\alpha = \text{sign}(\rho_{\text{Gauss}}) \rho_{\text{Gauss}}^2, \beta = 1/2$, indicating asymptotic independence.
+  % \item We sample from this copula and transform to GPD margins with shape $\xi = -0.05$, scale $\sigma = 1$, to generate our data. \todo{mention why we chose these?}
+  % \item Each variable in this multivariate dataset may represent, for example, a meteorological or air pollution variable at a given location.
+  % \item We can then transform to Laplace margins and use the CE model to estimate the multivariate extremal dependence structure at this location.
+  \item We sample from this copula and transform to Laplace margins and use the CE model to estimate the bivariate extremal dependence structure at this location.
 \end{itemize}
 
 \vspace{1cm}
@@ -261,8 +263,8 @@ Our Gaussian copula simulation design for a single ``location'', nomenclature ch
   \item We can easily extend this design by generating multiple locations with the same and different $\rho_{\text{Gauss}}$ values.
   \item The knowledge of these parameters provides our ``known'' clustering solution.
   \item For example, we could generate data for four locations, the first cluster being two locations with $\rho_{\text{Gauss}} = 0.1$, and the second having $\rho_{\text{Gauss}} = 0.9$ for its two locations.
-  \item We can use the CE model to estimate the multivariate extremal dependence structure at each location, and then apply the JS divergence to cluster these locations based on the similarity of the estimated CE parameters. 
-  \item These simulations can be repeated many times and we can evaluate the clustering solution using the ARI, and evaluate the bias and variance of our estimates around their theoretical values.
+  \item We can use the CE model to estimate the bivariate extremal dependence structure at each location, and then apply the JS divergence to cluster these locations based on the similarity of the estimated CE parameters.
+  \item These simulations can be repeated many times and we can evaluate the clustering solution using the ARI, and observe the bias and variance of our simulation estimates around their theoretical values.
 \end{itemize}
 
 % results
@@ -306,9 +308,10 @@ Our Gaussian copula simulation design for a single ``location'', nomenclature ch
 \todo{Extend to 500 simulations, only ran 200 times\!}
 \begin{itemize}
   \item We compared our method to the leading competitor in the bivariate case, \cite{Vignotto2021}, using the maximum risk function.
-  \item As in \ref{subsec:sim_gauss}, we generated data for 12 locations each with 1000 observations of two variables, but this time using a mixture of Gaussian and t-copulas with GPD margins. 
+  % \item As in \ref{subsec:sim_gauss}, we generated data for 12 locations each with 1000 observations of two variables, but this time using a mixture of Gaussian and t-copulas with GPD margins. 
+  \item As in \ref{subsec:sim_gauss}, we generated data for 12 locations each with 1000 observations of two variables, but this time using a mixture of Gaussian and t-copulas, again with Laplace margins. 
   \item Two known clusters were defined using different values of $\rho_t$, keeping $\rho_{\text{Gauss}}$ the same for both clusters (but varying across simulations).
-  \item The CE model was fit at the 90th dependence quantile. 
+  \item The CE model was fit at the $90^{th}$ dependence quantile. 
   \item The clustering solutions were evaluated using the ARI, with results shown in figure \ref{fig:01_ce_vs_vi} for a grid search over different $\rho_{\text{Gauss}}$ and $\rho_{t}$ values, with 500 simulations for each point.
   \item The proposed method is shown to be superior to the method of \cite{Vignotto2021}, across a range of possible bivariate dependence structures, as defined by $\rho_t$.
   \item Both models perform better when the difference in the t-copula correlation parameters between the two clusters is larger, as the clusters are naturally more distinct when there is greater disparity in dependence.
@@ -334,7 +337,8 @@ Our Gaussian copula simulation design for a single ``location'', nomenclature ch
   \item To illustrate this, we can repeat the simulation study and grid search of \ref{subsubsec:sim_competing_methods}, but now for three variables, the results of which are shown in figure \ref{fig:02_3d}.
   \item The proposed method is shown to work well for three dimensions, and the same patterns in the ARI emerge as in the bivariate case.
   \item The method is shown to actually perform better in three dimensions than in two.
-  \item This comes with the caveat that in these simulations, the variables all have the same GPD margins, and so including three variables naturally increases the amount of data available to estimate the same dependence structure as in the bivariate case, and does not introduce additional noise which might be present in real multivariate applications.
+  % \item This comes with the caveat that in these simulations, the variables all have the same GPD margins, and so including three variables naturally increases the amount of data available to estimate the same dependence structure as in the bivariate case, and does not introduce additional noise which might be present in real multivariate applications.
+  \item This comes with the caveat that in these simulations, the variables all have the same margins, and so including three variables naturally increases the amount of data available to estimate the same dependence structure as in the bivariate case, and does not introduce additional noise which might be present in real multivariate applications.
 \end{itemize}
 
 \begin{figure}[H]

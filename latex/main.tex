@@ -7,6 +7,7 @@
 \usepackage{titlesec}
 \usepackage{amssymb}
 \usepackage{amsmath}
+\usepackage{mathtools}
 \usepackage{natbib} % print author's name and year when citing
 \usepackage{bbm}
 \usepackage{todonotes}
@@ -38,7 +39,12 @@
 % Define a custom note command for general notes
 \newcommand{\mynote}[1]{\todo[color=yellow!40,inline]{#1}}
 
+\DeclareMathOperator{\Tr}{Tr}
+
 \DeclareMathOperator*{\argmin}{arg\,min}
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}%
+
+\newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
 
 % Nature Bibliography style
 % \usepackage[backend=biber,style=nature]{biblatex}
@@ -156,60 +162,143 @@ A framework which provides a more flexible approach to modelling extremal depend
 % See Jordan's paper for quick summary (TFR a bit long winded)
 % Need to talk about marginals, transformations and then model itself
 
-\subsection{Jensen-Shannon divergence}
+% \subsection{Jensen-Shannon divergence}
+% 
+% % Define KL divergence, show closed form for two normals, then JS divergence
+% 
+% % Intro: CE gives distributions, which need to be compared
+% \begin{itemize}
+%   % \item \citet{Heffernan2004} shows that inference can be made about the extremal dependence structure of a multivariate distribution by conditioning on the exceedance of a high threshold by at least one of the variables, using that 
+%  \item \citet{Heffernan2004} shows that inference can be made about the extremal dependence of a variable $Y_j$ on another variable $Y_i$ by conditioning on the exceedance of a high threshold by $Y_i$, using that
+%     \begin{equation} \label{eq:ce_norm}
+%       % \bm{Y}_{-i} \mid \bm{Y}_i = y_i \sim N\left(\bm{\alpha}_{\mid i} y_i + y_i^{\bm{\beta}_i} \bm{\mu}_{\mid i}, y_i^{\bm{\beta}_i} \bm{\sigma_{\mid i}}\right), 
+%       Y_{j} \mid Y_{i} = y_i \sim N\left(\alpha_{j \mid i} y_i + y_i^{\beta_i} \mu_{j \mid i}, y_i^{\beta_i} \sigma_{j \mid i}\right),
+%     \end{equation}
+% for $Y_i > u$.
+%   \item Therefore, when hoping to compare the extremal dependence structure of two locations, a sensible approach might be to compare the conditional distributions given by equation \ref{eq:ce_norm} for each variable. 
+% \end{itemize}
+% 
+% \vspace{1cm}
+% 
+% % KL Divergence
+% \begin{itemize}
+%   \item One common measure of dissimilarity between two distributions $P$ and $Q$ is the Kullback-Leibler (KL) divergence, defined as
+%     \begin{equation} \label{eq:kl}
+%       KL(P \mid\mid Q) = \int_{-\infty}^{\infty} p(y) \log\left(\frac{p(y)}{q(y)}\right) dy.
+%     \end{equation}
+%     where $p(y)$ and $q(y)$ are the densities of $P$ and $Q$, respectively \citet{Kullback1951}.
+%   \item The dissimilarity of two distributions can be measured using the KL divergence, which is always non-negative and zero if and only if $P = Q$.
+%   \item In this case, $P$ and $Q$ are the conditional distribution given by equation \ref{eq:ce_norm} for any two locations.
+%   % \item It can be shown that if $P$ and $Q$, which in this case will specify the conditional distributions in equation \ref{eq:kl} for two locations, are both normal, then the KL divergence has a closed form solution.
+%   \item Generally speaking, if we define $P$ and $Q$ as being normal distributions with means $\mu_1$ and $\mu_2$ and standard deviations $\sigma_1$ and $\sigma_2$, then the KL divergence has a closed form solution which is given by
+%     \begin{equation} \label{eq:kl_norm}
+%       KL(P \mid\mid Q) = \frac{1}{2} \left( \frac{(\mu_2 - \mu_1)^2}{\sigma_2^2} + \frac{\sigma_1^2}{\sigma_2^2} - \log{(\frac{\sigma_1^2}{\sigma_2^2})} - 1 \right),
+%     \end{equation}
+%     as shown in \citet{Soch2020_norm_kl}.
+%   % \item If we say that $Y_j \mid \Y_i \sim P$ and $Y_j \mid Y_i \sim Q$ for two locations, then we can calculate the KL divergence between these two conditional distributions by plugging in means and standard deviations of the normal distributions into 
+%   \item We can then calculate the KL divergence between the conditional distributions given by equation \ref{eq:ce_norm} for two locations by plugging in the means and standard deviations of the normal distributions into equation \ref{eq:kl_norm}. \todo{Do I need to actually show this calculation? Easy enough}
+%   \item This closed form solution means that the JS divergence can be easily and efficiently calculated.
+%   \item One question to answer is the values to use for $y_i$ in equation \ref{eq:ce_norm}, which should be the same for both locations, to assess whether the extremal dependence structure at the same conditioning level is similar.
+%   \item One somewhat arbitrary approach is to take the maximum threshold between the two CE fits, and then use 10 points between this threshold and twice its value, calculating the JS divergence between these points.
+% \end{itemize}
+% 
+% \vspace{1cm}
+% 
+% % JS Divergence
+% \begin{itemize}
+%   \item One limitation of the KL divergence is that it is not symmetric, making it a poor choice as a dissimilarity measure for clustering. 
+%   \item The Jensen-Shannon (JS) divergence is a simple extension of the JS divergence which provides a symmetric measure of dissimilarity between two distributions, defined as \todo{reference JS divergence}
+%     \begin{equation} \label{eq:js}
+%       JS(P \mid\mid Q) = \frac{1}{2} KL(P \mid\mid M) + \frac{1}{2} KL(Q \mid\mid M),
+%     \end{equation}
+%     where $M = \frac{1}{2}(P + Q)$ \citep{Lin1991}. \todo{IMPORTANT: Check with Christian if this is a mixture distribution or an ``average'' of the two, if mixture then JS is not closed!}
+%     \todo{May have to use the geometric JS divergence instead! Everything included in https://pmc.ncbi.nlm.nih.gov/articles/PMC7514974/#sec4dot1dot2-entropy-21-00485}
+%   \item Since we have a closed form for the KL divergence when both $P$ and $Q$ are normal, we also have a closed form for the JS divergence.
+%   \item Hence, we have a simple and interpretable measure of dissimilarity between two conditional distributions given by equation \ref{eq:ce_norm} for two locations, with which we can cluster locations based on their extremal dependence structure.
+%   \item This measure can be applied in arbitrary dimension, by simply summing the JS divergence across all variables, and is not restricted to a bivariate setting, as is \cite{Vignotto2021}.
+% \end{itemize}
 
-% Define KL divergence, show closed form for two normals, then JS divergence
+\subsection{Divergence metric}
+
+\todo{skew-geometric JS divergence is unbounded, need to include Thiagarajan version which is!}
 
 % Intro: CE gives distributions, which need to be compared
 \begin{itemize}
-  % \item \citet{Heffernan2004} shows that inference can be made about the extremal dependence structure of a multivariate distribution by conditioning on the exceedance of a high threshold by at least one of the variables, using that 
- \item \citet{Heffernan2004} shows that inference can be made about the extremal dependence of a variable $Y_j$ on another variable $Y_i$ by conditioning on the exceedance of a high threshold by $Y_i$, using that
+  \item \citet{Heffernan2004} shows that inference can be made about the extremal dependence of a random vector $\bm{Y}_{-i} = \bm{Y} \backslash Y_i$ on a variable $Y_i$ by conditioning on the exceedance of a high threshold $u$ by $Y_i$, and assuming that this conditional distribution is a diagonal multivariate Gaussian distribution: % with vector mean and standard deviation:
     \begin{equation} \label{eq:ce_norm}
-      % \bm{Y}_{-i} \mid \bm{Y}_i = y_i \sim N\left(\bm{\alpha}_{\mid i} y_i + y_i^{\bm{\beta}_i} \bm{\mu}_{\mid i}, y_i^{\bm{\beta}_i} \bm{\sigma_{\mid i}}\right), 
-      Y_{j} \mid Y_{i} = y_i \sim N\left(\alpha_{j \mid i} y_i + y_i^{\beta_i} \mu_{j \mid i}, y_i^{\beta_i} \sigma_{j \mid i}\right),
+      \bm{Y}_{-i} \mid Y_i = y_i \sim N\left(\bm{\alpha}_{\mid i} y_i + y_i^{\bm{\beta}_i} \bm{\mu}_{\mid i}, y_i^{\bm{\beta}_i} \bm{\sigma_{\mid i}}\right), Y_i > u.
+      % Y_{j} \mid Y_{i} = y_i \sim N\left(\alpha_{j \mid i} y_i + y_i^{\beta_i} \mu_{j \mid i}, y_i^{\beta_i} \sigma_{j \mid i}\right),
     \end{equation}
-for $Y_i > u$.
-  \item Therefore, when hoping to compare the extremal dependence structure of two locations, a sensible approach might be to compare the conditional distributions given by equation \ref{eq:ce_norm} for each variable. 
+  \item Therefore, when seeking to compare the extremal dependence structure of two locations, a sensible approach is to compare the conditional distributions given by equation \ref{eq:ce_norm} for each variable.
 \end{itemize}
 
 \vspace{1cm}
 
-% KL Divergence
-\begin{itemize}
+% Introduce KL divergence 
+\begin{itemize} 
   \item One common measure of dissimilarity between two distributions $P$ and $Q$ is the Kullback-Leibler (KL) divergence, defined as
     \begin{equation} \label{eq:kl}
-      D_{KL}(P \mid\mid Q) = \int_{-\infty}^{\infty} p(y) \log\left(\frac{p(y)}{q(y)}\right) dy.
+      KL(P \mid\mid Q) = \int_{-\infty}^{\infty} p(y) \log\left(\frac{p(y)}{q(y)}\right) dy.
     \end{equation}
+    \todo{define mid mid!}
     where $p(y)$ and $q(y)$ are the densities of $P$ and $Q$, respectively \citet{Kullback1951}.
-  \item The dissimilarity of two distributions can be measured using the KL divergence, which is always non-negative and zero if and only if $P = Q$.
-  \item In this case, $P$ and $Q$ are the conditional distribution given by equation \ref{eq:ce_norm} for any two locations.
-  % \item It can be shown that if $P$ and $Q$, which in this case will specify the conditional distributions in equation \ref{eq:kl} for two locations, are both normal, then the KL divergence has a closed form solution.
-  \item Generally speaking, if we define $P$ and $Q$ as being normal distributions with means $\mu_1$ and $\mu_2$ and standard deviations $\sigma_1$ and $\sigma_2$, then the KL divergence has a closed form solution which is given by
-    \begin{equation} \label{eq:kl_norm}
-      D_{KL}(P \mid\mid Q) = \frac{1}{2} \left( \frac{(\mu_2 - \mu_1)^2}{\sigma_2^2} + \frac{\sigma_1^2}{\sigma_2^2} - \log{(\frac{\sigma_1^2}{\sigma_2^2})} - 1 \right),
+  % \item The KL divergence is always non-negative and zero if and only if $P = Q$, and for $P \sim N(\mu_1, \sigma_1)$, $Q \sim N(\mu_2, \sigma_2)$ has closed form solution
+  \item The KL divergence is always non-negative and zero if and only if $P = Q$, and for two multivariate normal distributions $P \sim N(\mu_1, \Sigma_1)$, $Q \sim N(\mu_2, \Sigma_2)$ in $\mathbb{R}^n$ has closed form solution
+    \begin{equation} \label{eq:kl_mvn}
+      KL(P \mid\mid Q) = \frac{1}{2} \left( \log{\left(\frac{\det{\Sigma_2}}{\det{\Sigma_1}}\right)} - n + \Tr{(\Sigma_2^{-1}\Sigma_1)} + (\mu_2 - \mu_1)^T \Sigma_2^{-1}(\mu_2 - \mu_1) \right),
     \end{equation}
-    as shown in \citet{Soch2020_norm_kl}.
-  % \item If we say that $Y_j \mid \Y_i \sim P$ and $Y_j \mid Y_i \sim Q$ for two locations, then we can calculate the KL divergence between these two conditional distributions by plugging in means and standard deviations of the normal distributions into 
-  \item We can then calculate the KL divergence between the conditional distributions given by equation \ref{eq:ce_norm} for two locations by plugging in the means and standard deviations of the normal distributions into equation \ref{eq:kl_norm}. \todo{Do I need to actually show this calculation? Easy enough}
-  \item This closed form solution means that the JS divergence can be easily and efficiently calculated.
-  \item One question to answer is the values to use for $y_i$ in equation \ref{eq:ce_norm}, which should be the same for both locations, to assess whether the extremal dependence structure at the same conditioning level is similar.
-  \item One somewhat arbitrary approach is to take the maximum threshold between the two CE fits, and then use 10 points between this threshold and twice its value, calculating the JS divergence between these points.
+    as shown in \citet{Duchi2007}.
+  \item In the case where both covariance matrices are diagonal, this simplifies to
+    \begin{equation} \label{eq:kl_mvn_diag}
+      KL(P \mid\mid Q) = \frac{1}{2} \sum_{i=1}^{n} \left( \frac{\sigma_{1,i}^2}{\sigma_{2,i}^2} + \frac{(\mu_{1,i} - \mu_{2,i})^2}{\sigma_{2,i}^2} - 1 - \log\left(\frac{\sigma_{1,i}^2}{\sigma_{2,i}^2}\right) \right),
+    \end{equation}
+    where:
+    \begin{itemize}
+        \item $\mu_1 = (\mu_{1,1}, \mu_{1,2}, \ldots, \mu_{1,n})^\top$ and $\mu_2 = (\mu_{2,1}, \mu_{2,2}, \ldots, \mu_{2,n})^\top$ are the mean vectors,
+        \item $\Sigma_1 = \text{diag}(\sigma_{1,1}^2, \sigma_{1,2}^2, \ldots, \sigma_{1,n}^2)$ and $\Sigma_2 = \text{diag}(\sigma_{2,1}^2, \sigma_{2,2}^2, \ldots, \sigma_{2,n}^2)$ are diagonal covariance matrices,
+        \item $\sigma_{1,i}^2$ and $\sigma_{2,i}^2$ denote the $i$-th diagonal element of $\Sigma_1$ and $\Sigma_2$, respectively.
+    \end{itemize}
+  \item However, the KL divergence is unfortunately not symmetric, unbounded and not a true metric, making it a poor choice as a dissimilarity measure for clustering.
 \end{itemize}
 
 \vspace{1cm}
 
-% JS Divergence
+\todo{Comment on alpha}
+\todo{Say how this comes from VI}
 \begin{itemize}
-  \item One limitation of the KL divergence is that it is not symmetric, making it a poor choice as a dissimilarity measure for clustering. 
-  \item The Jensen-Shannon (JS) divergence is a simple extension of the JS divergence which provides a symmetric measure of dissimilarity between two distributions, defined as \todo{reference JS divergence}
+  \item The Jensen-Shannon (JS) divergence is a simple extension of the KL divergence, defined as
     \begin{equation} \label{eq:js}
-      D_{JS}(P \mid\mid Q) = \frac{1}{2} D_{KL}(P \mid\mid M) + \frac{1}{2} D_{KL}(Q \mid\mid M),
+      JS(P \mid\mid Q) = \frac{1}{2} KL(P \mid\mid M) + \frac{1}{2} KL(Q \mid\mid M),
     \end{equation}
-    where $M = \frac{1}{2}(P + Q)$ \citep{Lin1991}. \todo{IMPORTANT: Check with Christian if this is a mixture distribution or an ``average'' of the two, if mixture then JS is not closed!}
-    \todo{May have to use the geometric JS divergence instead! Everything included in https://pmc.ncbi.nlm.nih.gov/articles/PMC7514974/#sec4dot1dot2-entropy-21-00485}
-  \item Since we have a closed form for the KL divergence when both $P$ and $Q$ are normal, we also have a closed form for the JS divergence.
-  \item Hence, we have a simple and interpretable measure of dissimilarity between two conditional distributions given by equation \ref{eq:ce_norm} for two locations, with which we can cluster locations based on their extremal dependence structure.
-  \item This measure can be applied in arbitrary dimension, by simply summing the JS divergence across all variables, and is not restricted to a bivariate setting, as is \cite{Vignotto2021}.
+    where $M = \frac{1}{2}(P + Q)$ is a mixture distribution \citep{Lin1991}.
+  \item The JS divergence provides a symmetric measure of dissimilarity between two distributions.
+  \item It provides a suitable clustering distance in that it is bounded by $[0, \log{(2)}]$ and is a true metric, unlike the simple sum of the forward and backward KL divergences $KL(P \mid\mid Q) + KL(Q \mid\mid P)$.
+  \item A problem arises from the fact that the mixture distribution $M$ of two normals is not itself normal.
+  \item In fact, $M$ becomes increasingly bimodal as $P$ and $Q$ become more dissimilar, and so the JS divergence does not have a closed form solution for multivariate normals.
+  \item \citet{Nielsen2019} overcomes this problem by using the weighted geometric mean $G_{\alpha}(x, y) = x^{\alpha} y^{1 - \alpha}, \alpha \in [0, 1]$ instead of the arithmetic mean, and the fact that the weighted product of two normals is also normal (as with any other member of the exponential family).
+  \item From this, we get the skew-geometric JS divergence, defined as
+    \begin{equation} \label{eq:js_norm}
+      JS^{G_{\alpha}}(P \mid\mid Q) = \frac{1}{2} KL(P \mid\mid G_{\alpha}(P, Q)) + \frac{1}{2} KL(Q \mid\mid G_{\alpha}(P, Q)).
+    \end{equation}
+  \item The parameter $\alpha$ is called a skew parameter, and controls the divergence skew between P and Q \citep{Thiagarajan2025}. \todo{Look into in Thiagarajan paper where he says the reverse geometric mean is used by Deasy?}
+  \item For two multivariate normals, this gives the closed form solution
+    \begin{align*}
+      JS^{G_{\alpha}}(P \mid\mid Q) &= \frac{1}{2} \left( (1 - \alpha) \mu_1^T \Sigma_1^{-1} \mu_1 + \alpha \mu_2^T \Sigma_2^{-1} \mu_2 - \mu_{\alpha}^T \Sigma_{\alpha}^{-1} \mu_{\alpha} + \log{\left( \frac{\abs{\Sigma_1}^{1-\alpha} \abs{\Sigma_2}^{\alpha}}{\abs{\Sigma_{\alpha}}} \right)} \right), \\
+      \Sigma_{\alpha} &= \left( (1 - \alpha) \Sigma_1^{-1} + \alpha \Sigma_2^{-1} \right)^{-1}, \\
+      \mu_{\alpha} &= \Sigma_{\alpha} \left( (1 - \alpha) \Sigma_1^{-1} \mu_1 + \alpha \Sigma_2^{-1} \mu_2 \right), \numberthis \label{eq:js_norm_mvn}
+    \end{align*} 
+    \todo{define for diagonal covariance}
+    and for diagonal covariance matrices, \citet{Thiagarajan2025} show that this simplifies to
+    \begin{align*}
+          
+    \end{align*}
+
+  \item Thus we have a closed form, computationally efficient and symmetric measure of dissimilarity between any two conditional distributions given by equation \ref{eq:ce_norm} for two locations, with which we can cluster locations based on their extremal dependence structure. \todo{Reword} \todo{Comment on choice of alpha}
+\end{itemize}
+
+\todo{Do this!}
+\begin{itemize}
+  \item However, this version of the $JS^{G_{\alpha}}$ is also unbounded! I need to use the version derived in \citet{Deasy2020} and \citet{Thiagarajan2025}, which does have a finite upper bound! Work in progress!
 \end{itemize}
 
 \subsection{Clustering}
@@ -226,13 +315,10 @@ for $Y_i > u$.
 % Describe methods for choosing k (AIC, TWGSS) (silhouette not suitable)
 
 \section{Simulation study}\label{sec:sim}
-\todo{May not be subsections, but will form structure of this section}
-\todo{Do I want to add any visualisations of LRI here? Any ideas there?}
-\todo{Do I need to go into specifics about numbers in reduction of variation etc? Or are the plots self-evident?}
-\todo{May want tables instead of figures for some/all simulation results}
-\todo{How do I get the rho in ggplot to match the font used in LaTeX? and not clip?}
-\todo{Should I smooth across points in sum plots with geom smooth? Or continue to use 90\% credible interval (which would improve for 500 simulations vs 200 I've provisionally used}
-\todo{Redo simulations while not estimating marginal GPDs (already known!)}
+% \todo{May not be subsections, but will form structure of this section}
+% \todo{May want tables instead of figures for some/all simulation results}
+% \todo{Should I smooth across points in sum plots with geom smooth? Or continue to use 90\% credible interval (which would improve for 500 simulations vs 200 I've provisionally used}
+% \todo{Redo simulations while not estimating marginal GPDs (already known!)}
 
 % Introduce section
 \begin{itemize}

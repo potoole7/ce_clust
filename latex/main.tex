@@ -85,7 +85,7 @@
  
  % Simulation
  A detailed simulation study shows our technique to be superior to the leading competitor in the bivariate case across a range of possible dependence structures and uniquely provides a tool for clustering in the multivariate extremal dependence setting. 
- We also outline a methodology for selecting the number of clusters to use in a given application.  Finally, we apply our clustering framework to meteorological data from Ireland and air pollution data in cities across the US (United States). 
+ We also outline a methodology for selecting the number of clusters to use in a given application.  Finally, we apply our clustering framework to Irish meteorological data. % and air pollution data in cities across the US (United States). 
 
 \end{abstract}
 
@@ -272,7 +272,8 @@ A framework which provides a more flexible approach to modelling extremal depend
     \end{equation}
     where $M = \frac{1}{2}(P + Q)$ is a mixture distribution \citep{Lin1991}.
   \item The JS divergence provides a symmetric measure of dissimilarity between two distributions.
-  \item It provides a suitable clustering distance in that it is bounded by $[0, \log{(2)}]$ and is a true metric, unlike the simple sum of the forward and backward KL divergences $KL(P \mid\mid Q) + KL(Q \mid\mid P)$.
+  % \item It provides a suitable clustering distance in that it is bounded by $[0, \log{(2)}]$ and is a true metric, unlike the simple sum of the forward and backward KL divergences $KL(P \mid\mid Q) + KL(Q \mid\mid P)$.
+  \item It is bounded by $[0, \log{(2)}]$ and is a true metric, unlike the simple sum of the forward and backward KL divergences $KL(P \mid\mid Q) + KL(Q \mid\mid P)$.
   \item A problem arises from the fact that the mixture distribution $M$ of two normals is not itself normal.
   \item In fact, $M$ becomes increasingly bimodal as $P$ and $Q$ become more dissimilar, and so the JS divergence does not have a closed form solution for multivariate normals.
   \item \citet{Nielsen2019} overcomes this problem by using the weighted geometric mean $G_{\alpha}(x, y) = x^{\alpha} y^{1 - \alpha}, \alpha \in [0, 1]$ instead of the arithmetic mean, and the fact that the weighted product of two normals is also normal (as with any other member of the exponential family).
@@ -290,16 +291,17 @@ A framework which provides a more flexible approach to modelling extremal depend
     \todo{define for diagonal covariance}
     and for diagonal covariance matrices, \citet{Thiagarajan2025} show that this simplifies to
     \begin{align*}
-          
+    JS-G(P \mid \mid Q) = \frac{1}{2} \sum^n_{i=1}\left( \frac{(1-\alpha)\sigma_{1, i}^2 + \alpha \sigma_{2, i}^2}{\sigma_{\alpha, i}^2} + \log{\left( \frac{\sigma}{} \right)} \right)
     \end{align*}
 
   \item Thus we have a closed form, computationally efficient and symmetric measure of dissimilarity between any two conditional distributions given by equation \ref{eq:ce_norm} for two locations, with which we can cluster locations based on their extremal dependence structure. \todo{Reword} \todo{Comment on choice of alpha}
 \end{itemize}
 
-\todo{Do this!}
-\begin{itemize}
-  \item However, this version of the $JS^{G_{\alpha}}$ is also unbounded! I need to use the version derived in \citet{Deasy2020} and \citet{Thiagarajan2025}, which does have a finite upper bound! Work in progress!
-\end{itemize}
+% \todo{Revisit this!}
+% \begin{itemize}
+%   % \item However, this version of the $JS^{G_{\alpha}}$ is also unbounded! I need to use the version derived in \citet{Deasy2020} and \citet{Thiagarajan2025}, which does have a finite upper bound! Work in progress!
+%   \item However, $JS^{G_{\alpha}}$ is also unbounded. The generalized JS divergence from \citet{Thiagarajan2025} is bounded, but must be estimated using MC, as it has no closed form solution. Should I use/try it out?
+% \end{itemize}
 
 \subsection{Clustering}
 

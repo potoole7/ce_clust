@@ -334,8 +334,9 @@ A framework which provides a more flexible approach to modelling extremal depend
 % Single location
 Our Gaussian copula simulation design for a single ``location'', nomenclature chosen to match the spatial nature of our applications, is as follows:
 \begin{itemize}
-  \item We generate multivariate data from a bivariate Gaussian copula, where we control the dependence structure through its correlation parameter, $\rho_{N}$. 
-    \cite{Keef2013} show that for a bivariate Gaussian copula, the asymptotic CE parameters are $\alpha = \text{sign}(\rho_{\text{Gauss}}) \rho_{\text{Gauss}}^2, \beta = 1/2$, indicating asymptotic independence.
+  \item We generate multivariate data from a bivariate Gaussian copula, where we control the dependence structure through its correlation parameter, $\rho_{Gauss}$. 
+    % \cite{Keef2013} show that for a bivariate Gaussian copula, the asymptotic CE parameters are $\alpha = \text{sign}(\rho_{\text{Gauss}}) \rho_{\text{Gauss}}^2, \beta = 1/2$, indicating asymptotic independence.
+    \cite{Keef2013} show that for a bivariate Gaussian copula, the asymptotic CE parameters are $\alpha = \rho_{\text{Gauss}}^2, \beta = 1/2$, indicating asymptotic independence.
   % \item We sample from this copula and transform to GPD margins with shape $\xi = -0.05$, scale $\sigma = 1$, to generate our data. \todo{mention why we chose these?}
   % \item Each variable in this multivariate dataset may represent, for example, a meteorological or air pollution variable at a given location.
   % \item We can then transform to Laplace margins and use the CE model to estimate the multivariate extremal dependence structure at this location.

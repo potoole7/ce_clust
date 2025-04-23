@@ -484,7 +484,8 @@ Dependence model:
     \item \textbf{TWGSS}:
       \[
         \mathrm{TWGSS}(k)
-        = \sum_{i=1}^{k}\sum_{x \in C_i} d\bigl(x, m_i\bigr)
+        % = \sum_{i=1}^{k}\sum_{x \in C_i} d\bigl(x, m_i\bigr), d = JS^{G_{\alpha}}
+        = \sum_{i=1}^{k}\sum_{x \in C_i} JS^{G_{\alpha}}\bigl(x, m_i\bigr),
       \]
     \item \textbf{Elbow Plot:} Plot $\mathrm{TWGSS}(k)$ vs.\ $k$ and observe the curve
     \item \textbf{Elbow Criterion:} Select $k^*$ at the “elbow” where TWGSS reduction sharply slows
@@ -571,7 +572,6 @@ Dependence model:
 
 % Describe motivating example
 \begin{frame}{Ireland}
-  \todo{Check!}
   \begin{minipage}{0.45\textwidth}
       \begin{itemize}
           \item Precipitation and wind speed in Ireland, 1990-2020
@@ -579,33 +579,59 @@ Dependence model:
           \item Weekly sum of precipitation and mean of daily wind speed maxima for Winter only (Oct-Mar), in line with Vignotto \cite{Vignotto2021}. 
       \end{itemize}
   \end{minipage}
-  \begin{minipage}{0.54\textwidth}
+  \begin{minipage}{0.51\textwidth}
     \vspace{}
     % \includegraphics[width=7cm]{plots/01_ire_plot.png}
     \includegraphics[width=7cm]{plots/chi_map_ire.png}
   \end{minipage}
 \end{frame}
 
-\begin{frame}{$\alpha, \beta$ estimates}
-  \includegraphics[width=1\textwidth]{plots/ire_ce.png} 
+
+\begin{frame}{Procedure}
+  \begin{itemize}
+    \item Only use ECDF for marginal estimation, as spatial GPD modelling is difficult and not the focus of this analysis. 
+    \item Fit the CE model to data, use clustering algorithm to cluster locations for rain $\mid$ wind speed, wind speed $\mid$ rain, and combining the $JS^{G_{\alpha}}$ dissimilarity measurements for both. 
+    \item Refit CE to see if interpretation is any easier. 
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{$\alpha, \beta$ pre-clustering}
+  \center
+  \includegraphics[width=0.78\textwidth]{plots/ire_ce.png} 
 \end{frame}
 
 % Maps of clustering
 \begin{frame}{Clustering Result}
-  TODO: Include clustering results for both variables and just rain \& windspeed
+  \todo{Make county borders less bold}
+  \center
+  \includegraphics[width=1\textwidth]{plots/cluster_dqu_sep.pdf} 
 \end{frame}
 
 % plot of alpha, beta estimates after refitting, much more interpretable
 \begin{frame}{Refitting CE model}
-  TODO: Include plots of alpha, beta estimates for each cluster, much more interpretable now!
+  % TODO: Include plots of alpha, beta estimates for each cluster, much more interpretable now!
+  % \includegraphics[width=1\textwidth]{plots/cluster_dqu_sep.pdf} 
+  \center
+  \includegraphics[width=0.78\textwidth]{plots/ab_map_post_clust.png}
 \end{frame}
+
+\begin{frame}{Refitting CE model}
+  % TODO: Include plots of alpha, beta estimates for each cluster, much more interpretable now!
+  % \includegraphics[width=1\textwidth]{plots/cluster_dqu_sep.pdf} 
+  \center
+  \includegraphics[width=1\textwidth]{plots/ab_post_clust.png}
+\end{frame}
+
+
 
 \section{Conclusions}
 
 \begin{frame}{Conclusions}
+\todo{Needs work!}
 Limitations:
 \begin{itemize}
-  \item Todo!
+  \item Clustering performance limited by original marginal and dependence fits, which are still to scarce data.
+  \item Some $\beta$ estimates shown to be strange for Ireland.
 \end{itemize}
 
 Conclusions \& future work:
@@ -613,6 +639,7 @@ Conclusions \& future work:
   \item We provide a principled and effective clustering framework for CE model.
   \item Shown through simulations and real data that clustering can be used to improve interpretability of CE model.
   \item Mainly used for improved interpretability, would like to see if parameter estimation better post-clustering.
+  \item Compare clustering results for Ireland to Vignotto. 
   \item Want to apply clustering to more interesting multivariate data, such as Brazil landslide data and air pollution extremes in US cities. 
 \end{itemize}
 \end{frame}

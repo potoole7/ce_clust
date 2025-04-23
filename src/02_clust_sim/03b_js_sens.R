@@ -10,6 +10,7 @@
 library(dplyr, quietly = TRUE)
 # library(evc)
 devtools::load_all("../evc")
+# devtools::load_all("../evc2")
 library(tidyr)
 library(ggplot2)
 library(parallel)
@@ -49,7 +50,8 @@ grid <- tidyr::crossing(
   cor_gauss2 = seq(0, 1, by = 0.1),
   # t-copula correlation
   cor_t1 = seq(0.1, 0.9, by = 0.2),
-  cor_t2 = seq(0, 1, by = 0.2),
+  # cor_t2 = seq(0, 1, by = 0.2),
+  cor_t2 = seq(0, 0.8, by = 0.2),
   # Degrees of freedom for t-copula
   df_t1 = df_t,
   df_t2 = df_t,
@@ -63,9 +65,11 @@ grid <- tidyr::crossing(
   filter(cor_gauss1 == cor_gauss2)
 
 # run kl_sim_eval for each row in grid
+# n_times <- 100
 n_times <- 500
 results_vec <- lri_vec <- lri_mean_vec <- vector(length = n_times)
 set.seed(seed_number)
+i <- 275
 results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
   print(paste0("Progress: ", round(i / nrow(grid), 3) * 100, "%"))
   system(sprintf(
@@ -84,20 +88,35 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
       # params_gpd = c(scale_gpd, shape_gpd),
       mix_p      = c(0.5, 0.5),
       qfun       = evd::qgpd,
-      qargs      = c("scale" = scale_gpd, "shape" = shape_gpd)
+      qargs      = c("loc" = 0, "scale" = scale_gpd, "shape" = shape_gpd)
     ))$data_mix
+
+    # transform to Laplace margins
+    data_mix_trans <- lapply(data_mix, \(x) {
+      laplace_trans(evd::pgpd(x, loc = 0, scale = scale_gpd, shape = shape_gpd))
+    })
 
     clust_res <- tryCatch(
       {
         # if an error is produced, return a dummy list
-        dependence <- fit_ce(
-          data_mix,
-          marg_prob   = marg_prob,
-          cond_prob   = row$kl_prob,
-          fit_no_keef = TRUE
-        )$dependence
+        # dependence <- fit_ce(
+        #   data_mix,
+        #   marg_prob   = marg_prob,
+        #   cond_prob   = row$kl_prob,
+        #   fit_no_keef = TRUE
+        # )$dependence
+        # fit CE
+        ce_fit <- lapply(seq_along(data_mix_trans), \(l) {
+          o <- ce_optim(
+            Y         = data_mix_trans[[l]],
+            dqu       = row$kl_prob,
+            control   = list(maxit = 1e6),
+            constrain = FALSE
+          )
+        })
+
         # "true" number of clusters known from simulation design
-        js_clust(dependence, k = n_clust, cluster_mem = cluster_mem)
+        js_clust(ce_fit, k = n_clust, cluster_mem = cluster_mem)
       },
       error = function(cond) {
         return(list("adj_rand" = NA))
@@ -107,7 +126,7 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
 
     # also calculate local rand index
     # TODO Functionalise? Repeated in other scripts
-    lri <- local_rand_index(clust_res$pam$clustering, cluster_mem)
+    lri <- local_rand_index(cluster_mem, clust_res$pam$clustering)
     # concatenate to string to store in vector
     lri_vec[[j]] <- paste0(lri, collapse = "_")
     # also average by cluster
@@ -126,6 +145,7 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
 
 # remove NAs, give warning
 nas <- is.na(results_grid$adj_rand)
+sum(nas)
 if (sum(nas) > 0) {
   message(paste0("Warning: ", sum(nas), " NAs in results, removing"))
   results_grid <- results_grid[!nas, ]
@@ -148,7 +168,8 @@ results_grid <- results_grid %>%
 # save
 readr::write_csv(
   results_grid,
-  paste0("data/js_grid_search_res_dqu_", kl_prob, ".csv")
+  # paste0("data/js_grid_search_res_dqu_", kl_prob, ".csv")
+  paste0("data/js_grid_search_res_dqu_", kl_prob, "_new.csv")
 )
 
 # load data and redo results_grid_sum and results_grid_tally
@@ -185,7 +206,9 @@ p1 <- results_grid_plt |>
   ggplot() +
   geom_point(
     aes(x = cor_gauss1, y = adj_rand),
-    colour = "black", alpha = 0.05, size = 1
+    colour = "black",
+    alpha = 0.05,
+    # size = 1
   ) +
   # TODO: Size background points by number of occurrences
   # TODO: Or maybe do alpha by size?
@@ -199,27 +222,28 @@ p1 <- results_grid_plt |>
   # ) +
   # facet_grid(cor_t1 ~ cor_t2) +
   # Confidence intervals around mean line
-  geom_ribbon(
-    data = res_grid_sum_plt, # %>% filter(cor_t1 == 0.3, cor_t2 == 0.6),
-    aes(x = cor_gauss1, ymin = lower_rand, ymax = upper_rand),
-    fill = "#C11432",
-    alpha = 0.3,
-    size = 2
-  ) +
-  geom_line(
-    data = res_grid_sum_plt, # %>% filter(cor_t1 == 0.3, cor_t2 == 0.6),
-    aes(x = cor_gauss1, y = median_rand),
-    colour = "#C11432",
-    linewidth = 1
-  ) +
-  # geom_smooth(
-  #   aes(x = cor_gauss1, y = adj_rand),
-  #   method = "loess",
+  # geom_ribbon(
+  #   data = res_grid_sum_plt, # %>% filter(cor_t1 == 0.3, cor_t2 == 0.6),
+  #   aes(x = cor_gauss1, ymin = lower_rand, ymax = upper_rand),
+  #   fill = "#C11432",
+  #   alpha = 0.3,
+  #   size = 2
+  # ) +
+  # geom_line(
+  #   data = res_grid_sum_plt, # %>% filter(cor_t1 == 0.3, cor_t2 == 0.6),
+  #   aes(x = cor_gauss1, y = median_rand),
   #   colour = "#C11432",
-  #   se = TRUE,
   #   linewidth = 1
   # ) +
+  geom_smooth(
+    aes(x = cor_gauss1, y = adj_rand),
+    method = "loess",
+    colour = "#C11432",
+    se = TRUE,
+    linewidth = 1
+  ) +
   NULL
+common_plot_items(p1)
 
 ggsave(
   plot = common_plot_items(p1),
@@ -243,20 +267,23 @@ ggsave(
 #### Compare to Vignotto ####
 
 # load Vignotto results
-# results_grid_vig <- readRDS("data/vignotto_grid_search_res.RDS")
 results_grid_vig <- readr::read_csv("data/vignotto_grid_search_res.csv")
+# for testing using Geometric JS rather than arithmetic
+# results_grid_vig <- readr::read_csv("data/js_grid_search_res_dqu_0.9_js_bug.csv")
 
 results_grid_join <- bind_rows(
   results_grid %>%
-    distinct() %>%
     mutate(ind = "CE") %>%
-    relocate(ind),
+    relocate(ind) |>
+    # distinct() %>%
+    identity(),
   results_grid_vig %>%
     mutate(ind = "Vignotto") %>%
     relocate(ind) %>%
     dplyr::select(-matches("mean_rand")) %>%
-    summarise_sens_res() %>%
-    distinct()
+    # summarise_sens_res() %>%
+    # distinct() |>
+    identity()
 ) %>%
   # fix weird floating point problem from loading from .RDS file
   mutate(across(contains("cor"), \(x) round(x, 1))) |>
@@ -269,30 +296,43 @@ p2 <- results_grid_join %>%
   # points
   # geom_point(aes(x = cor_gauss1, y = mean_rand, colour = ind), size = 2) +
   # Confidence intervals around mean line
-  geom_ribbon(
-    aes(x = cor_gauss1, ymin = lower_rand, ymax = upper_rand, fill = ind),
-    # fill = "#C11432",
-    alpha = 0.3,
-    size = 2
-  ) +
-  geom_line(
-    aes(x = cor_gauss1, y = mean_rand, colour = ind),
-    # colour = "#C11432",
-    linewidth = 1
-  ) +
-  # # TODO Add colour and alpha to uncertainty
-  # geom_smooth(
-  #   aes(x = cor_gauss1, y = adj_rand, colour = ind),
-  #   method = "loess",
-  #   colour = "#C11432",
-  #   se = TRUE,
+  # geom_ribbon(
+  #   aes(x = cor_gauss1, ymin = lower_rand, ymax = upper_rand, fill = ind),
+  #   # fill = "#C11432",
+  #   alpha = 0.3,
+  #   size = 2
+  # ) +
+  # geom_line(
+  #   aes(x = cor_gauss1, y = mean_rand, colour = ind),
+  #   # colour = "#C11432",
   #   linewidth = 1
   # ) +
+  # # TODO Add colour and alpha to uncertainty
+  geom_smooth(
+    aes(x = cor_gauss1, y = adj_rand, colour = ind),
+    method = "loess",
+    # colour = "#C11432",
+    se = TRUE,
+    alpha = 0.7,
+    linewidth = 1.2
+  ) +
+  ggsci::scale_colour_nejm() +
   # ovverride alpha for fill
   guides(
-    colour = "none",
-    fill   = guide_legend(override.aes = list(alpha = 1))
-  )
+    # colour = guide_legend(override.aes = list(alpha = 1))
+    colour = guide_legend(
+      override.aes = list(
+        shape    = 22,
+        fill     = ggsci::pal_nejm()(2), # same palette as lines
+        alpha    = 1,
+        # colour   = scales::hue_pal()(2), # match box border to fill
+        linetype = 0,
+        size     = 5
+      )
+    )
+  ) +
+  NULL
+common_plot_items(p2)
 
 ggsave(
   plot = common_plot_items(p2),

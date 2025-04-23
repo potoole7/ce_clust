@@ -29,6 +29,7 @@ n_locs <- 12
 # Multivariate (> 2-dimensions)
 vars <- c("rain", "wind_speed", "temperature") # dummy names for 3 vars
 n_vars <- length(vars)
+n_clust <- 2
 cluster_mem <- sort(rep(c(1, 2), 6)) # known cluster membership
 n <- 1e4 # number of samples to take
 mix_p <- c("gauss_cop" = 0.5, "t_cop" = 0.5) # mixture percentages
@@ -116,9 +117,11 @@ grid <- tidyr::crossing(
   )
 
 # run kl_sim_eval for each row in grid
-n_times <- 500
+# n_times <- 500
+n_times <- 200
 results_vec <- lri_vec <- lri_mean_vec <- vector(length = n_times)
 set.seed(seed_number)
+# i <- 11
 results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
   print(paste0("Progress: ", round(i / nrow(grid), 3) * 100, "%"))
   system(sprintf(
@@ -130,32 +133,34 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
   for (j in seq_len(n_times)) {
     # generate simulation data for given parameter set
     data_mix <- with(row, sim_cop_dat(
-      n_locs     = n_locs,
-      n_vars     = n_vars,
-      n          = 1e3,
+      n          = n,
       cor_gauss  = c(cor_gauss1, cor_gauss2),
       cor_t      = c(cor_t1, cor_t2),
       df_t       = c(df_t1, df_t2),
       # params_gpd = c(scale_gpd, shape_gpd),
       mix_p      = c(0.5, 0.5),
       qfun       = evd::qgpd,
-      qargs      = c("scale" = scale_gpd, "shape" = shape_gpd)
+      qargs      = c("loc" = 0, "scale" = scale_gpd, "shape" = shape_gpd)
     ))$data_mix
 
-    # if an error is produced, return a dummy list
+    # transform to Laplace margins
+    data_mix_trans <- lapply(data_mix, \(x) {
+      laplace_trans(evd::pgpd(x, loc = 0, scale = scale_gpd, shape = shape_gpd))
+    })
+
     clust_res <- tryCatch(
       {
-        # fit CE model
-        dependence <- fit_ce(
-          data        = data_mix,
-          vars        = vars,
-          marg_prob   = marg_prob,
-          cond_prob   = cond_prob,
-          fit_no_keef = TRUE
-        )$dependence
+        ce_fit <- lapply(seq_along(data_mix_trans), \(l) {
+          o <- ce_optim(
+            Y         = data_mix_trans[[l]],
+            dqu       = row$kl_prob,
+            control   = list(maxit = 1e6),
+            constrain = FALSE
+          )
+        })
 
-        # cluster based on results
-        js_clust(dependence, k = 2, cluster_mem = cluster_mem)
+        # "true" number of clusters known from simulation design
+        js_clust(ce_fit, k = n_clust, cluster_mem = cluster_mem)
       },
       error = function(cond) {
         return(list("adj_rand" = NA))

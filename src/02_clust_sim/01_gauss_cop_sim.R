@@ -200,7 +200,7 @@ data <- sim_cop_dat(
   cluster_mem = cluster_mem,
   cor_gauss   = cor_gauss,
   mix_p       = c(1, 0), # only generate from Gaussian copula
-  qfun        = qnorm
+  qfun        = qnorm # standard normal margins
 )
 data_mix <- data$data_mix
 
@@ -309,6 +309,7 @@ diff_from_start(pars_df, start_vals)
 # In particular, beta -> 1/2 as rho -> 1, as expected
 
 # Pull JS distance (for later clustering)
+# TODO Do with new version of clustering
 dist <- js_clust(ce_fit, scree_k = 1:max_clust)$dist_mat
 
 # Find optimal k value using AIC, TWGSS and LRT
@@ -389,6 +390,7 @@ grid <- data.frame(
 # n_times <- 2
 n_times <- 500
 # n_times <- 200
+# n_times <- 20
 # objects for saving parameter values and cluster assignment
 results_orig <- results_clust <- clust_assign <- vector(
   mode = "list", length = n_times
@@ -525,7 +527,7 @@ results_grid <- mclapply(seq_len(nrow(grid)), \(i) {
 
 # save
 file <- "data/sim_gauss_cop_grid.RDS"
-# saveRDS(results_grid, file)
+saveRDS(results_grid, file)
 
 # load previous results
 results_grid <- readRDS(file)

@@ -109,19 +109,27 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
       mix_p = c(0.5, 0.5),
       perturb_cor = perturb_cor, # perturb cor for different locations
       qfun = evd::qgpd,
-      qargs = c("scale" = scale_gpd, "shape" = shape_gpd)
+      qargs = c("loc" = 0, "scale" = scale_gpd, "shape" = shape_gpd)
     ))$data_mix
+
+    # transform to Laplace margins
+    data_mix_trans <- lapply(data_mix, \(x) {
+      laplace_trans(evd::pgpd(x, loc = 0, scale = scale_gpd, shape = shape_gpd))
+    })
 
     clust_res <- tryCatch(
       {
-        # if an error is produced, return a dummy list
-        dependence <- fit_ce(
-          data_mix,
-          marg_prob   = marg_prob,
-          cond_prob   = row$cond_prob,
-          fit_no_keef = TRUE
-        )
-        js_clust(dependence, k = n_clust, cluster_mem = cluster_mem)
+        ce_fit <- lapply(seq_along(data_mix_trans), \(l) {
+          o <- ce_optim(
+            Y         = data_mix_trans[[l]],
+            dqu       = row$kl_prob,
+            control   = list(maxit = 1e6),
+            constrain = FALSE
+          )
+        })
+
+        # "true" number of clusters known from simulation design
+        js_clust(ce_fit, k = n_clust, cluster_mem = cluster_mem)
       },
       error = function(cond) {
         return(list("adj_rand" = NA))

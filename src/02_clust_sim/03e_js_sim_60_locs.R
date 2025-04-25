@@ -122,7 +122,7 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
         ce_fit <- lapply(seq_along(data_mix_trans), \(l) {
           o <- ce_optim(
             Y         = data_mix_trans[[l]],
-            dqu       = row$kl_prob,
+            dqu       = row$cond_prob,
             control   = list(maxit = 1e6),
             constrain = FALSE
           )
@@ -185,6 +185,7 @@ results_grid <- readr::read_csv(
     ".csv"
   )
 )
+
 results_grid_sum <- summarise_sens_res(results_grid, conf_level = conf_level)
 results_grid_tally <- results_grid %>%
   group_by(across(!contains("_rand")), adj_rand) %>%
@@ -225,6 +226,12 @@ p1 <- results_grid_plt %>%
     colour = "#C11432",
     linewidth = 1
   )
+# geom_smooth(formula = y ~ splines::bs(x, df = 4),
+#   aes(x = cor_t1, y = adj_rand),
+#   colour = "#C11432",
+#   se = TRUE,
+#   linewidth = 1
+# )
 
 # TODO save
 # Can clearly see that clustering is best where correlation parameters in

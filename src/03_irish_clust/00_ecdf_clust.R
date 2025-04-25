@@ -1,0 +1,1993 @@
+#### Cluster Conditional Extremes using ECDF only (no marginal GPD model) ####
+
+# Don't fit marginal model, just use all ECDF (and PIT to convert to Laplace)!
+# See if CE model fit is improved for variety of scenarios:
+# - Increased dependence threshold for wind ()
+# - Fix alpha to be positive
+# - Fix beta (to be positive)???
+# - Bootstrapped starting values for alpha, beta ()
+# Also (i) clustering and (ii) refitting to see if bootstrap CIs improve!
+
+# TODO Could use bootstrapped estimates as start values?
+# TODO Can we also produce profile likelihood plots??
+
+# TODO Fix adjacency stipulation!!! (Can't really do with k-medoids)
+
+# For meeting:
+# TODO Facet clustering solution for various DQU
+# Plot bootstrapped uncertainty before/after clustering (done)
+
+#### Libs ####
+
+library(sf)
+# library(evc)
+devtools::load_all("../evc")
+library(dplyr, quietly = TRUE)
+library(tidyr)
+library(ggplot2)
+library(lubridate)
+# library(texmex)
+# devtools::load_all("texmex") # forked texmex which allows for fixed b vals
+library(gridExtra)
+library(patchwork)
+library(geosphere)
+library(latex2exp)
+library(ggpattern)
+library(parallel)
+
+source("src/functions.R")
+
+theme <- evc::evc_theme()
+
+sf::sf_use_s2(FALSE)
+
+
+#### Misc Functions ####
+
+# pull parameters from dependence object
+get_pars <- \(ce_fit) lapply(ce_fit, \(x) lapply(x, `[[`, "params"))
+
+# function to remove " - " (county name) from names
+rm_cnty <- \(x) {
+  vapply(stringr::str_split(x, " - "), `[[`, 1, FUN.VALUE = character(1))
+}
+
+# function to convert to ECDF
+calc_ecdf <- \(x) {
+  apply(x, 2, \(dat_spec) {
+    dat_spec_ord <- order(dat_spec)
+    dat_spec_sort <- dat_spec[dat_spec_ord]
+
+    # calculate ECDF
+    m <- length(dat_spec)
+    ecdf_vals <- (seq_len(m)) / (m + 1)
+    # convert back to original order
+    ecdf_dat_ord <- numeric(m)
+    ecdf_dat_ord[dat_spec_ord] <- ecdf_vals
+    ecdf_dat_ord
+  })
+}
+
+# perform PIT on ECDF to get data on Laplace margins
+trans_fun <- \(x) {
+  laplace_trans(calc_ecdf(x))
+}
+
+# pull dependence parameters and residuals out separately
+pull_element <- \(x, element) {
+  if (element %in% names(x)) {
+    return(x[[element]])
+  } else {
+    lapply(x, pull_element, element)
+  }
+}
+
+# pull dependence paramaters into df
+dep_to_df <- \(dep) {
+  # pull a and b values for each location and variable
+  ab_vals <- lapply(dep, \(x) {
+    list(x[[1]][1:2], x[[2]][1:2])
+  })
+
+  # convert to dataframe
+  bind_rows(lapply(seq_along(ab_vals), \(i) {
+    data.frame(
+      "name" = names(ab_vals)[i],
+      "vars" = c("rain", "rain", "wind_speed", "wind_speed"),
+      "parameter" = c("a", "b", "a", "b"),
+      "value" = c(
+        ab_vals[[i]][[1]][1], ab_vals[[i]][[1]][2],
+        ab_vals[[i]][[2]][1], ab_vals[[i]][[2]][2]
+      )
+    )
+  })) |>
+    # TODO: Investigate NAs here
+    filter(!is.na(name))
+}
+
+# function to calculate adjacency matrix (slightly different to evc version)
+calc_adj_mat2 <- \(pts, cut_vor = TRUE, plot = FALSE, areas = NULL) {
+  # pts_proj <- sf::st_transform(pts, 2157)
+
+  # # Calculate voronoi partition for sites
+  # vor <- pts_proj |>
+  #   sf::st_union() |>
+  #   sf::st_voronoi(envelope = sf::st_as_sfc(sf::st_bbox(pts_proj))) |>
+  #   sf::st_collection_extract(type = "POLYGON") |>
+  #   sf::st_sf() |> # convert from geometry set to simple feature collection
+  #   identity()
+
+  # # order voronoi cells to match points
+  # # vor <- vor[order(sf::st_nearest_feature(sf::st_centroid(vor), pts_proj)), ]
+  # order_index <- order(sf::st_nearest_feature(sf::st_centroid(vor), pts_proj))
+  # vor <- vor[order_index, ]
+
+  # # Use the same ordering to get names from pts
+  # pts_names <- pts_proj$name[order_index]
+
+  # # cutoff voronoi cells from ocean, if desired (stops far away neighbours)
+  # # TODO: Generalise more! Functionalise box below
+  # if (cut_vor == TRUE) {
+  #   # slightly smaller than areas bbox
+  #   # vor <- sf::st_crop(
+  #   #   vor, c("xmin" = 95000, ymin = 177000, xmax = 1110000, ymax = 129000)
+  #   # )
+  # }
+
+  # # check that Voronoi cells have been produced correctly
+  # if (plot == TRUE && !is.null(areas)) {
+  #   plot(sf::st_geometry(areas))
+  #   # plot(vor, add = TRUE)
+  #   plot(sf::st_crop(
+  #     sf::st_transform(
+  #       vor,
+  #       "WGS84"
+  #     ),
+  #     c("xmin" = -10, "ymin" = 51.6, "xmax" = -5.7, "ymax" = 55.2)
+  #   ), add = TRUE)
+  #   plot(pts, col = "blue", pch = 16, add = TRUE)
+  # }
+
+  # # calculate adjacency matrix from voronoi cells for stations
+  # adj_mat <- spdep::nb2mat(spdep::poly2nb(vor), style = "B", zero.policy = TRUE)
+
+  # rownames(adj_mat) <- colnames(adj_mat) <- pts_names
+
+
+  # Compute Voronoi tessellation
+  coords <- st_coordinates(pts)
+  voronoi <- deldir::deldir(coords[, 1], coords[, 2])
+
+  # Extract neighbours (sharing Voronoi edges)
+  nb <- deldir::tile.list(voronoi) # list of Voronoi tiles
+  neighbours <- spdep::nb2listw(
+    spdep::cell2nb(length(nb), 1),
+    style = "B"
+  )$neighbours
+
+  # Create adjacency matrix from neighbours
+  adj_mat <- spdep::nb2mat(neighbours, style = "B", zero.policy = TRUE)
+  # set diagonal to 1
+  diag(adj_mat) <- 1
+
+  return(adj_mat)
+}
+
+#### Plotting functions ####
+
+# check residuals for single location
+plot_resid <- \(spec_resid) {
+  vars <- names(spec_resid)
+  plots <- lapply(vars, \(var) {
+    Z <- spec_resid[[var]]
+    if (all(is.na(Z))) {
+      return(NA)
+    }
+
+    n <- length(Z)
+
+    dqu_spec <- dqu
+    if (length(dqu) > 1) {
+      dqu_spec <- dqu[vars == var]
+    }
+    p <- seq(dqu_spec, 1 - (1 / n), length = n)
+
+    data.frame(p, "resid" = Z) |>
+      ggplot(aes(x = p, y = Z)) +
+      geom_point(alpha = 0.7) +
+      geom_smooth() +
+      theme +
+      labs(
+        x = paste0("F(", var, ")"),
+        y = paste0("Z ", colnames(Z), " | ", var)
+      )
+  })
+  names(plots) <- vars
+  return(plots)
+}
+
+# produce residual plots for all locations
+resid_plot <- \(fit) {
+  # df to join site names with counties (easier to know where they are)
+  residuals <- fit$residual
+  names_df <- data.frame("name" = names(residuals)) |>
+    left_join(county_key_df)
+
+  resid_plots <- lapply(seq_along(residuals), \(i) {
+    plots <- plot_resid(fit$residual[[i]])
+    # TODO Add parameter estimates
+    plots_spec <- lapply(seq_along(plots), \(j){
+      if (all(is.na(plots[[j]]))) {
+        return(NA)
+      }
+      pars <- fit$dependence[[i]][[j]][c("a", "b"), ]
+      plots[[j]] +
+        # ggtitle(paste(
+        #   names_df$name[i],
+        #   names_df$county[i],
+        #   sep = " - "
+        # ))
+        ggtitle(
+          paste0("a = ", round(pars[1], 3), ", b = ", round(pars[2], 3))
+        )
+    })
+    # join plots
+    wrap_plots(plots_spec) +
+      plot_annotation(
+        title = paste0(
+          names_df$name[i],
+          " (",
+          names_df$county[i],
+          ")"
+        ),
+        theme = evc::evc_theme()
+      )
+  })
+  names(resid_plots) <- names_df$name
+
+  return(resid_plots)
+}
+
+# plot quantiles of conditional expectation at single location (for single var)
+plot_ce_quantiles <- \(
+  dep_fit, spec_loc, cond_var = "rain", quantiles = seq(0.1, by = 0.2, len = 5)
+) {
+  # TODO Functionalise this somehow??
+  # take out data for one location
+  dep_fit_spec <- list(
+    "original" = dep_fit$original[[spec_loc]],
+    "residual" = dep_fit$residual[[spec_loc]],
+    "dependence" = dep_fit$dependence[[spec_loc]],
+    "transformed" = dep_fit$transformed[[spec_loc]]
+  )
+
+  # non-conditioning/other variables
+  vars <- names(dep_fit_spec$residual)
+  vars <- vars[vars != cond_var]
+  n <- nrow(dep_fit_spec$residual[[cond_var]])
+
+  # dependence parameters for conditioning variables
+  dep <- dep_fit_spec$dependence[[cond_var]]
+  # dependence thresholds and quantiles (on laplace scale)
+  dqu <- dep_fit$arg_vals$cond_prob
+  # dth <- quantile(dep_fit_spec$original[[cond_var]], dqu)
+  dth <- dep_fit_spec$dependence[[cond_var]]["dth", ]
+  # Determine x-axis values to estimate CE quantiles at along conditioned var
+  # TODO Change to Laplace scale
+  # xmax <- max(dep_fit_spec$original[[cond_var]])
+  xmax <- max(dep_fit_spec$transformed[, cond_var])
+  dif <- xmax - dth
+  xlim <- c(dth - 0.1 * dif, dth + 1.5 * dif)
+
+  # Determine upper limit of x-axis
+  # if (marg$xi < 0 && xlim[2] > upper) {
+  #   xlim[2] <- upper
+  #   plim <- 1
+  # } else {
+  #   plim <- evd::pgpd(xlim[[2]], mth, marg$sigma, marg$xi)
+  # }
+  plim <- 1
+  # CDF probabilities to plot at
+  p <- seq(dqu, 1 - 1 / n, length = n)
+  # take out largest point to avoid Inf in CDF transform
+  len <- 501
+  plotp <- seq(dqu, plim, len = len)[-len]
+  # transform to original scale; these will be x-values in plot
+  # TODO Gives different results to revTransform, why????
+  # plotx <- inv_semi_par_cdf(
+  #   F_hat = matrix(plotp),
+  #   dat   = dep_fit_spec$original[cond_var],
+  #   gpd   = dep_fit_spec$marginal[cond_var] # TODO Need conditional thresh, not marginal thresh!
+  # )
+  # plotx <- revTransform(
+  #   plotp,
+  #   data  = dep_fit_spec$original[[cond_var]],
+  #   qu    = dqu,
+  #   th    = dth,
+  #   sigma = marg$sigma,
+  #   xi    = marg$xi
+  # )
+  plotx <- as.vector(laplace_trans(plotp))
+
+  # convert probs to Laplace scale (these are values to calculate CE line at)
+  # xq <- dep$margins$p2q(plotp)
+  xq <- laplace_trans(plotp)
+
+  # plot on original margins
+  # TODO Loop over conditioning variables
+  # TODO Extend to > 2 variables
+  # base_plot <- dep_fit_spec$original |>
+  #   select(all_of(c(cond_var, vars))) |>
+  base_plot <- data.frame(dep_fit_spec$transformed) |>
+    setNames(c("x", "y")) |>
+    ggplot(aes(x, y)) +
+    geom_point() +
+    theme +
+    # add vertical line at threshold
+    geom_vline(xintercept = dth) +
+    labs(x = cond_var, y = vars)
+
+
+  # pull dependence coefficients and quantiles of residuals
+  # co <- coef(dep)[, i]
+  co <- dep_fit_spec$dependence[[vars]]
+  # zq <- quantile(dep$Z[, i], quantiles)
+  # zq <- quantile(dep_fit_spec$residual[[cond_var]], quantiles)
+  zq <- quantile(dep_fit_spec$residual[[vars]], quantiles)
+
+  # calculates regression lines from quantiles of residuals
+  # yq <- sapply(zq, function(z, co, xq) {
+  #   co["a"] * xq + co["c"] - co["d"] * log(xq) + xq^co["b"] * z
+  # }, xq, co = co)
+  yq <- sapply(zq, \(z, xq) {
+    # dep$co$a * xq + dep$co$c - dep$co$d * log(xq) + xq^dep$co$b * z
+    (co["a", ] * xq) + ((xq^co["b", ]) * z)
+  }, xq = xq)
+
+  # # transform to original scale
+  # # ploty <- apply(dep$margins$q2p(yq), 2, revTransform,
+  # #     data = trns,
+  # #     qu = qu, th = th, sigma = sigma, xi = xi
+  # #   )
+  # # ploty <- inv_semi_par_cdf(
+  # #   F_hat = yq,
+  # #   dat   = dep_fit_spec$original[vars],
+  # #   gpd   = dep_fit_spec$marginal[vars]
+  # # )
+  # # dth_spec <- quantile(dep_fit_spec$original[[vars]], dqu)
+  # # ploty <- apply(yq, 2, \(y) {
+  # ploty <- apply(inv_laplace_trans(yq), 2, \(y) {
+  #   # print(y[1])
+  #   # TODO again, not working, why???
+  #   # inv_semi_par_cdf(
+  #   #   F_hat = matrix(y),
+  #   #   dat   = dep_fit_spec$original[vars],
+  #   #   gpd   = dep_fit_spec$marginal[vars]
+  #   # )
+  #   revTransform(
+  #     y,
+  #     data  = dep_fit_spec$original[[vars]],
+  #     qu    = dqu,
+  #     th    = dth_spec,
+  #     sigma = dep_fit_spec$marginal[[vars]]$sigma,
+  #     xi    = dep_fit_spec$marginal[[vars]]$xi
+  #   )
+  # })
+  ploty <- yq
+  dth_spec <- dth
+
+  # plot CE quantiles recursively
+  add_line <- \(p, ploty) {
+    if (length(ploty) == 0) {
+      return(p)
+    } else {
+      add_line(
+        p +
+          geom_line(
+            data     = data.frame(x = plotx, y = ploty[, 1]),
+            mapping  = aes(x = plotx, y = ploty[, 1]),
+            linetype = 2,
+            col      = "blue"
+          ),
+        ploty[, -1, drop = FALSE]
+      )
+    }
+  }
+  p <- add_line(base_plot, ploty)
+
+  return(p)
+}
+
+# produce quantile plots in all locations
+quant_plot <- \(dep_fit) {
+  lapply(names(dep_fit$residual), \(x) {
+    tryCatch(
+      {
+        list(
+          "rain"       = plot_ce_quantiles(dep_fit, x, "rain"),
+          "wind_speed" = plot_ce_quantiles(dep_fit, x, "wind_speed")
+        )
+      },
+      error = function(e) {
+        message("Error in plotting quantiles for ", x, ": ", e$message)
+        return(NA)
+      }
+    )
+  })
+}
+
+# join resid and quantile plots
+diag_plot <- \(resid_plots, quantile_plots, names_df = NULL) {
+  lapply(seq_along(resid_plots), \(i) {
+    tryCatch(
+      {
+        p <- wrap_plots(resid_plots[[i]]) /
+          (quantile_plots[[i]]$rain + quantile_plots[[i]]$wind_speed)
+        if (!is.null(names_df)) {
+          p <- p +
+            patchwork::plot_annotation(
+              title = paste(names_df$name[i], names_df$county[i], sep = " - "),
+              theme = theme
+            )
+        }
+        return(p)
+      },
+      error = function(e) {
+        message("Error in joining plots for ", names(resid_plots)[i], ": ", e$message)
+        return(NA)
+      }
+    )
+  })
+}
+
+map_plot <- \(ab_df, data, n_breaks = 8) {
+  ab_sf <- ab_df |>
+    left_join(distinct(data, name, lon, lat)) |>
+    st_to_sf()
+
+  # check that b values aren't exceptionally negative (<-1)
+  # also check that all values are equal to fixed value for b, if applying
+  # sort(ab_sf[ab_sf$parameter == "b", ]$value)[1:10]
+
+  # plot parameter values for each parameter and variable
+  names <- c("a", "b")
+  p_lst <- lapply(seq_along(names), \(i) {
+    ggplot() +
+      geom_sf(data = areas, colour = "black") +
+      geom_sf(
+        data = ab_sf %>%
+          filter(parameter == names[i]) %>%
+          mutate(vars = paste0(parameter, " - ", vars)) |>
+          identity(),
+        aes(fill = value, size = value),
+        colour = "black",
+        stroke = 1,
+        pch = 21
+      ) +
+      facet_wrap(~vars, ncol = 2) +
+      scale_size_continuous(
+        breaks = scales::extended_breaks(n = n_breaks),
+        guide = "legend"
+      ) +
+      scale_fill_gradient2(
+        low = "blue3",
+        high = "red3",
+        na.value = "grey",
+        breaks = scales::extended_breaks(n = n_breaks),
+        guide = "legend"
+      ) +
+      guides(fill = guide_legend(), size = guide_legend()) +
+      labs(fill = "", size = "") +
+      theme
+  })
+  return(p_lst)
+}
+
+
+#### Bootstrapping functions ####
+
+# function to perform bootstrapping for CE model for ECDF
+boot_ce_ecdf <- \(
+  dep,
+  orig,
+  transformed,
+  # marg_pars = c(loc = 0, scale = 1, shape = -0.05),
+  cond_prob = 0.9,
+  # marg_prob = 0.98, # marginal quantile to calculate expectation after boots
+  R = 100,
+  trace = 10,
+  ncores = 1,
+  fixed_b = FALSE,
+  ...
+) {
+  # pull data
+  # TODO Should pull fixed_b from this!
+  arg_vals <- list("cond_prob" = cond_prob) # TODO Add any others here
+  dependence <- dep # dependence parameters
+
+  # calculate marginal threshold
+  # TODO Will have to change for real data, as can't use qgpd
+  # marg_val <- do.call(evd::qgpd, c(list(marg_prob), marg_pars))
+
+  # extract marginal and dependence thresholds
+  # TODO Implement for multiple locations
+  thresh_dep <- lapply(dependence, \(x) {
+    res <- vapply(x, \(y) {
+      y[rownames(y) == "dth", , drop = FALSE]
+    }, numeric(length(x) - 1))
+    if (!is.matrix(res)) {
+      res <- matrix(res, nrow = 1)
+      colnames(res) <- names(x)
+    }
+    res[1, , drop = FALSE]
+  })
+
+  # Parallel setup
+  apply_fun <- ifelse(ncores == 1, lapply, parallel::mclapply)
+  ext_args <- NULL
+  if (ncores > 1) {
+    ext_args <- list(mc.cores = ncores)
+  }
+  loop_fun <- \(...) {
+    do.call(apply_fun, c(list(...), ext_args))
+  }
+
+  # Pull start values
+  start <- lapply(dependence, \(x) {
+    lapply(x, \(y) {
+      # scale back towards zero in case point est on edge of original parameter
+      # space and falls off edge of constrained space for bootstrap sample
+      if (fixed_b) {
+        y[c("a", "b"), , drop = FALSE] * c(0.75, 1)
+      } else {
+        y[c("a", "b"), , drop = FALSE] * 0.75
+      }
+    })
+  })
+
+  # Function to prepare bootstrapped data for each location and conditioned var
+  prep_boot_loc_dat <- \(
+    dep_loc, trans_loc, orig_loc, thresh_dep, n_pass = 3
+  ) {
+    # pull bootstrap sample
+    # (must be different for each loc as nrows may differ)
+    indices <- sample(seq_len(nrow(trans_loc)), replace = TRUE)
+    trans_loc_boot <- trans_loc[indices, ]
+
+    # Reorder bootstrap sample to have the same order as original data
+    test <- FALSE
+    # which <- which(names(marg_loc) %in% cond_var)
+    while (test == FALSE) {
+      for (j in seq_along(dep_loc)) {
+        # replace ordered Yi with ordered sample from standard Laplace CDF
+        u <- matrix(runif(nrow(trans_loc_boot)))
+        trans_loc_boot[
+          order(trans_loc_boot[, j]), j
+        ] <- sort(laplace_trans(u)[, 1])
+      }
+      # need exceedance in cond. var, and also in other vars for these rows
+      if (any(colSums(sweep(trans_loc_boot, 2, thresh_dep, FUN = ">")) > 0)) {
+        test <- TRUE
+      }
+    }
+
+    # convert variables to original scale
+    # orig_loc_boot <- inv_semi_par_cdf(
+    #   # inverse Laplace transform to CDF
+    #   inv_laplace_trans(trans_loc_boot),
+    #   # original data for where semiparametric thresholding occurs
+    #   orig_loc,
+    #   # TODO Have to change if parameters are different
+    #   lapply(seq_len(ncol(orig_loc)), \(i) {
+    #     setNames(marg_pars[c("scale", "shape", "loc")], c("sigma", "xi", "thresh"))
+    #   })
+    # )
+
+    # convert from Laplace scale back to ECDF (no need to get original data)
+    ecdf_loc_boot <- inv_laplace_trans(trans_loc_boot)
+
+    # test for no marg exceedances over sampled points, if so resample w/ nPass
+    # max_vals <- apply(orig_loc_boot, 2, max, na.rm = TRUE)
+    # marg_thresh <- marg_val # TODO Will have to change if vars don't have same margins
+    # if (!all(max_vals > marg_thresh)) {
+    #   return(list(NA))
+    # }
+    return(ecdf_loc_boot)
+  }
+
+  # perform bootstrapping
+  boot_fits <- loop_fun(seq_len(R), \(i) {
+    if (i %% trace == 0) {
+      system(sprintf("echo %s", paste(i, "replicates done")))
+    }
+    dat_ecdf_boot <- lapply(seq_along(dependence), \(j) { # loop through locations
+      # prepare bootstrapped data for location j
+      # TODO Change argument order
+      dat_spec <- prep_boot_loc_dat(
+        dependence[[j]],
+        transformed[[j]],
+        orig[[j]],
+        thresh_dep[[j]]
+      )
+      # check if NA, if so then rerun
+      if (all(is.na(dat_spec)) && n_pass > 1) {
+        for (i in seq_len(n_pass - 1)) {
+          dat_spec <- prep_boot_loc_dat(
+            marginal[[j]], transformed[[j]], dependence[[j]]
+          )
+          if (!all(is.na(dat_spec))) {
+            break
+          }
+        }
+      } else if (all(is.na(dat_spec))) {
+        stop(paste0(
+          "Failed to generate bootstrapped data after ", n_pass, " attempts"
+        ))
+      }
+      return(dat_spec)
+    })
+
+    # transform from GPD to Laplace margins
+    # dat_boot_trans <- lapply(dat_boot, \(x) {
+    #   laplace_trans(do.call(evd::pgpd, c(list(x), marg_pars)))
+    # })
+    dat_boot_trans <- lapply(dat_ecdf_boot, laplace_trans)
+
+    # refit CE model using same dependence quantile
+    # TODO Could change to mapply?
+    fit_boot <- lapply(seq_along(dat_boot_trans), \(j) {
+      # if (i == 1 && j == 2) {
+      # browser()
+      # }
+      o <- ce_optim(
+        Y = dat_boot_trans[[j]],
+        dqu = cond_prob,
+        start = start[[j]],
+        control = list(maxit = 1e6),
+        fixed_b = fixed_b,
+        ...
+      )
+    })
+    # fit_boot <- mapply(\(dat, start_val) {
+    #   o <- ce_optim(
+    #     # Y = dat_boot_trans[[j]],
+    #     Y = dat,
+    #     dqu = cond_prob,
+    #     # start = start[[j]],
+    #     start = start_val,
+    #     control = list(maxit = 1e6),
+    #     ...
+    #   )
+    # }, dat_boot_trans, start)
+
+    # extract just parameters
+    fit_boot_pars <- lapply(fit_boot, \(x) lapply(x, `[[`, "params"))
+    names(fit_boot_pars) <- names(dep)
+
+    # Calculate conditional expectation at marg_val
+    # return(lapply(fit_boot_pars, \(x) {
+    #   lapply(x, \(y) {
+    #     y["a", ] * marg_val + (marg_val^(y["b", ])) * y["m", ]
+    #   })
+    # }))
+    # dep_out <- lapply(boot_fits, `[[`, "dependence") |>
+    dep_out <- purrr::map_dfr(names(fit_boot_pars), function(loc_name) {
+      # loc <- boot_sample[[1]]
+      loc <- fit_boot_pars[[loc_name]]
+
+      # loop over variables
+      purrr::map_dfr(names(loc), function(cond_var) {
+        # Get the matrix for the current conditioning variable
+        var_mat <- loc[[cond_var]]
+
+        # be careful if var_mat is not a matrix
+        if (is.matrix(var_mat)) {
+          var_names <- colnames(var_mat)
+        } else {
+          var_names <- names(loc)[!names(loc) == cond_var]
+          var_mat <- as.matrix(var_mat)
+        }
+
+        # Create a tidy data frame for this location's matrix
+        tibble(
+          parameter = rep(c("a", "b"), each = ncol(var_mat)),
+          # vars      = rep(colnames(var_mat), times = 2),
+          vars      = rep(var_names, times = 2),
+          value     = c(var_mat["a", ], var_mat["b", ]),
+          cond_var  = rep(cond_var, ncol(var_mat) * 2),
+          name      = rep(loc_name, ncol(var_mat) * 2)
+        )
+      })
+    })
+
+    # Combine all the lists of data frames into one final data frame
+    dep_out <- bind_rows(dep_out)
+  })
+
+  return(boot_fits)
+}
+
+# function to plot bootstrapped parameter estimates for different quantiles
+plot_boot_quant <- \(
+  data_lst,
+  quantiles = seq(0.5, 0.9, by = 0.1),
+  constrain = TRUE,
+  R = 10,
+  ncores = 1,
+  county_key_df = NULL,
+  start = c(0.01, 0.01),
+  ...
+) {
+  # transform data
+  Y_lst <- lapply(data_lst, trans_fun)
+
+  # fit model at each threshold
+  ce_fit_quant <- mclapply(quantiles, \(q) {
+    ret <- lapply(Y_lst, \(y) {
+      o <- ce_optim(
+        Y = y,
+        dqu = q,
+        constrain = constrain,
+        start = start,
+        nruns = 3,
+        ...
+      )
+    })
+    locs <- names(ret)
+    ret <- lapply(c("resid", "params"), \(x) {
+      setNames(pull_element(ret, x), locs)
+    })
+    names(ret) <- c("residual", "dependence")
+    return(ret)
+  }, mc.cores = ncores)
+
+  # extract parameter estimates and label by quantile (for plotting)
+  ab_df <- bind_rows(lapply(seq_along(ce_fit_quant), \(i) {
+    dep_to_df(ce_fit_quant[[i]]$dependence) |>
+      mutate(quantile = quantiles[i])
+  }))
+
+  if (!is.null(county_key_df)) {
+    ab_df <- ab_df |>
+      left_join(county_key_df, by = c("name"))
+  }
+
+  # now for each model fit, bootstrap
+  # TODO Again, need to make these parameters
+  boot_fit_quant <- mclapply(seq_along(ce_fit_quant), \(i) {
+    boot_ce_ecdf(
+      dep = ce_fit_quant[[i]]$dependence,
+      orig = data_lst,
+      transformed = Y_lst,
+      cond_prob = quantiles[i],
+      # marg_prob = 0.98, # marginal quantile to calculate expectation after boots
+      # R = 500,
+      R = R,
+      trace = R + 1, # don't show
+      constrain = constrain,
+      ...
+    )
+  }, mc.cores = ncores)
+
+  # join all together
+  boot_ab_df <- bind_rows(lapply(seq_along(boot_fit_quant), \(i) {
+    ret <- bind_rows(boot_fit_quant[[i]], .id = "run") |>
+      mutate(quantile = quantiles[i])
+  }))
+
+  loc_df <- ab_df |>
+    distinct(across(matches("name") | matches("county")))
+  plots <- lapply(seq_along(locs), \(i) {
+    title <- ifelse(
+      is.null(county_key_df),
+      loc_df$name[[i]],
+      paste0(loc_df$name[i], "-", loc_df$county[i])
+    )
+
+    ab_df |>
+      filter(name == loc_df$name[[i]]) |>
+      ggplot(aes(x = quantile, y = value)) +
+      geom_point(
+        data = boot_ab_df |>
+          filter(name == loc_df$name[[i]]) |>
+          mutate(vars = ifelse(vars == "windspeed", "wind_speed", vars)),
+        colour = "black",
+        size = 2,
+        alpha = 0.7
+      ) +
+      geom_line() +
+      geom_point(size = 5, colour = "orange", alpha = 0.7) +
+      facet_wrap(~ parameter + vars, scales = "free") +
+      evc::evc_theme() +
+      scale_x_continuous(breaks = quantiles) +
+      labs(
+        x     = "Quantile",
+        y     = "Parameter estimate",
+        title = title
+      ) +
+      theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  })
+  names(plots) <- loc_df$name
+
+  return(plots)
+}
+
+
+#### Metadata ####
+
+# marginal target threshold (wind speed requires higher threshold)
+# mqu <- c("rain" = 0.9, "wind_speed" = 0.98)
+# dqu <- 0.9 # dependence threshold
+# dqu2 <- c(0.9, 0.95)
+# dqu2 <- c(0.9, 0.95) # increased threshold for wind speed
+min_max_dates <- as_date(c("1990-01-01", "2020-12-31"))
+all_dates <- seq.Date(min_max_dates[1], min_max_dates[2], by = "day")
+fixed_xi <- TRUE # whether to fix shape parameter in GPD margins
+seed_number <- 123
+max_k <- 10
+
+ncores <- detectCores() - 1
+
+
+#### Load Data ####
+
+data <- readr::read_csv(
+  "data/met_eireann/final/met_eir_wind.csv.gz",
+  # "data/met_eireann/final/met_eir_wind_alt.csv.gz",
+  show_col_types = FALSE
+) %>%
+  filter(date %in% all_dates, !is.na(wind_speed))
+
+data <- data |>
+  # Remove sites with negative alpha values
+  # filter(!name %in% c(
+  #   "Belfast Newforge", "Belmont", "Carmoney", "Castlereagh",
+  #   "Dungonnell Filters No 2", "Marble Arch Caves", "Pomeroy Primary School",
+  #   "Woodburn North"
+  # ))
+  # remove six counties :(
+  filter(!county %in% c(
+    "Down", "Antrim", "Fermanagh", "Tyrone", "Armagh", "Derry"
+  ))
+
+# load shapefile
+areas <- sf::read_sf("data/met_eireann/final/irl_shapefile.geojson")
+
+# pull just site names, counties and provinces
+county_key_df <- data |>
+  distinct(name, county, province)
+
+# extract point location of each station for plotting on map
+pts <- data %>%
+  distinct(name, lon, lat) %>%
+  st_to_sf()
+
+# calculate adjacency matrix from Voronoi cells,
+# to restrict clustering to adjacent sites
+# TODO Check if correct
+# adj_mat <- calc_adj_mat2(pts)
+
+
+#### Preprocess Data ####
+
+# take Winter data only
+data_winter <- data %>%
+  mutate(month = as.numeric(substr(date, 6, 7))) %>%
+  filter(month %in% c(1:3, 10:12)) %>%
+  dplyr::select(-month)
+
+# Take weekly sum of precipitation and average of wind speed, to account for
+# lag in storm (as in Vignotto, Engelke 2021 study of GB + Ireland)
+data_week <- data_winter %>%
+  mutate(week = floor_date(date, "week")) %>%
+  group_by(week, name, county, province, lon, lat) %>%
+  summarise(
+    rain       = sum(rain, na.rm = TRUE),
+    wind_speed = mean(wind_speed, na.rm = TRUE),
+    .groups    = "drop"
+  ) %>%
+  rename(date = week) |>
+  # remove weeks with no rainfall, as in Vignotto 2021 (required/important?)
+  filter(rain != 0)
+
+# for many problem locs, there doesn't seem to be much relationship between
+# whether extremes happen together or separately?
+# data_week |>
+#   filter(
+#     # name == "Belfast Newforge"
+#     # name == "Belmont"
+#     # name == "Dungonnell Filters No 2"
+#     # name == "Lough Navar Forest"
+#     # name == "Marble Arch Caves"
+#     name == "Woodburn North"
+#   ) |>
+#   mutate(across(
+#     c(rain, wind_speed), ~ quantile(.x, 0.90, na.rm = TRUE),
+#     .names = "quant_{.col}"
+#   )) %>%
+#   ggplot(aes(x = rain, y = wind_speed)) +
+#   geom_point(aes(), size = 1.5, alpha = 0.8) +
+#   geom_vline(aes(xintercept = quant_rain), linetype = "dashed") +
+#   geom_hline(aes(yintercept = quant_wind_speed), linetype = "dashed") +
+#   evc::evc_theme()
+
+#### Chi exploration ####
+
+# Plot chi and chi-squared for one and all locations
+
+# calculate chi for one location
+
+# for each location, pull out 95th quantile for chibar
+# Colour chi grey if not valid
+# Plot on map
+# TODO Functionalise for US air pollution!
+names <- unique(data_week$name)
+chi_95_df <- bind_rows(lapply(names, \(x) {
+  chi <- data_week %>%
+    filter(name == x) %>%
+    dplyr::select(rain, wind_speed) %>%
+    texmex::chi()
+
+  # whether to show chi or not, based on whether chibar upper extend crosses 1
+  show_chi <- !prod(tail(chi$chibar[, 3]) < 1)
+
+  loc <- which.min(abs(chi$quantile - 0.95))
+  return(data.frame(
+    "name" = x,
+    "chi" = chi$chi[loc, 2, drop = TRUE],
+    "chibar" = chi$chibar[loc, 2, drop = TRUE],
+    "show_chi" = show_chi
+  ))
+  # }, mc.cores = ncores))
+}))
+rownames(chi_95_df) <- NULL
+
+# join in area statistics
+chi_95_sf <- chi_95_df %>%
+  pivot_longer(c("chi", "chibar"), names_to = "var") %>%
+  # always show chibar plot
+  mutate(show_chi = ifelse(value == "chibar", TRUE, show_chi)) %>%
+  left_join(
+    distinct(data, name, lon, lat)
+  ) %>%
+  st_to_sf()
+
+# function to plot chi and chi bar on map
+scales <- seq(-0.1, 0.6, by = 0.1)
+chi_map_plot <- \(
+  chi_95_sf,
+  var = c("chi", "chibar"),
+  scales = seq(-0.1, 0.6, by = 0.1),
+  point_ranges = c(2, 6)
+) {
+  # lab <- ifelse(var == "chi", expression(chi(u)), expression(bar(chi)(u)))
+  lab <- ifelse(var == "chi", expression(chi(0.95)), expression(bar(chi)(0.95)))
+  plot_data <- filter(chi_95_sf, var == !!var)
+  if (var == "chi") {
+    plot_data <- plot_data %>%
+      mutate(show_chi = factor(ifelse(show_chi == TRUE, "yes", "no")))
+  }
+
+  p <- ggplot(areas) +
+    geom_sf(colour = "black", fill = NA) +
+    geom_sf(
+      # geom_sf_pattern(
+      data = plot_data,
+      aes(fill = value, size = value),
+      # aes(fill = value, size = value, pattern = show_chi),
+      pch = 21,
+      stroke = 1
+    ) +
+    scale_x_continuous(expand = c(0, 0)) +
+    scale_y_continuous(expand = c(0, 0)) +
+    # add colour scheme afterwards
+    # scale_fill_gradientn(
+    #   colours = RColorBrewer::brewer.pal(name = "Blues", n = 7),
+    #   breaks = scales_chi,
+    #   labels = as.character(scales_chi),
+    #   guide = "legend"
+    # ) +
+    scale_size_continuous(
+      range  = point_ranges,
+      breaks = scales,
+      labels = as.character(scales),
+      guide  = "legend"
+    ) +
+    # scale_pattern_manual(values = c("stripe", "none")) +
+    # maximise plot within frame
+    coord_sf(expand = FALSE) +
+    labs(fill = lab, size = lab) +
+    guides(fill = guide_legend(), size = guide_legend(), pattern = "none") +
+    theme +
+    theme(
+      legend.position = "right",
+      axis.text       = element_blank(),
+      axis.ticks      = element_blank(),
+      legend.key      = element_blank()
+    )
+
+  return(p)
+}
+
+# plot chibar and chi
+# chibar_p <- chi_map_plot(chi_95_sf, "chibar") +
+#   scale_fill_gradientn(
+#     colours = rev(heat.colors(7)),
+#     breaks = scales,
+#     labels = as.character(scales),
+#     guide = "legend"
+#   )
+chi_p <- chi_map_plot(chi_95_sf, "chi") +
+  scale_fill_gradientn(
+    colours = RColorBrewer::brewer.pal(name = "Blues", n = 7),
+    breaks = scales,
+    labels = as.character(scales),
+    guide = "legend"
+  )
+
+# combine plots
+# (chi_plots <- chibar_p + chi_p)
+
+# ggsave("latex/plots/041_chi_plots.png", chi_plots, width = 6.3, height = 6, units = "in")
+ggsave("latex/plots/chi_map_ire.png", chi_p, width = 6, height = 6, units = "in")
+
+
+#### ECDF -> Laplace Transformation ####
+
+# split data by location, convert to list of matrices
+data_lst <- data_week |>
+  group_split(name, .keep = TRUE) # keep name to label list afterwards
+locs <- purrr::map_chr(data_lst, ~ as.character(.x$name[1]))
+names(data_lst) <- locs
+data_lst <- lapply(data_lst, \(x) {
+  matrix(
+    c(x$rain, x$wind_speed),
+    ncol = 2,
+    dimnames = list(NULL, c("rain", "wind_speed"))
+  )
+})
+
+# convert from ECDF to Laplace margins
+Y_lst <- lapply(data_lst, trans_fun)
+
+
+#### Select dependence quantile via bootstrapping ####
+
+# plot params at various quantiles for each loc, w/ bootstrapped samples
+quant_plots <- plot_boot_quant(
+  data_lst,
+  quantiles = sort(c(seq(0.5, 0.9, by = 0.1), 0.85, 0.88, 0.95, 0.98)),
+  constrain = TRUE,
+  R = 30,
+  ncores = ncores,
+  # ncores = 1,
+  county_key_df = county_key_df
+)
+saveRDS(quant_plots, "plots/tests/boot_quantiles.RDS")
+
+pdf("plots/tests/boot_quantiles.pdf", width = 14, height = 8)
+quant_plots
+dev.off()
+
+# notes:
+# - Seem to get worse after around 90th quantile (or at least for some locations)
+# - (somewhat) frequent pattern whereby params -> 0 as quantile -> 1
+#   Suppose that's from an increasing lack of data?
+# - Examples where beta is very low seem to be from problems with start values
+#   or convergence issues with optimisation
+# - Examples where a & b estimates aren't inside bootstrap sample, particularly
+#   for higher quantile levels (>= 90) (Woodburn North Antrim, Lough Navar Forest Fermanagh)
+
+# Individual problem locs:
+# rain:
+# - Belfast Newforge (Antrim) - a estimates outside more realistic bootstrapped ones,
+#  (and negative), strangely except for 0.9 quantile
+#  Far more obs extreme for just rain than for rain + wind speeds
+# - Belmont Antrim - a estimates very strange < 0.95, maybe just remove
+# - Costelloe Fishery: wide bootstrap CI @ 90%
+#   Same with Derryhillagh (outside boots), Glenamaddy Galway,
+# - Dungonnell Filters No 2 Antrim: a estimates way below bootstrapped ones
+# - Same with Pomeroy Primary School (Tyrone)
+# - Marbe Arch Caves Fermanagh has strange a (also windspeed), may just remove
+# - Lough Navar Fermanagh also weird though! Bootstrapped estimates often
+#   negative
+# wind speed:
+# - Carmoney Derry a values start positive and end negative
+#   Same with Cashel, Castleisland
+# - Dungonell Filters No 2 also also very large bootstrap CIs
+
+# decision: 0.85 for both? Seems to avoid instabilities observed for large q
+dqu <- 0.85
+
+
+#### Fit CE ####
+
+# fit CE model
+ce_fit <- lapply(Y_lst, \(x) {
+  o <- ce_optim(
+    Y = x,
+    # dqu = 0.7,
+    dqu = dqu,
+    cond_var = c("rain", "wind_speed"),
+    control = list(maxit = 1e6),
+    # constrain = FALSE,
+    constrain = TRUE,
+    start = c(0.01, 0.01),
+    fixed_b = FALSE, # TODO limit a, b to be positive
+    nruns = 3
+  )
+})
+
+# pull dependence parameters and residuals out separately
+dep_fit <- lapply(c("resid", "params"), \(x) {
+  setNames(pull_element(ce_fit, x), locs)
+})
+names(dep_fit) <- c("residual", "dependence")
+
+# add transformed data etc for plotting functions
+dep_fit$transformed <- Y_lst
+dep_fit$original <- data_week
+dep_fit$arg_vals <- list("cond_prob" = dqu)
+
+# pull dependence paramaters into df
+ab_df <- dep_to_df(dep_fit$dependence)
+
+# why so many locations with low alpha values?
+ab_df |>
+  filter(parameter == "a" & value < -0.2)
+# problem locations from before have low alpha, might be a good idea to
+# limit to positive values
+# All locations here are from NI, may indicate problem with data? Remove!
+
+ce_fit_final <- ce_fit
+dep_fit_final <- dep_fit
+
+#### CE Diagnostics ####
+
+# produce residual plots for all locations
+resid_plots <- resid_plot(dep_fit)
+
+# produce quantile plots in all locations
+quantile_plots <- quant_plot(dep_fit)
+
+# join resid and quantile plots
+diag_plots <- diag_plot(resid_plots, quantile_plots, arrange(county_key_df, name))
+names(diag_plots) <- names(resid_plots)
+
+pdf(paste0("plots/tests/residuals_dqu_", dqu, ".pdf"), width = 8, height = 8)
+diag_plots
+dev.off()
+
+# plot results on map
+map_plots <- map_plot(
+  ab_df,
+  data_week,
+  n_breaks = 8
+)
+
+ggsave(filename = "test.png", map_plots[[1]] / map_plots[[2]], width = 12, height = 12)
+
+# Comments:
+# W/o NI counties, individual plots actually look really good!
+# Is there a plot for every location???
+# However, some very small beta values observed for 9/72 locations!
+# Why might that be??
+ab_df |>
+  filter(value < -0.2) |>
+  left_join(county_key_df, by = "name")
+
+
+#### Limit alpha to be positive ####
+
+# ce_fit_alpha <- lapply(Y_lst, \(x) {
+#   o <- ce_optim(
+#     Y = x,
+#     dqu = dqu,
+#     cond_var = c("rain", "wind_speed"),
+#     control = list(maxit = 1e6),
+#     # constrain = FALSE,
+#     constrain = TRUE,
+#     start = c(0.01, 0.01),
+#     aLow = 0,
+#     nruns = 3
+#   )
+# })
+#
+# dep_fit_alpha <- lapply(c("resid", "params"), \(x) {
+#   setNames(pull_element(ce_fit_alpha, x), locs)
+# })
+# names(dep_fit_alpha) <- c("residual", "dependence")
+#
+# # add transformed data etc for plotting functions
+# dep_fit_alpha$transformed <- Y_lst
+# dep_fit_alpha$original <- data_week
+# dep_fit_alpha$arg_vals <- list("cond_prob" = dqu)
+#
+# ab_df_alpha <- dep_to_df(dep_fit_alpha$dependence)
+#
+# # TODO Investigate differences
+# # TODO Investigate failed plots
+# resid_plots_alpha <- resid_plot(dep_fit_alpha)
+# quantile_plots_alpha <- quant_plot(dep_fit_alpha)
+# diag_plots_alpha <- diag_plot(
+#   resid_plots_alpha,
+#   quantile_plots_alpha,
+#   arrange(county_key_df, name)
+# )
+# names(diag_plots_alpha) <- names(resid_plots_alpha)
+#
+#
+# pdf(paste0(
+#   "plots/tests/residuals_dqu_",
+#   dqu,
+#   "_alpha.pdf"
+# ), width = 8, height = 8)
+# # resid_plots_alpha
+# diag_plots_alpha
+# dev.off()
+#
+# map_plots_alpha <- map_plot(
+#   ab_df_alpha,
+#   data_week,
+#   n_breaks = 8
+# )
+#
+# # investigate locations which previously had very low alpha values
+# prob_locs <- ab_df |>
+#   filter(parameter == "a" & value < -0.2) |>
+#   distinct(name) |>
+#   pull()
+# ab_df_alpha |>
+#   filter(name %in% prob_locs) |>
+#   left_join(
+#     ab_df |>
+#       filter(name %in% prob_locs) |>
+#       rename(value_prev = value)
+#   )
+# # b values seem slightly higher, and a values shrink to basically 0
+#
+#
+# # find when different to previous fit; this is where plots will differ
+# ab_df_alpha |>
+#   left_join(
+#     rename(ab_df, "value_prev" = value)
+#   ) |>
+#   mutate(diff = abs(value - value_prev)) |>
+#   filter(diff > 0.001) |>
+#   arrange(desc(diff))
+# # pretty much same as above, biggest changes are just from having alpha >= 0
+#
+# # conclusion: fix alpha > 0 as it will reduce impact of strange location on
+# # clustering
+#
+# ce_fit_final <- ce_fit_alpha
+# dep_fit_final <- dep_fit_alpha
+
+
+#### Bootstrap ####
+
+# boot_fit <- boot_ce_ecdf(
+#   dep = dep_fit_final$dependence,
+#   orig = data_lst,
+#   transformed = Y_lst,
+#   # cond_prob = 0.9,
+#   cond_prob = dqu,
+#   # marg_prob = 0.98, # marginal quantile to calculate expectation after boots
+#   R = 500,
+#   trace = 10,
+#   ncores = ncores,
+#   constrain = TRUE
+# )
+# saveRDS(boot_fit, "data/ecdf_boot_fit.RDS")
+boot_fit <- readRDS("data/ecdf_boot_fit.RDS")
+
+boot_df <- bind_rows(boot_fit, .id = "run") |>
+  group_by(name, parameter, vars) |>
+  mutate(mean = mean(value, na.rm = TRUE)) |>
+  ungroup()
+
+# plot for each location
+boot_df |>
+  # filter(name == "Armagh") |>
+  filter(name == "Malahide Castle") |>
+  ggplot(aes(x = vars, y = value, fill = parameter)) +
+  geom_boxplot() +
+  # facet_wrap(~ parameter + vars) +
+  facet_wrap(~ parameter + vars, scales = "free") +
+  evc::evc_theme()
+
+boot_df |>
+  filter(name == "Malahide Castle") |>
+  ggplot(aes(x = value, fill = parameter)) +
+  geom_histogram(aes(y = ..density..), bins = 30, alpha = 0.7) +
+  geom_density(alpha = 0.5) +
+  # geom_vline(
+  #   aes(xintercept = mean),
+  #   linetype = "dashed",
+  #   color = "black"
+  # ) +
+  facet_wrap(~ parameter + vars, scales = "free") +
+  # facet_grid(
+  #   rows = vars(vars),
+  #   cols = vars(parameter),
+  #   scales = "free_x"
+  # ) +
+  evc::evc_theme() +
+  guides(fill = "none")
+
+# also plot a vs b for each, add the original model estimate and the
+# multivariate (geometric) median
+
+# calculate multivariate median
+boot_med_df <- boot_df |>
+  select(-c(mean, cond_var)) |>
+  pivot_wider(names_from = parameter, values_from = value) |>
+  group_split(name, vars, .keep = TRUE) |>
+  lapply(\(x) {
+    ret <- Gmedian::Gmedian(x[, c("a", "b")])
+    data.frame("a" = ret[1], "b" = ret[2], "vars" = x$vars[1], name = x$name[1])
+  }) |>
+  bind_rows()
+
+# loc <- "Crolly (Filter Works)"
+loc <- "Malahide Castle"
+boot_df |>
+  select(-c(mean, cond_var)) |>
+  filter(name == loc) |>
+  pivot_wider(names_from = parameter, values_from = value) |>
+  ggplot() +
+  geom_point(aes(x = a, y = b, colour = vars)) +
+  # plot model estimate
+  geom_point(
+    data = ab_df |>
+      filter(name == loc) |>
+      pivot_wider(names_from = parameter, values_from = value),
+    aes(x = a, y = b),
+    # large X
+    size = 5,
+    stroke = 2,
+    colour = "black",
+    shape = 4
+  ) +
+  # add geometric median
+  geom_point(
+    data = boot_med_df |>
+      filter(name == loc),
+    aes(x = a, y = b),
+    # large +
+    size = 5,
+    stroke = 2,
+    colour = "black",
+    shape = 3
+  ) +
+  facet_wrap(~vars, scales = "free") +
+  evc::evc_theme()
+
+
+#### Clustering: choose k ####
+
+# TODO Do for adjacency matrix as well!
+# extract JS distance matrix
+set.seed(123)
+clust_obj <- js_clust(dep_fit_final$dependence, scree_k = 1:max_k)
+dist_mat <- clust_obj$dist_mat
+
+# TODO function from Gaussian copula simulations, also needs to be packaged up!
+# Function to find optimal k value via TWGSS and AIC
+find_k <- \(
+  ce_fit,
+  data_mix, # list of data at different locations
+  max_clust,
+  cond_prob = 0.9,
+  fixed_b = FALSE,
+  adj_mat = NULL,
+  spec_vars = NULL,
+  ...
+) {
+  # Pull JS distance matrix
+  dist <- js_clust(
+    ce_fit,
+    scree_k = 1:max_clust, spec_vars = spec_vars
+  )$dist_mat
+
+  # apply adjacency if specified
+  if (!is.null(adj_mat)) {
+    dist_adj <- as.matrix(dist)
+    dist_adj[adj_mat == 0] <- 1e9 # arbitrarily large number
+    dist <- as.dist(dist_adj)
+  }
+
+  # extract TWGSS
+  twgss <- evc::scree_plot(dist, k = 1:max_clust)
+
+  # Calculate AIC and perform Likelihood Ratio test (i.e. model-based criteria)
+  # initialise list of dependence models
+  dep_clust_lst <- rep(
+    get_pars(ce_fit),
+    max_clust
+  )
+  aic <- lr <- vector(mode = "list", length = max_clust)
+  for (k in 1:max_clust) {
+    # cluster
+    pam_fit <- js_clust(
+      dist_mat = dist, k = k, return_dist = TRUE, spec_vars = spec_vars
+    )
+    # refit CE model
+    dependence_clust <- fit_optim_clust(
+      pam_fit$pam$clustering,
+      # data_mix,
+      data_lst,
+      n_vars = 2, # TODO
+      cond_prob = cond_prob,
+      trans_fun = trans_fun,
+      start_vals = c(0.01, 0.01),
+      fixed_b = fixed_b,
+      ...
+    )
+    # extract parameters (remove residuals)
+    dependence_clust <- get_pars(dependence_clust)
+    dep_clust_lst[[k]] <- dependence_clust
+
+    # calculate AIC
+    aic[[k]] <- ce_aic(dependence_clust)
+
+    # calculate likelihood ratio statistic
+    # if (k > 2) {
+    # if (k > 1) {
+    #   # df = 4 (n pars) * 2 (n_vars) (# more parameters in "full" model)
+    #   df <- 4 * n_vars
+    #   lr[[k]] <- lrt_test(
+    #     dep_clust_lst[[k - 1]], dep_clust_lst[[k]],
+    #     df = df
+    #   )
+    # }
+  }
+
+  aic <- unlist(aic)
+  # lr <- c(NA, NA, unlist(lapply(lr, "[[", "p_value")))
+  # lr <- c(NA, unlist(lapply(lr, "[[", "p_value")))
+
+  # find best k as mode of choice for TWGSS, AIC and LRT
+  get_mode <- function(x) {
+    uniq_x <- unique(x)
+    tab <- table(x)
+    return(uniq_x[which.max(tab)])
+  }
+  # use elbow finding algorithm to choose k from TWGSS and AIC
+  k_twgss <- find_elbow(twgss)
+  k_aic <- find_elbow(aic)
+
+  # find first LR test statistic w/ p-value < .05
+  # k_lr <- which(lr < 0.05)[1]
+
+  # if no LR test statistic is significant, choose from elbow plots
+  elbow_k <- get_mode(c(k_twgss, k_aic))
+  # also do so if LRT chooses lowest k but other methods choose lower k,
+  # as our LRT can only be computed for k > 2 (cannot cluster with k == 1)
+  # if (length(k_lr) == 0 || (k_lr == 2 && elbow_k < 2)) {
+  #   k_lr <- elbow_k
+  # }
+
+  # ks <- c("k_twgss" = k_twgss, "k_aic" = k_aic, "k_lr" = k_lr)
+  ks <- c("k_twgss" = k_twgss, "k_aic" = k_aic)
+  k <- get_mode(ks)
+
+  # plot to confirm
+  p <- data.frame("AIC" = -aic, "TWGSS" = twgss, k = seq_along(twgss)) |>
+    pivot_longer(AIC:TWGSS) |>
+    ggplot(aes(x = k, y = value, colour = name)) +
+    geom_line() +
+    # geom_vline(xintercept = n_clust, linetype = "dashed") +
+    facet_wrap(~name, scales = "free_y") +
+    evc::evc_theme() +
+    labs(
+      title = paste0(
+        # "Elbow Plots for AIC and TWGSS, true k = ",
+        # n_clust,
+        "Elbow Plots for AIC and TWGSS",
+        # ", ",
+        # "LRT choice = ",
+        # k_lr,
+        ", DQU = ",
+        cond_prob * 100,
+        "%"
+      ),
+      x = "k",
+      y = ""
+    ) +
+    scale_x_continuous(breaks = 1:max_clust, limits = c(1, max_clust)) +
+    guides(colour = "none") +
+    ggsci::scale_colour_nejm()
+
+  # return optimal k, k estimates from each method, and plot
+  return(list(
+    "k"        = k,
+    "k_method" = ks,
+    "plot"     = p
+  ))
+}
+
+k_obj <- find_k(
+  ce_fit_final,
+  data_lst,
+  max_clust = 10,
+  cond_prob = dqu,
+  fixed_b = FALSE,
+  cond_var = c("rain", "wind_speed")
+)
+
+# take k from TWGSS, looks like a pretty clear elbow at 3!
+k_obj$plot
+k <- k_obj$k_method["k_twgss"]
+
+#### Cluster and plot ####
+
+# cluster for k = 3!
+pam_fit <- js_clust(dist_mat = dist_mat, k = k)
+# plot on map
+# TODO Check that point ordering is definitely correct! This doesn't look great
+# ggsave(filename = "test.png", plt_clust_map(pts, areas, pam_fit))
+plt_clust_map(pts, areas, pam_fit)
+
+# also look at k = 2, k = 4
+plt_clust_map(pts, areas, js_clust(dist_mat = dist_mat, k = 2))
+plt_clust_map(pts, areas, js_clust(dist_mat = dist_mat, k = 4))
+
+
+#### Fit and cluster for different DQU ####
+
+# sensible quantiles
+# quantiles <- c(0.85, 0.88, 0.9, 0.92, 0.95)
+quantiles <- c(0.85, 0.88, 0.9)
+
+# function to fit CE model and cluster for different DQU
+quant_fit <- \(q, ...) {
+  print(paste0("Fitting DQU = ", q * 100, "%"))
+  ce_fit_spec <- lapply(Y_lst, \(x) {
+    o <- ce_optim(
+      Y = x,
+      dqu = q,
+      cond_var = c("rain", "wind_speed"),
+      control = list(maxit = 1e6),
+      constrain = TRUE,
+      # aLow = 0,
+      start = c(0.01, 0.01),
+      nruns = 3
+    )
+  })
+  locs <- names(ce_fit_spec)
+
+  dep_fit_spec <- lapply(c("resid", "params"), \(x) {
+    setNames(pull_element(ce_fit_spec, x), locs)
+  })
+  names(dep_fit_spec) <- c("residual", "dependence")
+
+  # cluster for k = 3
+  pam_fit_spec <- js_clust(dep_fit_spec$dependence, k = 3, ...)
+
+  # plot
+  map_plot_spec <- plt_clust_map(
+    pts, areas, pam_fit_spec,
+    plot_medoids = FALSE
+  ) +
+    ggtitle(paste0("DQU = ", q * 100, "%")) +
+    guides(colour = "none", fill = "none")
+
+  return(list(
+    "ce_fit" = ce_fit_spec,
+    "dep_fit" = dep_fit_spec,
+    "pam_fit" = pam_fit_spec,
+    "map_plot" = map_plot_spec
+  ))
+}
+
+fit_quant <- lapply(quantiles, quant_fit)
+
+wrap_plots(lapply(fit_quant, `[[`, "map_plot")[1:3])
+# seems to be pretty stable for 85-90!
+
+# save plot
+pdf("plots/tests/cluster_dqu.pdf", width = 8, height = 8)
+lapply(fit_quant, `[[`, "map_plot")
+dev.off()
+
+
+#### Cluster each variable separately ####
+
+vars <- c("rain", "wind_speed")
+fit_quant_sep <- lapply(vars, \(x) {
+  print(paste0("Fitting for ", x))
+  lapply(quantiles, quant_fit, spec_vars = x)
+})
+
+# combined for rain and wind speed seperately
+(p_rain <- wrap_plots(lapply(fit_quant_sep[[1]], `[[`, "map_plot")[1:3]) +
+  patchwork::plot_annotation(title = "Rain", theme = evc::evc_theme()))
+# For rain, DQU 85 seems to have best results, somewhat less stable thereafter
+(p_wind <- wrap_plots(lapply(fit_quant_sep[[2]], `[[`, "map_plot")[1:3]) +
+  patchwork::plot_annotation(title = "Wind Speed", theme = evc::evc_theme()))
+# For wind speed, same, but median is a bit weird!
+
+# combine all three for DQU = 0.85
+x <- which(quantiles == dqu)
+p <- wrap_plots(list(
+  fit_quant[[x]]$map_plot +
+    ggtitle("Both"),
+  fit_quant_sep[[1]][[x]]$map_plot +
+    ggtitle("Rain | Wind Speed") +
+    theme(axis.text.y = element_blank(), axis.ticks.y = element_blank()),
+  fit_quant_sep[[2]][[x]]$map_plot +
+    ggtitle("Wind Speed | Rain") +
+    theme(axis.text.y = element_blank(), axis.ticks.y = element_blank())
+)) +
+  # patchwork::plot_annotation("DQU = 85%", theme = evc::evc_theme()) +
+  NULL
+
+ggsave(
+  filename = "latex/plots/cluster_dqu_sep.pdf",
+  p,
+  width = 12,
+  height = 8
+)
+# TODO Create 9 map plots for each likely DQU
+
+
+##### Adjacency ####
+
+# TODO Fix, adjacency matrix is not correct!
+
+# dist_mat_adj <- as.matrix(dist_mat)
+# # ensure order of columns and rows is the same as adjacency matrix
+# ord <- match(rownames(adj_mat), colnames(dist_mat_adj))
+# dist_mat_adj <- dist_mat_adj[ord, ord]
+#
+# # double check
+# all(rownames(dist_mat_adj) == rownames(adj_mat))
+# all(colnames(dist_mat_adj) == colnames(adj_mat))
+# all(rownames(dist_mat_adj) == colnames(dist_mat_adj))
+#
+# dist_mat_adj[adj_mat == 0] <- 1e9 # arbitrarily large number
+# # diagonal entries need to be 0
+# diag(dist_mat_adj) <- 0
+
+# Compute distance matrix using adjacency stipulation
+dist_mat_adj <- as.matrix(dist_mat)
+dist_mat_adj[adj_mat == 0] <- 10^40
+dist_mat_adj <- as.dist(dist_mat_adj)
+
+# apply adjacency matrix
+k_obj_adj <- find_k(
+  ce_fit,
+  data_lst,
+  max_clust = 10,
+  cond_prob = dqu,
+  fixed_b = FALSE,
+  cond_var = c("rain", "wind_speed"),
+  adj_mat = adj_mat
+)
+k_obj_adj$plot
+k_obj_adj$k_method
+# no clear elbow anywhere
+
+k_adj <- 3
+pam_fit_adj <- js_clust(dist_mat = dist_mat_adj, k = k_adj)
+
+# plot on map
+# TODO Check that point ordering is definitely correct!
+# ggsave("test_adj.png", plt_clust_map(pts, areas, pam_fit_adj))
+plt_clust_map(pts, areas, pam_fit_adj)
+
+# also look at k = 2, k = 4
+plt_clust_map(pts, areas, js_clust(dist_mat = dist_mat_adj, k = 2))
+plt_clust_map(pts, areas, js_clust(dist_mat = dist_mat_adj, k = 4))
+
+
+#### Refit and bootstrap uncertainty ####
+
+# TODO Decide how best to "combine" information across cluster;
+# should days be added together (i.e. sum of rain & max wind), or
+# should we just use as more data??
+
+# reassign points to their cluster medoids
+clust_assign_df <- data.frame(
+  "name" = names(pam_fit$clustering), "clust" = pam_fit$clustering
+)
+data_week_clust <- data_week |>
+  left_join(clust_assign_df) |>
+  mutate(medoid = ifelse(name %in% pam_fit$medoids, TRUE, FALSE))
+
+med_loc <- data_week_clust |>
+  filter(medoid == TRUE) |>
+  distinct(clust, lon, lat)
+
+data_week_clust <- data_week_clust |>
+  select(-c(lon, lat)) |>
+  left_join(med_loc) |>
+  mutate(name = paste0("cluster_", clust)) |>
+  group_by(name, date, lon, lat) |>
+  summarise(
+    rain = sum(rain, na.rm = TRUE),
+    wind_speed = max(wind_speed, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+data_lst_clust <- data_week_clust |>
+  group_split(name, .keep = TRUE) # keep name to label list afterwards
+locs <- purrr::map_chr(data_lst_clust, ~ as.character(.x$name[1]))
+names(data_lst_clust) <- locs
+data_lst_clust <- lapply(data_lst_clust, \(x) {
+  matrix(
+    c(x$rain, x$wind_speed),
+    ncol = 2,
+    dimnames = list(NULL, c("rain", "wind_speed"))
+  )
+})
+
+# Bootstrap choice of DQU
+quant_plots_clust <- plot_boot_quant(
+  data_lst_clust,
+  quantiles = sort(c(seq(0.5, 0.9, by = 0.1), 0.85, 0.88, 0.92)),
+  constrain = TRUE,
+  # R = 10,
+  R = 30,
+  # ncores = ncores,
+  ncores = 1,
+  # start = c(0.01, 0.1),
+  # fixed_b = TRUE,
+  aLow = 0
+  # county_key_df = county_key_df
+)
+
+# # seems that things are stable up to around this dependence quantile (??)
+# # dqu_clust <- 0.85
+# Maybe just stick with previous dependence quantile, to show reduction in
+# uncertainty
+dqu_clust <- dqu
+# dqu_clust <- 0.88
+
+# Refit conditional extremes
+Y_lst_clust <- lapply(data_lst_clust, trans_fun)
+ce_fit_clust <- lapply(Y_lst_clust, \(x) {
+  o <- ce_optim(
+    Y = x,
+    dqu = dqu_clust,
+    cond_var = c("rain", "wind_speed"),
+    control = list(maxit = 1e6),
+    constrain = TRUE,
+    # start = c(0.01, 0.1),
+    # fixed_b = TRUE,
+    nruns = 3,
+    aLow = 0
+  )
+})
+
+# Diagnostic plots
+dep_fit_clust <- lapply(c("resid", "params"), \(x) {
+  setNames(pull_element(ce_fit_clust, x), locs)
+})
+names(dep_fit_clust) <- c("residual", "dependence")
+dep_fit_clust$transformed <- Y_lst_clust
+dep_fit_clust$original <- data_week_clust
+dep_fit_clust$arg_vals <- list("cond_prob" = dqu)
+
+# produce residual plots for all locations
+resid_plots <- resid_plot(dep_fit_clust)
+
+# produce quantile plots in all locations
+quantile_plots <- quant_plot(dep_fit_clust)
+
+# join resid and quantile plots
+diag_plots <- diag_plot(resid_plots, quantile_plots)
+names(diag_plots) <- names(resid_plots)
+
+# save first plot to show
+ggsave(
+  filename = "latex/plots/diag_plots_postclust.png",
+  diag_plots[[1]],
+  width = 8,
+  height = 8
+)
+
+# Plot alpha, beta
+ab_df_clust <- dep_to_df(dep_fit_clust$dependence)
+
+map_plots_clust <- map_plot(
+  ab_df_clust,
+  data_week_clust,
+  n_breaks = 4
+)
+
+# kinda makes sense??
+ggsave("test_clust.png", map_plots_clust[[1]] / map_plots_clust[[2]], width = 12, height = 12)
+# map_plots_clust[[1]]
+
+# TODO Don't plot on map!
+ab_df_clust |>
+  # filter(parameter == "a") |>
+  # ggplot(aes(x = value, fill = vars)) +
+  ggplot(aes(y = value, x = name)) +
+  geom_dotplot(aes(fill = vars), binaxis = "y", stackdir = "center", binwidth = 0.05) +
+  # facet_wrap(~ parameter + vars, scales = "free") +
+  facet_wrap(~ parameter + vars, scales = "free") +
+  labs(x = "") +
+  evc::evc_theme() +
+  guides(fill = "none")
+
+# bootstrap conditional extremes
+boot_fit_clust <- boot_ce_ecdf(
+  dep = dep_fit_clust$dependence,
+  orig = data_lst_clust,
+  transformed = Y_lst_clust,
+  cond_prob = dqu_clust,
+  # R = 100,
+  R = 500,
+  trace = 10,
+  ncores = ncores,
+  constrain = TRUE,
+  # fixed_b = TRUE,
+  aLow = 0
+)
+
+# TODO Plot (hopefully reduced!) boostrap uncertainty
+boot_df_clust <- bind_rows(boot_fit_clust, .id = "run") |>
+  group_by(name, parameter, vars) |>
+  mutate(mean = mean(value, na.rm = TRUE)) |>
+  ungroup()
+
+boot_df_clust |>
+  # filter(parameter == "a") |>
+  ggplot(aes(x = vars, y = value, fill = vars)) +
+  geom_boxplot(aes(fill = vars), alpha = 0.7) +
+  # facet_wrap(~ parameter + vars) +
+  # facet_wrap(~ parameter + vars, scales = "free") +
+  facet_wrap(~ parameter + name, scales = "free") +
+  evc::evc_theme() +
+  # guides(fill = "none") +
+  NULL
+
+boot_df_clust |>
+  # filter(parameter == "a") |>
+  ggplot(aes(x = value, fill = vars)) +
+  geom_histogram(aes(y = ..density..), bins = 30, alpha = 0.7) +
+  geom_density(alpha = 0.5) +
+  # facet_wrap(~ parameter + vars, scales = "free") +
+  facet_wrap(~ parameter + name, scales = "free") +
+  evc::evc_theme() +
+  # guides(fill = "none") +
+  NULL
+
+# Plot idea:
+# "dumbell" plot of bootstrapped a and b values for each location,
+# with cluster-wise uncertainty at bottom
+
+plot_df <- boot_df |>
+  left_join(clust_assign_df) |>
+  bind_rows(boot_df_clust) |>
+  mutate(
+    name_clust = stringr::str_remove(name, "cluster_"),
+    name = ifelse(
+      grepl("cluster_", name),
+      stringr::str_replace(stringr::str_to_title(name), "_", " "),
+      name
+    ),
+    clust = ifelse(is.na(clust), name_clust, clust)
+  ) |>
+  # for each location, estimate 95% CI for a and b
+  group_by(name, clust, parameter, vars) |>
+  summarise(
+    lower = quantile(value, 0.025),
+    upper = quantile(value, 0.975),
+    mean = mean(value),
+    .groups = "drop"
+  ) |>
+  mutate(diff = upper - lower)
+
+# pull mean uncertainty by cluster
+plot_df <- plot_df |>
+  bind_rows(
+    plot_df |>
+      group_by(clust, parameter, vars) |>
+      summarise(
+        diff = mean(diff),
+        .groups = "drop"
+      ) |>
+      mutate(name = paste0("Mean (Cluster ", clust, ")"))
+  ) |>
+  # use Markdown bold for cluster rows
+  mutate(
+    name = ifelse(
+      grepl("Cluster", name), glue("<b>{name}</b>"), name
+    )
+  )
+
+# TODO Change colour depending on whether it's above/below clust diff
+cols <- c("black", rev(ggsci::pal_nejm()(2)))
+boot_comp_plots <- plot_df |>
+  group_split(clust, parameter, vars) |>
+  lapply(\(x) {
+    # pull names for factor levels
+    names_spec <- unique(x$name)
+    (clust_name <- names_spec[grepl("Cluster", names_spec)][1])
+    mean_name <- names_spec[grepl("Mean", names_spec)]
+    names_spec <- names_spec[!names_spec %in% c(clust_name, mean_name)]
+
+    # pull size of CI for clustered fit, want to add to plot
+    clust_diff <- x |>
+      filter(name == clust_name) |>
+      pull(diff)
+
+    x_plot <- x |>
+      mutate(
+        name = factor(
+          name,
+          levels = c(clust_name, mean_name, sort(names_spec, decreasing = TRUE))
+        ),
+        lower_ci = factor(case_when(
+          diff == clust_diff ~ 1,
+          diff > clust_diff ~ 2,
+          TRUE ~ 3
+        )),
+        clust = paste0("Cluster ", clust, ", ", parameter, " (", vars, ")"),
+      )
+
+    lower <- sum(x_plot[!grepl("Cluster", x_plot$name), "lower_ci"] == 2)
+    x_plot$clust <- paste0(
+      x_plot$clust,
+      " (",
+      lower,
+      "/",
+      nrow(x_plot) - 2,
+      " lower 95% CI)"
+    )
+
+    cols_spec <- cols
+    if (lower == 0) {
+      cols_spec <- cols_spec[-2]
+    }
+
+    # browser()
+    # print(paste0("For ", x_plot$clust[1], ", ", sum(x_plot$lower_ci == 2), "/", nrow(x_plot) - 1))
+
+    x_plot |>
+      ggplot() +
+      geom_segment(
+        aes(
+          x      = name,
+          # y      = lower,
+          y      = 0,
+          # yend   = upper
+          yend   = diff,
+          colour = lower_ci
+        )
+      ) +
+      # set colours to colour palette specified above
+      scale_colour_manual(values = cols_spec) +
+      geom_hline(
+        data = x_plot |>
+          filter(
+            name == clust_name,
+            vars == x$vars[1],
+            parameter == x$parameter[1]
+          ),
+        aes(yintercept = diff),
+        linetype = "dashed"
+      ) +
+      facet_wrap(~clust) +
+      coord_flip(clip = "off", expand = TRUE) +
+      evc::evc_theme() +
+      theme(
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        axis.text.y = ggtext::element_markdown()
+      ) +
+      guides(colour = "none")
+  })
+
+# pdf("plots/tests/boot_compare.pdf", width = 8, height = 8)
+pdf(
+  paste0("plots/tests/boot_compare_dqu_", dqu_clust, ".pdf"),
+  width = 8,
+  height = 8
+)
+boot_comp_plots
+dev.off()

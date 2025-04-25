@@ -106,7 +106,8 @@ fit_optim_clust <- \(
   cond_prob,
   trans_fun = NULL,
   start_vals = c(0.01, 0.01),
-  fixed_b = FALSE
+  fixed_b = FALSE,
+  ...
 ) {
   clusts <- unique(clust_mem)
 
@@ -121,16 +122,6 @@ fit_optim_clust <- \(
   }
 
   # refit model and return
-  # return(fit_ce(
-  #   data_mix_clust,
-  #   vars = paste0("col_", seq_len(n_vars)),
-  #   # TODO Functionalise these inputs, may want to vary kl_prob!
-  #   marg_prob = marg_prob,
-  #   cond_prob = cond_prob,
-  #   # f           = NULL, # fit models with ismev
-  #   fit_no_keef = TRUE,
-  #   output_all = FALSE
-  # ))
   return(lapply(seq_along(data_mix_clust), \(i) {
     if (is.list(start_vals)) {
       start_vals_spec <- start_vals[[i]]
@@ -146,7 +137,8 @@ fit_optim_clust <- \(
       # TODO Should I change this to what initial guess should be from theory??
       # start     = c(0.01, 0.01)
       start = start_vals_spec,
-      fixed_b = fixed_b
+      fixed_b = fixed_b,
+      ...
     )
   }))
 }
@@ -215,6 +207,7 @@ boot_ce_dep <- \(
   orig,
   transformed,
   marg_pars = c(loc = 0, scale = 1, shape = -0.05),
+  marg_val = NULL, # marginal threshold
   cond_prob = 0.9,
   marg_prob = 0.98, # marginal quantile to calculate expectation after boots
   R = 100,
@@ -224,6 +217,7 @@ boot_ce_dep <- \(
   # pull data
   arg_vals <- list("cond_prob" = cond_prob) # TODO Add any others here
   dependence <- dep # dependence parameters
+
   # calculate marginal threshold
   # TODO Will have to change for real data, as can't use qgpd
   marg_val <- do.call(evd::qgpd, c(list(marg_prob), marg_pars))
@@ -646,8 +640,8 @@ boot_ce <- \(fit, R = 100, trace = 10, ncores = 1) {
 
 # calculate local rand index
 # (from https://github.com/Xuanjie-Shao/NonStaExtDep/blob/main/Functions/Utils.R)
+# true partition P0, partition P1
 local_rand_index <- \(P0, P1) {
-  # for each partition P1, true partition P0
   if (length(P0) == length(P1)) {
     D <- length(P0)
   } else {
@@ -836,10 +830,12 @@ sim_cop_dat <- \(
       #   evc:::inv_laplace_trans(u)
       # }
       # use supplied quantile function; defaults to default parameters
-      if (is.null(qargs)) {
+      if (!is.null(qfun) && is.null(qargs)) {
         return(do.call(qfun, list(u)))
-      } else {
+      } else if (!is.null(qfun)) {
         return(do.call(qfun, c(list(u), qargs)))
+      } else {
+        return(u)
       }
     })
     return(gauss_cop)

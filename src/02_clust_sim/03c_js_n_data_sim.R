@@ -88,6 +88,7 @@ grid <- tidyr::crossing(
   )
 
 n_times <- 100
+# n_times <- 500
 results_vec <- vector(length = n_times)
 set.seed(seed_number)
 results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {

@@ -9,6 +9,7 @@
 # TODO Save all plots!
 # TODO Add useful functions to package
 
+
 #### Libs ####
 
 # TODO Need for all of these packages?
@@ -42,11 +43,14 @@ rm_cnty <- \(x) {
 
 #### Metadata ####
 
+# marginal target threshold (wind speed requires higher threshold)
+mqu <- c("rain" = 0.9, "wind_speed" = 0.98)
 # dqu <- 0.7 # dependence threshold
 dqu <- 0.9 # dependence threshold
 min_max_dates <- as_date(c("1990-01-01", "2020-12-31"))
 all_dates <- seq.Date(min_max_dates[1], min_max_dates[2], by = "day")
-fixed_xi <- FALSE # whether to fix shape parameter in GPD margins
+fixed_xi <- TRUE # whether to fix shape parameter in GPD margins
+seed_number <- 123
 
 ncores <- detectCores() - 1
 
@@ -62,15 +66,6 @@ data <- readr::read_csv(
 
 # load shapefile
 areas <- sf::read_sf("data/met_eireann/final/irl_shapefile.geojson")
-
-# remove problematic locations
-data <- data |>
-  filter(!name %in% c(
-    # remove Castlereagh (Down), outlier in QQ plot for wind speed GPD fit
-    "Castlereagh",
-    # remove sites where model fails to fit for Keef constraints
-    "Crolly (Filter Works)", "Kilcar (Cronasillagh)", "Wexford (Newtown W.w.)"
-  ))
 
 # pull just site names, counties and provinces
 county_key_df <- data |>
@@ -99,7 +94,6 @@ data_winter <- data %>%
 data_week <- data_winter %>%
   mutate(week = floor_date(date, "week")) %>%
   group_by(week, name, county, province, lon, lat) %>%
-  # group_by(week, name, county, province, lon, lat, alt) %>%
   summarise(
     rain       = sum(rain, na.rm = TRUE),
     wind_speed = mean(wind_speed, na.rm = TRUE),
@@ -111,38 +105,62 @@ data_week <- data_winter %>%
   filter(rain != 0)
 
 # investigate how many weeks might be missing for each location
-locs <- data_week |>
-  arrange(desc(province), county) |>
-  distinct(name) |>
-  pull()
-plots <- lapply(locs, \(x) {
-  data_week |>
-    filter(name == x) |>
-    pivot_longer(c(rain, wind_speed), names_to = "var") |>
-    ggplot(aes(x = date, y = value)) +
-    geom_point() +
-    facet_wrap(~var, scales = "free_y") +
-    # scale_x_date(date_breaks = "6 months", date_labels = "%Y-%m") +
-    scale_x_date(date_breaks = "1 year", date_labels = "%Y") +
-    ggtitle(paste(
-      x,
-      data_week$county[data_week$name == x][1],
-      data_week$province[data_week$name == x][1],
-      sep = " - "
-    )) +
-    theme +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1))
-})
+# locs <- data_week |>
+#   arrange(desc(province), county) |>
+#   distinct(name) |>
+#   pull()
+# plots <- lapply(locs, \(x) {
+#   data_week |>
+#     filter(name == x) |>
+#     pivot_longer(c(rain, wind_speed), names_to = "var") |>
+#     ggplot(aes(x = date, y = value)) +
+#     geom_point() +
+#     facet_wrap(~var, scales = "free_y") +
+#     # scale_x_date(date_breaks = "6 months", date_labels = "%Y-%m") +
+#     scale_x_date(date_breaks = "1 year", date_labels = "%Y") +
+#     ggtitle(paste(
+#       x,
+#       data_week$county[data_week$name == x][1],
+#       data_week$province[data_week$name == x][1],
+#       sep = " - "
+#     )) +
+#     theme +
+#     theme(axis.text.x = element_text(angle = 45, hjust = 1))
+# })
+#
+# # TODO Why are the years 2000 up to end of 2002 missing?!?!
+# # Investigate wind speed data for this! No download6.rc!!
+# pdf("plots/irl_explore_missing.pdf", width = 8, height = 8)
+# plots
+# dev.off()
+#
+# data_dates <- unique(data_week$date)
+# all_dates <- seq.Date(min(data_dates), max(data_dates), by = "week")
+# (missing_dates <- as_date(setdiff(all_dates, data_dates)))
 
-# TODO Why are the years 2000 up to end of 2002 missing?!?!
-# Investigate wind speed data for this! No download6.rc!!
-pdf("plots/irl_explore_missing.pdf", width = 8, height = 8)
-plots
-dev.off()
+#### Removing problematic locations/data ####
 
-data_dates <- unique(data_week$date)
-all_dates <- seq.Date(min(data_dates), max(data_dates), by = "week")
-(missing_dates <- as_date(setdiff(all_dates, data_dates)))
+# TODO Come back to this!
+# # remove problematic locations
+# data_week <- data_week |>
+# filter(!name %in% c(
+#   # remove Castlereagh (Down), outlier in QQ plot for wind speed GPD fit
+#   "Castlereagh",
+#   # remove sites where model fails to fit for Keef constraints
+#   "Crolly (Filter Works)", "Kilcar (Cronasillagh)", "Wexford (Newtown W.w.)"
+# ))
+
+data_week <- data_week |>
+  filter(
+    # no exceedances for these locations
+    !name %in% c(
+      "Cloone Lake (Caragh River Area)", "Glenvickee (Caragh River Area)"
+    ),
+    # 1470 obs here (~1/2 elsewhere), and we have another loc in Fermanagh
+    !name == "Marble Arch Caves",
+    # remove outlier in QQ plot for wind speed GPD fit
+    !(name == "Castlereagh" & date == "2002-01-27")
+  )
 
 
 #### Data exploration ####
@@ -183,6 +201,16 @@ p_wind_rain <- data_week %>%
     strip.text.x = element_blank(),
     legend.key = element_blank()
   )
+
+# plot map of locations
+data_week |>
+  distinct(name, province, lon, lat) |>
+  st_to_sf(coords = c("lon", "lat"), crs = st_crs(areas)) |>
+  ggplot() +
+  geom_sf(data = areas, fill = NA, colour = "black") +
+  geom_sf(aes(colour = province), size = 3, alpha = 0.7) +
+  theme +
+  theme(legend.position = "right")
 
 
 #### Chi exploration ####
@@ -248,7 +276,8 @@ chi_map_plot <- \(
   scales = seq(-0.1, 0.6, by = 0.1),
   point_ranges = c(2, 6)
 ) {
-  lab <- ifelse(var == "chi", expression(chi(u)), expression(bar(chi)(u)))
+  # lab <- ifelse(var == "chi", expression(chi(u)), expression(bar(chi)(u)))
+  lab <- ifelse(var == "chi", expression(chi(0.95)), expression(bar(chi)(0.95)))
   plot_data <- filter(chi_95_sf, var == !!var)
   if (var == "chi") {
     plot_data <- plot_data %>%
@@ -316,6 +345,7 @@ chi_p <- chi_map_plot(chi_95_sf, "chi") +
 (chi_plots <- chibar_p + chi_p)
 
 # ggsave("latex/plots/041_chi_plots.png", chi_plots, width = 6.3, height = 6, units = "in")
+ggsave("latex/plots/chi_map_ire.png", chi_p, width = 6, height = 6, units = "in")
 
 
 #### Thresholding ####
@@ -332,137 +362,138 @@ data_week |>
 
 # explore difference between thresholding via evgam and ald and qgam
 f_evgam <- list(excess ~ s(lon, lat), ~ s(lon, lat))
-if (fixed_xi) {
-  f_evgam[[2]] <- ~1
+if (fixed_xi == TRUE) {
+  f_evgam[[2]] <- ~1 # model xi with intercept (i.e. fixed value) only
 }
 shared_args <- list(
   data = data_week,
   vars = c("rain", "wind_speed"),
   # arguments to `quantile_thresh`
+  # marg_prob = c(0.9, 0.95),
   marg_prob = list(
     f = list("response ~ s(lon, lat)", "~ s(lon, lat)"),
-    # tau = 0.9
-    tau = 0.95
+    tau = mqu
   ),
   # formula for evgam fit to excesses over threshold
   f = f_evgam,
-  ncores = max(1, parallel::detectCores() - 2),
+  # f = NULL,
+  ncores = ncores,
   marg_only = TRUE
 )
-mod_fit_ald <- do.call(
-  fit_ce, c(shared_args, list(thresh_fun = evgam_ald_thresh))
-)
+# mod_fit_ald <- do.call(
+#   fit_ce, c(shared_args, list(thresh_fun = evgam_ald_thresh))
+# )
 mod_fit_qgam <- do.call(
   fit_ce, c(shared_args, list(thresh_fun = qgam_thresh))
 )
 
 # plot thresholds; decide which seems more reasonable
 
-# first, pull thresholded data together
-prep_thresh_data <- \(data_rain, data_ws) {
-  data_rain %>%
-    distinct(name, lon, lat, thresh_rain = thresh) %>%
-    left_join(
-      data_ws %>%
-        distinct(name, lon, lat, thresh_ws = thresh)
-    ) %>%
-    pivot_longer(contains("thresh"), names_to = "var")
-}
-data_thresh_ald <- st_to_sf(prep_thresh_data(
-  mod_fit_ald$data_thresh$rain, mod_fit_ald$data_thresh$wind_speed
-))
-data_thresh_qgam <- st_to_sf(prep_thresh_data(
-  mod_fit_qgam$data_thresh$rain, mod_fit_qgam$data_thresh$wind_speed
-))
-
-# plot barplots of difference in exceedances
-data_thresh_ald |>
-  rename(thresh_ald = value) |>
-  left_join(
-    data_thresh_qgam |>
-      rename(thresh_qgam = value) |>
-      st_drop_geometry()
-  ) |>
-  left_join(data_week |> distinct(name, province) |> st_drop_geometry()) |>
-  # order plot by province
-  arrange(province) |>
-  mutate(name = factor(name, levels = unique(name))) |>
-  ggplot(aes(x = name, y = thresh_ald - thresh_qgam, fill = province)) +
-  geom_bar(stat = "identity") +
-  facet_wrap(~var, scales = "free_y") +
-  theme +
-  # theme(axis.text.x = element_text(angle = 45, hjust = 1))
-  # remove x-axis labels, too bunched
-  theme(axis.text.x = element_blank())
-# qgam threshold consistently higher than ald threshold, but not by much
-
-
-# Plot thresholds on map for both
-
-# function for plotting
-plot_thresh <- \(x, areas, scales = NULL) {
-  ggplot(areas) +
-    geom_sf(colour = "black", fill = NA) +
-    geom_sf(
-      data = x,
-      # aes(fill = n, size = n),
-      aes(fill = value, size = value),
-      # size = 6,
-      stroke = 1,
-      pch = 21
-    ) +
-    scale_x_continuous(expand = c(0, 0)) +
-    scale_y_continuous(expand = c(0, 0)) +
-    # scale_fill_gradientn(
-    #   colours = RColorBrewer::brewer.pal(name = "Blues", n = 7),
-    #   breaks = scales,
-    #   labels = as.character(scales),
-    #   guide = "legend"
-    # ) +
-    viridis::scale_fill_viridis(
-      option = "A",
-      breaks = scales,
-      labels = as.character(scales),
-      guide = "legend"
-    ) +
-    scale_size_continuous(
-      range = c(3, 8),
-      breaks = scales,
-      labels = as.character(scales),
-      guide = "legend"
-    ) +
-    labs(fill = "", size = "") +
-    guides(fill = guide_legend(), size = guide_legend()) +
-    theme +
-    theme(
-      legend.position = "right",
-      axis.text = element_blank(),
-      axis.ticks = element_blank(),
-      legend.key = element_blank()
-    )
-}
-
-join_plot_thresh <- \(data_thresh, title) {
-  p_thresh_rain <- plot_thresh(
-    filter(data_thresh, var == "thresh_rain"), areas, seq(50, 150, by = 25)
-  ) +
-    labs(fill = "u for precipitation", size = "u for precipitation")
-
-  p_thresh_ws <- plot_thresh(
-    filter(data_thresh, var == "thresh_ws"), areas, seq(8, 11, by = 0.5)
-  ) +
-    labs(fill = "u for wind speed", size = "u for wind speed")
-
-  p_thresh_rain + p_thresh_ws +
-    patchwork::plot_annotation(
-      title = title,
-      theme = theme(plot.title = element_text(hjust = 0.5))
-    )
-}
-
-join_plot_thresh(data_thresh_ald, "ALD")
-join_plot_thresh(data_thresh_qgam, "qgam")
-# ggsave("latex/plots/031_thresh_plots.png", p_thresh, width = 6.3, height = 6, units = "in")
+# # first, pull thresholded data together
+# prep_thresh_data <- \(data_rain, data_ws) {
+#   data_rain %>%
+#     distinct(name, lon, lat, thresh_rain = thresh) %>%
+#     left_join(
+#       data_ws %>%
+#         distinct(name, lon, lat, thresh_ws = thresh)
+#     ) %>%
+#     pivot_longer(contains("thresh"), names_to = "var")
+# }
+# data_thresh_ald <- st_to_sf(prep_thresh_data(
+#   mod_fit_ald$data_thresh$rain, mod_fit_ald$data_thresh$wind_speed
+# ))
+# data_thresh_qgam <- st_to_sf(prep_thresh_data(
+#   mod_fit_qgam$data_thresh$rain, mod_fit_qgam$data_thresh$wind_speed
+# ))
+#
+# # plot barplots of difference in exceedances
+# data_thresh_ald |>
+#   rename(thresh_ald = value) |>
+#   left_join(
+#     data_thresh_qgam |>
+#       rename(thresh_qgam = value) |>
+#       st_drop_geometry()
+#   ) |>
+#   left_join(data_week |> distinct(name, province) |> st_drop_geometry()) |>
+#   # order plot by province
+#   arrange(province) |>
+#   mutate(name = factor(name, levels = unique(name))) |>
+#   ggplot(aes(x = name, y = thresh_ald - thresh_qgam, fill = province)) +
+#   geom_bar(stat = "identity") +
+#   facet_wrap(~var, scales = "free_y") +
+#   theme +
+#   # theme(axis.text.x = element_text(angle = 45, hjust = 1))
+#   # remove x-axis labels, too bunched
+#   theme(axis.text.x = element_blank())
+# # qgam threshold consistently higher than ald threshold, but not by much
+#
+#
+# # Plot thresholds on map for both
+#
+# # function for plotting
+# plot_thresh <- \(x, areas, scales = NULL) {
+#   ggplot(areas) +
+#     geom_sf(colour = "black", fill = NA) +
+#     geom_sf(
+#       data = x,
+#       # aes(fill = n, size = n),
+#       aes(fill = value, size = value),
+#       # size = 6,
+#       stroke = 1,
+#       pch = 21
+#     ) +
+#     scale_x_continuous(expand = c(0, 0)) +
+#     scale_y_continuous(expand = c(0, 0)) +
+#     # scale_fill_gradientn(
+#     #   colours = RColorBrewer::brewer.pal(name = "Blues", n = 7),
+#     #   breaks = scales,
+#     #   labels = as.character(scales),
+#     #   guide = "legend"
+#     # ) +
+#     viridis::scale_fill_viridis(
+#       option = "A",
+#       breaks = scales,
+#       labels = as.character(scales),
+#       guide = "legend"
+#     ) +
+#     scale_size_continuous(
+#       range = c(3, 8),
+#       breaks = scales,
+#       labels = as.character(scales),
+#       guide = "legend"
+#     ) +
+#     labs(fill = "", size = "") +
+#     guides(fill = guide_legend(), size = guide_legend()) +
+#     theme +
+#     theme(
+#       legend.position = "right",
+#       axis.text = element_blank(),
+#       axis.ticks = element_blank(),
+#       legend.key = element_blank()
+#     )
+# }
+#
+# join_plot_thresh <- \(data_thresh, title) {
+#   p_thresh_rain <- plot_thresh(
+#     filter(data_thresh, var == "thresh_rain"), areas, seq(50, 150, by = 25)
+#   ) +
+#     labs(fill = "u for precipitation", size = "u for precipitation")
+#
+#   p_thresh_ws <- plot_thresh(
+#     filter(data_thresh, var == "thresh_ws"), areas, seq(8, 11, by = 0.5)
+#   ) +
+#     labs(fill = "u for wind speed", size = "u for wind speed")
+#
+#   p_thresh_rain + p_thresh_ws +
+#     patchwork::plot_annotation(
+#       title = title,
+#       theme = theme(plot.title = element_text(hjust = 0.5))
+#     )
+# }
+#
+# join_plot_thresh(data_thresh_ald, "ALD")
+# join_plot_thresh(data_thresh_qgam, "qgam")
+# # ggsave("latex/plots/031_thresh_plots.png", p_thresh, width = 6.3, height = 6, units = "in")
 
 # plot exceedances for each
 plot_exceedances <- \(mod_fit) {
@@ -495,7 +526,7 @@ plot_exceedances <- \(mod_fit) {
     theme(legend.position = "right")
 }
 
-plot_exceedances(mod_fit_ald)
+# plot_exceedances(mod_fit_ald)
 plot_exceedances(mod_fit_qgam)
 
 # conclusion: Go with qgam
@@ -512,12 +543,17 @@ data_ws_map <- data_ws %>%
   left_join(mod_fit$evgam_fit$wind_speed$predictions) %>%
   st_to_sf(remove = FALSE) # add location
 
+
 #### Marginal Checking ####
 
 # Probability and Quantile-Quantile plots for checking model fit
 # code by Kristina Bratkova!
 # TODO Add to package, useful function!
-pp_qq_plot <- function(data_map, xlab = "Empirical", debug_q = FALSE) {
+pp_qq_plot <- function(
+    data_map,
+    xlab = "Empirical",
+    keep_cols = c("name", "date", "county") # columns to keep from orig dataa
+    ) {
   n <- nrow(data_map)
   # empirical probabilities and quantiles
   probs <- seq_len(n) / (n + 1)
@@ -541,44 +577,55 @@ pp_qq_plot <- function(data_map, xlab = "Empirical", debug_q = FALSE) {
   Uup <- sapply(seq_len(n), function(i) qbeta(0.975, i, n + 1 - i))
 
   # dataframes for plotting
-  prob_plot_df <- data.frame(
-    name  = data_map$name[ord_p],
-    x     = probs,
-    y     = model_probs,
-    lower = Ulow,
-    upper = Uup
-  )
-  qq_plot_df <- data.frame(
-    name  = data_map$name[ord],
-    x     = quantiles,
-    y     = model_quantiles,
-    lower = -log(1 - Ulow),
-    upper = -log(1 - Uup)
-  )
+  # prob_plot_df <- data.frame(
+  #   name  = data_map$name[ord_p],
+  #   x     = probs,
+  #   y     = model_probs,
+  #   lower = Ulow,
+  #   upper = Uup
+  # )
+  keep_cols <- keep_cols[keep_cols %in% names(data_map)]
+  prob_plot_df <- data_map[ord_p, keep_cols] %>%
+    mutate(
+      x = probs,
+      y = model_probs,
+      # lower = -log(1 - Ulow),
+      lower = Ulow,
+      # upper = -log(1 - Uup)
+      upper = Uup
+    )
+
+  # qq_plot_df <- data.frame(
+  #   name  = data_map$name[ord_q],
+  #   x     = quantiles,
+  #   y     = model_quantiles,
+  #   lower = -log(1 - Ulow),
+  #   upper = -log(1 - Uup)
+  # )
+  qq_plot_df <- data_map[ord_q, keep_cols] %>%
+    mutate(
+      x = quantiles,
+      y = model_quantiles,
+      lower = -log(1 - Ulow),
+      upper = -log(1 - Uup)
+    )
 
   # Probability Plot with confidence intervals
   pp <- ggplot(prob_plot_df, aes(x = x, y = y)) +
     geom_abline(intercept = 0, slope = 1, colour = "#C11432", size = 1.5) +
     geom_point() +
+    scale_x_continuous(limits = c(0, 1), expand = c(0, 0)) +
+    scale_y_continuous(limits = c(0, 1), expand = c(0, 0)) +
     geom_line(aes(y = upper), linetype = "dashed", colour = "#C11432") +
     geom_line(aes(y = lower), linetype = "dashed", colour = "#C11432") +
     geom_ribbon(aes(ymin = lower, ymax = upper), fill = "#C11432", alpha = 0.2) +
     theme_minimal() +
-    scale_x_continuous(limits = c(0, 1), expand = c(0, 0)) +
-    scale_y_continuous(limits = c(0, 1), expand = c(0, 0)) +
     labs(x = xlab, y = "Model")
 
   # QQ Plot with confidence intervals
 
   max_x <- max(qq_plot_df$x)
   max_y <- max(c(qq_plot_df$y, qq_plot_df$upper))
-
-  # TEMP: return names of locations with Empirical > 6
-  if (debug_q == TRUE) {
-    qq_plot_df |>
-      filter(x > 6) |>
-      pull(name)
-  }
 
   qq_p <- ggplot(qq_plot_df, aes(x = x, y = y)) +
     geom_segment(
@@ -605,11 +652,12 @@ pp_qq_plot <- function(data_map, xlab = "Empirical", debug_q = FALSE) {
 }
 
 # plot for wind speed and rain
-pp_qq_rain <- (
-  pp_qq_plot(data_rain_map) |>
+set.seed(seed_number)
+(pp_qq_rain <- (
+  pp_qq_plot(data_rain_map, keep_cols = "name") |>
     wrap_plots()
 ) +
-  patchwork::plot_annotation(title = "Rain", theme = theme)
+  patchwork::plot_annotation(title = "Rain", theme = theme))
 
 # TODO Label points with weird values! Look at these locations individually
 pp_qq_ws <- (
@@ -618,23 +666,91 @@ pp_qq_ws <- (
 ) +
   patchwork::plot_annotation(title = "Wind Speed", theme = theme)
 
+pp_qq_rain / pp_qq_ws +
+  plot_annotation(
+    title = paste0(
+      "PP/QQ plots, marg_probs = ",
+      mqu[1], ", ", mqu[2],
+      ", fixed_xi = ", fixed_xi
+    ),
+    theme = theme(plot.title = element_text(hjust = 0.5))
+  )
+
 plot_lab <- ifelse(fixed_xi, "fixed_xi", "vary_xi")
 ggsave(
-  paste0("plots/ire/pp_qq_rain_", plot_lab, ".png"),
+  paste0("plots/02_ire/pp_qq_rain_", plot_lab, ".png"),
   pp_qq_rain,
   width = 6.3,
   height = 6,
   units = "in"
 )
 ggsave(
-  paste0("plots/ire/pp_qq_ws_", plot_lab, ".png"),
+  paste0("plots/02_ire/pp_qq_ws_", plot_lab, ".png"),
   pp_qq_ws,
   width = 6.3,
   height = 6,
   units = "in"
 )
-# conclusion: allowing shape parameter to vary seems to lead to better fit!
+# conclusion: allowing shape parameter to vary seems to lead to better fit! (??)
 
+#### PP/QQ plots for all locations ####
+
+# plots for all locations (in paper would need to sample randomly)
+# spec_pp_qq_plots <- lapply(names(mod_fit$original), \(x) {
+county_df <- county_key_df |>
+  filter(name %in% names(mod_fit$original))
+spec_pp_qq_plots <- lapply(seq_len(nrow(county_df)), \(i) {
+  pp_qq_rain <- (
+    pp_qq_plot(filter(data_rain_map, name == county_df$name[i])) |>
+      wrap_plots()
+  ) +
+    patchwork::plot_annotation(title = "Rain", theme = theme)
+
+  pp_qq_ws <- (
+    pp_qq_plot(filter(data_ws_map, name == county_df$name[i])) |>
+      wrap_plots()
+  ) +
+    patchwork::plot_annotation(title = "Wind Speed", theme = theme)
+
+  pp_qq_rain / pp_qq_ws +
+    plot_annotation(
+      title = paste0(county_df$name[i], " - ", county_df$county[i]),
+      theme = theme(plot.title = element_text(hjust = 0.5))
+    )
+})
+names(spec_pp_qq_plots) <- county_df$name
+
+# particularly bad QQ plot, for one point only!!
+spec_pp_qq_plots$`Dublin (Ringsend)`
+
+# investigate locations with < 10 exceedances (dependence model prob won't work)
+mod_fit$data_thresh$wind_speed |>
+  count(name) |>
+  arrange(n)
+
+locs_low_exceed <- unique(as.vector(unlist(sapply(mod_fit$data_thresh, \(x) {
+  x |>
+    mutate(name = paste0(name, " --- ", county)) |>
+    count(name) |>
+    arrange(n) |>
+    filter(n < 10) |>
+    pull(name)
+}))))
+
+print(paste0(
+  "Locations with < 10 exceedances (",
+  length(locs_low_exceed), "): ",
+  paste0(locs_low_exceed, collapse = ", ")
+))
+
+# save
+pdf(
+  "plots/02_ire/pp_qq_all_locs_98.pdf",
+  width = 8,
+  height = 8
+)
+spec_pp_qq_plots
+dev.off()
 
 
 #### Marginal plotting ####
@@ -700,20 +816,23 @@ lab_scale_rain <- "scale"
 p_scale_rain <- plot_param(data_rain_map, areas, seq(10, 45, by = 5)) +
   labs(fill = lab_scale_rain, size = lab_scale_rain)
 
-lab_shape_rain <- "shape"
-p_shape_rain <- plot_param(
-  data_rain_map, areas, round(seq(-0.15, 0.15, by = 0.05), 2), "shape"
-) +
-  labs(fill = lab_shape_rain, size = lab_shape_rain)
+ggsave(
+  "plots/02_ire/scale_rain_ire.png", p_scale_rain,
+  width = 6.3, height = 6, units = "in"
+)
 
-ggsave(
-  "plots/ire/scale_rain_ire.png", p_scale_rain,
-  width = 6.3, height = 6, units = "in"
-)
-ggsave(
-  "plots/ire/shape_rain_ire.png", p_shape_rain,
-  width = 6.3, height = 6, units = "in"
-)
+if (fixed_xi == FALSE) {
+  lab_shape_rain <- "shape"
+  p_shape_rain <- plot_param(
+    data_rain_map, areas, round(seq(-0.15, 0.15, by = 0.05), 2), "shape"
+  ) +
+    labs(fill = lab_shape_rain, size = lab_shape_rain)
+
+  ggsave(
+    "plots/02_ire/shape_rain_ire.png", p_shape_rain,
+    width = 6.3, height = 6, units = "in"
+  )
+}
 
 # for wind speed
 lab_scale_ws <- "scale"
@@ -721,26 +840,29 @@ p_scale_ws <- plot_param(data_ws_map, areas, seq(0.5, 0.8, by = 0.05)) +
   labs(fill = lab_scale_ws, size = lab_scale_ws) +
   NULL
 
-lab_shape_ws <- "shape"
-p_shape_ws <- plot_param(data_ws_map, areas, seq(-0.3, -0.1, by = 0.05), "shape") +
-  labs(fill = lab_shape_ws, size = lab_shape_ws) +
-  scale_fill_gradient2(
-    low = "red3",
-    high = "blue3",
-    na.value = "grey",
-    breaks = seq(-0.3, -0.1, by = 0.05),
-    labels = as.character(seq(-0.3, -0.1, by = 0.05)),
-    guide = "legend"
-  )
+ggsave(
+  "plots/02_ire/scale_ws_ire.png", p_scale_ws,
+  width = 6.3, height = 6, units = "in"
+)
 
-ggsave(
-  "plots/ire/scale_ws_ire.png", p_scale_ws,
-  width = 6.3, height = 6, units = "in"
-)
-ggsave(
-  "plots/ire/shape_ws_ire.png", p_shape_ws,
-  width = 6.3, height = 6, units = "in"
-)
+if (fixed_xi == FALSE) {
+  lab_shape_ws <- "shape"
+  p_shape_ws <- plot_param(data_ws_map, areas, seq(-0.3, -0.1, by = 0.05), "shape") +
+    labs(fill = lab_shape_ws, size = lab_shape_ws) +
+    scale_fill_gradient2(
+      low = "red3",
+      high = "blue3",
+      na.value = "grey",
+      breaks = seq(-0.3, -0.1, by = 0.05),
+      labels = as.character(seq(-0.3, -0.1, by = 0.05)),
+      guide = "legend"
+    )
+
+  ggsave(
+    "plots/02_ire/shape_ws_ire.png", p_shape_ws,
+    width = 6.3, height = 6, units = "in"
+  )
+}
 
 # Plot endpoints where shape parameter is negative
 plot_endpoint <- \(data_map, scales, range) {
@@ -756,17 +878,24 @@ plot_endpoint <- \(data_map, scales, range) {
     labs(fill = "endpoint (m/s)", size = "endpoint (m/s)")
 }
 
-p_end_rain <- plot_endpoint(data_rain_map, c(500, 1000, 2000, 7000), c(1.5, 10))
-p_end_ws <- plot_endpoint(data_ws_map, seq(10, 25, by = 1), c(1.5, 10))
+if (fixed_xi == FALSE) {
+  p_end_rain <- plot_endpoint(
+    data_rain_map, c(500, 1000, 2000, 7000), c(1.5, 10)
+  )
+  p_end_ws <- plot_endpoint(
+    data_ws_map, seq(10, 25, by = 1), c(1.5, 10)
+  )
 
-ggsave(
-  "plots/ire/endpoint_rain.png", p_end_rain,
-  width = 6.3, height = 6, units = "in"
-)
-ggsave(
-  "plots/ire/endpoint_ws.png", p_end_ws,
-  width = 6.3, height = 6, units = "in"
-)
+  ggsave(
+    "plots/02_ire/endpoint_rain.png", p_end_rain,
+    width = 6.3, height = 6, units = "in"
+  )
+  ggsave(
+    "plots/02_ire/endpoint_ws.png", p_end_ws,
+    width = 6.3, height = 6, units = "in"
+  )
+}
+
 
 #### Dependence Modelling ####
 
@@ -776,20 +905,29 @@ dep_args$data <- mod_fit
 dep_args$marg_only <- FALSE
 dep_args$ncores <- 1 # for debugging
 
+# TEMP: fit with just Crolly Works
+# loc <- "Crolly (Filter Works)"
+# dep_args$data$marginal <- dep_args$data$marginal[loc]
+# dep_args$data$original <- dep_args$data$original[loc]
+# dep_args$data$data_thresh <- lapply(dep_args$data$data_thresh, \(x) {
+#   filter(x, name == loc)
+# })
+
 dep_fit <- do.call(
   fit_ce,
   c(dep_args, list(
-    cond_prob   = 0.9,
+    # cond_prob   = 0.85,
+    # cond_prob = 0.9, # TODO Try larger for one or both variables
+    cond_prob = 0.95,
     fit_no_keef = TRUE,
     # fit_no_keef = FALSE, # causes a lot of models to fail!
-    output_all  = TRUE
+    output_all = TRUE
   ))
 )
-# fails for Crolly (Filter Works), Kilcar (Cronasillagh) (both Donegal) &
-# Wexford (Newtown W.w.)
 
 # TODO Find and remove failed model fits
 fail_locs <- sapply(dep_fit$dependence, \(x) any(is.na(unlist(x))))
+fail_locs[fail_locs == TRUE]
 
 # save
 saveRDS(dep_fit, "data/ire_dep_fit.rds")
@@ -798,7 +936,7 @@ dep_fit <- readRDS("data/ire_dep_fit.rds")
 
 #### Check residuals ####
 
-# TODO Extend to work with > 2 variables
+# TODO Add to package
 plot_resid <- \(spec_resid, spec_trans) {
   vars <- names(spec_resid)
   # TODO do for one var, then loop
@@ -848,7 +986,7 @@ resid_plots <- lapply(seq_along(residuals), \(i) {
 })
 names(resid_plots) <- names_df$name
 
-# pdf("plots/ire/residuals.pdf", width = 8, height = 8)
+# pdf("plots/02_ire/residuals.pdf", width = 8, height = 8)
 # resid_plots
 # dev.off()
 
@@ -1029,26 +1167,48 @@ plot_ce_quantiles <- \(
 
 quantile_plots <- lapply(names(dep_fit$residual), \(x) {
   print(x)
-  list(
-    "rain"       = plot_ce_quantiles(dep_fit, x, "rain"),
-    "wind_speed" = plot_ce_quantiles(dep_fit, x, "wind_speed")
+  tryCatch(
+    {
+      list(
+        "rain"       = plot_ce_quantiles(dep_fit, x, "rain"),
+        "wind_speed" = plot_ce_quantiles(dep_fit, x, "wind_speed")
+      )
+    },
+    error = function(e) {
+      message("Error in plotting quantiles for ", x, ": ", e$message)
+      return(NA)
+    }
   )
 })
 
 # join resid and quantile plots
 diagnostic_plots <- lapply(seq_along(resid_plots), \(i) {
-  wrap_plots(resid_plots[[i]]) /
-    (quantile_plots[[i]]$rain + quantile_plots[[i]]$wind_speed) +
-    # ggtitle(paste(names_df$name[i], names_df$county[i], sep = " - "))
-    patchwork::plot_annotation(
-      title = paste(names_df$name[i], names_df$county[i], sep = " - "),
-      theme = theme
-    )
+  # print(i)
+  tryCatch(
+    {
+      wrap_plots(resid_plots[[i]]) /
+        (quantile_plots[[i]]$rain + quantile_plots[[i]]$wind_speed) +
+        # ggtitle(paste(names_df$name[i], names_df$county[i], sep = " - "))
+        patchwork::plot_annotation(
+          title = paste(names_df$name[i], names_df$county[i], sep = " - "),
+          theme = theme
+        )
+    },
+    error = function(e) {
+      wrap_plots(
+        resid_plots[[i]][sapply(resid_plots[[i]], \(x) all(!is.na(x)))]
+      ) +
+        patchwork::plot_annotation(
+          title = paste(names_df$name[i], names_df$county[i], sep = " - "),
+          theme = theme
+        )
+    }
+  )
 })
 names(diagnostic_plots) <- names_df$name
 
 # save
-pdf("plots/ire/dep_diagnostic_plots.pdf", width = 8, height = 8)
+pdf("plots/02_ire/dep_diagnostic_plots.pdf", width = 8, height = 8)
 diagnostic_plots
 dev.off()
 

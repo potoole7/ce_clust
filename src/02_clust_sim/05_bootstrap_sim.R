@@ -62,6 +62,72 @@ data_mix <- sim_cop_dat(
   qargs = c("loc" = 0, "scale" = scale_gpd, "shape" = shape_gpd)
 )$data_mix
 
+# fit CE model to save plots of data pre and post-transformation
+ce <- fit_ce(
+  data_mix,
+  marg_prob = 0.95,
+  cond_prob = cond_prob,
+  fit_no_keef = TRUE,
+  ncores = n_cores,
+  output_all = TRUE
+)
+
+par(mfrow = c(1, 2))
+with(ce$original[[4]], plot(rain, wind_speed, xlab = "", ylab = ""))
+plot(ce$transformed[[1]], xlab = "", ylab = "")
+par(mfrow = c(1, 1))
+
+plt_orig <- ce$original[[4]] |>
+  select(-name) |>
+  mutate(
+    ind = "Original",
+    col_var = case_when(
+      wind_speed == max(wind_speed) ~ 1, # case with weak dependence
+      wind_speed > 5 & rain > 6 ~ 2, # case with strong dependence
+      # case with strong negative dependence
+      TRUE ~ 4
+    ),
+    row_n = row_number()
+  ) |>
+  mutate(col_var = ifelse(
+    row_n == which(ce$transformed[[4]][, 1] < -6 & ce$transformed[[4]][, 1] < -5),
+    3,
+    col_var
+  )) |>
+  pivot_longer(rain:wind_speed)
+
+plt_df <- bind_rows(
+  plt_orig,
+  data.frame(
+    "rain"       = ce$transformed[[4]][, 1],
+    "wind_speed" = ce$transformed[[4]][, 2],
+    "ind"        = "Laplace",
+    "row_n"      = seq_len(nrow(ce$transformed[[4]]))
+  ) |>
+    pivot_longer(rain:wind_speed) |>
+    mutate(col_var = plt_orig$col_var)
+) |>
+  pivot_wider(names_from = name, values_from = value) |>
+  mutate(ind = factor(ind, levels = c("Original", "Laplace")))
+
+p <- plt_df |>
+  ggplot(aes(x = rain, y = wind_speed)) +
+  # geom_point(aes(colour = factor(col_var), size = factor(col_var)), alpha = 0.7) +
+  geom_point() +
+  geom_point(
+    data = plt_df[plt_df$col_var != 4, ],
+    aes(colour = factor(col_var)),
+    size = 5
+  ) +
+  facet_wrap(~ind, scales = "free") +
+  evc_theme() +
+  labs(x = "", y = "") +
+  scale_colour_manual(values = ggsci::pal_nejm()(3)) +
+  guides(colour = "none") +
+  NULL
+
+ggsave("latex/plots/transform.png", p, width = 8, height = 6)
+
 # Function to transform data, fit CE and perform bootstrapping
 fit_boot <- \(data_mix, ncores = 1, ret_ce = FALSE) {
   # transform to Laplace margins

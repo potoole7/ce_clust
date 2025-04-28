@@ -183,9 +183,16 @@ find_k <- \(ce_fit, data_mix, max_clust, fixed_b = FALSE) {
 cond_prob <- 0.9 # conditional probability
 # n_clust <- 2 # number of clusters
 n_clust <- 3
-cor_gauss <- seq(0.3, 0.9, length.out = n_clust) # correlation for clusters)
+cor_gauss <- c(0.3, 0.6, 0.9)
 cluster_mem <- rep(1:n_clust, each = n_locs / n_clust) # cluster membership
 fixed_b <- FALSE
+
+# pull cors and first cluster mem location
+gauss_cor_df <- data.frame(
+  "cor" = cor_gauss,
+  "loc" = sapply(c(1, 2, 3), \(x) first(which(cluster_mem == x))),
+  "id" = seq_along(cor_gauss)
+)
 
 # calculate theoretical alpha and beta values
 start_vals <- lapply(cor_gauss, \(x) c(sign(x) * x^2, 1 / 2))
@@ -210,29 +217,64 @@ data_mix_gauss <- data_mix
 trans_fun <- \(x) laplace_trans(pnorm(x))
 data_mix <- lapply(data_mix, trans_fun)
 
-# cluster with minimum and max rho
+# cluster with minimum and max rho/correlation parameter
 min_max_rho <- c(
   which(cluster_mem == min(cluster_mem))[1],
   which(cluster_mem == max(cluster_mem))[1]
 )
 
-# plot for locs in clusters 1 & 2, to show difference in sample correlations
-# gaussian
-plot(data_mix_gauss[[min_max_rho[1]]], xlab = "", ylab = "")
-points(data_mix_gauss[[min_max_rho[[2]]]], col = "blue")
-# laplace
-plot(data_mix[[min_max_rho[1]]], xlab = "", ylab = "")
-points(data_mix[[min_max_rho[2]]], col = "blue")
+#### Exploratory plots ####
+
+# function to convert list of matrices to df
+mat_to_df <- \(mat_lst) {
+  lapply(mat_lst, \(mat) {
+    data.frame("x" = mat[, 1], "y" = mat[, 2])
+  })
+}
+
+p <- bind_rows(
+  bind_rows(mat_to_df(data_mix_gauss[gauss_cor_df$loc]), .id = "id") |>
+    mutate(trans = "Gaussian"),
+  bind_rows(mat_to_df(data_mix[gauss_cor_df$loc]), .id = "id") |>
+    mutate(trans = "Laplace")
+) |>
+  # thin out points slightly
+  # group_by(id, trans) |>
+  # slice(1:800) |>
+  # ungroup() |>
+  # actually take only Gaussian data?
+  filter(trans == "Gaussian") |>
+  # join in correlations for different IDs
+  mutate(id = as.numeric(id)) |>
+  left_join(gauss_cor_df) |>
+  ggplot(aes(x = x, y = y, colour = factor(cor))) +
+  geom_point(alpha = 0.7) +
+  # geom_density_2d() +
+  # facet_wrap(~trans, scales = "free") +
+  facet_wrap(~cor, scales = "fixed") +
+  # facet_grid(trans ~ cor, scales = "free_y") +
+  labs(x = "", y = "") +
+  scale_x_continuous(
+    sec.axis = sec_axis(
+      ~.,
+      name = expression(rho[Gauss]),
+      breaks = NULL,
+      labels = NULL
+    )
+  ) +
+  evc_theme() +
+  guides(colour = "none") +
+  ggsci::scale_colour_nejm()
+
+ggsave("latex/plots/gauss_sim_ex.png", p, width = 8, height = 8)
+
 
 # look at chi and chibar for both
 do.call(`+`, ggplot(texmex::chi(data_mix[[min_max_rho[1]]]), plot. = FALSE)) /
   do.call(`+`, ggplot(texmex::chi(data_mix[[min_max_rho[2]]]), plot. = FALSE))
 
 
-# look at the correlation between variables in the extreme right tails
-sapply(data_mix[c(min_max_rho)], \(x) {
-  cor(x[x[, 1] > quantile(x[, 1], cond_prob) & x[, 2] > quantile(x[, 2], cond_prob), ])[[2]]
-})
+#### Fit CE, cluster and refit ####
 
 # fit CE to each location
 ce_fit <- lapply(seq_along(data_mix), \(i) {

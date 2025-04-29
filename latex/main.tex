@@ -103,7 +103,7 @@
 \todo{Where to describe Vignotto method? in introduction?}
 \todo{Will have to mention that other paper that does bivaraite clustering as well in background, right?}
 
-\section{Motivating example: Irish Meterological Data}
+\section{Motivating example: Irish Meterological Data} \label{sec:ire}
 
 \todo{Move to below methods? Then we can use chi plot instead for sites!}
 
@@ -203,7 +203,7 @@ A framework which provides a more flexible approach to modelling extremal depend
 % its tails are known to converge faster to a non-degenerate distribution as we
 % increase v"
 
-\subsection{Divergence metric}
+\subsection{Divergence metric} \label{subsec:div}
 
 \todo{Need some references for use of this metric! In intro}
 
@@ -295,9 +295,10 @@ A framework which provides a more flexible approach to modelling extremal depend
 
 % PAM (K-means not suitable as clusters cannot be assumed to be spherical)
 \begin{itemize}
+    \item $\ldots$
 \end{itemize}
 
-\subsubsection{Choice of k}
+\subsubsection{Choice of k} \label{subsubsec:choose_k}
 
 % Describe methods for choosing k (AIC, TWGSS) (silhouette not suitable)
 
@@ -430,7 +431,7 @@ Our Gaussian copula simulation design for a single ``location'', nomenclature ch
 % \end{itemize}
 
 \begin{itemize}
-  \item We also design a more realistic example to somewhat mimic the structure of the Irish dataset introduced in \ref{subsec:mot_irl}.
+  \item We also design a more realistic example to somewhat mimic the structure of the Irish dataset introduced in \ref{sec:ire}.
   \item We generated data from 60 locations, each with 1000 observations of two variables, using a mixture of Gaussian and t-copulas with GPD margins.
   \item The 60 locations had three known clusters, with 10, 20, and 30 locations in each cluster, respectively.
   \item A constant $\rho_{\text{Gauss}}$ of 0.5 was used for all locations and simulations, to reduce the dimensionality of the grid search.
@@ -497,7 +498,7 @@ Our Gaussian copula simulation design for a single ``location'', nomenclature ch
 % chi + chi-bar plots as quick exploratory analysis
 \begin{itemize}
   \item As a brief exploration of the dependence profile in our data, we looked at the $\chi$ and $\bar{\chi}$ statistics introduced in section \ref{subsec:asym_dep}.
-  \item Specifically, we estimated $\chi$ and $\chibar$ at the 95th quantile for each of our 59 sites, to determine the extent of asymptotic dependence between our variables, and whether any spatial patterns in this dependence emerge. 
+  \item Specifically, we estimated $\chi$ and $\bar{\chi}$ at the 95th quantile for each of our 59 sites, to determine the extent of asymptotic dependence between our variables, and whether any spatial patterns in this dependence emerge. 
   \item These values are shown in figure \ref{fig:chi}.
   \item We can see that $\chi$ and $\bar{\chi}$ are positive for almost all sites, indicating positive asymptotic dependence of varying degree between rain and wind speed.
   \item A clear spatial pattern emerges, whereby extremal dependence is progressively stronger for locations further south and west, being highest along the west coast of Ireland, in counties such as Kerry, Galway, Mayo and Donegal. 
@@ -522,7 +523,7 @@ Our Gaussian copula simulation design for a single ``location'', nomenclature ch
     \item Using the bootstrapping scheme of \citep{Heffernan2004}, we estimated the CE model parameters $\alpha$ and $\beta$ at various dependence quantiles. \todo{Sufficient reference to bootstrapping scheme?}
     \item This revealed that estimates in general were quite stable up to the 88th quantile.  \todo{Need to expand with more details, could include plots in Appendix?} \todo{Why not use 90 if stable enough?Try in script!}
     \item Subsequent analysis was also performed at the 85th and 90th quantiles, and shown to provide similar MLEs for our CE parameters, and clustering solutions. \todo{Include in Appendix also?}
-    \item The results of this CE analysis are shown in figure \ref{fig:02_locs}.
+    \item The results of this CE analysis are shown in figure \ref{fig:a_b_vals}.
     \item Interpretation of these plots is difficult, but we can see some, albeit uneven, increases in the $\alpha$ values for both variables as we move further West and particularly South. \todo{Should I estimate/show uncertainty in these estimates somehow? these estimates have been bootstrapped!}
     \item Several $\beta$ values are negative, which is unexpected, and perhaps suggests non-identifiability in the CE regression model. 
     % \item It appears that high uncertainty is making interpretation difficult, and so we will cluster the locations based on their CE parameters, to aid in interpretation.
@@ -535,12 +536,12 @@ Our Gaussian copula simulation design for a single ``location'', nomenclature ch
     \centering
     \includegraphics[width = 0.9\linewidth]{plots/ire_ce.png}
     \caption{\emph{Insert}}
-    \label{fig:02_locs}
+    \label{fig:a_b_vals}
 \end{figure}
 
 % Clustering (including choice of k for each metric)
 \begin{itemize}
-  \item We clustered the locations using the $JS^{G_{\alpha}}$ dissimilarity matrix for their CE parameters, as described in \ref{subsec:clust_js}, for the CE models fit to rain conditional on extreme wind speed and vice versa, separately. 
+  \item We clustered the locations using the $JS^{G_{\alpha}}$ dissimilarity matrix for their CE parameters, as described in \ref{subsec:div}, for the CE models fit to rain conditional on extreme wind speed and vice versa, separately. 
   \item We also combine information from both models to cluster by summing their dissimilarity matrices.
   \item The number of clusters $k$ was chosen via the method described in \ref{subsubsec:choose_k}, using the elbow plot of the TWGSS. 
   \item For all three clustering solutions, clear elbows were observed at $k = 3$, so this was the number of clusters chosen \todo{Include plots? Appendix?}.

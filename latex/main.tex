@@ -46,6 +46,9 @@
 
 \newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
 
+% comment to turn on TODO notes on pdf
+\presetkeys{todonotes}{disable}{}
+
 % Nature Bibliography style
 % \usepackage[backend=biber,style=nature]{biblatex}
 % \addbibresource{library.bib} 
@@ -66,6 +69,7 @@
 \todo{Same (present), tense throughout if possible}
 \todo{Check citep, citet}
 \todo{Tidy up maths, notation and acronyms so nothing is repeated (or different!)}
+\todo{correct spelling mistakes}
 
 \todo{Crop (map) plots that have too much whitespace}
 \todo{Plots need some tidying up!}
@@ -106,9 +110,9 @@
 
 \section{Introduction}\label{sec:intro}
 \todo{Where to describe Vignotto method? in introduction?}
-\todo{Will have to mention that other paper that does bivaraite clustering as well in background, right?}
+\todo{Will have to mention that other paper that does bivariate clustering as well in background, right?}
 
-\section{Motivating example: Irish Meterological Data} \label{sec:ire}
+\section{Motivating example: Irish Meteorological Data} \label{sec:ire}
 
 \todo{Either move below as intro, or actually motivate need to model this data! (then we could use chi/chibar as plot instead of sites)}
 
@@ -121,7 +125,7 @@
     \centering
     % \includegraphics[width = 0.9\linewidth]{plots/02_mot_ex_plot.png}
     \includegraphics[width = 0.9\linewidth]{plots/ire_sites_plt.png}
-    \caption{\emph{The figure on the left shows the location of 59 Met Éireann sites with precipitation data available from 1990 to 2020, inclusive. The points in red and blue show the weather sites at Cloone Lake in county Kerry and Ringsend in Dublin, which have the highest and lowest mean precipiation across this period, respectively. The figure on the right shows the weekly total precipitation in millimetres versus weekly wind speed maxima in metres per second for both of these sites.}}
+    \caption{\emph{The figure on the left shows the location of 59 Met Éireann sites with precipitation data available from 1990 to 2020, inclusive. The points in red and blue show the weather sites at Cloone Lake in county Kerry and Ringsend in Dublin, which have the highest and lowest mean precipitation across this period, respectively. The figure on the right shows the weekly total precipitation in millimetres versus weekly wind speed maxima in metres per second for both of these sites.}}
     \label{fig:02_locs}
 \end{figure}
 
@@ -135,7 +139,7 @@ Conversely, although reanalysis data is spatially complete, it only has a certai
 The data is averaged over each grid cell, and so often underestimates extreme wind speeds \citep{Gandoin2024}.
 
 % Preprocessing
-This data spans the dates 1990-01-01 to 2020-12-31 inclusively, totaling 11,323 days of consecutive precipitation readings. 
+This data spans the dates 1990-01-01 to 2020-12-31 inclusively, totalling 11,323 days of consecutive precipitation readings. 
 % Sites which did not have a complete set of data for these dates were removed, leaving us with 50 sites in total, located in 20 of the 26 counties of the Republic of Ireland. \todo{Change this, no longer the case!}
 Following the example of \citet{Vignotto2021}, we thinned our data, looking at the weekly sum of daily precipitation and weekly averages of wind speed maxima, for the winter months (November to March) only.
 This weekly temporal scale was chosen as precipitation and wind in the case of storms is believed to experience a slight lag \citep{Bengtsson2009}.
@@ -295,7 +299,7 @@ A framework which provides a flexible approach to modelling extremal dependence 
     % with residual vector $\bm{Z}_{\mid i} \sim G_{\mid i}$.
   \item $\bm{\alpha}{\mid i} \in [-1, 1]$ is the slope or linear regression coefficient, which describes the strength of association between $Y_{-i}$ and large $Y_i$. 
   % \item $\bm{\beta}_{\mid i} \in [-\infty, 1]$ can be interpretated as a ``spread'' parameter, controlling the levels of heteroskedasticity in the model.
-  \item $\bm{\beta}_{\mid i} \in [-\infty, 1]$ can be interpretated as a ``spread'' or heteroskedastic parameter, controlling the impact of the residual term $\bm{Z}_{\mid i}$ on the dependence between $\bm{Y}_{-i}$ and $\bm{Y}_i$.
+  \item $\bm{\beta}_{\mid i} \in [-\infty, 1]$ can be interpreted as a ``spread'' or heteroskedastic parameter, controlling the impact of the residual term $\bm{Z}_{\mid i}$ on the dependence between $\bm{Y}_{-i}$ and $\bm{Y}_i$.
   \item Higher values of $\bm{\beta}_{\mid i}$ indicate that the distribution of $Y_{-i}$ is more spread out for larger values of $Y_i$, while lower values indicate a more strongly deterministic relationship. 
   \item Several choices for $G_{\mid i}$, the distribution of $\bm{Z}_{\mid i}$, were proposed in \citet{Heffernan2004}, before ultimately settling on a multivariate normal distribution with vector nuisance parameters $\bm{\mu}_{\mid i} \in \mathbb{R}^{(d-1)}$ and $\bm{\sigma}_{\mid i} \in \mathbb{R}^{(d-1)}$.
   \item Some special cases of the CE model are:
@@ -425,7 +429,8 @@ A framework which provides a flexible approach to modelling extremal dependence 
   \item The choice remains as to which algorithm to use to cluster this matrix. 
   \item As in \citet{Vignotto2021}, we use the Partitioning Around Medoids (PAM) algorithm, which is a variant of the popular K-medoids algorithm of \citet{Kaufman1987}.
   \item A brief description of the algorithm is as follows:
-    \begin{itemize} \todo{Have as algorithm block?}
+    \todo{Have as algorithm block?}
+    \begin{itemize} 
       \item The algorithm begins by randomly selecting $k$ medoids from the dataset as our cluster centroids. 
       \item Each observation is then assigned to the cluster of the nearest medoid, using the dissimilarity metric defined in \ref{subsec:div}.
       \item The centroids are updated by selecting the observation in each cluster which minimises the sum of dissimilarities to all other observations in that cluster.
@@ -586,7 +591,7 @@ Our Gaussian copula simulation design for a single ``location'', nomenclature ch
 
 \begin{itemize}
   \item We also design a more realistic example to somewhat mimic the structure of the Irish dataset introduced in \ref{sec:ire}.
-  \item We generated data from 60 locations, each with 1000 observations of two variables, using a mixture of Gaussian and t-copulas with GPD margins.
+  \item We generated data from 60 locations, each with 1000 observations of two variables, using a mixture of Gaussian and t-copulas with Laplace margins.
   \item The 60 locations had three known clusters, with 10, 20, and 30 locations in each cluster, respectively.
   \item A constant $\rho_{\text{Gauss}}$ of 0.5 was used for all locations and simulations, to reduce the dimensionality of the grid search.
   \item A slight perturbation via a uniform sample between $-0.05$ and $0.05$ was added to the correlation parameters of the t-copula for each location, to make the clustering solution more challenging.

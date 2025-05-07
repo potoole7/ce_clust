@@ -405,7 +405,7 @@ A framework which provides a flexible approach to modelling extremal dependence 
         + (1 - \alpha) \frac{(\mu_{\alpha,i} - \mu_{2,i})^2}{\sigma_{\alpha,i}^2}
         - 1 \Bigg],
     \end{align}
-    where $\sigma_{\alpha, i}^2 = \frac{\sigma_{1, i}^2 \sigma_{2, i}^2}{\alpha\sgima_{1, i}^2 + (1 - \alpha)\sigma_{2, i}^2}$ and $\mu_{\alpha, i} = \sigma_{\alpha, i}^2 \left( \frac{\alpha\mu_{1, i}}{\sigma_{1, i}^2} + \frac{(1 - \alpha) \mu_{2, i}}{\sigma_{2, i}^2} \right)$.
+    where $\sigma_{\alpha, i}^2 = \frac{\sigma_{1, i}^2 \sigma_{2, i}^2}{\alpha\sigma_{1, i}^2 + (1 - \alpha)\sigma_{2, i}^2}$ and $\mu_{\alpha, i} = \sigma_{\alpha, i}^2 \left( \frac{\alpha\mu_{1, i}}{\sigma_{1, i}^2} + \frac{(1 - \alpha) \mu_{2, i}}{\sigma_{2, i}^2} \right)$.
   % \item Thus we have a closed form, computationally efficient and symmetric measure of dissimilarity between any two conditional distributions as given by equation \ref{eq:ce_norm} for two sites, with which we can cluster locations based on their extremal dependence structure. 
   \item Thus we have a closed form, computationally efficient and symmetric measure of dissimilarity between any conditional multivariate normal distributions as given by equation \ref{eq:ce_norm}, representing the extremal dependence structure at each site. 
   \item We can calculate a dissimilarity matrix between each pair of locations in this way.

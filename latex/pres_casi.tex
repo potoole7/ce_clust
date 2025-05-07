@@ -1,15 +1,9 @@
 \documentclass[10pt]{beamer}
-% \usepackage[colorlinks=true,citecolor=blue, linkcolor=blue]{hyperref}
 \usepackage{hyperref}
 \usepackage[utf8x]{inputenc}
-% \usepackage{algorithm, algorithmic}
-% \usepackage[ruled,vlined]{algorithm2e}
-% \usepackage{fontawesome}
 \usepackage{graphicx}
-% \usepackage[english]{babel}
 \usepackage[nodayofweek]{datetime}
-% \usepackage[colorinlistoftodos]{todonotes}
-\usepackage{todonotes}
+\usepackage[colorinlistoftodos]{todonotes}
 \usepackage{graphicx}
 \usepackage{mathtools}
 \usepackage{amssymb}
@@ -19,7 +13,6 @@
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage[T1]{fontenc}
-% \usepackage[utf8]{inputenc}
 \usepackage{authblk}
 \usepackage{pdfpages}
 \usepackage{setspace} 
@@ -29,11 +22,6 @@
 \usepackage{tikz}
 \usepackage{bm}
 \usepackage{appendixnumberbeamer}
-% \usepackage{adjustbox}
-% \usepackage{multirow}
-% \setlength{\tabcolsep}{5pt}
-% \usepackage[parfill]{parskip}
-% \renewcommand{\arraystretch}{1.5}
 
 % ------------------------------------------------------------------------------
 % Use the beautiful metropolis beamer template
@@ -41,8 +29,8 @@
 \usepackage[T1]{fontenc}
 \usepackage{fontawesome}
 \usepackage{FiraSans} 
-% \usepackage{fontspec}
-% \setmonofont{Fira Mono}
+\usepackage{fontspec}
+\setmonofont{Fira Mono}
 \mode<presentation>
 {
   \usetheme[progressbar=foot,numbering=fraction,background=light]{metropolis} 
@@ -55,6 +43,21 @@
 
 \setbeamertemplate{section in toc}{\hspace*{1em}\inserttocsectionnumber.~\inserttocsection\par}
 \setbeamertemplate{subsection in toc}{\hspace*{2em}\inserttocsectionnumber.\inserttocsubsectionnumber.~\inserttocsubsection\par}
+
+\setbeamertemplate{footnote}{%
+  \parindent 1em\noindent%
+  \raggedright
+  \tiny\insertfootnotetext\par%
+}
+
+\makeatletter
+\addtobeamertemplate{footline}{%
+  \vskip1ex%
+  {\usebeamerfont{footnote}%
+   \usebeamercolor[fg]{footnote}%
+   \insertfootnotetext\par}%
+}{}
+\makeatother
 
 % ------------------------------------------------------------------------------
 % beamer doesn't have texttt defined, but I usually want it anyway
@@ -136,51 +139,39 @@ keywordstyle=\color{myblue}\bfseries,
 
 \newdate{date}{14}{05}{2025}
 \date{
-  % \footnotesize Postgraduate Seminar Series (PSS) Talk, \\
   \footnotesize Conference on Applied Statistics in Ireland (CASI) Talk, \\
   \displaydate{date}, \\
-  % \today \\
-  % \shortdate \\
-  % \vspace{0.4cm}
   \emph{Paddy O'Toole} \\
-  % \vspace{-5mm}
   \emph{Supervised by Christian Rohrbeck and Jordan Richards (University of Edinburgh)}
 }
 
-% \frame{\titlepage}
-
 \begin{frame}[noframenumbering, plain]
-  % \addtocounter{framenumber}{-1}
   \titlepage
 \end{frame}
 
-\begin{frame}
-  \addtocounter{framenumber}{-1}
-  % \item Get down to 20ish slides before Christian meeting
-  % \item Cut down on words wherever possible
-  \item Do TODOs
-  \item Add QR code slide
-  \item Fix clipping plots (requires saving manually!)
-  % \item Swap pdfs for pngs
-  % \item Finalise plots
-  % \item Add appendix slides + plots
-  \item Keep second slide, or first and talk over it?
-  % Full presentation notes
-  % \item Remove references to GPD
-  % \item Update simulation slides/plots (or don't)
-  % \item Go through Christians notes on slides
-  % \item Cut down on words
-  % \item Update chi plot
-  % \item Remove medians from clustering map
-  % \item Add diagnostic plots
-  % \item Comment (and do) todos (temporarily)
-\end{frame}
-
-%==================================================
-
-% \frame{\begin{small}
-% \frametitle{Overview}
-% \tableofcontents\end{small}}
+% \begin{frame}
+%   \addtocounter{framenumber}{-1}
+%   % \item Get down to 20ish slides before Christian meeting
+%   % \item Cut down on words wherever possible
+%   % \item Do TODOs
+%   \item Add QR code slide
+%   % \item Fix clipping plots (requires saving manually!) (including appendix!)
+%   % \item Check slide titles, don't capitalise
+%   % \item Swap pdfs for pngs
+%   % \item Finalise plots
+%   % \item Add appendix slides + plots
+%   % \item Remove commented slides when finished
+%   \item Write script
+%   % Full presentation notes
+%   % \item Remove references to GPD
+%   % \item Update simulation slides/plots (or don't)
+%   % \item Go through Christians notes on slides
+%   % \item Cut down on words
+%   % \item Update chi plot
+%   % \item Remove medians from clustering map
+%   % \item Add diagnostic plots
+%   % \item Comment (and do) todos (temporarily)
+% \end{frame}
 
 %=================================================
 
@@ -192,39 +183,17 @@ keywordstyle=\color{myblue}\bfseries,
 \section{Introduction}
 
 
-% % Images of Pulteney Bridge Weir and plaque
-% % Frank Greenhalgh, Engineer who designed Pulteney Weir and Sluce for Bristol Avon River Authority
-% \begin{frame}
-%    \begin{minipage}{0.49\textwidth}
-%      % \includegraphics[width=.99\textwidth]{images/civictrustaward_location.jpg}
-%      % \todo{Get a nicer picture of Pulteney Bridge!}
-%      \includegraphics[width=.99\textwidth]{images/civictrustaward_location.jpg}
-%    \end{minipage}
-%    \hfill
-%    \begin{minipage}{0.49\textwidth}
-%      \includegraphics[width=.99\textwidth]{images/Hapennybr_lower.jpg}
-%    \end{minipage}
-% \end{frame}
-
-% Motivation behind EVT
-\begin{frame}{Introduction}
-  \todo{Use this one, or last slide and just talk over it?}
-   \begin{minipage}{0.49\textwidth}
-        % Anything else to add here?
-        \begin{itemize}
-            % \item Extreme Value Theory models the extreme tails of distributions $X$. % standard models don't work well
-            \item Extreme Value Theory models tail distribution of random variable $X$.
-            % \item Only known method to reliably \textbf{predict beyond magnitude of observations} % in extremal context.
-            \item Provides asymptotically justified methods for predicting beyond range of observed values. 
-            % \item Applications found in finance, insurance and environmental 
-            \item Applications in finance, engineering \& environmental sciences.
-        \end{itemize}
+% Images of Pulteney Bridge Weir and plaque
+% Frank Greenhalgh, Engineer who designed Pulteney Weir and Sluce for Bristol Avon River Authority
+\begin{frame}
+   \begin{minipage}{0.5\textwidth}
+     \begin{center}
+       \hspace*{-0.7cm} \includegraphics[width=1.4\textwidth]{images/pultney-bridge.jpg}
+     \end{center}
    \end{minipage}
    \hfill
-   \begin{minipage}{0.49\textwidth}
-     % \centering
-     % \vspace{}
-     \includegraphics[width=6cm]{images/tail.png}
+   \begin{minipage}{0.4\textwidth}
+     \hspace*{0.8cm} \includegraphics[width=1\textwidth]{images/Hapennybr_lower.jpg} 
    \end{minipage}
 \end{frame}
 
@@ -235,429 +204,122 @@ keywordstyle=\color{myblue}\bfseries,
         \mathbb{P}(X > x, Y > y) = \textcolor{red}{\mathbb{P}(Y > y \mid X > x)}\textcolor{blue}{\mathbb{P}(X > x)}
       \]
       for large $x, y$
-    % \todo{Remove as bullets and just say outloud?}
-    % \item $X, Y$ might represent rain \& wind for single location, or rain at two locations
-    % \item Of interest are ``concomitant'' or concurrent extreme events for random vector $\bf{X}$, which are often particularly devastating
     \item ``concomitant''/concurrent extreme events for random vector $\bf{X}$ often particularly devastating
-    % \item The \textcolor{blue}{second term} can be modelled using a marginal model such as the \textbf{Generalised Pareto distribution} (GPD).
-    % \item \textcolor{blue}{second term} estimated empirically or using marginal model
-    \item $\textcolor{blue}{\mathbb{P}(X > x)}$ estimated empirically or using marginal model
-    % \item \textcolor{red}{first term} involves modelling \textbf{dependence} between $X, Y$, which is more difficult
-    \item $\textcolor{red}{\mathbb{P}(Y > y \mid X > x)}$ requires \textbf{dependence} model for $X$ and $Y$ % which is more difficult!
-    \item Want to \textbf{identify trends by clustering sites with similar tail dependence}
-    % \item Want to \textbf{identify trends by clustering random vector} $\bf{X}$ of sites with similar dependence structures.
+    \item Goal: \textbf{identify trends by clustering sites with similar \textcolor{red}{tail dependence}}
   \end{itemize}
 \end{frame}
-
-% \begin{frame}{Generalised Pareto Distribution}
-%   \todo{How/where to situate this within presentation?}
-% The GPD is often characterised by it's survival function:
-% \begin{equation*} 
-%   \mathbb{P}(X > x + u \mid X > u) = \left(1 + \xi \frac{x}{\sigma} \right)_{+}^{-1/\xi},
-% \end{equation*}
-% \vspace{-5mm}
-% \begin{itemize}
-%     \item $(x)_+ = \max{(0, x)}$
-%     \item Parameters: scale $\sigma$, shape $\xi$, 
-%     % \item For $\xi < 0$, (increasingly small) finite upper end point
-%     % \item Can model parameters as function of spatial location, i.e.\ $\sigma(s), \xi(s)$, with $s =$ (longitude, latitude)
-%     \item Threshold $u$ often taken as high quantile of data. % , can also model as $u(s)$
-% \end{itemize}
-% \end{frame}
-
-% % MV extremes, uses, methods, shortcomings - clustering
-% % todo: Add 2D plot showing different regions of extremity
-% \begin{frame}{Multivariate extremes}
-%     \begin{itemize}
-%       \item Concurrently occurring extremal events can be particularly destructive 
-%       \item $\mathbb{P}(\bm{X} \in \bm{C}) = \sum_{i=1}^{d}{\mathbb{P}(\bm{X}_i \in C_i)}$, for some extreme set $C_i$ corresponding to each vector $X_i$. 
-%       \item This may refer to different spatial locations, or different variables
-%       \item For example, offshore platforms must be built to withstand extreme wind speed and wave height conditions at sea
-%       \item Storm defences must withstand extreme rainfall and wind speed conditions, and insurance premiums must take into account these particularly destructive events
-%     \end{itemize}
-% \end{frame}
-% 
-% \begin{frame}{Multivariate extremes}
-%      % \includegraphics[width=.9\textwidth]{plots/021_mv_extreme.png}
-% \end{frame}
-
-% \begin{frame}{Aims}
-%   \begin{enumerate}
-%     \item Introduction to (asymptotic) dependence,
-%     \item Explain choice of extremal dependence model, the \textbf{conditional extremes} (CE) model,
-%     \item Describe clustering algorithm,
-%     % \item Validate with simulation study \& Irish meteorological application, shows clustering is effective and helps with interpretability.
-%     \item Show through simulation study and Irish meteorological application that we can identify clusters of sites with similar tail dependence structures.
-%   \end{enumerate}
-% \end{frame}
 
 \section{Dependence Modelling}
 
-% \begin{frame}{Asymptotic dependence}
-% \begin{itemize}
-%   \item Asymptotic dependence measures strength of tail dependence between two random variables % or more accurately their CDFs
-%   \item Coefficient of dependence, $\chi \in [0, 1]$, measures extremal dependence between $X, Y$ with CDFs $F_X, F_Y$
-%   \item $\chi = \lim_{u \rightarrow 1}{\chi(u)}$ where
-% \[
-% \chi(u) = 2 - \frac{\log\left(\mathbb{P}(F_X(X) < u, F_Y(Y) < u)\right)}{\log \left(\mathbb{P}(F_1(X) < u)\right)}. % log ratio of joint to marginal CDF as threshold increases
-% \]
-% \end{itemize}
-% \end{frame}
-% 
-% \begin{frame}{Asymptotic dependence}
-% \begin{minipage}{0.4\textwidth}
-%     \begin{itemize}
-%       \item For $\chi = 0$, $X, Y$ asymptotically independent.
-%       \item (Increasingly strong) asymptotic dependence for $\chi > 0$.
-%       \item However, $\chi$ only summary; inference requires \textbf{dependence model}.
-%     \end{itemize}
-% \end{minipage}
-% \hfill
-% \begin{minipage}{0.59\textwidth}
-%      % \vspace{}
-%      \includegraphics[width=7cm]{plots/p_chi.png}
-% \end{minipage}
-% \end{frame}
-
 \begin{frame}{Asymptotic dependence}
-  \begin{columns}[t]
-    \begin{column}[t]{0.48\textwidth}
-      \vspace{0pt}
-      \small
-      \begin{itemize}
-        \item Coefficient of extremal dependence $\chi\in[0,1]$.
-        \item $\chi = \lim_{u\to1}\chi(u)$ where
-          {\setlength{\abovedisplayskip}{-5pt}%
-           \setlength{\abovedisplayshortskip}{-5pt}%
-           \adjustbox{valign=t}{%
-             \begin{minipage}{0.9\linewidth}
-               \begin{multline*}
-                 \chi(u)=2-\\[-0.5ex]
-                 \frac{
-                   \log\bigl(\mathbb{P}(F_1(X_1)<u,\,F_2(X_2)<u)\bigr)
-                 }{
-                   \log\bigl(\mathbb{P}(F_1(X_1)<u)\bigr)
-                 }
-               \end{multline*}
-             \end{minipage}%
-           }%
-          }
-        \item (Increasingly strong) asymptotic dependence for $\chi > 0$.
-        \item However, $\chi$ only summary; inference requires \textbf{dependence model}.
-      \end{itemize}
-    \end{column}
-    \begin{column}[t]{0.52\textwidth}
-      \vspace{0pt}
-      \includegraphics[width=\linewidth,height=0.85\textheight,keepaspectratio]{plots/p_chi.png}
-      % \includegraphics[width=\linewidth,height=0.85\textheight,keepaspectratio]{plots/chi_plot_spec.png}
-      % \includegraphics[height = 0.85\textheight, width = 0.85\linewidth, keepaspectratio]{plots/chi_plot_spec.png}
-    \end{column}
-  \end{columns}
+  \begin{itemize}
+    \item Coefficient of extremal dependence $\chi\in[0,1]$, 
+          \[\chi = \lim_{u\to1}\mathbb{P}\left[F_1(X_1)>u\mid F_2(X_2)>u\right]\] 
+    \item (Increasingly strong) asymptotic dependence for $\chi > 0$.
+    \item However, $\chi$ only gives summary; \\
+      inference requires \textbf{dependence model}.
+  \end{itemize}
 \end{frame}
 
-% Describe motivating example
 \begin{frame}{Ireland}
-  \begin{minipage}{0.45\textwidth}
+  \begin{minipage}{0.4\textwidth}
       \begin{itemize}
-        % \item Precipitation \& wind speed in Ireland, 1990-2020
-        \item Precipitation from 59 Met Éireann weather sites, wind speeds from ERA5 (reanalysis data), 1990-2020
-        % \item Weekly sum of precipitation and mean of daily wind speed maxima for Winter only (Oct-Mar), in line with Vignotto. % \cite{Vignotto2021}. 
-        \item Data thinned (matching Vignotto):
-        \begin{itemize} 
-          \item Winter (Oct-Mar) only
-          \item Precipitation: weekly sum
-          \item Wind Speed: weekly mean of daily maxima
-        \end{itemize}
+        \item Precipitation\textsuperscript{1} \& wind speed\textsuperscript{2} data for 59 sites across Ireland, Winter months (Oct-Mar) 1990-2020
       \end{itemize}
   \end{minipage}
-  \begin{minipage}{0.51\textwidth}
-    % \vspace{}
-    % \includegraphics[width=7cm]{plots/01_ire_plot.png}
-    % \todo{Replace with version without sites in six counties!}
-    % \includegraphics[width=7cm]{plots/chi_map_ire.png}
-    \includegraphics[width=7cm]{plots/041_chi_plots_man_crop.png}
+  \begin{minipage}{0.59\textwidth}
+    \includegraphics[width = \linewidth]{plots/041_chi_plots_man_crop.png}
   \end{minipage}
+  % {\tiny
+  {\scriptsize
+    \rule{\linewidth}{0.4pt}\\
+    \makebox[\linewidth]{
+      \textsuperscript{1} Met Éireann weekly aggregate
+      \hfill{}
+      \textsuperscript{2} ERA5 reanalysis weekly mean of daily maxima
+      \hspace{0.5cm}
+    }
+  }
 \end{frame}
-
-% \begin{frame}{Copulas}
-%   \begin{itemize}
-%     % \item One form of dependence model is a \textbf{copula}.
-%     \item \textbf{copulas} used to model dependence.
-%     % \item Takes the form of a multivariate CDF with Uniform $[0, 1]$ margins:
-%     \item multivariate CDF with Uniform $[0, 1]$ margins:
-%       \begin{align*}
-%         C(u_1,\dots,u_d) &= F\bigl(F_1^{-1}(u_1),\dots,F_d^{-1}(u_d)\bigr) \\
-%                          % &= \mathbb{P}(F_1(X_1) < u_1, \dots, F_d(X_d) < u_d)
-%       \end{align*}
-%     \item \vspace{-8mm} Models marginals and dependence separately, margins can be any distribution.
-%     \item Choices include:
-%       \begin{itemize}
-%         \item Gaussian: 
-%           \[
-%             C_{\Sigma}(u) = \Phi_{\Sigma}\Bigl(\Phi^{-1}(u_1),\dots,\Phi^{-1}(u_d)\Bigr)
-%           \]
-%         \item Student-t:
-%           \[
-%             C_{\Sigma,\nu}(u) = t_{\Sigma,\nu}\Bigl(t_\nu^{-1}(u_1),\dots,t_\nu^{-1}(u_d)\Bigr)
-%           \]
-%       \end{itemize}
-%     \item Lacks flexibility \& efficiency of CE, but \textbf{used to easily simulate data}.
-%     % Other disadvantages: Assume same dependence strength across all quantiles,
-%     % models joint dependence, so less flexible and more computationally
-%     % challenging
-%     % being fully parametric
-%   \end{itemize}
-% \end{frame}
 
 \section{Conditional extremes}
-% \begin{frame}{Introduction}
-% \begin{itemize}
-%   \item Gets name from modelling \emph{conditional} on a single variable, i.e. $\bm{X}_{-i} \mid X_i$ for a random vector $\bm{X}$.
-%     \item Has simple univariate and dependence components
-%     \item Flexible model which can model all forms of extremal dependence, such as:
-%       \begin{itemize}
-%         \item Asymptotic independence $(P(X_i > x_i \mid X_j > x_j) = P(X_i > x_i)$, for large $x$. 
-%         \item Perfect dependence, where $X_i$ only extreme when $Y_j$ is also extreme.
-%         \item Anywhere in between!
-%       \end{itemize}
-%     % \item Some definitions:
-%     % \begin{itemize}
-%     %     \item $\bm{X}_{-i}$: Vector $\bm{X}$ without $i^{th}$ component
-%     %     \item $\bm{\alpha}_{\mid i}$: Vector of parameters $\alpha_{j \mid i}$ conditional on $X_i$, $j \ne i$
-%     % \end{itemize}
-% \end{itemize}
-% \end{frame}
-
-% semi-parametric piecewise function of empirical distribution below threshold and GPD (from previous section) above threshold:
-
-% Univariate piecewise function
-% \begin{frame}{Univariate}
-%   \todo{Include a plot here?}
-%   \begin{itemize}
-%     \item Univariate component of model: 
-%     \begin{equation*} 
-%       \hat{F}_{X_i}(x) = \begin{cases}
-%         1 - \{ 1 - \tilde{F}_{X_i}(u_{X_i})\} \left\{1 + \xi_{i}(x - u_{X_i})/\sigma_i\right\}_{+}^{-1/\xi_{i}} & \text{if } x > u_{X_i} \\
-%         \tilde{F}_{X_i}(x) & \text{if } x \le u_{X_i},
-%       \end{cases}
-%     \end{equation*}
-%     where $\tilde{F}_{X_i}$ is the empirical distribution function of $X_i$.
-%     \item semi-parametric piecewise function of ECDF below threshold and GPD above threshold.
-% \end{itemize}
-% \end{frame}
-
-% Transform to Laplace
-% \begin{frame}{Marginal transformation}
-%   \todo{Single slide below sufficient? Can just talk over it}
-%   \begin{itemize}
-%   % \item In extremes, models often involve a transformation to more favourable margins.
-%   \item In extremes, we often transform to more favourable margins.
-%   % \item First, we take the piecewise CDF $F(X_i)$ with GPD above threshold and ECDF below.
-%   \item In CE, for $X_i \in \bf{X}$ estimate $F_{X_i}(X_i)$ \& transform to Laplace margins:
-%   \begin{equation*}
-%     Y_i = \begin{cases}
-%       % \exp(y)/2 &\text{ for } y < 0 \\
-%       \log\left\{2F_{X_i}(X_i)\right\} &\text{ for } X_i < F_{X_i}^{-1}(0.5), \\
-%       -\log\left\{2(1 - F_{X_i}(X_i))\right\} &\text{ for } X_i \ge F_{X_i}^{-1}(0.5). \\
-%     \end{cases}
-%   \end{equation*}
-%   % \vspace{-5mm}
-%   \item Advantage: both tails exponential with mean 1%  which is more convenient to model. 
-%   \end{itemize}
-% \end{frame}
 
 \begin{frame}{Marginal transformation}
-% allows for heteroskedastic regression model, symmetry means model is the same
+  % allows for heteroskedastic regression model, symmetry means model is the same
   % for both positive and negative dependence, and also easy to model any
   % dependence strength
-  \includegraphics[width=1\textwidth]{plots/transform.png} 
+  \center
+  \includegraphics[width=1\textwidth]{plots/transform_costelloe.png} 
 \end{frame}
 
 % Multivariate piecewise function, Z, Y independent
-\begin{frame}{Dependence}
+\begin{frame}{Conditional extremes}
 % Reduces multivariate model to simple univariate models!
 \begin{itemize}
-  \item \textbf{Heteroskedastic regression model} for dependence:
+  \item <1-> \textbf{Heteroskedastic regression dependence model}: 
   \begin{equation*}
-      \bm{Y}_{-i} = \bm{\alpha}_{\mid i}\bm{y}_i + \bm{y}_i^{\bm{\beta}_{\mid i}}\bm{Z}_{\mid i}, \text{ for } Y_i = y_i, y_i > u_{Y_i},
+      \bm{Y}_{-i} \mid Y_i = y_i = \bm{\alpha}_{\mid i}\bm{y}_i + \bm{y}_i^{\bm{\beta}_{\mid i}}\bm{Z}_{\mid i}, y_i > u_{Y_i},
   \end{equation*}
-  % \vspace{-8mm}
+  \vspace{-5mm}
   % with
   \begin{itemize}
-    % \item $\alpha_{j \mid i} \in [-1, 1]$ is slope parameter for $Y_j$ conditional on $Y_i$.
-    \item slope parameter $\alpha_{j \mid i} \in [-1, 1]$  for $Y_j$ given large $Y_i$,
-    % \item $\beta_{j \mid i} \in (-\infty, 1]$ is ``spread'' parameter, $\bm{\beta}_{\mid i}$ controls level of stochasticity in relationship between $\bm{Y}_{-i}$ and large $Y_i$. \todo{Power law??}
-    \item ``spread'' parameter $\beta_{j \mid i} \in (-\infty, 1]$ $\bm{\beta}_{\mid i}$ controls stochasticity of relationship between $Y_j$ and large $Y_i$. 
+    \item <1-> slope parameter $\alpha_{j \mid i} \in [-1, 1]$  for $Y_j$ given large $Y_i$,
+    \item <1-> ``spread'' parameter $\beta_{j \mid i} \in (-\infty, 1]$ $\bm{\beta}_{\mid i}$ controls stochasticity of relationship between $Y_j$ and large $Y_i$. 
   \end{itemize}
   \vspace{2mm}
-  \item Key assumptions:
+  \item <2-> Key assumptions:
   \begin{itemize}
-    \item Residuals $\bm{Z}_{\mid i} \sim N(\bm{\mu}_{\mid i}, \bm{\sigma}_{\mid i})$ 
-    \item $\bm{Z}_{\mid i}$, large $Y_i$ independent
+    \item <2-> Residuals $\bm{Z}_{\mid i} \sim N(\bm{\mu}_{\mid i}, \bm{\sigma}_{\mid i})$ 
+    \item <2-> $\bm{Z}_{\mid i}, Y_i$ conditionally independent for large $Y_i$
   \end{itemize}
   \vspace{2mm}
-  \item Special cases:
+  \item <2-> Special cases:
   \vspace{-4mm}
   \begin{alignat*}{2}
   &\bm{\alpha}_{\mid i} = 0, \bm{\beta}_{\mid i} = 0    &&\implies \bm{Y}_{-i}, \bm{Y}_{i} \text{ independent,} \\
   &\bm{\alpha}_{\mid i} = -1/1, \bm{\beta}_{\mid i} = 0 &&\implies \text{ perfect positive/negative dependence,} \\
-  &-1 < \bm{\alpha}_{\mid i} < 1                        &&\implies \text{ asymptotic independence}
+  &-1 < \bm{\alpha}_{\mid i} < 1 
   \end{alignat*}
-  \todo{What to say for speaker notes from asymptotic independence here?}
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Conditional extremes diagnostic plots}
-  \todo{Why is slope of line higher for first plot than second?? Higher beta??}
+\begin{frame}{Conditional extremes}
   \center{}
-  \includegraphics[width=0.79\textwidth]{plots/041_costelloe_fishery.png} 
+  \includegraphics[width=\textwidth]{plots/041_costelloe_fishery.png} 
 \end{frame}
-
-% \begin{frame}{Limitations}
-%   \begin{itemize}
-%     \item CE model is very flexible and can model all forms of extremal dependence, but can be difficult to fit.
-%     \item Interpretation can sometimes be difficult due to estimating two parameters. 
-%     \item CE often has large uncertainty in parameter estimates.
-%     \item This is especially true when there are few observations of extreme events, which are rate by definition. 
-%     \item How can we seek to overcome this?
-%     % \item This is because the model is not identifiable, as parameters may not be unique.
-%     % \item This means that the model can be fitted to the data in many different ways, leading to large uncertainty in parameter estimates.
-%   \end{itemize}
-% \end{frame}
 
 \begin{frame}{Inference}
   \begin{itemize}
-    % \item Inference on $\bm{Y}_{-i} \mid Y_i$ done by conditioning on the exceedance of a high threshold $u_{Y_i}$ by $Y_i$.
-    % \item We assume this conditional distribution follows a diagonal multivariate Normal (MVN) distribution: 
     Inference assumes conditional distribution follows diagonal multivariate Normal (MVN) distribution: \\
       \begin{equation*} \label{eq:ce_norm}
         \bm{Y}_{-i} \mid Y_i = y_i \sim N\left(\bm{\alpha}_{\mid i} y_i + y_i^{\bm{\beta}_i} \bm{\mu}_{\mid i}, y_i^{\bm{\beta}_i} \bm{\sigma_{\mid i}}\right), \text{ for } Y_i > u_{Y_i}
       \end{equation*} \\
-    % $\implies$ \textbf{comparing dependence structure at different sites equivalent to comparing MVN distributions}.
     $\implies$ \textbf{dependence structures at different sites can be compared using their MVN distributions}
 \end{itemize}
 \end{frame}
 
 \section{Clustering}
 
-% \begin{frame}{Clustering}
-%     \begin{itemize}
-%       % \item CE very flexible \& conceptually simple, but can be difficult to fit, with large estimation uncertainty and difficult interpretations for parameters.
-%       \item CE flexible \& conceptually simple, but often difficult to fit \& interpret under large uncertainty. % , with large estimation uncertainty and difficult interpretations for parameters.
-%       % \item extensions to CE model which seek to overcome shortcomings of ``vanilla'' model, such as spatial and spatio-temporal versions.
-%       % \item Alternative/additional approach: \textbf{clustering}
-%       \item Clustering can help with
-%         \begin{itemize}
-%           \item \textbf{enhancing interpretability of data},
-%           \item improving parameter estimation.
-%         \end{itemize}
-%       % \item \textbf{How best to cluster for CE model?}
-%       \item \textbf{Aim}: Find suitable distance metric/measure to estimate dissimilarity matrix across sites based on CE fits, upon which we can perform clustering. 
-%     \end{itemize}
-% \end{frame}
-
-% \begin{frame}{Kullback-Leibler divergence}
-%   % The Kullback-Leibler (KL) divergence between two continuous distributions $P$, $Q$ is given by
-%   Kullback-Leibler (KL) divergence between two distributions $P$, $Q$ is
-%   \[
-%     KL(P \mid\mid Q) = \int_{-\infty}^{\infty} p(y) \log\left(\frac{p(y)}{q(y)}\right) dy.
-%   \]
-%   \vspace{-5mm}
-%   \begin{itemize}
-%   \item For two MVNs, KL has closed form. 
-%   \item However, KL asymmetric ($KL(P \mid\mid Q) \ne KL(Q \mid\mid P)$) and not ``true'' metric $\implies$ poor choice of dissimilarity measure. 
-%   \end{itemize}
-% \end{frame}
-% 
-% \begin{frame}{Jensen-Shannon divergence}
-%   \begin{itemize}
-%     \item The Jensen-Shannon divergence given by
-%       \[
-%         JS(P \mid\mid Q) = \frac{1}{2} KL(P \mid\mid M) + \frac{1}{2} KL(Q \mid\mid M),
-%       \]
-%       % where $M = \frac{1}{2}(P + Q)$ is a mixture distribution.
-%       where $M$ is two-component mixture of $P, Q$. 
-%     \item JS is symmetric \& true metric!
-%     \item However, mixture of two normals is non-normal \\ $\implies$ no closed form for two MVNs. 
-%   \end{itemize}
-% \end{frame}
-% 
-% \begin{frame}{skew-geometric Jensen-Shannon divergence}
-% \begin{itemize}
-%   \item Introduce the weighted geometric mean $G_{\alpha}(x, y) = x^{\alpha} y^{1 - \alpha}, \alpha \in [0, 1]$
-%   % \item The weighted product of two members of the same exponential family also comes from this family, so we will have another multivariate normal. 
-%   \item weighted product of two members of same exponential family comes from \textbf{same family}.
-%   \item Using $G_{\alpha}$, we get the \textbf{skew-geometric Jensen-Shannon divergence}
-%     \[
-%       JS^{G_{\alpha}}(P \mid\mid Q) = \frac{1}{2} KL(P \mid\mid G_{\alpha}(P, Q)) + \frac{1}{2} KL(Q \mid\mid G_{\alpha}(P, Q))
-%     \]
-%   % \item Has both closed form for MVNs and is true metric, making it a good candidate as a dissimilarity measure for clustering. 
-%   \item Has both closed form for MVNs and is true metric $\implies$ found suitable dissimilarity measure!
-%   \item Sensible choice is $\alpha = 0.5$. %, may adapt data-driven or theoretically motivated approach in the future. 
-% \end{itemize}
-% \end{frame}
-
 \begin{frame}{skew-geometric Jensen-Shannon divergence}
-\begin{itemize}
-  \item Kullback-Leibler ($KL(P, Q)$) gives (asymmetric) distance from $P$ to $Q$ % (e.g.\ MVN dependence structure at two sites)
-  % \item Weighted geometric mean $G_{\alpha}(x, y) = x^{\alpha} y^{1 - \alpha}, \alpha \in [0, 1]$
-  \item Weighted geometric mean $G_{\alpha}(P, Q) = P^{\alpha} Q^{1 - \alpha}, \alpha \in [0, 1]$
-  % \item The weighted product of two members of the same exponential family also comes from this family, so we will have another multivariate normal. 
-  \item \textbf{Skew-geometric Jensen-Shannon divergence} given by
-    \[
-      JS^{G_{\alpha}}(P \mid\mid Q) = \frac{1}{2} KL(P \mid\mid G_{\alpha}(P, Q)) + \frac{1}{2} KL(Q \mid\mid G_{\alpha}(P, Q))
-    \]
-  % \item Has both closed form for MVNs and is true metric, making it a good candidate as a dissimilarity measure for clustering. 
-  \item uses property that weighted product of two members of exponential family comes from \textbf{same family}.
-  \item $\implies$ For MVNs, $JS^{G_{\alpha}}$ has \textbf{closed form} \& is \textbf{true metric} % $\implies$ suitable dissimilarity measure for clustering!
-  \item Applicable in $d$ dimensions. 
-  % \item Has both closed form for MVNs and is true metric $\implies$ found suitable dissimilarity measure!
-  % \item Sensible choice is $\alpha = 0.5$. %, may adapt data-driven or theoretically motivated approach in the future. 
-\end{itemize}
+  \begin{itemize}
+    \item <1-> Kullback-Leibler divergence $KL(P, Q)$ measures (asymmetric) distance from $P$ to $Q$
+    \item <1-> $KL(P, Q)$ has closed form for two MVNs
+    \item <2-> Weighted geometric mean $G_{\alpha}(P, Q) = P^{\alpha} Q^{1 - \alpha}, \alpha \in [0, 1]$
+    \item <3-> weighted product $G_{\alpha}$ of two exponential family members is in \textbf{same family}.
+    \item <3-> \textbf{Skew-geometric Jensen-Shannon divergence}:
+      \[
+        JS^{G_{\alpha}}(P \mid\mid Q) = \frac{1}{2} KL(P \mid\mid G_{\alpha}(P, Q)) + \frac{1}{2} KL(Q \mid\mid G_{\alpha}(P, Q))
+      \]
+  \end{itemize}
 \end{frame}
-
-% \begin{frame}{Partitioning Around Mediods (PAM)}
-%   \begin{itemize}
-%     % \item Now we have a dissimilarity measure, we can use it to cluster the data.
-%     \item Require clustering algorithm to cluster data using dissimilarity matrix.
-%     % \item We use the PAM algorithm, which is a partitioning clustering algorithm that uses the mediod of each cluster as the representative point.
-%     \item PAM algorithm uses mediod of each cluster as representative point.
-%     % \item Cluster centroids actual sites, making them more interpretable than the centroids of k-means, especially for spatial and spatio-temporal applications. 
-%     \item Cluster centroids are actual sites, giving better interpretability and a location to refit at.
-%     % \item Also, as we are clustering on functional space, advantageous to have actual set of CE parameters rather than some summary as cluster centre.
-%     % \item Cluster centroids also actual CE fits, want to be careful when clustering in functional space that centroids represent valid models!
-%   \end{itemize}
-% \end{frame}
-% 
-% \begin{frame}{Selecting $k$: total within cluster sum of squares \& elbow plot}
-%   \begin{itemize}
-%     \item \textbf{TWGSS}:
-%       \[
-%         \mathrm{TWGSS}(k)
-%         % = \sum_{i=1}^{k}\sum_{x \in C_i} d\bigl(x, m_i\bigr), d = JS^{G_{\alpha}}
-%         = \sum_{i=1}^{k}\sum_{x \in C_i} JS^{G_{\alpha}}\bigl(x, m_i\bigr),
-%       \]
-%     \item \textbf{Elbow Plot:} Plot $\mathrm{TWGSS}(k)$ vs.\ $k$, observe curve, choose $k^*$ at ``elbow'' where TWGSS reduction sharply slows
-%   \end{itemize}
-% 
-%   \vspace{0.5em}
-%   \begin{center}
-%     \includegraphics[width=0.7\textwidth]{plots/elbow_plot.png}
-%   \end{center}
-% \end{frame}
 
 \begin{frame}{Clustering}
   \begin{itemize}
     \item Uses \textbf{k-medoids} to cluster over $JS_{G_{\alpha}}$ dissimilarity matrix between sites
-    % \item $k$ chosen using elbow plot of total within cluster sum of squares (TWGSS):
-    %   \[
-    %     \mathrm{TWGSS}(k) = \sum_{i=1}^{k}\sum_{x \in C_i} JS^{G_{\alpha}}\bigl(x, m_i\bigr)
-    %   \]
     \item $k$ chosen using elbow plot of 
-     $$
+     \[
        \mathrm{TWGSS}(k) = \sum_{i=1}^{k}\sum_{x \in C_i} JS^{G_{\alpha}}\bigl(x, m_i\bigr)
-     $$
-
+     \]
   \end{itemize}
   \vspace{0.1em}
   % \vspace{-2em}
@@ -668,181 +330,81 @@ keywordstyle=\color{myblue}\bfseries,
 
 \section{Simulations}
 
-% \begin{frame}{Simulation study}
-%   \begin{itemize}
-%     % \item We perform a simulation study to assess the performance of our clustering algorithm.
-%     \item Simulation study used to assess clustering performance
-%     \item Generate data for multiple ``locations'', each with specified dependence structure.
-%     \item Get ``known'' clusters by giving locations similar dependence structures.
-%     \item Evaluate clustering using Adjusted Rand Index (ARI), \& uncertainty using bootstrapping.
-%   \end{itemize}
-% \end{frame}
-
 \begin{frame}{Gaussian copula}
+  \todo{Stop plot clipping}
   \begin{itemize}
-    % \item For single ``site'', generate data from bivariate Gaussian copula
-    % \item Dependence controlled by $\rho_{Gauss}$ % (off-diagonals of $\Sigma$). 
     \item For single ``site'', generate data from bivariate Gaussian copula $C_{\rho_{Gauss}}$ with Gaussian margins
-    % \item \cite{Keef2013} shows that for bivariate Gaussian copula, the asymptotic CE parameters are $\alpha = \rho_{\text{Gauss}}^2, \beta = 1/2$, so we can compare estimated parameters to true asymptotic values. 
-    % \item For bivariate Gaussian copula, asymptotic CE parameters are $\alpha = \rho_{\text{Gauss}}^2, \beta = 1/2$, can compare to estimates. \nocite{Keef2013} 
-    % \item (asymptotic) CE parameters for bivariate Gaussian copula known to be $\alpha = \rho_{\text{Gauss}}^2, \beta = 1/2$
     \item (asymptotic) CE parameters are $\alpha = \rho_{\text{Gauss}}^2, \beta = 1/2$
-    % \item Can cluster using $JS^{G_{\alpha}}$ dissimilarity measure between CE fits at each site.
-    \item Example: 12 ``sites'' with 1000 observations of 2 variables
+    \item Example: 12 ``sites'' with \num[group-separator={,}]{10000} observations of 2 variables
     \item 3 clusters of 4 locations defined by respective $\rho_{Gauss}$ values of $0.3, 0.6, 0.9$.
   \end{itemize}
 \end{frame}
 
 \begin{frame}{Gaussian copula}
-  \includegraphics[width=0.9\textwidth]{plots/gauss_sim_ex.png}
+  \center
+  \includegraphics[width=\textwidth]{plots/gauss_sim_ex_man.png}
 \end{frame}
 
 \begin{frame}{Gaussian copula - results}
-  \includegraphics[width=0.9\textwidth]{plots/sim_01_gauss_cop.png}
+  \center
+  \includegraphics[width=\textwidth]{plots/sim_01_gauss_cop_man.png}
 \end{frame}
 
 \begin{frame}{Mixture simulation}
   \begin{itemize}
-    % \item Introduce data generated from mixture of Gaussian and t-copulas
-    \item Extend design to mixture of Gaussian and t-copulas
-    \item Idea: 
+    \item <1-> Extend design to mixture of Gaussian and t-copulas
+    \item <2-> Idea: 
     \begin{itemize} 
       \item Gaussian copula generates observations exhibiting extremal independence, 
       \item t-copula induces extremal dependence.
     \end{itemize}
-    \item No theoretical guarantees for $\alpha, \beta$, but $\rho_t$ dominates clustering performance. 
-    \item Design: 12 sites with 1000 bivariate observations
-    \item 2 clusters of 6 sites
-    \item Grid search performed over $\rho_{gauss}, \rho_{t_1}, \rho_{t_2} \in [0, 1]$.
-    \item Clustering compared to competing Vignotto algorithm using Adjusted Rand Index $\text{ARI} \in [0, 1]$ %, which is leading competitor in the bivariate setting. \nocite{Vignotto2021}. % nonparametric
+    \item <3-> Design: 12 sites with \num[group-separator={,}]{10000} bivariate observations
+    \item <3-> 2 clusters of 6 sites
+    \item <4-> Grid search performed over $\rho_{gauss}, \rho_{t_1}, \rho_{t_2} \in [0, 1]$.
+    \item <5-> Clustering compared to competing Vignotto algorithm using Adjusted Rand Index $\text{ARI} \in [0, 1]$ 
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Mixture simulation (two variables)}
-  % \todo{Replace with plot once more samples have been used!}
-  \includegraphics[width=1\textwidth]{plots/sim_01b_ce_vs_vi_dqu_0.9.png}
+\begin{frame}{Mixture simulation}
+  \center
+  \includegraphics[width=1\textwidth]{plots/sim_01b_ce_vs_vi_dqu_0.9_man.png}
 \end{frame}
-
-% \begin{frame}{Other scenarios}
-% \begin{itemize}
-%   % \item We also perform the same simulation study where three variables are available at each location, for which our clustering algorithm is uniquely applicable.
-%   \item Also performed simulation study with three variables at each location, for which our clustering algorithm is uniquely applicable.
-%   \item Also generated more ``realistic'' example with 60 locations, perturbed $\rho_t$ and three clusters of 30, 20 and 10 sites each, to more closely mimic Irish dataset. 
-% \end{itemize}
-% \end{frame}
-% 
-% % \begin{frame}{Mixture simulation (three variables)}
-% %   % \todo{Replace with plot once more samples have been used!}
-% %   \includegraphics[width=1\textwidth]{plots/sim_01c_js_sens_3_var_dqu_0.9.png}
-% % \end{frame}
-% 
-% \begin{frame}{More realistic example}
-%   % \todo{Replace with plot once more samples have been used!}
-%   \includegraphics[width=1\textwidth]{plots/sim_01d_js_sens_3_var_dqu_0.9.png}
-% \end{frame}
-
-% TODO Needed, as we're focusing on interpretability??
-% \begin{frame}{Uncertainty Reduction}
-%   \includegraphics[width=1\textwidth]{plots/sim_01e_bootstrap.png}
-% \end{frame}
-
-% \section{Ireland Meteorological Data}
 
 \section{Ireland meteorological data}
 
-% Describe motivating example
-% \begin{frame}{Ireland}
-%   \begin{minipage}{0.45\textwidth}
-%       \begin{itemize}
-%           \item Precipitation and wind speed in Ireland, 1990-2020
-%           \item Precipitation data from 59 Met Éireann weather sites across country, wind data from ERA5 reanalysis.
-%           \item Weekly sum of precipitation and mean of daily wind speed maxima for Winter only (Oct-Mar), in line with Vignotto. % \cite{Vignotto2021}. 
-%       \end{itemize}
-%   \end{minipage}
-%   \begin{minipage}{0.51\textwidth}
-%     % \vspace{}
-%     % \includegraphics[width=7cm]{plots/01_ire_plot.png}
-%     % \todo{Replace with version without sites in six counties!}
-%     \includegraphics[width=7cm]{plots/chi_map_ire.png}
-%   \end{minipage}
-% \end{frame}
-
-% \begin{frame}{Procedure}
-%   \begin{itemize}
-%     % \item Only use ECDF for marginal estimation, as spatial GPD modelling is difficult and not the focus of this analysis. 
-%     \item Estimate ECDF and perform marginal transformation to Laplace margins
-%     \item Fit CE model to data, cluster locations separately for rain $\mid$ wind speed, wind speed $\mid$ rain, and combining $JS^{G_{\alpha}}$ for both.
-%     \item Refit CE, see if interpretation is any easier. 
-%   \end{itemize}
-% \end{frame}
-
-% \begin{frame}{$\alpha, \beta$ pre-clustering}
-%   \center
-%   \includegraphics[width=0.78\textwidth]{plots/ire_ce.png} 
-% \end{frame}
-
 % Maps of clustering
 \begin{frame}{Ireland clustering}
-  % \todo{Make county borders less bold}
   \center
-  \todo{Change to png}
-  \includegraphics[width=1\textwidth]{plots/cluster_dqu_sep.png} 
+  \includegraphics[width=0.9\textwidth]{plots/cluster_dqu_sep.png} 
 \end{frame}
 
-% plot of alpha, beta estimates after refitting, much more interpretable
-% \begin{frame}{Refitting CE model}
-%   % TODO: Include plots of alpha, beta estimates for each cluster, much more interpretable now!
-%   % \includegraphics[width=1\textwidth]{plots/cluster_dqu_sep.pdf} 
-%   \center
-%   \includegraphics[width=0.78\textwidth]{plots/ab_map_post_clust.png}
-% \end{frame}
+\section{Discussion}
 
-% \begin{frame}{Diagnostic plots}
-%   % TODO: Include plots of alpha, beta estimates for each cluster, much more interpretable now!
-%   % \includegraphics[width=1\textwidth]{plots/cluster_dqu_sep.pdf} 
-%   \center
-%   \includegraphics[width=0.78\textwidth]{plots/diag_plots_postclust.png}
-% \end{frame}
-
-\section{Conclusions}
-
-\begin{frame}{Limitations}
-\begin{itemize}
-  \item \textbf{CE}: Gaussian assumption for $Z_{\mid i}$
-    \begin{itemize}
-      \item Requires diagnostic plots, if not satisfied then uncertainty may be underestimated.
-    \end{itemize}
-  \item Especially where data scarce, model sometimes non-identifiable/non-unique % (i.e.\ many candidate models valid)
-  \item \textbf{Clustering}: high uncertainty in original CE fits not incorporated in clustering, only MLEs $\hat{\alpha}, \hat{\beta}$ used
+\begin{frame}{Discussion}
   \begin{itemize}
-    \item Could perform sensitivity analysis of clustering using bootstrapped CE fits.
-    \item Sufficient for interpretation, but requires better treatment for improving uncertainty post-clustering
-  \end{itemize}
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Conclusions, future work}
-\begin{itemize}
-  % \item We provide principled \& effective clustering framework for CE models.
-  \item Principled \& effective clustering framework for CE models
-  \item Simulations \& application show clustering can group sites with similar tail dependence, which may help interpretability
-  % \item Mainly used for improved interpretability, would like to see if parameter estimation better post-clustering.
-  % \item Need to compare Ireland clustering to Vignotto. 
-  % \item Want to apply clustering to more interesting multivariate data, such as Brazil landslide data and air pollution extremes in US cities. 
-  \item Want to apply clustering to more interesting multivariate data, e.g.\ air pollution extremes in US cities. 
-  \item Explore clustering solutions incorporating uncertainty, and also how well we can do at reducing this uncertainty
-\end{itemize}
+    \item <1-> \textbf{Conclusion}:
+      \begin{itemize}
+        \item Principled \& effective clustering framework for CE models
+        \item Simulations \& application show clustering can group sites with similar tail dependence, which may aid interpretation
+      \end{itemize} 
+    \vspace{2mm}
+    \item <2-> \textbf{Limitations}:
+      \begin{itemize}
+        \item \textbf{CE}: Gaussian assumption for $\bm{Z}_{\mid i}$
+        \item \textbf{Clustering}: Uncertainty in CE fits is ignored in clustering
+      \end{itemize} 
+  \end{itemize} 
 \end{frame}
 
 % QR Code slide
 \begin{frame} 
   \todo{Insert QR code!}
+  \addtocounter{framenumber}{-1}
   Thank you! For slides and supplementary materials, please scan the QR code below:
 \end{frame}
 
 \appendix
 
-% TODO: Add references!
 % \begin{frame}\frametitle{References}
 % \addtocounter{framenumber}{-1}
 % \tiny
@@ -854,29 +416,28 @@ keywordstyle=\color{myblue}\bfseries,
 \section{Appendix}
 
 \begin{frame}{Mixture simulation (three variables)}
-  % \todo{Replace with plot once more samples have been used!}
-  \includegraphics[width=1\textwidth]{plots/sim_01d_js_sens_3_var_dqu_0.9.png}
+  \center
+  \includegraphics[width=1\textwidth]{plots/sim_01d_js_sens_3_var_dqu_0.9_man.png}
 \end{frame}
 
 \begin{frame}{More realistic example}
-  % \todo{Replace with plot once more samples have been used!}
-  \includegraphics[width=1\textwidth]{plots/01c2_js_sens_sim_60_locs_dqu_0.9_smooth.png}
+  \center
+  \includegraphics[width=1\textwidth]{plots/01c2_js_sens_sim_60_locs_dqu_0.9_smooth_man.png}
 \end{frame}
 
 \begin{frame}{Uncertainty Reduction}
-  \includegraphics[width=1\textwidth]{plots/sim_01e_bootstrap.png}
+  \center
+  \includegraphics[width=1\textwidth]{plots/sim_01e_bootstrap_man.png}
 \end{frame}
 
 \begin{frame}{$\alpha, \beta$ pre-clustering}
   \center
-  \includegraphics[width=0.78\textwidth]{plots/ire_ce.png} 
+  \includegraphics[width=0.75\textwidth]{plots/ire_ce.png} 
 \end{frame}
 
 \begin{frame}{$\alpha, \beta$ post-clustering}
-  % TODO: Include plots of alpha, beta estimates for each cluster, much more interpretable now!
-  % \includegraphics[width=1\textwidth]{plots/cluster_dqu_sep.pdf} 
   \center
-  \includegraphics[width=0.78\textwidth]{plots/ab_map_post_clust.png}
+  \includegraphics[width=0.72\textwidth]{plots/ab_map_post_clust.png}
 \end{frame}
 
 \end{document}

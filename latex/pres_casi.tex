@@ -218,15 +218,27 @@ keywordstyle=\color{myblue}\bfseries,
 
 \section{Dependence Modelling}
 
-\begin{frame}{Asymptotic dependence}
-  \begin{itemize}
-    \item Coefficient of extremal dependence $\chi\in[0,1]$, 
-          \[\chi = \lim_{u\to1}\mathbb{P}\left[F_1(X_1)>u\mid F_2(X_2)>u\right]\] 
-    \item (Increasingly strong) asymptotic dependence for $\chi > 0$.
-    \item However, $\chi$ only gives summary; \\
-      inference requires \textbf{dependence model}.
-  \end{itemize}
-  \vspace{3cm}
+\begin{frame}[fragile]{Asymptotic dependence}
+  % reserve space for your citation block
+  \newlength{\TopBoxHeight}
+  \setlength{\TopBoxHeight}{\dimexpr\textheight-3cm\relax}
+
+  \vbox to \TopBoxHeight{
+    \vfill
+    \begin{center}
+      \begin{itemize}
+        \item Coefficient of extremal dependence $\chi\in[0,1]$, 
+              \[
+                \chi = \lim_{u\to1}\mathbb{P}\bigl[F_1(X_1)>u\mid F_2(X_2)>u\bigr]
+              \]
+        \item (Increasingly strong) asymptotic dependence for $\chi > 0$.
+        \item However, $\chi$ only gives summary; inference requires \textbf{dependence model}.
+      \end{itemize}
+    \end{center}
+    \vfill
+  }
+
+  \vspace{1.5cm}
   {\scriptsize
     \rule{\linewidth}{0.4pt}\\
     \makebox[\linewidth]{
@@ -297,7 +309,7 @@ keywordstyle=\color{myblue}\bfseries,
   \begin{alignat*}{2}
   &\bm{\alpha}_{\mid i} = 0, \bm{\beta}_{\mid i} = 0    &&\implies \bm{Y}_{-i}, \bm{Y}_{i} \text{ independent,} \\
   &\bm{\alpha}_{\mid i} = -1/1, \bm{\beta}_{\mid i} = 0 &&\implies \text{ perfect positive/negative dependence,} \\
-  &-1 < \bm{\alpha}_{\mid i} < 1 
+  &-1 < \bm{\alpha}_{\mid i} < 1 && \implies \text{ asymptotic independence}
   \end{alignat*}
 \end{itemize}
 \vspace{-1.1cm}
@@ -328,22 +340,23 @@ keywordstyle=\color{myblue}\bfseries,
 
 \begin{frame}{skew-geometric Jensen-Shannon divergence}
   \begin{itemize}
-    \item <1-> Kullback-Leibler divergence $KL(P, Q)$ measures (asymmetric) distance from $P$ to $Q$
-    \item <1-> $KL(P, Q)$ has closed form for two MVNs
+    \item <1-> Kullback-Leibler divergence $KL(P \mid\mid Q)$ measures (asymmetric) distance from $P$ to $Q$
+    % triangle inequality: “direct” distance between two distributions is never larger than going through a third.
+    \item <1-> $KL(P \mid \mid Q)$ has closed form for two MVNs
     \item <2-> Weighted geometric mean $G_{\alpha}(P, Q) = P^{\alpha} Q^{1 - \alpha}, \alpha \in [0, 1]$
     \item <3-> weighted product $G_{\alpha}$ of two exponential family members is in \textbf{same family}.
     \item <4-> \textbf{Skew-geometric Jensen-Shannon divergence}:
       \[
-        JS^{G_{\alpha}}(P \mid\mid Q) = \frac{1}{2} KL(P \mid\mid G_{\alpha}(P, Q)) + \frac{1}{2} KL(Q \mid\mid G_{\alpha}(P, Q))
+        JS^{G_{\alpha}}(P \mid\mid Q) = \frac{1}{2} \left\{KL(P \mid\mid G_{\alpha}(P, Q)) + KL(Q \mid\mid G_{\alpha}(P, Q))\right\}
       \]
   \end{itemize}
   \vspace{1.5cm}
-  {\scriptsize
+  {\only<4>{\scriptsize
     \rule{\linewidth}{0.4pt}\\
     \makebox[\linewidth]{
       \citeauthor{Nielsen2019}, \emph{\citetitle{Nielsen2019}} (2019)
     }
-  }
+  }}
 \end{frame}
 
 \begin{frame}{Clustering}
@@ -405,14 +418,14 @@ keywordstyle=\color{myblue}\bfseries,
   %     % \emph{\citetitle{Vignotto2021}} (2021)
   %   }
   % }
-  {\scriptsize
+  {\only<5>{\scriptsize
     \rule{\linewidth}{0.4pt}\\
     \begin{minipage}{\linewidth}
       \vspace{2mm}
       \citeauthor{Vignotto2021},\\
       \emph{\citetitle{Vignotto2021}} (2021)
     \end{minipage}
-  }
+  }}
 \end{frame}
 
 \begin{frame}{Mixture simulation}
@@ -448,7 +461,6 @@ keywordstyle=\color{myblue}\bfseries,
 
 % QR Code slide
 \begin{frame} 
-  \todo{Insert QR code!}
   \addtocounter{framenumber}{-1}
   Thank you! For slides and supplementary materials, please scan the QR code below:
   \begin{center}
@@ -458,13 +470,10 @@ keywordstyle=\color{myblue}\bfseries,
 
 \appendix
 
-% \begin{frame}\frametitle{References}
-% \addtocounter{framenumber}{-1}
-% \tiny
-% \bibliographystyle{unsrt}
-% \bibliography{library.bib}
-% % \nocite{cocoaprod, dunn2012hadisd, faostat, hersbach2020era5, wilson2019simulation}
-% \end{frame}
+\begin{frame}\frametitle{References}
+\tiny
+\printbibliography[heading=none]
+\end{frame}
 
 \section{Appendix}
 

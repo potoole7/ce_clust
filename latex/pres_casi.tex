@@ -22,6 +22,7 @@
 \usepackage{tikz}
 \usepackage{bm}
 \usepackage{appendixnumberbeamer}
+\usepackage{siunitx}
 
 % ------------------------------------------------------------------------------
 % Use the beautiful metropolis beamer template
@@ -306,7 +307,7 @@ keywordstyle=\color{myblue}\bfseries,
     \item <1-> $KL(P, Q)$ has closed form for two MVNs
     \item <2-> Weighted geometric mean $G_{\alpha}(P, Q) = P^{\alpha} Q^{1 - \alpha}, \alpha \in [0, 1]$
     \item <3-> weighted product $G_{\alpha}$ of two exponential family members is in \textbf{same family}.
-    \item <3-> \textbf{Skew-geometric Jensen-Shannon divergence}:
+    \item <4-> \textbf{Skew-geometric Jensen-Shannon divergence}:
       \[
         JS^{G_{\alpha}}(P \mid\mid Q) = \frac{1}{2} KL(P \mid\mid G_{\alpha}(P, Q)) + \frac{1}{2} KL(Q \mid\mid G_{\alpha}(P, Q))
       \]
@@ -401,6 +402,9 @@ keywordstyle=\color{myblue}\bfseries,
   \todo{Insert QR code!}
   \addtocounter{framenumber}{-1}
   Thank you! For slides and supplementary materials, please scan the QR code below:
+  \begin{center}
+    \includegraphics[width=0.5\textwidth]{images/9pW0kU.jpg}
+  \end{center}
 \end{frame}
 
 \appendix

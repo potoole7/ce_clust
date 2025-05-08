@@ -325,23 +325,8 @@ keywordstyle=\color{myblue}\bfseries,
       \vspace{0pt}
       \small
       \begin{itemize}
-        \item Coefficient of extremal dependence $\chi\in[0,1]$.
-        \item $\chi = \lim_{u\to1}\chi(u)$ where
-          {\setlength{\abovedisplayskip}{-5pt}%
-           \setlength{\abovedisplayshortskip}{-5pt}%
-           \adjustbox{valign=t}{%
-             \begin{minipage}{0.9\linewidth}
-               \begin{multline*}
-                 \chi(u)=2-\\[-0.5ex]
-                 \frac{
-                   \log\bigl(\mathbb{P}(F_1(X_1)<u,\,F_2(X_2)<u)\bigr)
-                 }{
-                   \log\bigl(\mathbb{P}(F_1(X_1)<u)\bigr)
-                 }
-               \end{multline*}
-             \end{minipage}%
-           }%
-          }
+        \item Coefficient of extremal dependence $\chi\in[0,1]$, 
+        \[\chi = \lim_{u\to1}\mathbb{P}\left[F_1(X_1)>u\mid F_2(X_2)>u\right]\] 
         \item (Increasingly strong) asymptotic dependence for $\chi > 0$.
         \item However, $\chi$ only summary; inference requires \textbf{dependence model}.
       \end{itemize}

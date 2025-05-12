@@ -148,7 +148,7 @@ keywordstyle=\color{myblue}\bfseries,
 \date{
   \footnotesize Conference on Applied Statistics in Ireland (CASI) Talk, \\
   \displaydate{date}, \\
-  \emph{Paddy O'Toole} \\
+  \emph{Paddy O'Toole, University of Bath} \\
   \emph{Supervised by Christian Rohrbeck and Jordan Richards (University of Edinburgh)}
 }
 
@@ -284,12 +284,29 @@ keywordstyle=\color{myblue}\bfseries,
 \end{frame}
 
 % Multivariate piecewise function, Z, Y independent
-\begin{frame}{Conditional extremes}
+\begin{frame}[t]{Conditional extremes}
+% Reduces multivariate model to simple univariate models!
+\begin{itemize}
+  \item \textbf{Heteroskedastic regression dependence model}: 
+  \begin{equation*}
+      % \bm{Y}_{-i} \mid Y_i = y_i = \bm{\alpha}_{\mid i}\bm{y}_i + \bm{y}_i^{\bm{\beta}_{\mid i}}\bm{Z}_{\mid i}, y_i > u_{Y_i},
+    Y \mid X = x = \alpha x + x^{\beta} Z, \text{ for } x > u
+  \end{equation*}
+  \vspace{-5mm}
+  % with
+  \begin{itemize}
+    \item slope parameter $\alpha$  for $Y$ given large $X$,
+    \item ``spread'' parameter $\beta \in (-\infty, 1]$ controls stochasticity of relationship between $Y$ and large $X$. 
+  \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Conditional extremes}
 % Reduces multivariate model to simple univariate models!
 \begin{itemize}
   \item <1-> \textbf{Heteroskedastic regression dependence model}: 
   \begin{equation*}
-      \bm{Y}_{-i} \mid Y_i = y_i = \bm{\alpha}_{\mid i}\bm{y}_i + \bm{y}_i^{\bm{\beta}_{\mid i}}\bm{Z}_{\mid i}, y_i > u_{Y_i},
+      \bm{Y}_{-i} \mid Y_i = y_i = \bm{\alpha}_{\mid i}\bm{y}_i + \bm{y}_i^{\bm{\beta}_{\mid i}}\bm{Z}_{\mid i}, \text{ for } y_i > u_{Y_i}
   \end{equation*}
   \vspace{-5mm}
   % with
@@ -371,7 +388,7 @@ keywordstyle=\color{myblue}\bfseries,
   % \vspace{-2em}
   \begin{center}
     \vspace{-0.3cm}
-    \includegraphics[width=0.65\textwidth]{plots/elbow_plot.png}
+    \includegraphics[width=0.6\textwidth]{plots/elbow_plot.png}
   \end{center}
 \end{frame}
 

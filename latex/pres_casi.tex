@@ -290,7 +290,8 @@ keywordstyle=\color{myblue}\bfseries,
   \item \textbf{Heteroskedastic regression dependence model}: 
   \begin{equation*}
       % \bm{Y}_{-i} \mid Y_i = y_i = \bm{\alpha}_{\mid i}\bm{y}_i + \bm{y}_i^{\bm{\beta}_{\mid i}}\bm{Z}_{\mid i}, y_i > u_{Y_i},
-    Y \mid X = x = \alpha x + x^{\beta} Z, \text{ for } x > u
+    % Y \mid X = x = \alpha x + x^{\beta} Z, \text{ for } x > u
+    \bigl(Y \mid X = x\bigr) = \alpha x + x^{\beta} Z, \text{ for } x > u
   \end{equation*}
   \vspace{-5mm}
   % with
@@ -306,7 +307,7 @@ keywordstyle=\color{myblue}\bfseries,
 \begin{itemize}
   \item <1-> \textbf{Heteroskedastic regression dependence model}: 
   \begin{equation*}
-      \bm{Y}_{-i} \mid Y_i = y_i = \bm{\alpha}_{\mid i}\bm{y}_i + \bm{y}_i^{\bm{\beta}_{\mid i}}\bm{Z}_{\mid i}, \text{ for } y_i > u_{Y_i}
+      \bigl(\bm{Y}_{-i} \mid Y_i = y_i \bigr) = \bm{\alpha}_{\mid i}\bm{y}_i + \bm{y}_i^{\bm{\beta}_{\mid i}}\bm{Z}_{\mid i}, \text{ for } y_i > u_{Y_i}
   \end{equation*}
   \vspace{-5mm}
   % with

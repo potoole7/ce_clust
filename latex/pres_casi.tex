@@ -146,7 +146,7 @@ keywordstyle=\color{myblue}\bfseries,
 
 \newdate{date}{14}{05}{2025}
 \date{
-  \footnotesize Conference on Applied Statistics in Ireland (CASI) Talk, \\
+  \footnotesize Conference on Applied Statistics in Ireland (CASI) 2025 Talk, \\
   \displaydate{date}, \\
   \emph{Paddy O'Toole, University of Bath} \\
   \emph{Supervised by Christian Rohrbeck and Jordan Richards (University of Edinburgh)}
@@ -302,7 +302,7 @@ keywordstyle=\color{myblue}\bfseries,
 \end{itemize}
 \end{frame}
 
-\begin{frame}[t]{Conditional extremes}
+\begin{frame}[t, noframenumbering]{Conditional extremes}
 % Reduces multivariate model to simple univariate models!
 \begin{itemize}
   \item <1-> \textbf{Heteroskedastic regression dependence model}: 
@@ -348,7 +348,7 @@ keywordstyle=\color{myblue}\bfseries,
   \begin{itemize}
     Inference assumes conditional distribution follows diagonal multivariate Normal (MVN) distribution: \\
       \begin{equation*} \label{eq:ce_norm}
-        \bm{Y}_{-i} \mid Y_i = y_i \sim N\left(\bm{\alpha}_{\mid i} y_i + y_i^{\bm{\beta}_i} \bm{\mu}_{\mid i}, y_i^{\bm{\beta}_i} \bm{\sigma_{\mid i}}\right), \text{ for } Y_i > u_{Y_i}
+        \bigl( \bm{Y}_{-i} \mid Y_i = y_i \bigr) \sim N\left(\bm{\alpha}_{\mid i} y_i + y_i^{\bm{\beta}_i} \bm{\mu}_{\mid i}, y_i^{\bm{\beta}_i} \bm{\sigma_{\mid i}}\right), \text{ for } Y_i > u_{Y_i}
       \end{equation*} \\
     $\implies$ \textbf{dependence structures at different sites can be compared using their MVN distributions}
 \end{itemize}
@@ -480,10 +480,12 @@ keywordstyle=\color{myblue}\bfseries,
 % QR Code slide
 \begin{frame} 
   \addtocounter{framenumber}{-1}
+  % Thank you! For slides and supplementary materials, please scan the QR code below:
   Thank you! For slides and supplementary materials, please scan the QR code below:
   \begin{center}
     \includegraphics[width=0.5\textwidth]{images/9pW0kU.jpg}
   \end{center}
+  Email: \url{pot23@bath.ac.uk} 
 \end{frame}
 
 \appendix

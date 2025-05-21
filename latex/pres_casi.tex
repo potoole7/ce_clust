@@ -58,6 +58,23 @@
 }
 
 \makeatletter
+\setbeamertemplate{title page}{
+  \vbox{}
+  \vfill
+  \begin{centering}
+    {\usebeamerfont{title}\inserttitle\par}
+    \vskip0.5em
+    {\usebeamerfont{author}\insertauthor\par}
+    \vskip0.5em
+    {\usebeamerfont{date}\insertdate\par}
+    \vskip1em
+    \inserttitlegraphic  % << this places it BELOW the title
+  \end{centering}
+  \vfill
+}
+\makeatother
+
+\makeatletter
 \addtobeamertemplate{footline}{%
   \vskip1ex%
   {\usebeamerfont{footnote}%
@@ -139,6 +156,12 @@ keywordstyle=\color{myblue}\bfseries,
 % ------------------------------------------------------------------------------
 % The Document
 % ------------------------------------------------------------------------------
+
+\titlegraphic{%
+  \centering
+  \includegraphics[height=1.5cm]{images/university-of-bath-logo.png}\hspace{1cm}%
+  \includegraphics[height=1.5cm]{images/UKRIlogo.png}%
+}
 
 \begin{document}
 
@@ -523,3 +546,4 @@ keywordstyle=\color{myblue}\bfseries,
 \end{frame}
 
 \end{document}
+

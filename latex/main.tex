@@ -90,12 +90,12 @@
 %  This motivates the development of clustering methods for this class of models; pooling similar within-cluster data drastically reduces parameter estimation uncertainty.
 %  The development of clustering methods for this class of models is motivated by the need to identify the spatial structure of extremal dependence. 
  
- While an extensive amount of work to estimate conditional extremes models exists in multivariate and spatial applications, the prospect of clustering models of this type has not yet been explored. 
+ While an extensive amount of work to estimate conditional extremes (CE) models exists in multivariate and spatial applications, the prospect of clustering models of this type has not yet been explored. 
  As a motivating example, we explore tail dependence of meteorological variables across multiple spatial locations and seek to identify sites which exhibit similar multivariate tail behaviour. 
- To this end, we introduce a clustering framework for conditional extremes models which provides a novel and principled, parametric methodology for summarising multivariate extremal dependence.
+ To this end, we introduce a clustering framework for CE models which provides a novel and principled, parametric methodology for summarising multivariate extremal dependence.
  
  % Outline of model
- In a first step, we define a dissimilarity measure for conditional extremes models based on the Jensen-Shannon divergence and common working assumptions made when fitting these models. 
+ In a first step, we define a dissimilarity measure for CE models based on the Jensen-Shannon divergence and common working assumptions made when fitting these models. 
  One key advantage of our measure is that it can be applied in any dimensions and, as opposed to existing methods for clustering extremal dependence, is not restricted to a bivariate setting. 
 % Clustering is then performed by applying the k-medoids algorithm to our novel dissimilarity matrix, which collects the dissimilarity between all pairs of spatial sites. 
 Clustering is then performed by applying the k-medoids algorithm, with the dissimilarity measure calculated for each pair of sites.  
@@ -178,22 +178,22 @@ This data will be used to showcase the marginal and dependence models we have ch
 
 In order to characterise the dependence between extremes, we first introduce the concepts of asymptotic dependence and independence, as described in \citet{Coles1999}.
 % The coefficient of asymptotic dependence, $\chi \in [0, 1]$, measures the degree of asymptotic dependence between two random variables $X_1$ and $X_2$ with corresponding CDFs $F_1$ and $F_2$, under the class of asymptotically dependent distributions.
-The coefficient of dependence, $\chi \in [0, 1]$, measures the degree of extremal dependence between two random variables $X_1$ and $X_2$ with corresponding CDFs $F_1$ and $F_2$, under the class of asymptotically dependent distributions. \todo{expand CDF?}
-It is defined as $\chi = \lim_{u \rightarrow 1}{\chi(u)}$, where
+The coefficient of asymptotic dependence, $\chi \in [0, 1]$, measures the degree of extremal dependence between two random variables $X_1$ and $X_2$ with corresponding CDFs $F_1$ and $F_2$, under the class of asymptotically dependent distributions, and is given by 
+% It is defined as $\chi = \lim_{u \rightarrow 1}{\chi(u)}$, where
 % \[
-%   \chi(u) = \mathbb{P}\left( F_1(X_1) > u \mid F_2(X_2) > u \right), u \in [0, 1].
+% \chi(u) = 2 - \frac{\log\left(\mathbb{P}(F_1(X_1) < u, F_2(X_2) < u)\right)}{\log \left(\mathbb{P}(F_1(X_1) < u)\right)}.
 % \]
 \[
-\chi(u) = 2 - \frac{\log\left(\mathbb{P}(F_1(X_1) < u, F_2(X_2) < u)\right)}{\log \left(\mathbb{P}(F_1(X_1) < u)\right)}.
+  \chi = \lim_{u\to1}\mathbb{P}\bigl[F_1(X_1)>u\mid F_2(X_2)>u\bigr].
 \]
-
-If $\chi = 0$, then $X_1$ and $X_2$ are said to be asymptotically independent, while for $\chi > 0$, they are increasingly asymptotically dependent. % , with greater magnitude as $\chi$ increases.
+If $\chi = 0$, then $X_1$ and $X_2$ are said to be asymptotically independent, while for $\chi > 0$, they are termed asymptotically dependent, with greater magnitude as $\chi$ increases.
 Thus, $\chi$ gives the limit probability of $X_1$ being extreme given that $X_2$ is extreme, and we expect the joint probability of observing extremal events in both variables to be greater where $\chi$ is higher \citep{Rohrbeck2021}.
 Furthermore, $\chi$ is symmetric in $X_1$ and $X_2$.
-Two variables can be asymptotically dependent even if they are not dependent in the classical sense.
+Note, two variables can be asymptotically dependent even if they are not dependent in the classical sense.
 % Another coefficient, $\bar{\chi} \in [-1, 1]$, is used to measure the strength of dependence in the case of asymptotically independent distributions, where $\chi = 0$.
-Another coefficient, $\bar{\chi} \in [-1, 1]$, measures the tail dependence between two variables where $\chi = 0$, in the case of asymptotically independent variables.
-This coefficient is similarly defined as $\bar{\chi} = \lim_{u \rightarrow 1}{\bar{\chi}(u)}$, where
+Another coefficient, $\bar{\chi} \in [-1, 1]$, measures the tail dependence between two variables where $\chi = 0$, the case of asymptotically independent variables.
+This coefficient is defined as $\bar{\chi} = \lim_{u \rightarrow 1}{\bar{\chi}(u)}$, where
+\todo{Is there a better definition than this, given I've changed chi?}
 \[
   \bar{\chi}(u) = \lim_{u \rightarrow 1} \frac{2\log\mathbb{P}(F_1(X_1) > u)}{ \log{\mathbb{P}(F_1(X_1) > u, F_2(X_2) > u)}} - 1.
 \]
@@ -225,9 +225,9 @@ A framework which provides a flexible approach to modelling extremal dependence 
 % Transformation
 \todo{Finish off!}
 \begin{itemize}
-  \item The conditional extremes model, like many other models for multivariate extremes, uses a marginal transformation.
-  \item Standardising to common margins is a widespread technique to ensure differences in variable scale do not effect the dependence structure. 
-  \item A popular choice for conditional extremes is to transform to Laplace margins, as introduced in \citet{Keef2013}.
+  \item The CE model, like many other models for multivariate extremes, uses a marginal transformation.
+  \item Standardising to common margins is a widespread technique to ensure differences in variable scale do not affect the dependence structure. 
+  \item A popular choice for CE is to transform to Laplace margins, as introduced in \citet{Keef2013}.
   % \item This is performing using the following transformation:
   \item Each marginal random variable $X_i$ is transformed to Laplace margins, whereby it is denoted by $Y_i$, using the following transformation:
   \begin{equation} \label{eq:laplace}
@@ -237,11 +237,11 @@ A framework which provides a flexible approach to modelling extremal dependence 
     \end{cases}
   \end{equation}
   where $F_{X_i}$ is the cumulative distribution function (CDF) of $X_i$.
-  \item The Laplace distribution specifically is chosen for its doubly exponential tails, each with mean 1. \todo{More formal?}
-  \item The Laplace distribution specifically is chosen as both its tails are exponential.
-  \item More formally, for any $u > 0$, the distributions of $Y_i - u \mid Y_i > u$ and $(-Y_i + u) \mid Y_i \le -u$ are exponential with mean 1. 
-  \item This ensures that the model for the upper and lower tails, corresponding to positive and negative dependence, is of the same, simple form, namely that of a heteroskedastic regression model.
-  \item Also, the tails of the Laplace distribution converge faster to a non-degenerate distribution as we increase the number of variables in the model, which makes it effective for modelling extremes \citep{Rohrbeck2024-jm}.
+  % \item The Laplace distribution specifically is chosen for its doubly exponential tails, each with mean 1. \todo{More formal?}
+  % \item The Laplace distribution specifically is chosen as both its tails are exponential.
+  % \item More formally, for any $u > 0$, the distributions of $Y_i - u \mid Y_i > u$ and $(-Y_i + u) \mid Y_i \le -u$ are exponential with mean 1. 
+  % \item This ensures that the model for the upper and lower tails, corresponding to positive and negative dependence, is of the same, simple form, namely that of a heteroskedastic regression model.
+  % \item Also, the tails of the Laplace distribution converge faster to a non-degenerate distribution as we increase the number of variables in the model, which makes it effective for modelling extremes \citep{Rohrbeck2024-jm}.
 \end{itemize}
 
 \vspace{1cm}
@@ -270,12 +270,13 @@ A framework which provides a flexible approach to modelling extremal dependence 
 % \end{itemize}
 
 \begin{itemize}
-  \item We use $Y_{-i} = \bm{Y} \backslash Y_{i}$ to denote the vector of all variables in $\bm{Y}$ except $Y_i$, and assume all operations are performed component-wise.
-  % \item The conditional extremes model of \citet{Heffernan2004} assumes that there exists vector normalising parameters $\alpha_{\mid i} := \bm{a}_{\mid i}(y_i), \beta_{\mid i} := \bm{b}_{\mid i}(y_i) \in \mathbb{R} \rightarrow \mathbb{R}^{(d-1)}$ such that for fixed $\bm{z}_{\mid i} \in \mathbb{R}^{(d-1)}$,
-  \item The conditional extremes model of \citet{Heffernan2004} assumes that there exists vector normalising parameters $\bm{\alpha}_{\mid i} := \left\{\alpha_{j \mid i} : j \in (1, \ldots, d) \backslash i \right\} \in [-1, 1]^{(d-1)}$ and $\bm{\beta}_{\mid i} := \left\{\beta_{j \mid i} : j \in (1, \ldots, d) \backslash i \right\} \in [-\infty, 1]^{(d-1)}$ such that for fixed $\bm{z}_{\mid i} \in \mathbb{R}^{(d-1)}$, $y_i > 0$,
+  % say Y in d dimensions
+  \item We use $Y_{-i} = \bm{Y} \backslash Y_{i}, \bm{Y} \in \mathbb{R}^d, y \in (1, \ldots, d)$ to denote the vector of all variables in $\bm{Y}$ except $Y_i$, and assume all operations are performed component-wise.
+  % \item The CE model of \citet{Heffernan2004} assumes that there exists vector normalising parameters $\alpha_{\mid i} := \bm{a}_{\mid i}(y_i), \beta_{\mid i} := \bm{b}_{\mid i}(y_i) \in \mathbb{R} \rightarrow \mathbb{R}^{(d-1)}$ such that for fixed $\bm{z}_{\mid i} \in \mathbb{R}^{(d-1)}$,
+  \item The CE model of \citet{Heffernan2004} assumes that there exists vector normalising parameters $\bm{\alpha}_{\mid i} := \left\{\alpha_{j \mid i} : j \in (1, \ldots, d) \backslash i \right\} \in [-1, 1]^{(d-1)}$ and $\bm{\beta}_{\mid i} := \left\{\beta_{j \mid i} : j \in (1, \ldots, d) \backslash i \right\} \in [-\infty, 1]^{(d-1)}$ such that for fixed $\bm{z}_{\mid i} \in \mathbb{R}^{(d-1)}$, $y_i > 0$,
       \todo{Check if probably is for equal to yi or greater than yi}
       \begin{equation} \label{eq:ce_limiting_dist}
-        \mathbb{P}\left( \frac{\bm{Y}_{-i} - \bm{\alpha}_{\mid i} Y_{i}}{Y_{i}^{\bm{\beta}_{\mid i}}} \le \bm{z}_{\mid i}, Y_i - u_i = y_i \mid Y_i > u_i \right) \rightarrow G_{\mid i}(\bm{z}_i) \exp(-y) \text{ as } u_i \rightarrow \infty,
+        \mathbb{P}\left( \frac{\bm{Y}_{-i} - \bm{\alpha}_{\mid i} Y_{i}}{Y_{i}^{\bm{\beta}_{\mid i}}} \le \bm{z}_{\mid i}, Y_i - u_i = y_i \mid Y_i > u_i \right) \rightarrow G_{\mid i}(\bm{z}_{\mid i}) \exp(-y_i) \text{ as } u_i \rightarrow \infty,
       \end{equation}
   where $G_{j \mid i}$ is non-degenerate for all $j \ne i$. 
   \todo{below points needed, or can some of this be removed?}
@@ -283,33 +284,35 @@ A framework which provides a flexible approach to modelling extremal dependence 
   \[
     \lim_{z \rightarrow \infty}{\bm{G}_{j \mid i}(\bm{z})} = 1, \forall j \ne i,
   \]
-  ensuring that there is no mass at $+\infty$ for any margin, but allowing for some mass to be at $-\infty$, in order to ensure uniqueness of the solution. \citep{Keef2013}
+  ensuring that there is no mass at $+\infty$ for any margin, but allowing for some mass to be at $-\infty$, in order to ensure uniqueness of the solution \citep{Keef2013}.
   \item An important consequence of this formulation is the weak assumption that
   \begin{equation} \label{eq:limit_independence}
-  \mathbb{P}(\bm{Z}_{\mid i} \le \bm{z}_{\mid i}, Y_i - u_i = y_i \mid Y_i > u_i) \rightarrow G_{\mid i}(\bm{z}_i) \exp(-y) \text{ as } u_i \rightarrow \infty,
+    \mathbb{P}(\bm{Z}_{\mid i} \le \bm{z}_{\mid i}, Y_i - u_i = y_i \mid Y_i > u_i) \rightarrow G_{\mid i}(\bm{z}_{\mid i}) \exp(-y_i) \text{ as } u_i \rightarrow \infty,
   \end{equation}
   so that in the limit as $u_i \to \infty$, the extremal exceedances $Y_i - u_i$ and the standardised residuals $\bm{Z}_{\mid i} = \frac{\bm{Y}_{-i} - \bm{\alpha}_{\mid i} Y_{i}}{Y_{i}^{\bm{\beta}_{\mid i}}}, \bm{Z}_{\mid i} \sim G_{\mid i}$ are independent.
-  % \item Methods for assessing the validity of this assumption and hence the conditional extremes model for a given application are explored in section \ref{subsubsec:ce_diagnostics}.
+  % \item Methods for assessing the validity of this assumption and hence the CE model for a given application are explored in section \ref{subsubsec:ce_diagnostics}.
 \end{itemize}
 
 \vspace{1cm}
 
 % Heteroskedastic regression
 \begin{itemize}
-  \item The limiting distribution in equation \ref{eq:ce_limiting_dist} can be rearranged to give the heteroskedastic regression equation defined by
+  \item The limiting distribution in \eqref{eq:ce_limiting_dist} can be rearranged to give the heteroskedastic regression equation defined by
     \begin{equation} \label{eq:ce_model}
-        \bm{Y}_{-i} \bm{\alpha}_{\mid i}\bm{y}_i + \bm{y}_i^{\bm{\beta}_{\mid i}}\bm{Z}_{\mid i}, \text{ for } Y_i = y_i > u_{Y_i}.
+        % \bm{Y}_{-i} \bm{\alpha}_{\mid i}\bm{y}_i + \bm{y}_i^{\bm{\beta}_{\mid i}}\bm{Z}_{\mid i}, \text{ for } Y_i = y_i > u_{Y_i}.
+      \bigl(\bm{Y}_{-i} \mid Y_i = y_i \bigr) = \bm{\alpha}_{\mid i}\bm{y}_i + \bm{y}_i^{\bm{\beta}_{\mid i}}\bm{Z}_{\mid i}, \text{ for } y_i > u_{Y_i}.
     \end{equation}
     % with residual vector $\bm{Z}_{\mid i} \sim G_{\mid i}$.
-  \item $\bm{\alpha}{\mid i} \in [-1, 1]$ is the slope or linear regression coefficient, which describes the strength of association between $Y_{-i}$ and large $Y_i$. 
+  \item The slope or linear regression coefficient $\bm{\alpha}_{\mid i} \in [-1, 1]$ describes the strength of association between $Y_{-i}$ and large $Y_i$. 
   % \item $\bm{\beta}_{\mid i} \in [-\infty, 1]$ can be interpretated as a ``spread'' parameter, controlling the levels of heteroskedasticity in the model.
-  \item $\bm{\beta}_{\mid i} \in [-\infty, 1]$ can be interpreted as a ``spread'' or heteroskedastic parameter, controlling the impact of the residual term $\bm{Z}_{\mid i}$ on the dependence between $\bm{Y}_{-i}$ and $\bm{Y}_i$.
+  \item The parameter $\bm{\beta}_{\mid i} \in [-\infty, 1]$ can be interpreted as a ``spread'' or heteroskedastic parameter, controlling the impact of the residual term $\bm{Z}_{\mid i}$ on the dependence between $\bm{Y}_{-i}$ and $\bm{Y}_i$.
   \item Higher values of $\bm{\beta}_{\mid i}$ indicate that the distribution of $Y_{-i}$ is more spread out for larger values of $Y_i$, while lower values indicate a more strongly deterministic relationship. 
-  \item Several choices for $G_{\mid i}$, the distribution of $\bm{Z}_{\mid i}$, were proposed in \citet{Heffernan2004}, before ultimately settling on a multivariate normal distribution with vector nuisance parameters $\bm{\mu}_{\mid i} \in \mathbb{R}^{(d-1)}$ and $\bm{\sigma}_{\mid i} \in \mathbb{R}^{(d-1)}$.
+  % \item Several choices for $G_{\mid i}$, the distribution of $\bm{Z}_{\mid i}$, were proposed in \citet{Heffernan2004}, before ultimately settling on a multivariate normal distribution with vector nuisance parameters $\bm{\mu}_{\mid i} \in \mathbb{R}^{(d-1)}$ and $\bm{\sigma}_{\mid i} \in \mathbb{R}^{(d-1)}$.
+  \item The distribution of $\bm{Z}_{\mid i}$, the residuals of the model, is assumed to be multivariate normal with vector nuisance parameters $\bm{\mu}_{\mid i} \in \mathbb{R}^{(d-1)}$ and $\bm{\sigma}_{\mid i} \in \mathbb{R}^{(d-1)}$, as proposed in \citet{Heffernan2004}.
   \item Some special cases of the CE model are:
     \begin{itemize}
-      \item $\bm{\alpha}_{\mid i} = 0, \bm{\beta}_{\mid i} = 0$, for which we have perfect independent between $Y_i$ and $Y_{-i}$.
-      \item $\bm{\alpha}_{\mid i} = -1/1, \bm{\beta}_{\mid i} = 0$, which corresponds to perfect positive/negative dependence, 
+      \item $\bm{\alpha}_{\mid i} = 0, \bm{\beta}_{\mid i} = 0$, for which we have perfect independence between $Y_i$ and $Y_{-i}$.
+      \item $\bm{\alpha}_{\mid i} = -1(+1), \bm{\beta}_{\mid i} = 0$, which corresponds to perfect positive/negative dependence, 
       \item $-1 < \bm{\alpha}_{\mid i} < 1$, which suggests asymptotic independence between $Y_{-i}$ and large $Y_{i}$.
     \end{itemize}
 \end{itemize}
@@ -321,14 +324,14 @@ A framework which provides a flexible approach to modelling extremal dependence 
 % Intro: CE gives distributions, which need to be compared
 \todo{Keep here, or move to last section?}
 \begin{itemize}
-  \item \citet{Heffernan2004} shows that inference can be made about the extremal dependence of a random vector $\bm{Y}_{-i} = \bm{Y} \backslash Y_i$ on a variable $Y_i$ by conditioning on the exceedance of a high threshold $u$ by $Y_i$, and assuming that this conditional distribution is a diagonal multivariate Gaussian distribution: % with vector mean and standard deviation:
+  \item \citet{Heffernan2004} shows that inference can be made about the extremal dependence of a random vector $\bm{Y}_{-i} = \bm{Y} \backslash Y_i$ on $Y_i$ by conditioning on the exceedance of a high threshold $u$ by $Y_i$, and assuming that this conditional distribution is a diagonal multivariate Gaussian distribution: % with vector mean and standard deviation:
     \begin{equation} \label{eq:ce_norm}
-      \bm{Y}_{-i} \mid Y_i = y_i \sim N\left(\bm{\alpha}_{\mid i} y_i + y_i^{\bm{\beta}_i} \bm{\mu}_{\mid i}, y_i^{\bm{\beta}_i} \bm{\sigma_{\mid i}}\right), Y_i > u,
+      \(\bm{Y}_{-i} \mid Y_i \) = y_i \sim N\left(\bm{\alpha}_{\mid i} y_i + y_i^{\bm{\beta}_i} \bm{\mu}_{\mid i}, y_i^{\bm{\beta}_i} \bm{\sigma_{\mid i}}\right), Y_i > u,
       % Y_{j} \mid Y_{i} = y_i \sim N\left(\alpha_{j \mid i} y_i + y_i^{\beta_i} \mu_{j \mid i}, y_i^{\beta_i} \sigma_{j \mid i}\right),
     \end{equation}
-    where $\bm{\alpha}_{\mid i}, \bm{\beta}_{\mid i}, \bm{\mu}_{\mid i}, \bm{\sigma}_{\mid i} \in \mathbb{R}^{(d-1)}$ come from the CE model.
+    where $\bm{\alpha}_{\mid i}, \bm{\beta}_{\mid i}, \bm{\mu}_{\mid i}, \bm{\sigma}_{\mid i} \in \mathbb{R}^{(d-1)}$ are the parameters of the CE model.
   % \item Therefore, when seeking to compare the extremal dependence structure of two locations, a sensible approach is to compare the conditional distributions given by equation \ref{eq:ce_norm} for each variable at both sites. 
-  \item Therefore, under this model, when comparing the extremal dependence structure between variables at any given sites, we are effectively comparing the conditional distributions given by equation \ref{eq:ce_norm}.
+  \item Therefore, under this model, when comparing the extremal dependence structure between variables at any given sites, we are effectively comparing the conditional distributions given by \eqref{eq:ce_norm}.
 \end{itemize}
 
 \vspace{1cm}
@@ -346,20 +349,16 @@ A framework which provides a flexible approach to modelling extremal dependence 
     % \Sigma_1)$, Q \sim N(\mu_2, \Sigma_2)$ in $\mathbb{R}^n$ has closed form
     % solution
   \item The KL divergence is always non-negative and zero if and only if $P = Q$.
-  \item For two multivariate normal distributions $P \sim N(\mu_1, \Sigma_1), Q \sim N(\mu_2, \Sigma_2) \in \mathbb{R}^n$ with diagonal covariance matrices, $KL(P \mid\mid Q)$ has closed form 
-    % \begin{equation} \label{eq:kl_mvn}
-    %   KL(P \mid\mid Q) = \frac{1}{2} \left( \log{\left(\frac{\det{\Sigma_2}}{\det{\Sigma_1}}\right)} - n + \Tr{(\Sigma_2^{-1}\Sigma_1)} + (\mu_2 - \mu_1)^T \Sigma_2^{-1}(\mu_2 - \mu_1) \right),
-    % \end{equation}
-    % as shown in \citet{Duchi2007}.
+  \item For two multivariate normal distributions $P \sim N(\mu_1, \Sigma_1), Q \sim N(\mu_2, \Sigma_2) \in \mathbb{R}^n$ with diagonal covariance matrices, $KL(P \mid\mid Q)$ has closed form.
   % \item In the case where both covariance matrices are diagonal, this simplifies to
-    \begin{equation} \label{eq:kl_mvn_diag}
-      KL(P \mid\mid Q) = \frac{1}{2} \sum_{i=1}^{n} \left( \frac{\sigma_{1,i}^2}{\sigma_{2,i}^2} + \frac{(\mu_{1,i} - \mu_{2,i})^2}{\sigma_{2,i}^2} - 1 - \log\left(\frac{\sigma_{1,i}^2}{\sigma_{2,i}^2}\right) \right),
-    \end{equation}
-    where: \todo{Should I use a different notation here, since I also use mu, sigma for the CE model?}
-    \begin{itemize}
-        \item $\mu_1 = (\mu_{1,1}, \mu_{1,2}, \ldots, \mu_{1,n})^\top$ and $\mu_2 = (\mu_{2,1}, \mu_{2,2}, \ldots, \mu_{2,n})^\top$ are the mean vectors,
-        \item $\Sigma_1 = \text{diag}(\sigma_{1,1}^2, \sigma_{1,2}^2, \ldots, \sigma_{1,n}^2)$ and $\Sigma_2 = \text{diag}(\sigma_{2,1}^2, \sigma_{2,2}^2, \ldots, \sigma_{2,n}^2)$ are diagonal covariance matrices,
-        \item $\sigma_{1,i}^2$ and $\sigma_{2,i}^2$ denote the $i$-th diagonal element of $\Sigma_1$ and $\Sigma_2$, respectively.
+    % \begin{equation} \label{eq:kl_mvn_diag}
+    %   KL(P \mid\mid Q) = \frac{1}{2} \sum_{i=1}^{n} \left( \frac{\sigma_{1,i}^2}{\sigma_{2,i}^2} + \frac{(\mu_{1,i} - \mu_{2,i})^2}{\sigma_{2,i}^2} - 1 - \log\left(\frac{\sigma_{1,i}^2}{\sigma_{2,i}^2}\right) \right),
+    % \end{equation}
+    % where: \todo{Should I use a different notation here, since I also use mu, sigma for the CE model?}
+    % \begin{itemize}
+    %     \item $\mu_1 = (\mu_{1,1}, \mu_{1,2}, \ldots, \mu_{1,n})^\top$ and $\mu_2 = (\mu_{2,1}, \mu_{2,2}, \ldots, \mu_{2,n})^\top$ are the mean vectors,
+    %     \item $\Sigma_1 = \text{diag}(\sigma_{1,1}^2, \sigma_{1,2}^2, \ldots, \sigma_{1,n}^2)$ and $\Sigma_2 = \text{diag}(\sigma_{2,1}^2, \sigma_{2,2}^2, \ldots, \sigma_{2,n}^2)$ are diagonal covariance matrices,
+    %     \item $\sigma_{1,i}^2$ and $\sigma_{2,i}^2$ denote the $i$-th diagonal element of $\Sigma_1$ and $\Sigma_2$, respectively.
     \end{itemize}
   \item However, the KL divergence is asymmetric, unbounded and not a true divergence metric, making it unsuitable for clustering.
 \end{itemize}
@@ -380,27 +379,34 @@ A framework which provides a flexible approach to modelling extremal dependence 
   % \item A problem arises from the fact that the mixture distribution $M$ of two normals is not itself normal.
   % \item In fact, $M$ becomes increasingly bimodal as $P$ and $Q$ become more dissimilar, and so the JS divergence does not have a closed form solution for multivariate normals.
   \item A problem arises from the fact that the mixture distribution $M$ of two normals is not itself normal, and so the KL divergence does not have a closed form solution for multivariate normals.
-  \item \citet{Nielsen2019} overcomes this problem by using the weighted geometric mean $G_{\alpha}(x, y) = x^{\alpha} y^{1 - \alpha}, \alpha \in [0, 1]$, instead of the arithmetic mean. 
+  \item \citet{Nielsen2019} overcomes this problem by using the weighted geometric mean $G_{\alpha}(P, Q) = P^{\alpha} Q^{1 - \alpha}, \alpha \in [0, 1]$, instead of the arithmetic mean. 
   \item This allows us to exploit the property that the weighted product of exponential family distributions is itself a member of the same family, and so $G_{\alpha}(P, Q)$ will also be a multivariate normal distribution.
   \item From this, we can define the skew-geometric JS divergence as
     \begin{equation} \label{eq:js_norm}
       JS^{G_{\alpha}}(P \mid\mid Q) = \frac{1}{2} KL(P \mid\mid G_{\alpha}(P, Q)) + \frac{1}{2} KL(Q \mid\mid G_{\alpha}(P, Q)).
     \end{equation}
   \item The parameter $\alpha$ is called a skew parameter, and controls the divergence skew between P and Q. 
-  \item For our purposes, we will set $\alpha = 0.5$. \todo{More needed?}
+  \item For our purposes, we will set $\alpha = 0.5$, which corresponds to giving equal weight to both distributions.
   \item For two multivariate normals, this gives the closed form solution
     \begin{align*}
       JS^{G_{\alpha}}(P \mid\mid Q) &= \frac{1}{2} \left( (1 - \alpha) \mu_1^T \Sigma_1^{-1} \mu_1 + \alpha \mu_2^T \Sigma_2^{-1} \mu_2 - \mu_{\alpha}^T \Sigma_{\alpha}^{-1} \mu_{\alpha} + \log{\left( \frac{\abs{\Sigma_1}^{1-\alpha} \abs{\Sigma_2}^{\alpha}}{\abs{\Sigma_{\alpha}}} \right)} \right), \\
       \Sigma_{\alpha} &= \left( (1 - \alpha) \Sigma_1^{-1} + \alpha \Sigma_2^{-1} \right)^{-1}, \\
       \mu_{\alpha} &= \Sigma_{\alpha} \left( (1 - \alpha) \Sigma_1^{-1} \mu_1 + \alpha \Sigma_2^{-1} \mu_2 \right), \numberthis \label{eq:js_norm_mvn}
     \end{align*} 
-    and for diagonal covariance matrices, \citet{Thiagarajan2025} show that this simplifies to
-    \todo{Double check about dash in Thiagarajan formula}
+    where:
+    \begin{itemize}
+      \item $\mu_1 = (\mu_{1,1}, \mu_{1,2}, \ldots, \mu_{1,n})^\top$ and $\mu_2 = (\mu_{2,1}, \mu_{2,2}, \ldots, \mu_{2,n})^\top$ are the mean vectors,
+      \item $\Sigma_1 = \text{diag}(\sigma_{1,1}^2, \sigma_{1,2}^2, \ldots, \sigma_{1,n}^2)$ and $\Sigma_2 = \text{diag}(\sigma_{2,1}^2, \sigma_{2,2}^2, \ldots, \sigma_{2,n}^2)$ are diagonal covariance matrices,
+      \item $\sigma_{1,i}^2$ and $\sigma_{2,i}^2$ denote the $i$-th diagonal element of $\Sigma_1$ and $\Sigma_2$, respectively.
+    \end{itemize}
+    For diagonal covariance matrices, \citet{Thiagarajan2025} show that this simplifies to
+    \todo{Double check about dash in Thiagarajan formula, also check for backwards JSGa use}
     \todo{Double check this formula is correct (R should give same as above)}
     \todo{Standardise use of brackets, varies a lot}
     % \begin{align*}
     %   JS-G(P \mid \mid Q) = \frac{1}{2} \sum^n_{i=1} \left[ \frac{\alpha \sigma_{1, i}^2 + (1-\alpha)\sigma_{2, i}^2}{\sigma_{\alpha, i}^2} + \log{\left( \frac{\sigma_{\alpha, i}^2}{\sigma_{1, i}^{(2\alpha)}\sigma_{2, i}^{2(1 - \alpha)}} \right)} + \alpha \frac{(\mu_{\alpha, i} - \mu_{1, i})^2}{\sigma_{\alpha, i}^2} + (1 - \alpha) \frac{(\mu_{\alpha, i} - \mu_{2, i})^2}{\sigma_{\alpha, i}^2} -1 \right],
     % \end{align*}
+    \todo{Should I use a different notation here, since I also use mu, sigma for the CE model?}
     \begin{align}
     JS^{G_{\alpha}}(P \mid\mid Q) = \frac{1}{2} \sum_{i=1}^n \Bigg[
         & \frac{\alpha \sigma_{1,i}^2 + (1 - \alpha) \sigma_{2,i}^2}{\sigma_{\alpha,i}^2} 
@@ -409,9 +415,10 @@ A framework which provides a flexible approach to modelling extremal dependence 
         + (1 - \alpha) \frac{(\mu_{\alpha,i} - \mu_{2,i})^2}{\sigma_{\alpha,i}^2}
         - 1 \Bigg],
     \end{align}
-    where $\sigma_{\alpha, i}^2 = \frac{\sigma_{1, i}^2 \sigma_{2, i}^2}{\alpha\sigma_{1, i}^2 + (1 - \alpha)\sigma_{2, i}^2}$ and $\mu_{\alpha, i} = \sigma_{\alpha, i}^2 \left( \frac{\alpha\mu_{1, i}}{\sigma_{1, i}^2} + \frac{(1 - \alpha) \mu_{2, i}}{\sigma_{2, i}^2} \right)$.
+where $\sigma_{\alpha, i}^2 = \frac{\sigma_{1, i}^2 \sigma_{2, i}^2}{\alpha\sigma_{1, i}^2 + (1 - \alpha)\sigma_{2, i}^2}$, and $\mu_{\alpha, i} = \sigma_{\alpha, i}^2 \left( \frac{\alpha\mu_{1, i}}{\sigma_{1, i}^2} + \frac{(1 - \alpha) \mu_{2, i}}{\sigma_{2, i}^2} \right)$, respectively.
   % \item Thus we have a closed form, computationally efficient and symmetric measure of dissimilarity between any two conditional distributions as given by equation \ref{eq:ce_norm} for two sites, with which we can cluster locations based on their extremal dependence structure. 
-  \item Thus we have a closed form, computationally efficient and symmetric measure of dissimilarity between any conditional multivariate normal distributions as given by equation \ref{eq:ce_norm}, representing the extremal dependence structure at each site. 
+  % \item Thus we have a closed form, computationally efficient and symmetric measure of dissimilarity between any conditional multivariate normal distributions as given by \eqref{eq:ce_norm}, representing the extremal dependence structure at each site. 
+\item Thus we have a closed form, computationally efficient and symmetric dissimilarity measure between any two CE models assuming \eqref{eq:ce_norm}, representing the extremal dependence structure at each site.
   \item We can calculate a dissimilarity matrix between each pair of locations in this way.
 \end{itemize}
 
@@ -454,15 +461,17 @@ A framework which provides a flexible approach to modelling extremal dependence 
   \item There is a rich body of literature on methods for selecting $k$, including the silhouette method \citep{Rousseeuw1987} and the Akaike Information Criterion (AIC) \citep{Akaike1974}.
   \item However, the silhouette method is not suitable for our application, as it is designed for spherical clusters. \todo{Cite, have reference for this somewhere?}
   \item The AIC is also unsuitable and has been found to perform poorly for our algorithm.
-  \item This may be because it requires summarising over each location, which if taken as the sum or mean assumes independence between the models fit for each site, which is often not the case for spatial applications.
-  \item We revert, therefore, to the simple method of \citet{Tibshirani2005}, which uses the total within-cluster sum of squares (TWGSS) to select $k$. \todo{Fix citation?}
+  \item This may be because it requires aggregating over each location, which if unweighted assumes independence between the models fit for each site.
+  \item However, this assumption is often violated in spatial applications.
+  \item We revert, therefore, to the simple method of \citet{Thorndike1953-ie}, which uses the total within-cluster sum of squares (TWGSS) to select $k$. \todo{Fix citation?}
   \item This method has been found to perform well in both our simulation study and our Irish meterological application, making clear suggestions as to the value of $k$ to use. 
   \item Specifically, the TWGSS is defined as
     \begin{equation} \label{eq:twgss}
-      TWGSS(k) = \sum_{i=1}^{k} \sum_{j=1}^{n_i} d_{ij}^2,
+      % \mathrm{TWGSS}(k) = \sum_{i=1}^{k} \sum_{j=1}^{n_i} d_{ij}^2,
+      \mathrm{TWGSS}(k) = \sum_{i=1}^{k} \sum_{j=1}^{n_i} d_{ij}^2,
     \end{equation}
-    where $d_{ij}$ is the dissimilarity between observation $j$ and the centroid of cluster $i$, which we measure using the $JS^{G_{\alpha}}$ divergence defined in \ref{subsec:div}, and $n_i$ is the number of observations in cluster $i$.
-  \item We then plot $\mathrm{TWGSS}(k)$ vs.\ $k$, and choose $k^*$ at the ``elbow'' where TWGSS reduction sharply slows.
+    where $d_{ij}$ is the dissimilarity between site $j$ and the centroid of cluster $i$, which we measure using the $JS^{G_{\alpha}}$ divergence defined in section \ref{subsec:div}, and $n_i$ is the number of observations in cluster $i$.
+  \item We then plot $\mathrm{TWGSS}(k)$ vs.\ $k$, and choose $k^*$, the optimal number of clusters, as the value of $k$ at which the TWGSS reduction sharply slows, or equivalently, the point at which the curve has an ``elbow''.
 \end{itemize}
 
 \section{Simulation study}\label{sec:sim}

@@ -1,0 +1,150 @@
+\documentclass{article}
+
+\usepackage[top=3cm, bottom=3cm, left=3.5cm,right=3.5cm]{geometry}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage{graphicx}
+\usepackage{bm}
+\usepackage{titlesec}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{mathtools}
+\usepackage{natbib} % print author's name and year when citing
+\usepackage{bbm}
+\usepackage{todonotes}
+\usepackage{pdflscape}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{authblk}
+\usepackage{pdfpages}
+\usepackage{setspace} 
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{tikz}
+\usepackage[colorlinks=true,citecolor=blue, linkcolor=blue]{hyperref}
+\usepackage{multirow}
+
+\usepackage{tikz}
+
+\setlength{\tabcolsep}{5pt}
+%%\setlength{\parindent}{0pt}
+\usepackage[parfill]{parskip}
+\renewcommand{\arraystretch}{1.5}
+
+\setcounter{tocdepth}{2}
+
+% Define a custom note command for general notes
+\newcommand{\mynote}[1]{\todo[color=yellow!40,inline]{#1}}
+
+\DeclareMathOperator{\Tr}{Tr}
+
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}%
+
+\newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
+
+% comment to turn on TODO notes on pdf
+\presetkeys{todonotes}{disable}{}
+
+% Nature Bibliography style
+% \usepackage[backend=biber,style=nature]{biblatex}
+% \addbibresource{library.bib} 
+\bibliographystyle{unsrtnat}
+
+% number equations by section
+\numberwithin{equation}{section}
+
+\title{A clustering framework for conditional extremes models: supplementary materials}
+\thispagestyle{empty}
+\author{Patrick O'Toole, Christian Rohrbeck, Jordan Richards}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Simulation study}\label{sec:sim}
+
+\subsection{Gaussian copula} \label{subsec:sim_gauss}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width = 0.9\linewidth]{plots/sim_01_gauss_cop_man.png}
+    \caption{Boxplots of \emph{$\alpha$ and $\beta$ parameter estimates for the conditional extremes model pre- and post-clustering for a bivariate Gaussian copula simulation of 12 datasets, or ``locations'', each with 1000 observations of each variable, belonging equally to three known clusters. Simulations were repeated 500 times. The x-axis represents the conditional quantile used to fit the conditional extremes model, and the boxes are coloured by their Gaussian copula correlation parameter, $\rho_{\text{Gauss}}$. Dotted horizontal lines indicate the theoretical asymptotic values of $\alpha$ and $\beta$ for a bivariate Gaussian copula, coloured by the same $\rho_{\text{Gauss}}$ values for $\alpha$ and black for $\beta$ to indicate the same value across all clusters, at $1/2$.}}
+    \label{fig:00_gauss_cop}
+\end{figure}
+
+\subsection{Mixture models} \label{subsec:sim_mixture}
+
+\subsubsection{Comparison to competing methods} \label{subsubsec:sim_competing_methods}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width = 0.9\linewidth]{plots/sim_01b_ce_vs_vi_dqu_0.9_man.png}
+    \caption{\emph{Comparison of clustering methods for two variables and two equally sized clusters for simulations of 12 ``locations'', each with 1000 observations of each variable, from a mixture of Normal and Gaussian copulas. A grid search was performed, with the x-axis representing the Gaussian correlation parameter used for both clusters, and the facet labels showing the t-copula correlation parameters for each ``known'' cluster. This grid search was repeated 500 times. The lines show the smoothed Adjusted Rand Index for both clustering methods across all simulations, with associated uncertainty.}} % The proposed method is shown to be superior to the leading competitor in the bivariate case, that of \cite{Vignotto2021}. Both models perform better when the difference in the t-copula correlation parameters between the two clusters is larger, and when Gaussian correlation is higher.}}
+    \label{fig:01_ce_vs_vi}
+\end{figure}
+
+\subsubsection{Extension to $>2$ dimensions} \label{subsubsec:sim_extension}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width = 0.9\linewidth]{plots/sim_01d_js_sens_3_var_dqu_0.9_man.png}
+    \caption{\emph{Evaluation of clustering performance for three variables and two equally sized clusters for simulations of 12 ``locations'', each with 1000 observations for each variable, from a mixture of Normal and Gaussian copulas. A grid search was performed,  with the x-axis representing the Gaussian correlation parameter used for both clusters, and the facet labels showing the t-copula correlation parameters for each ``known'' cluster. This grid search was repeated 500 times. The lines show the smoothed Adjusted Rand Index for both clustering methods across all simulations, with associated uncertainty. Points show individual values of the ARI for a given simulation.}} 
+    \label{fig:02_3d}
+\end{figure}
+
+\subsubsection{More realistic example} \label{subsubsec:sim_realistic}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width = 0.9\linewidth]{plots/01c2_js_sens_sim_60_locs_dqu_0.9_smooth_man.png}
+    \caption{\emph{Evaluation of clustering performance for two variables and three clusters for simulations from a mixture of Normal and Gaussian copulas in a more realistic clustering setting. 60 locations with 1000 observations for each variable were simulated, with 10, 20 and 30 belonging to each respective cluster. A grid search was performed, with the x-axis and facet labels showing the t-copula correlation parameters for each of the three ``known'' clusters, for a Gaussian copula correlation of 0.5. Perturbations were added to these parameters. This grid search was repeated 500 times. The lines show the smoothed Adjusted Rand Index for both clustering methods across all simulations, with associated uncertainty. Points show individual values of the ARI for a given simulation.}} 
+    \label{fig:03_realistic}
+\end{figure}
+
+\subsubsection{Parameter estimation pre- and post-clustering} \label{subsubsec:boot}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width = 0.9\linewidth]{plots/sim_01e_bootstrap_box_man.png}
+    \caption{\emph{Boxplots of 500 bootstrapped conditional expectations of one variable given the other is at the $98\%$ marginal quantile $u$, pre- and post-clustering for a simulation of 12 ``locations'', each with 1000 observations for each variable, from a mixture of Normal and Gaussian copulas, with the Gaussian correlation set to 0.5. The t-copula correlation parameters for the two clusters were set to 0.1 and 0.9, as shown on the x-axis.}}
+    \label{fig:04_bootstrap}
+\end{figure}
+
+\section{Application to Irish meteorological data} \label{sec:app}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width = 0.9\linewidth]{plots/041_chi_plots_man_crop.png}
+    % \includegraphics[width = 0.9\linewidth]{plots/041_chi_plots.png}
+    \caption{\emph{$\chi$ estimates for rain and wind speed at the $95^{th}$ quantile across all 59 Met Éireann weather sites in Ireland.}}
+    \label{fig:chi}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width = 0.9\linewidth]{plots/ire_ce.png}
+    \caption{\emph{Estimates for the conditional extremes model $\alpha$ and $\beta$ parameters for the 59 Met Éireann weather sites in Ireland, for the model of rain given extreme wind speed, and vice versa.}}
+    \label{fig:a_b_vals}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width = 0.9\linewidth]{plots/cluster_dqu_sep.png}
+    \caption{\emph{Clustering solution based on the conditional extremes model fits at each of the 59 Met Éireann weather sites in Ireland, for the model of rain given extreme wind speed, vice versa and combined.}}
+    \label{fig:clust_sol}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width = 0.9\linewidth]{plots/ab_map_post_clust.png}
+    \caption{\emph{Post-clustering estimates for the conditional extremes model $\alpha$ and $\beta$ parameters for the 59 Met Éireann weather sites in Ireland, for the model of rain given extreme wind speed, and vice versa. Data was re-assigned to their respective cluster medoids, aggregating rainfall and taking the maximum wind speed for a given date across all members of each cluster.}}
+    \label{fig:ce_post_clust}
+\end{figure}
+
+% \newpage
+% \bibliography{library}
+
+\end{document}

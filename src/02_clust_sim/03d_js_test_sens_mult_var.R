@@ -27,8 +27,9 @@ seed_number <- 123
 # number of "locations"
 n_locs <- 12
 # Multivariate (> 2-dimensions)
-vars <- c("rain", "wind_speed", "temperature") # dummy names for 3 vars
-n_vars <- length(vars)
+# vars <- c("rain", "wind_speed", "temperature") # dummy names for 3 vars
+# n_vars <- length(vars)
+n_vars <- 5
 n_clust <- 2
 cluster_mem <- sort(rep(c(1, 2), 6)) # known cluster membership
 n <- 1e4 # number of samples to take
@@ -73,7 +74,7 @@ data_mix <- data$data_mix
 # Fit CE model
 dependence <- fit_ce(
   data        = data_mix,
-  vars        = vars,
+  # vars        = vars,
   marg_prob   = marg_prob,
   cond_prob   = cond_prob,
   fit_no_keef = TRUE
@@ -81,7 +82,6 @@ dependence <- fit_ce(
 
 # check that all dependence models have run successfully
 sapply(dependence, \(x) lapply(x, length))
-
 
 # Perform PAM and k-means clustering, as an exploratory analysis
 
@@ -118,7 +118,7 @@ grid <- tidyr::crossing(
 
 # run kl_sim_eval for each row in grid
 # n_times <- 500
-n_times <- 200
+n_times <- 1
 results_vec <- lri_vec <- lri_mean_vec <- vector(length = n_times)
 set.seed(seed_number)
 # i <- 11
@@ -133,6 +133,8 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
   for (j in seq_len(n_times)) {
     # generate simulation data for given parameter set
     data_mix <- with(row, sim_cop_dat(
+      n_vars     = n_vars,
+      n_locs     = n_locs,
       n          = n,
       cor_gauss  = c(cor_gauss1, cor_gauss2),
       cor_t      = c(cor_t1, cor_t2),
@@ -243,19 +245,28 @@ p1 <- results_grid_plt |>
     colour = "black", alpha = 0.05, size = 1
   ) +
   # Confidence intervals around mean line
-  geom_ribbon(
-    data = res_grid_sum_plt,
-    aes(x = cor_gauss1, ymin = lower_rand, ymax = upper_rand),
-    fill = "#C11432",
-    alpha = 0.3,
-    size = 2
-  ) +
-  geom_line(
-    data = res_grid_sum_plt,
-    aes(x = cor_gauss1, y = median_rand),
+  # geom_ribbon(
+  #   data = res_grid_sum_plt,
+  #   aes(x = cor_gauss1, ymin = lower_rand, ymax = upper_rand),
+  #   fill = "#C11432",
+  #   alpha = 0.3,
+  #   size = 2
+  # ) +
+  # geom_line(
+  #   data = res_grid_sum_plt,
+  #   aes(x = cor_gauss1, y = median_rand),
+  #   colour = "#C11432",
+  #   linewidth = 1
+  # ) +
+  geom_smooth(
+    aes(x = cor_gauss1, y = adj_rand),
+    method = "loess",
     colour = "#C11432",
-    linewidth = 1
-  )
+    se = TRUE,
+    alpha = 0.7,
+    linewidth = 1.2
+  ) +
+  NULL
 (p1 <- common_plot_items(p1))
 
 ggsave(
@@ -288,20 +299,42 @@ results_grid_join <- bind_rows(
 
 p2 <- results_grid_join %>%
   ggplot() +
-  geom_line(
-    aes(x = cor_gauss1, y = median_rand, colour = ind),
-    linewidth = 1,
-    show.legend = FALSE
-  ) +
+  # points
+  # geom_point(aes(x = cor_gauss1, y = mean_rand, colour = ind), size = 2) +
   # Confidence intervals around mean line
-  geom_ribbon(
-    aes(x = cor_gauss1, ymin = lower_rand, ymax = upper_rand, fill = ind),
-    alpha = 0.3,
-    size = 2,
+  # geom_ribbon(
+  #   aes(x = cor_gauss1, ymin = lower_rand, ymax = upper_rand, fill = ind),
+  #   # fill = "#C11432",
+  #   alpha = 0.3,
+  #   size = 2
+  # ) +
+  # geom_line(
+  #   aes(x = cor_gauss1, y = mean_rand, colour = ind),
+  #   # colour = "#C11432",
+  #   linewidth = 1
+  # ) +
+  # # TODO Add colour and alpha to uncertainty
+  geom_smooth(
+    aes(x = cor_gauss1, y = adj_rand, colour = ind),
+    method = "loess",
+    # colour = "#C11432",
+    # se = TRUE,
+    se = FALSE,
+    alpha = 0.7,
+    linewidth = 1.2,
+    key_glyph = draw_key_rect # have rectangle in legend, rather than line
   ) +
-  guides(fill = guide_legend(override.aes = list(alpha = 1)))
-
-(p2 <- common_plot_items(p2))
+  ggsci::scale_colour_nejm() +
+  guides(
+    colour = guide_legend(override.aes = list(
+      fill     = ggsci::pal_nejm()(2),
+      colour   = NA, # no border
+      size     = 5,
+      linetype = 0, # hide line
+      alpha    = 1
+    ))
+  )
+common_plot_items(p2)
 
 ggsave(
   plot = p2,

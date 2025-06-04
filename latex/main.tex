@@ -58,7 +58,8 @@
 \numberwithin{equation}{section}
 
 % \title{A clustering framework for conditional extremes models}
-\title{Clustering of tail dependence in general dimensions}
+% \title{Clustering of tail dependence in general dimensions}
+\title{Clustering of multivariate tail dependence using conditional methods}
 \thispagestyle{empty}
 \author{Patrick O'Toole, Christian Rohrbeck, Jordan Richards}
 \date{\today}
@@ -83,27 +84,27 @@
 \todo{Should perhaps change the focus from uncertainty reduction to exploration (see what Jordan says)}
 \begin{abstract}
   % Intro
- % Conditional extreme value models have proven useful for analysing the joint tail behaviour of random vectors. 
- Conditional extreme value models have proven useful for analysing the joint tail behaviour of random variables. 
- These models describe the distribution of components of a random vector conditional on one exceeding a suitably high threshold, and they can flexibly capture a variety of structures in the distribution tails.
- One drawback of these methods is that model estimates tend to be highly uncertain due to the natural scarcity of extreme data. 
+  Conditional extreme value models have proven useful for analysing the joint tail behaviour of random vectors. 
+ % Conditional extreme value models have proven useful for analysing the joint tail behaviour of random variables. 
+ These models describe the distribution of components of a random vector conditional on one exceeding a suitably high threshold, and have been shown to provide a flexible description of the distribution tails.
+ However, one drawback of these methods is that model estimates tend to be highly uncertain due to the natural scarcity of extreme data. 
 %  This motivates the development of clustering methods for this class of models; pooling similar within-cluster data drastically reduces parameter estimation uncertainty.
 %  The development of clustering methods for this class of models is motivated by the need to identify the spatial structure of extremal dependence. 
  
- While an extensive amount of work to estimate conditional extremes (CE) models exists in multivariate and spatial applications, the prospect of clustering models of this type has not yet been explored. 
+ While there exists an extensive amount of work to estimate conditional extremes (CE) models in multivariate and spatial applications, the prospect of clustering models of this type has not yet been explored. 
  As a motivating example, we explore tail dependence of meteorological variables across multiple spatial locations and seek to identify sites which exhibit similar multivariate tail behaviour. 
  To this end, we introduce a clustering framework for CE models which provides a novel and principled, parametric methodology for summarising multivariate extremal dependence.
  
  % Outline of model
- In a first step, we define a dissimilarity measure for CE models based on the Jensen-Shannon divergence and common working assumptions made when fitting these models. 
- One key advantage of our measure is that it can be applied in any dimensions and, as opposed to existing methods for clustering extremal dependence, is not restricted to a bivariate setting. 
+ We first define a novel dissimilarity measure for CE models based on the Jensen-Shannon divergence and common working assumptions made when fitting these models. 
+ One key advantage of our measure is that it can be applied in any dimensions and, as opposed to existing methods for clustering multivariate extremal dependence, is not restricted to a bivariate setting. 
 % Clustering is then performed by applying the k-medoids algorithm to our novel dissimilarity matrix, which collects the dissimilarity between all pairs of spatial sites. 
-Clustering is then performed by applying the k-medoids algorithm, with the dissimilarity measure calculated for each pair of sites.  
+Clustering is then performed by applying the k-medoids algorithm on the dissimilarity measure, calculated for each pair of sites.  
  
  % Simulation
- A detailed simulation study shows our technique outperforms to the leading competitor in the bivariate case across a range of possible dependence structures and uniquely provides a tool for clustering in the multivariate extremal dependence setting. 
+ A detailed simulation study shows our technique outperforms the leading competitor in the bivariate case across a range of extremal dependence structures and uniquely provides a tool for clustering in the multivariate extremal dependence setting. 
  \todo{May want to place below earlier, before sim?}
- We also outline a methodology for selecting the number of clusters to use in a given application.  Finally, we apply our clustering framework to Irish meteorological data. % and air pollution data in cities across the US (United States).
+ We also outline a methodology for selecting the number of clusters to use in a given application.  Finally, we apply our clustering framework to Irish meteorological data, where we show how it can be used to identify sites with similar tail dependence structures between precipitation and wind speed.
 
 \end{abstract}
 
@@ -127,32 +128,34 @@ Clustering is then performed by applying the k-medoids algorithm, with the dissi
     \centering
     \includegraphics[width = 0.9\linewidth]{plots/02_mot_ex_plot.png}
     % \includegraphics[width = 0.9\linewidth]{plots/ire_sites_plt.png}
-    \caption{\emph{The figure on the left shows the locations of 59 Met Éireann sites with precipitation data available from 1990 to 2020. The figure on the right shows scatter plots of the weekly aggregated precipitation and wind speed maxima for Cloone Lake, County Kerry (red) and Ringsend, Dublin (blue) in the Winter Months (October - March), the two stations with the highest and lowest mean precipitation respectively.}}
+    \caption{\emph{Left: locations of 59 Met Éireann sites with precipitation data available from 1990 to 2020. Right: scatter plots of the weekly aggregated precipitation and wind speed maxima for Cloone Lake, County Kerry (red), and Malahide Castle, County Dublin (blue), in the Winter months (October - March), which are the two stations with the highest and lowest mean weekly precipitation, respectively.}}
     \label{fig:02_locs}
 \end{figure}
 
-We consider extreme precipitation and wind speeds at 59 sites across the Republic of Ireland from 1990 to 2020, inclusive.  
+We consider the joint extremal behaviour of precipitation and wind speeds at 59 sites across the Republic of Ireland from 1990 to 2020, inclusive.  
 % The data we have performed our clustering on is precipitation data for the Republic of Ireland, collected from the Met Éireann website at \citet{metHistoricalData}, and wind speed data from the ERA5 Reanalysis dataset at \citet{Hersbach2020}, corresponding to the closest grid point to each location.
-Precipitation data was collected from the Met Éireann website, and wind speed data from the gridded ERA5 Reanalysis dataset, taking the closest grid points corresponding to each precipitation measurement location \citep{metHistoricalData}, \citep{Hersbach2020}.
+Precipitation data were collected from the Met Éireann website (accessed 2024-09-01), and wind speed data from the gridded ERA5 Reanalysis dataset citep{metHistoricalData}, \citep{Hersbach2020}.
+ERA5 provides averages over a gridded box of $0.25^{\circ} \times 0.25^{\circ}$, so each site will lie within a grid cell, to which the wind speed data corresponds.
+% , taking the closest grid cell corresponding to each precipitation measurement location.
 % While the point estimates of the precipitation data can be considered more precise, it may also be susceptible to preferential sampling, with sites likely to be more densely found in areas with higher precipitation.
 % Conversely, although reanalysis data is spatially complete, it only has a certain resolution (in this case, $0.25^{\circ} \times 0.25^{\circ}$).
 % The data is averaged over each grid cell, and so often underestimates extreme wind speeds \citep{Gandoin2024}.
 
 % Preprocessing
-This data spans the dates 1990-01-01 to 2020-12-31, totalling 11,323 days of consecutive precipitation readings. 
+These data span the dates 1990-01-01 to 2020-12-31, totalling 11,323 days of consecutive precipitation readings. 
 % Sites which did not have a complete set of data for these dates were removed, leaving us with 50 sites in total, located in 20 of the 26 counties of the Republic of Ireland. \todo{Change this, no longer the case!}
-Following the example of \citet{Vignotto2021}, we thinned the data, looking at the weekly sum of daily precipitation and weekly averages of wind speed maxima, for the winter months (November to March) only.
+Following \citet{Vignotto2021}, we thinned the data, looking at the weekly sum of daily precipitation and weekly averages of wind speed maxima, for the winter months (November to March) only.
 This weekly temporal scale was chosen as precipitation and wind in the case of storms is believed to experience a slight lag \citep{Bengtsson2009}.
 It may also remove some of the temporal dependence in the data, which is not accounted for in our model.
-Weeks with no rain are also ignored, leaving us with 5,022 weeks of data for the 59 sites.
+As our interest is in extremes, weeks with no rain are also ignored, leaving us with 5,022 weeks of data for the 59 sites.
 
 % Summaries of dataset
-The maximum weekly precipitation sum observed was to 198.6mm at Cloone Lake in county Kerry. 
+The maximum weekly precipitation sum observed was 198.6mm at Cloone Lake in county Kerry. 
 % The mean precipitation across all sites for each day was 5.96mm.
 For wind speed, the highest weekly maxima is 20.2 m/s, and was recorded closest to Eskeragh in county Mayo.
-Conversely, the minimum wind speed of 0.95 m/s was recorded Glenvickee in Kerry. %, with the mean wind speed overall being 6.83 m/s.
+Conversely, the minimum wind speed of 0.95 m/s was recorded at Glenvickee in Kerry. %, with the mean wind speed overall being 6.83 m/s.
 % The difference between the mean and maximum values for each of these marginal extremes suggests that there will be an extreme right tail to the distribution of this data, a situation well suited to the use of EVT.
-This data will be used to showcase the marginal and dependence models we have chosen to use, and illustrate some of their shortcomings, and the need for extremal clustering to address these challenges.
+These data will be used to showcase the marginal and dependence models we have chosen to use, and illustrate some of their shortcomings, and the need for extremal clustering to address these challenges.
 
 \todo{Actual motivation needed? Or will this be in intro? See Christian's paper for example}
 

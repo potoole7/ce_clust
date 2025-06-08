@@ -29,7 +29,7 @@ n_locs <- 12
 # Multivariate (> 2-dimensions)
 # vars <- c("rain", "wind_speed", "temperature") # dummy names for 3 vars
 # n_vars <- length(vars)
-n_vars <- 5
+n_vars <- 2
 n_clust <- 2
 cluster_mem <- sort(rep(c(1, 2), 6)) # known cluster membership
 n <- 1e4 # number of samples to take
@@ -91,7 +91,6 @@ js_mat <- js_clust(dependence)$dist_mat # suggests k = 2, as desired
 # cluster and assess performance
 js_clust(dependence, k = 2, dist_mat = js_mat, cluster_mem = cluster_mem)
 # adj_rand == 1, as desired (perfect clustering!)
-
 
 #### Sensitivity Analysis ####
 
@@ -340,6 +339,186 @@ ggsave(
   plot = p2,
   # paste0("plots/01f_js_sens_3_var_compare_dqu_", cond_prob, ".png"),
   paste0("latex/plots/01f_js_sens_3_var_compare_dqu_", cond_prob, ".png"),
+  width = 10,
+  height = 7
+)
+
+#### Grid search for 5, 8, 10 variables ####
+
+# create grid
+grid_mult <- tidyr::crossing(
+  cor_gauss1 = seq(0, 1, by = 0.1),
+  cor_gauss2 = seq(0, 1, by = 0.1),
+  # t-copula correlation
+  # cor_t1 = c(0.6),
+  cor_t1 = c(0.4),
+  # cor_t2 = c(0.7),
+  cor_t2 = c(0.5),
+  # Degrees of freedom for t-copula
+  df_t1 = 3,
+  df_t2 = 3,
+  # mixture percentages (must sum to 1)
+  mix_p1 = 0.5,
+  mix_p2 = 0.5,
+  # extremal quantiles
+  kl_prob = cond_prob,
+  # n_vars = c(5, 8, 10) # number of variables to simulate
+  n_vars = c(2, 3, 4, 5)
+) %>%
+  filter(
+    # use same correlation in both clusters for Gaussian copula
+    cor_gauss1 == cor_gauss2,
+    cor_t1 == cor_t2 - 0.1 # only want most difficult case where cors are close
+  )
+
+# run kl_sim_eval for each row in grid
+# n_times <- 1
+# n_times <- 10
+n_times <- 200
+results_vec <- lri_vec <- lri_mean_vec <- vector(length = n_times)
+set.seed(seed_number)
+# i <- 11
+results_grid_mult <- bind_rows(mclapply(seq_len(nrow(grid_mult)), \(i) {
+  print(paste0("Progress: ", round(i / nrow(grid_mult), 3) * 100, "%"))
+  system(sprintf(
+    'echo "\n%s\n"',
+    paste0(round(i / nrow(grid_mult), 3) * 100, "% completed", collapse = "")
+  ))
+
+  row <- grid_mult[i, , drop = FALSE]
+  for (j in seq_len(n_times)) {
+    # generate simulation data for given parameter set
+    data_mix <- with(row, sim_cop_dat(
+      n_vars     = n_vars,
+      n_locs     = n_locs,
+      n          = n,
+      cor_gauss  = c(cor_gauss1, cor_gauss2),
+      cor_t      = c(cor_t1, cor_t2),
+      df_t       = c(df_t1, df_t2),
+      # params_gpd = c(scale_gpd, shape_gpd),
+      mix_p      = c(0.5, 0.5),
+      qfun       = evd::qgpd,
+      qargs      = c("loc" = 0, "scale" = scale_gpd, "shape" = shape_gpd)
+    ))$data_mix
+
+    # transform to Laplace margins
+    data_mix_trans <- lapply(data_mix, \(x) {
+      laplace_trans(evd::pgpd(x, loc = 0, scale = scale_gpd, shape = shape_gpd))
+    })
+
+    clust_res <- tryCatch(
+      {
+        ce_fit <- lapply(seq_along(data_mix_trans), \(l) {
+          # TODO Investigate warnings for i = 1!
+          o <- ce_optim(
+            Y         = data_mix_trans[[l]],
+            dqu       = row$kl_prob,
+            control   = list(maxit = 1e6),
+            constrain = FALSE
+          )
+        })
+
+        # "true" number of clusters known from simulation design
+        js_clust(ce_fit, k = n_clust, cluster_mem = cluster_mem)
+      },
+      error = function(cond) {
+        return(list("adj_rand" = NA))
+      }
+    )
+    results_vec[[j]] <- clust_res$adj_rand
+
+    # also calculate local rand index
+    lri <- local_rand_index(clust_res$pam$clustering, cluster_mem)
+    # concatenate to string to store in vector
+    lri_vec[[j]] <- paste0(lri, collapse = "_")
+    # also average by cluster
+    lri_mean_vec[[j]] <- paste0(vapply(unique(cluster_mem), \(x) {
+      mean(lri[cluster_mem == x])
+    }, numeric(1)), collapse = "-")
+  }
+
+  return(cbind(
+    row,
+    "adj_rand"        = results_vec,
+    "local_rand"      = lri_vec,
+    "mean_local_rand" = lri_mean_vec
+  ))
+  # }))
+}, mc.cores = n_cores))
+
+# save
+readr::write_csv(
+  results_grid_mult,
+  paste0("data/js_sens_res_nvar_", n_vars, "_dqu_", cond_prob, "mult_var.csv")
+)
+
+# plot
+results_grid_mult_sum <- summarise_sens_res(results_grid_mult, conf_level = conf_level)
+results_grid_mult_tally <- results_grid_mult %>%
+  group_by(across(!contains("_rand")), adj_rand) %>%
+  tally(name = "n_rand")
+# add both to results, as before
+results_grid_mult <- results_grid_mult %>%
+  dplyr::select(-(ends_with("_rand") & !matches("adj_rand"))) %>%
+  left_join(results_grid_mult_sum) %>%
+  left_join(results_grid_mult_tally)
+
+results_grid_mult_plt <- filter(results_grid_mult, cor_t1 < 1, cor_t2 < 1)
+res_grid_sum_plt <- filter(results_grid_mult_sum, cor_t1 < 1, cor_t2 < 1)
+
+p1_mult <- results_grid_mult_plt |>
+  ggplot() +
+  # geom_point(
+  #   aes(
+  #     x = cor_gauss1, y = adj_rand, colour = factor(n_vars),
+  #     # colour = "black",
+  #     alpha = 0.05, size = 1
+  #   )
+  # ) +
+  # Confidence intervals around mean line
+  # geom_ribbon(
+  #   data = res_grid_sum_plt,
+  #   aes(x = cor_gauss1, ymin = lower_rand, ymax = upper_rand),
+  #   fill = "#C11432",
+  #   alpha = 0.3,
+  #   size = 2
+  # ) +
+  # geom_line(
+  #   data = res_grid_sum_plt,
+  #   aes(x = cor_gauss1, y = median_rand, colour = factor(n_vars)),
+  #   # colour = "#C11432",
+  #   linewidth = 1,
+  #   alpha = 0.7
+  # ) +
+  geom_smooth(
+    aes(x = cor_gauss1, y = adj_rand, colour = factor(n_vars), fill = factor(n_vars)),
+    method = "loess",
+    # colour = "#C11432",
+    se = TRUE,
+    alpha = 0.4,
+    linewidth = 1.2
+  ) +
+  guides(fill = guide_legend(override.aes = list(alpha = 1))) +
+  ggsci::scale_colour_nejm() +
+  evc::evc_theme() +
+  labs(
+    x      = expression(rho["Gauss"]),
+    y      = "ARI",
+    fill   = "Copula Dimension",
+    colour = "Copula Dimension"
+  ) +
+  scale_x_continuous(limits = c(0, 1), expand = c(0.01, 0.01)) +
+  scale_y_continuous(
+    breaks = seq(0, 1, by = 0.2),
+    limits = c(0, 1),
+    expand = expansion(mult = c(0, 0.01))
+  )
+p1_mult
+
+ggsave(
+  plot = p1_mult,
+  # paste0("plots/01e_js_sens_3_var_dqu_", cond_prob, ".png"),
+  paste0("latex/plots/sim_01d_js_sens_3_var_dqu_", cond_prob, "mult_var.png"),
   width = 10,
   height = 7
 )

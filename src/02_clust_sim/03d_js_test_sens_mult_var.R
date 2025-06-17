@@ -447,8 +447,12 @@ results_grid_mult <- bind_rows(mclapply(seq_len(nrow(grid_mult)), \(i) {
 }, mc.cores = n_cores))
 
 # save
-readr::write_csv(
-  results_grid_mult,
+# readr::write_csv(
+#   results_grid_mult,
+#   paste0("data/js_sens_res_nvar_", n_vars, "_dqu_", cond_prob, "mult_var.csv")
+# )
+
+results_grid_mult <- readr::read_csv(
   paste0("data/js_sens_res_nvar_", n_vars, "_dqu_", cond_prob, "mult_var.csv")
 )
 
@@ -478,8 +482,8 @@ p1_mult <- results_grid_mult_plt |>
   # Confidence intervals around mean line
   # geom_ribbon(
   #   data = res_grid_sum_plt,
-  #   aes(x = cor_gauss1, ymin = lower_rand, ymax = upper_rand),
-  #   fill = "#C11432",
+  #   aes(x = cor_gauss1, ymin = lower_rand, ymax = upper_rand, fill = factor(n_vars)),
+  #   # fill = "#C11432",
   #   alpha = 0.3,
   #   size = 2
   # ) +

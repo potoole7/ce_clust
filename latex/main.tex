@@ -115,8 +115,118 @@ Clustering is then performed by applying the k-medoids algorithm on the dissimil
 \newpage
 
 \section{Introduction}\label{sec:intro}
-\todo{Where to describe Vignotto method? in introduction?}
 \todo{Will have to mention that other paper that does bivariate clustering as well in background, right?}
+
+% Introduction to EVT
+\todo{Rewrite, kinda crap (look at Jordan's book chapter)}
+\begin{itemize}
+  \item Extreme Value Theory (EVT) provides an asymptotically justified framework for projecting beyond the magnitude of observed data into the extreme tails of distributions \citep{Coles2001}.
+  % \item EVT implicitly assumes that there is an underlying stochastic process generating the data, which is sufficiently smooth to allow extrapolation to unseen levels \citep{Coles2001}.
+  \item EVT is useful anywhere we are interested more in the ``extreme'' tails of the distributions of a phenomenon, rather than the mean or ``bulk'' behaviour.
+  \item This situation can arise in a variety of contexts, and is particularly popular in environmental applications.
+  \item EVT modelling can be used to assess the risk of extreme events, such as floods, droughts, heatwaves and storms, which can have significant impacts on society and the environment.
+  \item Heatwaves can lead to droughts and wild fires \citep{tanarhte2015heat, french2019quantifying, koh2023gradient}.
+  \item Extreme rainfall contributes to storms and flooding, which can cause major damage and trigger large insurance claims \citep{Rohrbeck_flooding, osei2021estimation}.
+  \item High wind speeds can lead to significantly damaging events such as tropical cyclones, and have also seen much focus in the field of EVT \citep{soukissian2015effect, steinkohl2013extreme}.
+\end{itemize}
+
+\vspace{1cm}
+
+% Dependence modelling
+\begin{itemize}
+  \item EVT can naturally be extended to a multivariate setting, where we are instead interested in the \emph{joint} tail behaviour of a random vector. 
+  \item Often, the simultaneous or ``concomitant'' occurrence of extreme events in environmental settings leads to significantly more catastrophic events \citep{zscheischler2018future, bevacqua2021guidelines}.
+  \item These rarer and more devastating occurrences can take the form of extreme events occurring at multiple locations, or for multiple variables concurrently exhibiting extremal behaviour at a single site.
+  \item For example, in the UK in 2015 and 2016, widespread flooding as a result of Storms Desmond, Eva and Frank resulted in damages estimated at £1.3–1.9 billion \citep{FloodsWinter, Rohrbeck2021}.
+  \item The co-occurrence of extreme wind speeds and wave heights have led to devastating tropical cyclones \citep{Sando2022}.
+  \item Climate change is exacerbating the effects of compound environmental hazards, and so these phenomena are becoming increasingly important to understand \citet{AghaKouchak2020-ji}.
+  \item To explore multivariate extremes, in addition to an estimate for the marginal extremal distribution for each variable, we also require a model for the tail \emph{dependence} between them.
+\end{itemize}
+
+\vspace{1cm}
+
+% Conditional extremes
+\begin{itemize}
+  % \item One such model is the CE model, which combines a univariate Generalised Pareto Distribution (GPD) and a semiparametric regression dependence model \cite{Heffernan2004}. \todo{Don't emphasise GPD, not used below}
+  \item One such method is the CE model of \citep{Heffernan2004}.
+  \item The CE model describes the tail behaviour of a random vector \emph{conditional} on a separate random variable exceeding a suitably high threshold.
+  \item It does this via a semiparametric heteroskedastic regression model conditioned on threshold exceedances, which can be used to ascertain the joint tail dependence structure of the random vector.
+  \item The CE model provides many advantages over other competing methods. 
+  \item It is highly flexible in the type of extremal dependence it can model, and is considered to be conceptually simple relative to other models.
+  \item It reduces a difficult multivariate estimation problem to a univariate problem, by individually modelling each element of the random vector, which can then be combined to form a joint model, and so is computationally efficient.
+  \item It involves a robust Gaussian working assumption which facilitates efficient inference, and allows for a closed form expression for the KL divergence, between two sites, allowing for a rather simple clustering framework to be derived, as we will see in Section \ref{subsec:div} \citet{Kullback1951}.
+  \item However, as with many models for extremes, which suffer from the natural rarity of extreme data, the CE model is susceptible to high uncertainty in its parameter estimates. 
+\end{itemize}
+
+\vspace{1cm}
+
+% Clustering: introduction + motivation
+\todo{Need a couple more lines here? Look at other papers}
+\begin{itemize}
+  \item One method for improved parameter estimation is through clustering.
+  \item Clustering is an unsupervised learning technique which seeks to group similar data together, such that the data within each group is more similar to each other than to data in other groups \citep{Hastie2009}.
+  \item Clustering is a powerful tool for exploratory analysis, allowing us to identify patterns in the data and improve interpretability of the extremal dependence structure.
+  \item Clustering allows us to pool information from multiple sites or variables.
+  \item This pooling can lead to more robust parameter estimates, as it reduces the uncertainty associated with estimating parameters from a single site or variable.
+  \item Clustering is a popular method in extremes, where data is naturally scarce, often leading to high uncertainty and difficulty in intrepretation \citep{Ferreira2023-mz, Zheng2023-jf}.
+  % \item Extremal clustering is chiefly concerned with the problems of exploratory analysis and improved interpretability of extremal dependence structures, and also in reducing parameter uncertainty.
+\end{itemize}
+
+\vspace{1cm}
+
+% Clustering: past work (interpretability)
+\begin{itemize}
+  \item Exploratory clustering for improved interpretability, in extremes and elsewhere, generally focuses on deriving some similarity matrix for a given distance metric, and then using performing some generic clustering algorithm such as k-means or k-mediods on this matrix \citet{Lloyd1957} \citet{Kaufman1987}.
+  \item There is a large body of literature concerning such clustering methods for extremes. 
+  \item In \citet{Bernard2013}, a clustering algorithm is derived for weekly precipitation maxima for sites across France, which uses the F-madogram as a distance metric.
+  \item \citet{Vignotto2021} proposes a k-mediods algorithm for clustering locations in Great Britain and Ireland for precipitation and wind speed data.
+  \item These variables are transformed to Pareto margins at each location, and a risk function, namely the maximum across both transformed margins, is used to define extreme observations and partition the bivariate space into three disjoint sets, corresponding to extremal observations for precipitation, wind speed and both, which can be used to compute an empirical estimate of the Kullback-Leibler divergence \citep{Kullback1951} between any two locations.
+  \item This method is our main competitor, similarly focusing on improving interpretation of tail behaviour in a closely related application to our own, but it must be noted that it is limited to the bivariate case.
+  \item In financial applications, \citet{deCarvalho2023} propose a clustering algorithm for stock prices, which uses the extremal index and heteroskedastic function, loosely interpretable as the magnitude and frequency of extreme events, to define a bivariate centroid with which to cluster stocks on the London Stock Exchange. 
+\end{itemize}
+
+\vspace{1cm}
+
+% Clustering: past work (improved parameter estimation)
+\todo{Add line about that new paper which does have multivariate clustering, but not CE (which one?)}
+\todo{Do we want to include a paragraph on this? Or de-emphasise it?}
+\todo{If including, probably need to cut down!} % Better to get something down now though!}
+\begin{itemize}
+  \item Extremal clustering for improved parameter estimation also exists in the literature, and generally focuses on partial-pooling of information across multiple sites or variables using hierarchical models.
+  \item In the Bayesian setting, \citet{Bottolo2003} is an early example of extremal clustering, defining exceedances over a high threshold as generated by a Poisson process (PP), and proposing a Bayesian hierarchical model with a separate hierarchical mixture prior for each PP parameter, each having a specific latent group structuring.
+  \item The model is estimated using a Reversible Jump MCMC (RJMCMC) algorithm, which allows for the estimation of the number of clusters, rather than fixing it a priori.
+  \item Another early example is \citet{Cooley2007}, which modelled return levels for extreme precipitation in Colorado.
+  \item Separate hierarchical models were used to estimate for intensity and frequency of extremes for a given location using the GPD and the binomial distribution, respectively, both of which incorporated  latent spatial processes.
+  \item \cite{Rohrbeck2021} proposes a clustering algorithm utilising Bayesian hierarchical modelling, which consists of a dependence component using the $\chi$ statistic to cluster sites based on their extremal dependence, and a marginal component consisting of a generalised Pareto distribution (GPD) fitted to each cluster.
+  \item This method also uses a RJMCMC algorithm, and was specifically developed for hydrological variables. 
+  \item Frequentist alternatives generally use mixture models estimated using the Expectation-Maximisation (EM) algorithm.
+  \item \citet{Carreau2017} derives a model which utilises a conditional mixture of GPDs with subregions defined by a constant shape parameter.
+  \item The number of subregions to partition the data into was chosen by out-of-sample cross-validation using three different loss functions, including the Anderson-Darling statistic, which is used to compare probability distributions and is particularly sensitive to tail deviation.
+  \item In \citet{Dupuis2023}, the EM algorithm is used to identify group structure and group-specific model parameters for generalised extreme value (GEV) distributed panel data.
+  \item A simulation study using this model was performed, and applications to financial risk, extreme temperature and flood risk data were shown to be effective, and superior to methods using groupings based on domain knowledge.
+\end{itemize}
+
+\vspace{1cm}
+
+% Clustering: Motivating our clustering algorithm
+\todo{Fill in more}
+\begin{itemize}
+  \item While clustering is evidently not novel within extremes, we hope to identify some opportunities to adapt some of the existing methods in the field to the CE model, which has not yet been explored in the content of clustering.
+  \item One advantage of focusing on the CE model is that it can be applied to any dimension, which contrasts with existing clustering methods such as \citet{Vignotto2021} for multivariate extremes, which are limited to the bivariate case.  
+  \item Also, as mentioned, the Gaussian assumption in the CE model allows for a simple, closed form divergence metric upon which to base our clustering framework.
+  \item As opposed to \citet{Vignotto2021}, our method is parametric, and so we hope that our method will provide a more powerful and principled framework for performing exploratory analysis on multivariate extremes and identifying locations with similar tail dependence structure.
+\end{itemize}
+
+\vspace{1cm}
+
+% Structure of paper
+\begin{itemize}
+  \item In Section \ref{sec:ire} of this paper, we introduce a motivating example of the joint tail behaviour of precipitation and wind speed in Ireland, which we will use to illustrate our clustering framework.
+  \item Section \ref{sec:method} introduces our clustering framework for CE models, which includes a novel dissimilarity measure based on the Jensen-Shannon divergence, and a method for selecting the number of clusters.
+  \item A simulation study is described and performed in Section \ref{sec:sim}, to compare our method to the leading competitor in the bivariate case, and show that it outperforms this method across a range of extremal dependence structures.
+  \item In Section \ref{sec:application}, we apply our clustering framework to the Irish meteorological data, and show how it can be used to identify sites with similar tail dependence structures between precipitation and wind speed.
+  \item Finally, Section \ref{sec:discuss} contains a discussion of our findings, including the limitations of our method and potential future work.
+\end{itemize}
 
 \section{Motivating example: Irish Meteorological Data} \label{sec:ire}
 
@@ -166,18 +276,16 @@ These data will be used to showcase the marginal and dependence models we have c
 %     \item 
 % \end{itemize}
 
-\section{Methods}
+\section{Methodology} \label{sec:method}
 % \subsection{Peaks-over-threshold}
 
 % Christian said not needed! What exactly should we have instead??
 
 \subsection{Asymptotic dependence} \label{subsec:asym_dep}
 
-\todo{Coppied straight from TFR, may have to cut down}
-
-In order to characterise the dependence between extremes, we first introduce the concepts of asymptotic dependence and independence, as described in \citet{Coles1999}.
+To characterise extremal dependence, we first introduce the concepts of asymptotic dependence and independence, as described in \citet{Coles1999}.
 % The coefficient of asymptotic dependence, $\chi \in [0, 1]$, measures the degree of asymptotic dependence between two random variables $X_1$ and $X_2$ with corresponding CDFs $F_1$ and $F_2$, under the class of asymptotically dependent distributions.
-The coefficient of asymptotic dependence, $\chi \in [0, 1]$, measures the degree of extremal dependence between two random variables $X_1$ and $X_2$ with corresponding CDFs $F_1$ and $F_2$, under the class of asymptotically dependent distributions, and is given by 
+The coefficient of asymptotic dependence, $\chi \in [0, 1]$, measures the degree of extremal dependence between two random variables $X_1$ and $X_2$ with corresponding distribution functions $F_1$ and $F_2$, and is given by % , under the class of asymptotically dependent distributions, and is given by 
 % It is defined as $\chi = \lim_{u \rightarrow 1}{\chi(u)}$, where
 % \[
 % \chi(u) = 2 - \frac{\log\left(\mathbb{P}(F_1(X_1) < u, F_2(X_2) < u)\right)}{\log \left(\mathbb{P}(F_1(X_1) < u)\right)}.
@@ -185,10 +293,11 @@ The coefficient of asymptotic dependence, $\chi \in [0, 1]$, measures the degree
 \[
   \chi = \lim_{u\to1}\mathbb{P}\bigl[F_1(X_1)>u\mid F_2(X_2)>u\bigr].
 \]
-If $\chi = 0$, then $X_1$ and $X_2$ are said to be asymptotically independent, while for $\chi > 0$, they are termed asymptotically dependent, with greater magnitude as $\chi$ increases.
-Thus, $\chi$ gives the limit probability of $X_1$ being extreme given that $X_2$ is extreme, and we expect the joint probability of observing extremal events in both variables to be greater where $\chi$ is higher \citep{Rohrbeck2021}.
+If $\chi = 0$, then $X_1$ and $X_2$ are said to be asymptotically independent while, for $\chi > 0$, they are termed asymptotically dependent, with greater strength as $\chi$ increases.
+Thus, $\chi$ gives the limiting probability of $X_1$ being extreme given that $X_2$ is also extreme, and we expect the joint probability of observing extremal events in both variables to be greater when $\chi$ is higher \citep{Rohrbeck2021}.
 Furthermore, $\chi$ is symmetric in $X_1$ and $X_2$.
-Note, two variables can be asymptotically dependent even if they are not dependent in the classical sense.
+% Note, two variables can be asymptotically dependent even if they are not dependent in the classical sense.
+Note, two variables $X_1$ and $X_2$ can exhibit asymptotic dependence even when they are not dependent in the classical sense, i.e.\ they do not exhibit strong correlation in the bulk of their distributions.
 % Another coefficient, $\bar{\chi} \in [-1, 1]$, is used to measure the strength of dependence in the case of asymptotically independent distributions, where $\chi = 0$.
 Another coefficient, $\bar{\chi} \in [-1, 1]$, measures the tail dependence between two variables where $\chi = 0$, the case of asymptotically independent variables.
 This coefficient is defined as $\bar{\chi} = \lim_{u \rightarrow 1}{\bar{\chi}(u)}$, where
@@ -225,7 +334,7 @@ A framework which provides a flexible approach to modelling extremal dependence 
 \todo{Finish off!}
 \begin{itemize}
   \item The CE model, like many other models for multivariate extremes, uses a marginal transformation.
-  \item Standardising to common margins is a widespread technique to ensure differences in variable scale do not affect the dependence structure. 
+  \item Standardising to common margins is a widespread technique to ensure differences in variable scale do not affect estimation of the dependence structure. 
   \item A popular choice for CE is to transform to Laplace margins, as introduced in \citet{Keef2013}.
   % \item This is performing using the following transformation:
   \item Each marginal random variable $X_i$ is transformed to Laplace margins, whereby it is denoted by $Y_i$, using the following transformation:
@@ -446,9 +555,9 @@ where $\sigma_{\alpha, i}^2 = \frac{\sigma_{1, i}^2 \sigma_{2, i}^2}{\alpha\sigm
       \item The centroids are updated by selecting the observation in each cluster which minimises the sum of dissimilarities to all other observations in that cluster.
       \item This process is repeated until convergence, when no observations change clusters.
     \end{itemize}
-  \item We choose this algorithm over alternatives such as K-means for several reasons. \todo{cite k-means?}
+  \item We choose this algorithm over alternatives such as k-means for several reasons. 
   \item Firstly, since our clustering is designed to be performed in a spatial setting, it is preferable to have actual locations rather than summaries as cluster centres, for visualisation and also for refitting the CE model and reinterpreting results. 
-  \item Secondly, as we are clustering over a dissimilarity matrix defined over a functional space, we cannot assume that the clusters are spherical or equally sized, as K-means does. \todo{cite}
+  \item Secondly, as we are clustering over a dissimilarity matrix defined over a functional space, we cannot assume that the clusters are spherical or equally sized, as k-means does. \todo{cite}
   \item Furthermore, using the median instead of the mean to define the cluster centre is more robust to outliers, which is important in an extremal setting where data for some or many sites may be scarce. 
 \end{itemize}
 
@@ -473,7 +582,7 @@ where $\sigma_{\alpha, i}^2 = \frac{\sigma_{1, i}^2 \sigma_{2, i}^2}{\alpha\sigm
   \item We then plot $\mathrm{TWGSS}(k)$ vs.\ $k$, and choose $k^*$, the optimal number of clusters, as the value of $k$ at which the TWGSS reduction sharply slows, or equivalently, the point at which the curve has an ``elbow''.
 \end{itemize}
 
-\section{Simulation study}\label{sec:sim}
+\section{Simulation study} \label{sec:sim}
 % \todo{May not be subsections, but will form structure of this section}
 % \todo{May want tables instead of figures for some/all simulation results}
 % \todo{Should I smooth across points in sum plots with geom smooth? Or continue to use 90\% credible interval (which would improve for 500 simulations vs 200 I've provisionally used}
@@ -664,7 +773,7 @@ Our Gaussian copula simulation design for a single ``location'', nomenclature ch
 \end{figure}
 
 
-\section{Application to Irish meteorological data} \label{sec:app}
+\section{Application to Irish meteorological data} \label{sec:application}
 
 \todo{Go into more detail (with bootstrapping) or not?}
 
@@ -764,7 +873,7 @@ Our Gaussian copula simulation design for a single ``location'', nomenclature ch
 %     \item 
 % \end{itemize}
 
-\section{Discussion}
+\section{Discussion} \label{sec:discuss}
 
 % Limitations
 \begin{itemize}

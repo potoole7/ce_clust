@@ -154,7 +154,7 @@ Clustering is then performed by applying the k-medoids algorithm on the dissimil
   \item The CE model provides many advantages over other competing methods. 
   \item It is highly flexible in the type of extremal dependence it can model, and is considered to be conceptually simple relative to other models.
   \item It reduces a difficult multivariate estimation problem to a univariate problem, by individually modelling each element of the random vector, which can then be combined to form a joint model, and so is computationally efficient.
-  \item It involves a robust Gaussian working assumption which facilitates efficient inference, and allows for a closed form expression for the KL divergence, between two sites, allowing for a rather simple clustering framework to be derived, as we will see in Section \ref{subsec:div} \citet{Kullback1951}.
+  \item It involves a robust Gaussian working assumption which facilitates efficient inference, and allows for a closed form expression for the KL divergence, between two sites, allowing for a rather simple clustering framework to be derived, as we will see in Section \ref{subsec:div} \citep{Kullback1951}.
   \item However, as with many models for extremes, which suffer from the natural rarity of extreme data, the CE model is susceptible to high uncertainty in its parameter estimates. 
 \end{itemize}
 
@@ -707,6 +707,26 @@ Our Gaussian copula simulation design for a single ``location'', nomenclature ch
     \caption{\emph{Evaluation of clustering performance for three variables and two equally sized clusters for simulations of 12 ``locations'', each with 1000 observations for each variable, from a mixture of Gaussian and t-copulas. A grid search was performed,  with the x-axis representing the Gaussian correlation parameter used for both clusters, and the facet labels showing the t-copula correlation parameters for each ``known'' cluster. This grid search was repeated 500 times. The smoothed lines show the smoothed median of the Adjusted Rand Index for both clustering methods, with smoothing performing using a generalised additive model. Points show individual values of the ARI for a given simulation.}} 
     \label{fig:02_3d}
 \end{figure}
+
+% Expand to up to 5 dimensions!
+\begin{itemize}
+  \item To further illustrate how our method can be extended to higher dimensions and why this is useful, let us consider a specific example from our grid search, where we have $\rho_{t_1} = 0.4, \rho_{t_2} = 0.5$.
+  \item This is a relatively difficult clustering scenario in both the bivariate and three-dimensional cases, as the difference in the t-copula correlation parameters between the two clusters is small.
+  \item In \ref{fig:02b_5d}, we show the results of our clustering algorithm when the dimensions of the mixture of copula is progressively increased from two to five, for 500 simulations at each $\rho_{\text{Gauss}}$ value. 
+  \item We clearly see that the ARI increases as the number of dimensions increases, with the clustering solution improving as we include more variables.
+  \item At 5 dimensions, the ARI is close to 1 for all $\rho_{\text{Gauss}}$ values. 
+  \item Again, we must be cautious in interpreting these results, as in this example we merely increase the amount of data in our simulation and keep the dependence structure the same across each pair of variables, 
+  \item However, we can still conclude that these results show that our method performs well for extremal clustering in higher dimensions, and motivates such a use. 
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    % \includegraphics[width = 0.9\linewidth]{plots/sim_01c_js_sens_3_var_dqu_0.9.png}
+    \includegraphics[width = 0.9\linewidth]{plots/sim_01d_js_sens_3_var_dqu_0.9mult_var_man.png}
+    \caption{\emph{Evaluation of clustering performance for two to five variables and two equally sized clusters for simulations of 12 ``locations'', each with 1000 observations for each variable, from a mixture of Gaussian and t-copulas. The t-copula correlation parameters for each ``known'' cluster were set to $\rho_{t_1} = 0.4, \rho{t_2} = 0.5$. A grid search was performed over the values of the Gaussian correlation parameter, as represented on the x-axis. This grid search was repeated 500 times. The smoothed lines show the smoothed median of the Adjusted Rand Index for both clustering methods, with smoothing performing using a generalised additive model. Points show individual values of the ARI for a given simulation.}} 
+    \label{fig:02b_5d}
+\end{figure}
+
 
 \subsubsection{More realistic example} \label{subsubsec:sim_realistic}
 

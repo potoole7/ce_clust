@@ -479,7 +479,7 @@ For two multivariate normals, this gives the closed form solution
 where $\sigma_{\alpha, i}^2 = \frac{\sigma_{1, i}^2 \sigma_{2, i}^2}{\alpha\sigma_{1, i}^2 + (1 - \alpha)\sigma_{2, i}^2}$, and $\mu_{\alpha, i} = \sigma_{\alpha, i}^2 \left( \frac{\alpha\mu_{1, i}}{\sigma_{1, i}^2} + \frac{(1 - \alpha) \mu_{2, i}}{\sigma_{2, i}^2} \right)$, respectively.
   % \item Thus we have a closed form, computationally efficient and symmetric measure of dissimilarity between any two conditional distributions as given by equation \ref{eq:ce_norm} for two sites, with which we can cluster locations based on their extremal dependence structure. 
   % \item Thus we have a closed form, computationally efficient and symmetric measure of dissimilarity between any conditional multivariate normal distributions as given by \eqref{eq:ce_norm}, representing the extremal dependence structure at each site. 
-\item Thus we have a closed form, computationally efficient and symmetric dissimilarity measure between any two CE models assuming \eqref{eq:ce_norm}, representing the extremal dependence structure at each site.
+Thus we have a closed form, computationally efficient and symmetric dissimilarity measure between any two CE models assuming \eqref{eq:ce_norm}, representing the extremal dependence structure at each site.
 We can calculate a dissimilarity matrix between each pair of locations in this way.
 
 % \todo{Revisit this!}
@@ -881,8 +881,6 @@ We could also look at other datasets where multivariate extremal dependence is o
   % \item It may be interesting to compare the performance of our method versus a fully parametric approach such as this, as opposed to the semi-parametric approach of \citet{Vignotto2021} which drew comparisons to in our simulation study.
 For example, \citet{Vettori2020} modelled the extremal dependence structure of California state air pollution and environmental data across 21 sites. 
 It would be interesting to see if we could build on such work via exploratory spatial clustering using our method, and whether the CE model would provide greater flexibility than their max-stable process approach, which can only model asymptotic dependence. 
-
-\newpage
 
 \section*{Code availability}
 

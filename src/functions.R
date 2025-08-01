@@ -186,10 +186,7 @@ common_plot_items <- \(
       colour = ""
     ) +
     evc_theme() +
-    theme(
-      axis.text.x = element_text(angle = 45, vjust = 0.5),
-      # axis.title = element_markdown(size = 12, family = "serif")
-    ) +
+    theme(axis.text.x = element_text(angle = 45, vjust = 0.5)) +
     ggsci::scale_fill_nejm() +
     ggsci::scale_colour_nejm()
 }

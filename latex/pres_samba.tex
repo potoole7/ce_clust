@@ -392,13 +392,14 @@ keywordstyle=\color{myblue}\bfseries,
 % \begin{frame}{skew-geometric Jensen-Shannon divergence}
 \begin{frame}{KL Divergence}
   \begin{itemize}
-    \item <1-> A popular form of statistical distance is the Kullback-Leibler divergence % measures (\textbf{asymmetric}) distance from models $P$ to $Q$
+    \item <1-> We have CE models $Y \mid X$ across all sites
+    \item <2-> A popular form of statistical distance is the Kullback-Leibler divergence % measures (\textbf{asymmetric}) distance from models $P$ to $Q$
     \[
     KL(P \mid\mid Q) = \int_{-\infty}^{\infty} p(y) \log\left(\frac{p(y)}{q(y)}\right) \mathrm{d}y.
     \]
     % triangle inequality: “direct” distance between two distributions is never larger than going through a third.
-    \item <2-> $KL(P \mid \mid Q)$ has closed form for two MVNs
-    \item <3-> Why not $KL(P \mid\mid Q) + KL(Q \mid\mid P)$? % symmetric but does not satisfy triangle inequality $\implies$ \textbf{not a true metric}.
+    \item <3-> $KL(P \mid \mid Q)$ has closed form for two MVNs
+    \item <4-> Why not $KL(P \mid\mid Q) + KL(Q \mid\mid P)$? % symmetric but does not satisfy triangle inequality $\implies$ \textbf{not a true metric}.
     % \item <2-> Weighted geometric mean $G_{\alpha}(P, Q) = P^{\alpha} Q^{1 - \alpha}, \alpha \in [0, 1]$
     % \item <3-> weighted product $G_{\alpha}$ of two exponential family members is in \textbf{same family}.
     % \item <4-> \textbf{Skew-geometric Jensen-Shannon divergence}:
@@ -446,7 +447,7 @@ keywordstyle=\color{myblue}\bfseries,
 
 \begin{frame}{Clustering}
   \begin{itemize}
-    \item Use \textbf{k-medoids} to cluster over pairwise $JS_{G_{\alpha}}$ dissimilarity matrix between sites
+    \item Use \textbf{k-medoids} to cluster over pairwise $JS_{G_{\alpha}}$ dissimilarity matrix% between sites
     \item \textbf{Elbow plot}: $k$ chosen using \textbf{Total Within Group Sum of Squares} between sites $x$ within clusters $C_i$ with medoids $m_i$:
      \[
        \mathrm{TWGSS}(k) = \sum_{i=1}^{k}\sum_{x \in C_i} JS^{G_{\alpha}}\bigl(x \mid \mid m_i\bigr)

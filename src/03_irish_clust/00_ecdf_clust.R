@@ -22,10 +22,13 @@
 library(sf)
 # library(evc)
 devtools::load_all("../evc")
+# devtools::load_all("../evc_mc")
 library(dplyr, quietly = TRUE)
 library(tidyr)
 library(ggplot2)
 library(lubridate)
+library(terra)
+library(elevatr)
 # library(texmex)
 # devtools::load_all("texmex") # forked texmex which allows for fixed b vals
 library(gridExtra)
@@ -37,12 +40,64 @@ library(parallel)
 
 source("src/functions.R")
 
-theme <- evc::evc_theme()
-
 sf::sf_use_s2(FALSE)
 
+theme <- ggplot2::theme_bw() +
+  ggplot2::theme(
+    legend.position  = "bottom",
+    plot.title       = ggplot2::element_text(size = 16, hjust = 0.5),
+    axis.text        = ggplot2::element_text(size = 12),
+    axis.title       = ggplot2::element_text(size = 14, face = "bold"),
+    legend.text      = ggplot2::element_text(size = 12),
+    strip.text       = ggplot2::element_text(size = 13, face = "bold"),
+    strip.background = ggplot2::element_rect(fill = NA, colour = "black"),
+    plot.tag         = ggplot2::element_text(size = 16, face = "bold"),
+    panel.background = ggplot2::element_rect(fill = NA, colour = "black")
+  )
+
+#### Metadata ####
+
+# number of MC samples to take
+n_mc <- 1000
+# n_mc <- 200
 
 #### Misc Functions ####
+
+# get raster of elevations from areas file
+get_elev_rast <- \(areas, z = 9, bins = NULL, labels = NULL) {
+  # convert to projected CRS
+  areas_proj <- st_transform(areas, IrishGrid = 29902)
+
+  # pull elevation data from Open Elevation API (DEM = Digital Elevation Model)
+  dem <- terra::rast(get_elev_raster(
+    locations = areas_proj, z = z, clip = "locations"
+  ))
+
+  # Mask DEM to the exact MULTIPOLYGON footprint
+  dem_masked <- terra::mask(dem, vect(areas_proj))
+
+  # Convert raster to a data.frame for ggplot
+  df_dem <- as.data.frame(dem_masked, xy = TRUE, na.rm = TRUE)
+  names(df_dem) <- c("x", "y", "elevation")
+  # filter out negative elevations
+  df_dem <- filter(df_dem, elevation >= 0)
+
+  if (!is.null(bins)) {
+    df_dem <- df_dem %>%
+      mutate(elev_bin = cut(
+        elevation,
+        # breaks = c(seq(0, 500, by = 100), Inf),
+        breaks = bins,
+        # labels = c(
+        #   "200–300 m", "300–400 m", "400–500 m", "> 500 m"
+        # ),
+        labels = labels,
+        right  = FALSE
+      ))
+  }
+
+  return(df_dem)
+}
 
 # pull parameters from dependence object
 get_pars <- \(ce_fit) lapply(ce_fit, \(x) lapply(x, `[[`, "params"))
@@ -180,6 +235,11 @@ plot_resid <- \(spec_resid) {
   vars <- names(spec_resid)
   plots <- lapply(vars, \(var) {
     Z <- spec_resid[[var]]
+
+    # For plotting, tidy up variable names
+    cond_var <- stringr::str_replace_all(var, "_", " ")
+    lhs_var <- stringr::str_replace_all(colnames(Z), "_", " ")
+
     if (all(is.na(Z))) {
       return(NA)
     }
@@ -198,8 +258,9 @@ plot_resid <- \(spec_resid) {
       geom_smooth() +
       theme +
       labs(
-        x = paste0("F(", var, ")"),
-        y = paste0("Z ", colnames(Z), " | ", var)
+        x = paste0("F(", cond_var, ")"),
+        # y = paste0("Z ", colnames(Z), " | ", cond_var)
+        y = paste0("Z ", lhs_var, " | ", cond_var)
       )
   })
   names(plots) <- vars
@@ -217,6 +278,7 @@ resid_plot <- \(fit) {
     plots <- plot_resid(fit$residual[[i]])
     # TODO Add parameter estimates
     plots_spec <- lapply(seq_along(plots), \(j){
+      print(j)
       if (all(is.na(plots[[j]]))) {
         return(NA)
       }
@@ -240,7 +302,7 @@ resid_plot <- \(fit) {
           names_df$county[i],
           ")"
         ),
-        theme = evc::evc_theme()
+        theme = theme
       )
   })
   names(resid_plots) <- names_df$name
@@ -270,6 +332,9 @@ plot_ce_quantiles <- \(
   dep <- dep_fit_spec$dependence[[cond_var]]
   # dependence thresholds and quantiles (on laplace scale)
   dqu <- dep_fit$arg_vals$cond_prob
+  if (length(dqu) > 1) {
+    dqu <- dqu[[cond_var]]
+  }
   # dth <- quantile(dep_fit_spec$original[[cond_var]], dqu)
   dth <- dep_fit_spec$dependence[[cond_var]]["dth", ]
   # Determine x-axis values to estimate CE quantiles at along conditioned var
@@ -318,6 +383,7 @@ plot_ce_quantiles <- \(
   # TODO Extend to > 2 variables
   # base_plot <- dep_fit_spec$original |>
   #   select(all_of(c(cond_var, vars))) |>
+  labels <- lapply(c(cond_var, vars), stringr::str_replace_all, "_", " ")
   base_plot <- data.frame(dep_fit_spec$transformed) |>
     setNames(c("x", "y")) |>
     ggplot(aes(x, y)) +
@@ -325,7 +391,8 @@ plot_ce_quantiles <- \(
     theme +
     # add vertical line at threshold
     geom_vline(xintercept = dth) +
-    labs(x = cond_var, y = vars)
+    # labs(x = cond_var, y = vars)
+    labs(x = labels[[1]], y = labels[[2]])
 
 
   # pull dependence coefficients and quantiles of residuals
@@ -440,7 +507,7 @@ diag_plot <- \(resid_plots, quantile_plots, names_df = NULL) {
   })
 }
 
-map_plot <- \(ab_df, data, n_breaks = 8) {
+map_plot <- \(ab_df, data, n_breaks = 8, range = c(1, 6), elev_df = NULL) {
   ab_sf <- ab_df |>
     left_join(distinct(data, name, lon, lat)) |>
     st_to_sf()
@@ -452,21 +519,53 @@ map_plot <- \(ab_df, data, n_breaks = 8) {
   # plot parameter values for each parameter and variable
   names <- c("a", "b")
   p_lst <- lapply(seq_along(names), \(i) {
-    ggplot() +
-      geom_sf(data = areas, colour = "black") +
+    p <- ggplot()
+    # add elevation raster
+    if (!is.null(elev_df)) {
+      # plot bins if available, if not plot directly (less distinct colours)
+      if ("elev_bin" %in% names(elev_df)) {
+        p + geom_tile(
+          data = elev_df,
+          aes(x = x, y = y, fill = elev_bin),
+          width = diff(range(elev_df$x)) / length(unique(elev_df$x)),
+          height = diff(range(elev_df$y)) / length(unique(elev_df$y))
+        ) +
+          scale_fill_viridis_d(
+            name = "Elevation",
+            option = "D",
+            direction = 1
+          )
+      } else {
+        p <- p +
+          geom_tile(
+            data = elev_df,
+            aes(x = x, y = y, fill = elevation)
+          ) +
+          scale_fill_viridis(
+            name = "Elevation\n(m)",
+            option = "D",
+            limits = c(0, 1500)
+          )
+      }
+      p <- p + geom_sf(data = areas, fill = NA, colour = "white")
+    } else {
+      p <- p + geom_sf(data = areas, fill = NA, colour = "black")
+    }
+    p +
+      # geom_sf(data = areas, fill = NA, colour = "white") +
+      ggnewscale::new_scale_fill() +
       geom_sf(
         data = ab_sf %>%
           filter(parameter == names[i]) %>%
-          mutate(vars = paste0(parameter, " - ", vars)) |>
-          identity(),
+          mutate(vars = paste0(parameter, " - ", vars)),
         aes(fill = value, size = value),
         colour = "black",
         stroke = 1,
         pch = 21
       ) +
-      facet_wrap(~vars, ncol = 2) +
       scale_size_continuous(
         breaks = scales::extended_breaks(n = n_breaks),
+        range = range,
         guide = "legend"
       ) +
       scale_fill_gradient2(
@@ -478,6 +577,16 @@ map_plot <- \(ab_df, data, n_breaks = 8) {
       ) +
       guides(fill = guide_legend(), size = guide_legend()) +
       labs(fill = "", size = "") +
+      facet_wrap(
+        ~vars,
+        ncol = 2,
+        labeller = as_labeller(c(
+          "a - rain"       = "alpha ~ ' - ' ~ 'Rain | Wind Speed'",
+          "a - wind_speed" = "alpha ~ ' - ' ~ 'Wind Speed | Rain'",
+          "b - rain"       = "beta ~ ' - ' ~ 'Rain | Wind Speed'",
+          "b - wind_speed" = "beta ~ ' - ' ~ 'Wind Speed | Rain'"
+        ), default = label_parsed)
+      ) +
       theme
   })
   return(p_lst)
@@ -798,7 +907,7 @@ plot_boot_quant <- \(
       geom_line() +
       geom_point(size = 5, colour = "orange", alpha = 0.7) +
       facet_wrap(~ parameter + vars, scales = "free") +
-      evc::evc_theme() +
+      theme +
       scale_x_continuous(breaks = quantiles) +
       labs(
         x     = "Quantile",
@@ -852,6 +961,25 @@ data <- data |>
 
 # load shapefile
 areas <- sf::read_sf("data/met_eireann/final/irl_shapefile.geojson")
+
+# pull elevation for areas
+# elev_df <- get_elev_rast(
+#   areas,
+#   z = 9,
+#   bins = c(seq(0, 500, by = 100), Inf),
+#   labels = c(
+#     "0–100 m", "100–200 m",
+#     "200–300 m", "300–400 m", "400–500 m", "> 500 m"
+#   )
+# )
+# readr::write_csv(
+#   elev_df,
+#   "data/met_eireann/final/irl_elev.csv"
+# )
+elev_df <- readr::read_csv(
+  "data/met_eireann/final/irl_elev.csv",
+  show_col_types = FALSE
+)
 
 # pull just site names, counties and provinces
 county_key_df <- data |>
@@ -911,11 +1039,155 @@ data_week <- data_winter %>%
 #   geom_hline(aes(yintercept = quant_wind_speed), linetype = "dashed") +
 #   evc::evc_theme()
 
+
+#### Exploration of sites ####
+
+# Identify sites with highest and lowest rainfall
+highest_lowest_rain <- data_week %>%
+  group_by(name) %>%
+  summarise(rain = mean(rain, na.rm = TRUE), .groups = "drop") %>%
+  arrange(rain) %>%
+  slice(c(1, n())) %>%
+  pull(name)
+
+# plot sites on left and locations with highest and lowest rainfall on right
+data_plot <- data_week %>%
+  # mutate(indicator = ifelse(name %in% highest_lowest_rain, name, NA)) %>%
+  mutate(indicator = ifelse(name %in% highest_lowest_rain, name, "other")) %>%
+  arrange(desc(indicator)) %>%
+  st_to_sf()
+
+# First, plot the location of each site
+p1 <- ggplot(areas) +
+  geom_sf(colour = "black", fill = NA) +
+  # points other than two sites
+  geom_sf(
+    data = filter(data_plot, indicator == "other"),
+    colour = "black",
+    size = 3,
+    alpha = 0.9,
+    show.legend = FALSE
+  ) +
+  # points for two sites with highest and lowest rain
+  geom_sf(
+    data = filter(data_plot, indicator != "other"),
+    aes(colour = indicator, size = indicator),
+    # colour = "black",
+    alpha = 0.9,
+    # show.legend = TRUE
+    show.legend = FALSE
+  ) +
+  scale_colour_manual(values = c(ggsci::pal_nejm()(2))) +
+  scale_size_manual(values = c(4.5, 4.5)) +
+  labs(colour = "", size = "") +
+  theme +
+  # remove axis text
+  theme(
+    axis.text = element_blank(),
+    axis.ticks = element_blank(),
+    legend.key = element_blank()
+  )
+
+cols <- ggsci::pal_nejm()(4)
+cols[2] <- "black"
+p21 <- data_plot %>%
+  filter(name == highest_lowest_rain[2], rain > 0) %>%
+  group_by(name) %>%
+  mutate(across(c(rain, wind_speed), ~ quantile(.x, 0.95, na.rm = TRUE), .names = "quant_{.col}")) %>%
+  ungroup() %>%
+  mutate(col = case_when(
+    rain > quant_rain & wind_speed > quant_wind_speed ~ "Both",
+    rain > quant_rain & wind_speed <= quant_wind_speed ~ "Rain",
+    rain <= quant_rain & wind_speed > quant_wind_speed ~ "Wind",
+    TRUE ~ "Neither"
+  )) %>%
+  ggplot(aes(x = rain, y = wind_speed)) +
+  # geom_point(aes(colour = name), size = 1.5, alpha = 0.9) +
+  geom_point(aes(colour = col), size = 1.5, alpha = 0.9) +
+  geom_vline(aes(xintercept = quant_rain), linetype = "dashed") +
+  geom_hline(aes(yintercept = quant_wind_speed), linetype = "dashed") +
+  # facet_wrap(~ name, scales = "free_x") +
+  scale_colour_manual(values = cols) +
+  labs(
+    # x = "Weekly total precipitation (mm)",
+    x = "precipitation (mm)",
+    y = "wind speed (m/s)", # TODO: What is the unit of ws?
+    colour = ""
+  ) +
+  guides(colour = "none") +
+  theme +
+  # remove facet labels, colour will do
+  theme(
+    strip.background = element_blank(),
+    strip.text.x = element_blank(),
+    legend.key = element_blank()
+  )
+
+# Second, plot wind speeds against rain for sites with the highest and lowest rainfall
+# TODO: Add 95% quantile lines for both (?)
+p2 <- data_plot %>%
+  filter(name %in% highest_lowest_rain, rain > 0) %>%
+  group_by(name) %>%
+  mutate(across(c(rain, wind_speed), ~ quantile(.x, 0.95, na.rm = TRUE), .names = "quant_{.col}")) %>%
+  ungroup() %>%
+  # ggplot(aes(x = rain, y = wind_speed)) +
+  ggplot(aes(x = wind_speed, y = rain)) +
+  # geom_point(aes(colour = name), size = 1.5, alpha = 0.9) +
+  geom_point(aes(colour = name), size = 1.5, alpha = 0.9) +
+  # geom_vline(aes(xintercept = quant_rain)) +
+  # geom_hline(aes(yintercept = quant_wind_speed)) +
+  facet_wrap(~name, scales = "fixed") +
+  scale_colour_manual(values = c(ggsci::pal_nejm()(2))) +
+  labs(
+    # x = "Weekly total precipitation (mm)",
+    # x = "precipitation (mm)",
+    y = "precipitation (mm)",
+    # y = "wind speed (m/s)", # TODO: What is the unit of ws?
+    x = "wind speed (m/s)", # TODO: What is the unit of ws?
+    colour = ""
+  ) +
+  theme +
+  # remove facet labels, colour will do
+  theme(
+    strip.background = element_blank(),
+    strip.text.x = element_blank(),
+    legend.key = element_blank()
+  )
+
+# join plots
+# TODO: Change size of first plot to be larger!
+p_sec_2 <- p1 +
+  (p2 + guides(colour = "none", size = "none")) +
+  # have common legends
+  plot_layout(guides = "collect") &
+  theme(legend.position = "bottom")
+
+ggsave("latex/plots/02_mot_ex_plot.png", p_sec_2, width = 10, height = 6, units = "in")
+
+
 #### Chi exploration ####
 
-# Plot chi and chi-squared for one and all locations
+# Plot chi and chi-squared for one location
+loc <- "Costelloe Fishery"
+chi_spec <- data_week %>%
+  # filter(name == highest_lowest_rain[2]) %>%
+  filter(name == loc) |>
+  dplyr::select(rain, wind_speed) %>%
+  texmex::chi()
 
-# calculate chi for one location
+(chi_plot_spec <- chi_spec %>%
+  # use texmex plotting method for chi and chibar
+  ggplot(main = c("ChiBar" = "", "Chi" = ""), plot. = FALSE) |>
+  lapply(\(x) x + theme) %>%
+  # wrap_plots() +
+  `[[`(2) +
+  # add centred title through patchwork
+  patchwork::plot_annotation(
+    title = paste0("Tail Dependence, ", loc),
+    theme = theme
+  ))
+saveRDS(chi_plot_spec, file = "temp.RDS")
+ggsave("latex/plots/chi_plot_spec.png", chi_plot_spec, width = 6, height = 6, units = "in")
 
 # for each location, pull out 95th quantile for chibar
 # Colour chi grey if not valid
@@ -1010,13 +1282,13 @@ chi_map_plot <- \(
 }
 
 # plot chibar and chi
-# chibar_p <- chi_map_plot(chi_95_sf, "chibar") +
-#   scale_fill_gradientn(
-#     colours = rev(heat.colors(7)),
-#     breaks = scales,
-#     labels = as.character(scales),
-#     guide = "legend"
-#   )
+chibar_p <- chi_map_plot(chi_95_sf, "chibar") +
+  scale_fill_gradientn(
+    colours = rev(heat.colors(7)),
+    breaks = scales,
+    labels = as.character(scales),
+    guide = "legend"
+  )
 chi_p <- chi_map_plot(chi_95_sf, "chi") +
   scale_fill_gradientn(
     colours = RColorBrewer::brewer.pal(name = "Blues", n = 7),
@@ -1026,9 +1298,10 @@ chi_p <- chi_map_plot(chi_95_sf, "chi") +
   )
 
 # combine plots
-# (chi_plots <- chibar_p + chi_p)
+(chi_plots <- chibar_p + chi_p)
 
-# ggsave("latex/plots/041_chi_plots.png", chi_plots, width = 6.3, height = 6, units = "in")
+# save for just chi (presentation) and both
+ggsave("latex/plots/041_chi_plots.png", chi_plots, width = 6.3, height = 6, units = "in")
 ggsave("latex/plots/chi_map_ire.png", chi_p, width = 6, height = 6, units = "in")
 
 
@@ -1096,11 +1369,13 @@ dev.off()
 #   Same with Cashel, Castleisland
 # - Dungonell Filters No 2 also also very large bootstrap CIs
 
-# decision: 0.85 for both? Seems to avoid instabilities observed for large q
-dqu <- 0.85
-
 
 #### Fit CE ####
+
+# decision: 0.85 for both? Seems to avoid instabilities observed for large q
+# dqu <- 0.85
+dqu <- c("rain" = 0.88, "wind_speed" = 0.85)
+# dqu <- 0.9
 
 # fit CE model
 ce_fit <- lapply(Y_lst, \(x) {
@@ -1142,6 +1417,7 @@ ab_df |>
 ce_fit_final <- ce_fit
 dep_fit_final <- dep_fit
 
+
 #### CE Diagnostics ####
 
 # produce residual plots for all locations
@@ -1149,6 +1425,7 @@ resid_plots <- resid_plot(dep_fit)
 
 # produce quantile plots in all locations
 quantile_plots <- quant_plot(dep_fit)
+names(quantile_plots) <- names(resid_plots)
 
 # join resid and quantile plots
 diag_plots <- diag_plot(resid_plots, quantile_plots, arrange(county_key_df, name))
@@ -1162,10 +1439,30 @@ dev.off()
 map_plots <- map_plot(
   ab_df,
   data_week,
-  n_breaks = 8
+  n_breaks = 8 # ,
+  # elev_df = elev_df
 )
 
-ggsave(filename = "test.png", map_plots[[1]] / map_plots[[2]], width = 12, height = 12)
+# ggsave(filename = "test.png", map_plots[[1]] / map_plots[[2]], width = 12, height = 12)
+saveRDS(map_plots, "latex/plots/map_plots.RDS")
+map_plots[[1]] / map_plots[[2]]
+ggsave(
+  filename = "latex/plots/ire_ce_new.png",
+  map_plots[[1]] / map_plots[[2]],
+  width = 12, height = 12
+)
+
+# choose one (nicer) diagnostic plot to include in presentation
+p_spec <- diag_plots$`Costelloe Fishery` +
+  plot_annotation(
+    title = "Costelloe Fishery",
+    theme = theme
+  )
+ggsave(p_spec,
+  filename = "latex/plots/041_costelloe_fishery.png",
+  width = 6, height = 6, units = "in"
+)
+
 
 # Comments:
 # W/o NI counties, individual plots actually look really good!
@@ -1294,7 +1591,7 @@ boot_df |>
   geom_boxplot() +
   # facet_wrap(~ parameter + vars) +
   facet_wrap(~ parameter + vars, scales = "free") +
-  evc::evc_theme()
+  theme
 
 boot_df |>
   filter(name == "Malahide Castle") |>
@@ -1312,7 +1609,7 @@ boot_df |>
   #   cols = vars(parameter),
   #   scales = "free_x"
   # ) +
-  evc::evc_theme() +
+  theme +
   guides(fill = "none")
 
 # also plot a vs b for each, add the original model estimate and the
@@ -1361,7 +1658,7 @@ boot_df |>
     shape = 3
   ) +
   facet_wrap(~vars, scales = "free") +
-  evc::evc_theme()
+  theme
 
 
 #### Clustering: choose k ####
@@ -1369,8 +1666,18 @@ boot_df |>
 # TODO Do for adjacency matrix as well!
 # extract JS distance matrix
 set.seed(123)
-clust_obj <- js_clust(dep_fit_final$dependence, scree_k = 1:max_k)
+clust_obj <- js_clust(
+  dep_fit_final$dependence,
+  scree_k = 1:max_k,
+  n = n_mc
+)
 dist_mat <- clust_obj$dist_mat
+
+# look at 2-norm for each location
+sort(apply(as.matrix(dist_mat), 2, mean))
+sort(apply(as.matrix(dist_mat), 2, norm, type = "2"))
+# interesting that Malahide and Ringsend, where rain was lowest, are
+# notable outliers (especially Malahide)
 
 # TODO function from Gaussian copula simulations, also needs to be packaged up!
 # Function to find optimal k value via TWGSS and AIC
@@ -1387,7 +1694,9 @@ find_k <- \(
   # Pull JS distance matrix
   dist <- js_clust(
     ce_fit,
-    scree_k = 1:max_clust, spec_vars = spec_vars
+    scree_k = 1:max_clust,
+    spec_vars = spec_vars,
+    n = n_mc
   )$dist_mat
 
   # apply adjacency if specified
@@ -1409,15 +1718,20 @@ find_k <- \(
   aic <- lr <- vector(mode = "list", length = max_clust)
   for (k in 1:max_clust) {
     # cluster
+    # debugonce(js_clust)
     pam_fit <- js_clust(
-      dist_mat = dist, k = k, return_dist = TRUE, spec_vars = spec_vars
+      dist_mat = dist,
+      k = k,
+      return_dist = TRUE,
+      spec_vars = spec_vars,
+      n = n_mc
     )
     # refit CE model
     dependence_clust <- fit_optim_clust(
       pam_fit$pam$clustering,
       # data_mix,
       data_lst,
-      n_vars = 2, # TODO
+      n_vars = 2,
       cond_prob = cond_prob,
       trans_fun = trans_fun,
       start_vals = c(0.01, 0.01),
@@ -1479,7 +1793,7 @@ find_k <- \(
     geom_line() +
     # geom_vline(xintercept = n_clust, linetype = "dashed") +
     facet_wrap(~name, scales = "free_y") +
-    evc::evc_theme() +
+    theme +
     labs(
       title = paste0(
         # "Elbow Plots for AIC and TWGSS, true k = ",
@@ -1515,23 +1829,38 @@ k_obj <- find_k(
   fixed_b = FALSE,
   cond_var = c("rain", "wind_speed")
 )
+# saveRDS(k_obj, "k_obj.RDS")
+# readRDS(k_obj, "k_obj.RDS")
 
 # take k from TWGSS, looks like a pretty clear elbow at 3!
 k_obj$plot
+k_obj$k_method
 k <- k_obj$k_method["k_twgss"]
+
 
 #### Cluster and plot ####
 
 # cluster for k = 3!
-pam_fit <- js_clust(dist_mat = dist_mat, k = k)
+if (!exists("dist_mat")) {
+  set.seed(123)
+  clust_obj <- js_clust(
+    dep_fit_final$dependence,
+    scree_k = 1:max_k,
+    n = n_mc
+  )
+  dist_mat <- clust_obj$dist_mat
+}
+k <- 3
+pam_fit <- js_clust(dist_mat = dist_mat, k = k, n = n_mc)
 # plot on map
-# TODO Check that point ordering is definitely correct! This doesn't look great
 # ggsave(filename = "test.png", plt_clust_map(pts, areas, pam_fit))
-plt_clust_map(pts, areas, pam_fit)
+# TODO Make dots in plot legend larger!! (or remove altogether?)
+plt_clust_map(pts, areas, pam_fit, plot_medoids = FALSE, elev_df = elev_df)
 
 # also look at k = 2, k = 4
-plt_clust_map(pts, areas, js_clust(dist_mat = dist_mat, k = 2))
-plt_clust_map(pts, areas, js_clust(dist_mat = dist_mat, k = 4))
+plt_clust_map(pts, areas, js_clust(dist_mat = dist_mat, k = 2, n = n_mc))
+plt_clust_map(pts, areas, js_clust(dist_mat = dist_mat, k = 4, n = n_mc))
+plt_clust_map(pts, areas, js_clust(dist_mat = dist_mat, k = 5, n = n_mc))
 
 
 #### Fit and cluster for different DQU ####
@@ -1563,12 +1892,15 @@ quant_fit <- \(q, ...) {
   names(dep_fit_spec) <- c("residual", "dependence")
 
   # cluster for k = 3
-  pam_fit_spec <- js_clust(dep_fit_spec$dependence, k = 3, ...)
+  # pam_fit_spec <- js_clust(dep_fit_spec$dependence, k = 3, mqu = mqu, ...)
+  pam_fit_spec <- js_clust(dep_fit_spec$dependence, k = 3, n = n_mc, ...)
 
   # plot
   map_plot_spec <- plt_clust_map(
     pts, areas, pam_fit_spec,
-    plot_medoids = FALSE
+    plot_medoids = FALSE,
+    # plot_medoids = TRUE,
+    elev_df = elev_df
   ) +
     ggtitle(paste0("DQU = ", q * 100, "%")) +
     guides(colour = "none", fill = "none")
@@ -1582,6 +1914,8 @@ quant_fit <- \(q, ...) {
 }
 
 fit_quant <- lapply(quantiles, quant_fit)
+saveRDS(fit_quant, "fit_quant.RDS")
+fit_quant <- readRDS("fit_quant.RDS")
 
 wrap_plots(lapply(fit_quant, `[[`, "map_plot")[1:3])
 # seems to be pretty stable for 85-90!
@@ -1591,24 +1925,85 @@ pdf("plots/tests/cluster_dqu.pdf", width = 8, height = 8)
 lapply(fit_quant, `[[`, "map_plot")
 dev.off()
 
+# also add medoids
+add_medoid <- \(fit_quant) {
+  lapply(seq_along(fit_quant), \(i) {
+    q <- quantiles[[i]]
+    plt_clust_map(
+      pts,
+      areas,
+      # pam_fit_spec,
+      fit_quant[[i]]$pam_fit,
+      # plot_medoids = FALSE
+      plot_medoids = TRUE
+    ) +
+      ggtitle(paste0("DQU = ", q * 100, "%")) +
+      guides(colour = "none", fill = "none")
+  })
+}
+plt_quant_med <- add_medoid(fit_quant)
+
+pdf("plots/tests/cluster_dqu_medoid.pdf", width = 8, height = 8)
+plt_quant_med
+dev.off()
+
 
 #### Cluster each variable separately ####
 
 vars <- c("rain", "wind_speed")
+# quantiles <- 0.85
 fit_quant_sep <- lapply(vars, \(x) {
   print(paste0("Fitting for ", x))
   lapply(quantiles, quant_fit, spec_vars = x)
 })
+saveRDS(fit_quant_sep, "fit_quant_sep.RDS")
+plt_quant_sep <- readRDS("fit_quant_sep.RDS")
 
 # combined for rain and wind speed seperately
 (p_rain <- wrap_plots(lapply(fit_quant_sep[[1]], `[[`, "map_plot")[1:3]) +
-  patchwork::plot_annotation(title = "Rain", theme = evc::evc_theme()))
+  patchwork::plot_annotation(title = "Rain", theme = theme))
 # For rain, DQU 85 seems to have best results, somewhat less stable thereafter
 (p_wind <- wrap_plots(lapply(fit_quant_sep[[2]], `[[`, "map_plot")[1:3]) +
-  patchwork::plot_annotation(title = "Wind Speed", theme = evc::evc_theme()))
+  patchwork::plot_annotation(title = "Wind Speed", theme = theme))
 # For wind speed, same, but median is a bit weird!
 
-# combine all three for DQU = 0.85
+# plot for all
+print_quant_plt <- \(fit_quant, fit_quant_sep, quantiles) {
+  lapply(quantiles, \(q_spec) {
+    x <- which(quantiles == q_spec)
+    p <- wrap_plots(list(
+      fit_quant[[x]]$map_plot +
+        ggtitle("Both"),
+      fit_quant_sep[[1]][[x]]$map_plot +
+        ggtitle("Rain | Wind Speed") +
+        theme(axis.text.y = element_blank(), axis.ticks.y = element_blank()),
+      fit_quant_sep[[2]][[x]]$map_plot +
+        ggtitle("Wind Speed | Rain") +
+        theme(axis.text.y = element_blank(), axis.ticks.y = element_blank())
+    )) +
+      patchwork::plot_annotation(
+        paste0("DQU = ", q_spec * 100, "%"),
+        theme = evc::evc_theme()
+      ) +
+      NULL
+  })
+}
+
+pdf("plots/tests/cluster_dqu_sep.pdf", width = 10, height = 10)
+print_quant_plt(fit_quant, fit_quant_sep, quantiles)
+dev.off()
+
+# add medoids
+fit_quant_sep_med <- lapply(fit_quant_sep, add_medoid)
+pdf("plots/tests/cluster_dqu_sep_medoid.pdf", width = 10, height = 10)
+print_quant_plt(
+  lapply(plt_quant_med, \(x) list("map_plot" = x)),
+  lapply(fit_quant_sep_med, \(x) lapply(x, \(y) list("map_plot" = y))),
+  quantiles
+)
+dev.off()
+
+# combine all three for DQU = 0.85, our chosen DQU
 x <- which(quantiles == dqu)
 p <- wrap_plots(list(
   fit_quant[[x]]$map_plot +
@@ -1624,12 +2019,15 @@ p <- wrap_plots(list(
   NULL
 
 ggsave(
-  filename = "latex/plots/cluster_dqu_sep.pdf",
+  # filename = "latex/plots/cluster_dqu_sep.png",
+  filename = "latex/plots/cluster_dqu_sep_new.png",
   p,
   width = 12,
   height = 8
 )
 # TODO Create 9 map plots for each likely DQU
+
+
 
 
 ##### Adjacency ####
@@ -1670,7 +2068,7 @@ k_obj_adj$k_method
 # no clear elbow anywhere
 
 k_adj <- 3
-pam_fit_adj <- js_clust(dist_mat = dist_mat_adj, k = k_adj)
+pam_fit_adj <- js_clust(dist_mat = dist_mat_adj, k = k_adj, n = n_mc)
 
 # plot on map
 # TODO Check that point ordering is definitely correct!
@@ -1678,8 +2076,8 @@ pam_fit_adj <- js_clust(dist_mat = dist_mat_adj, k = k_adj)
 plt_clust_map(pts, areas, pam_fit_adj)
 
 # also look at k = 2, k = 4
-plt_clust_map(pts, areas, js_clust(dist_mat = dist_mat_adj, k = 2))
-plt_clust_map(pts, areas, js_clust(dist_mat = dist_mat_adj, k = 4))
+plt_clust_map(pts, areas, js_clust(dist_mat = dist_mat_adj, k = 2, n = n_mc))
+plt_clust_map(pts, areas, js_clust(dist_mat = dist_mat_adj, k = 4, n = n_mc))
 
 
 #### Refit and bootstrap uncertainty ####
@@ -1743,9 +2141,10 @@ quant_plots_clust <- plot_boot_quant(
 # Maybe just stick with previous dependence quantile, to show reduction in
 # uncertainty
 dqu_clust <- dqu
-# dqu_clust <- 0.88
+dqu_clust <- 0.88
 
 # Refit conditional extremes
+# TODO Check if constraining is a good idea!
 Y_lst_clust <- lapply(data_lst_clust, trans_fun)
 ce_fit_clust <- lapply(Y_lst_clust, \(x) {
   o <- ce_optim(
@@ -1756,8 +2155,8 @@ ce_fit_clust <- lapply(Y_lst_clust, \(x) {
     constrain = TRUE,
     # start = c(0.01, 0.1),
     # fixed_b = TRUE,
-    nruns = 3,
-    aLow = 0
+    nruns = 3
+    # aLow = 0
   )
 })
 
@@ -1782,7 +2181,7 @@ names(diag_plots) <- names(resid_plots)
 
 # save first plot to show
 ggsave(
-  filename = "latex/plots/diag_plots_postclust.png",
+  filename = "latex/plots/diag_plots_postclust_new.png",
   diag_plots[[1]],
   width = 8,
   height = 8
@@ -1794,12 +2193,15 @@ ab_df_clust <- dep_to_df(dep_fit_clust$dependence)
 map_plots_clust <- map_plot(
   ab_df_clust,
   data_week_clust,
-  n_breaks = 4
+  n_breaks = 4,
+  range = c(5, 10)
 )
 
-# kinda makes sense??
-ggsave("test_clust.png", map_plots_clust[[1]] / map_plots_clust[[2]], width = 12, height = 12)
-# map_plots_clust[[1]]
+ggsave(
+  map_plots_clust[[1]] / map_plots_clust[[2]],
+  filename = "latex/plots/ab_map_post_clust_new.png",
+  width = 12, height = 12
+)
 
 # TODO Don't plot on map!
 ab_df_clust |>
@@ -1810,7 +2212,7 @@ ab_df_clust |>
   # facet_wrap(~ parameter + vars, scales = "free") +
   facet_wrap(~ parameter + vars, scales = "free") +
   labs(x = "") +
-  evc::evc_theme() +
+  theme +
   guides(fill = "none")
 
 # bootstrap conditional extremes
@@ -1841,7 +2243,7 @@ boot_df_clust |>
   # facet_wrap(~ parameter + vars) +
   # facet_wrap(~ parameter + vars, scales = "free") +
   facet_wrap(~ parameter + name, scales = "free") +
-  evc::evc_theme() +
+  theme +
   # guides(fill = "none") +
   NULL
 
@@ -1852,7 +2254,7 @@ boot_df_clust |>
   geom_density(alpha = 0.5) +
   # facet_wrap(~ parameter + vars, scales = "free") +
   facet_wrap(~ parameter + name, scales = "free") +
-  evc::evc_theme() +
+  theme +
   # guides(fill = "none") +
   NULL
 
@@ -1974,7 +2376,7 @@ boot_comp_plots <- plot_df |>
       ) +
       facet_wrap(~clust) +
       coord_flip(clip = "off", expand = TRUE) +
-      evc::evc_theme() +
+      theme +
       theme(
         axis.title.x = element_blank(),
         axis.title.y = element_blank(),

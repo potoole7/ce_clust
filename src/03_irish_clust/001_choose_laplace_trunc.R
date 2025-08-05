@@ -14,8 +14,9 @@
 # matrices, or clustering results
 # - finally, k chosen based on simple scree plot for favoured previous choices
 
-# TODO Add elevation to plots!
-# TODO Look at each variable separately, as well as together??
+# TODO Add elevation to plots
+# TODO Look at each variable separately, as well as together!
+# TODO Maybe try for different dependence quantiles also??
 
 #### Libs ####
 
@@ -81,11 +82,16 @@ laplace_q <- seq(0.7, 0.95, by = 0.05)
 ce_fit <- readRDS("data/ce_fit.RDS")
 dep_fit <- readRDS("data/dep_fit.RDS")
 
-# load shapefile and site locations for plotting
+# load shapefile site locations and elevation raster for plotting
 areas <- sf::read_sf("data/met_eireann/final/irl_shapefile.geojson")
 pts <- sf::read_sf("data/met_eireann/final/irl_points.geojson")
 pts <- pts |>
   filter(name %in% names(dep_fit$dependence))
+elev_df <- readr::read_csv(
+  "data/met_eireann/final/irl_elev.csv",
+  show_col_types = FALSE
+) |>
+  mutate(elev_bin = factor(elev_bin, levels = unique(elev_bin)))
 
 
 #### Cluster for different truncation points ####
@@ -198,7 +204,9 @@ plt_lst <- lapply(seq_along(clust_obj_lst), \(i) {
   plt_clust_map(
     pts,
     areas,
-    clust_obj_lst[[i]]$clust_obj
+    clust_obj_lst[[i]]$clust_obj,
+    elev_df = elev_df,
+    rm_elev_leg = TRUE
   ) +
     ggtitle(
       label = paste0("Laplace truncation at ", laplace_q[i])

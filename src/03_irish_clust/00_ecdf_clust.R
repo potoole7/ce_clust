@@ -84,16 +84,18 @@ get_elev_rast <- \(areas, z = 9, bins = NULL, labels = NULL) {
 
   if (!is.null(bins)) {
     df_dem <- df_dem %>%
-      mutate(elev_bin = cut(
-        elevation,
-        # breaks = c(seq(0, 500, by = 100), Inf),
-        breaks = bins,
-        # labels = c(
-        #   "200–300 m", "300–400 m", "400–500 m", "> 500 m"
-        # ),
-        labels = labels,
-        right  = FALSE
-      ))
+      mutate(
+        elev_bin = factor(cut(
+          elevation,
+          # breaks = c(seq(0, 500, by = 100), Inf),
+          breaks = bins,
+          # labels = c(
+          #   "200–300 m", "300–400 m", "400–500 m", "> 500 m"
+          # ),
+          labels = labels,
+          right  = FALSE
+        ), levels = labels)
+      )
   }
 
   return(df_dem)
@@ -963,6 +965,7 @@ data <- data |>
 areas <- sf::read_sf("data/met_eireann/final/irl_shapefile.geojson")
 
 # pull elevation for areas
+# TODO May have to add another bin for 600m, since over that is a mountain!
 # elev_df <- get_elev_rast(
 #   areas,
 #   z = 9,
@@ -1058,13 +1061,49 @@ data_plot <- data_week %>%
   st_to_sf()
 
 # First, plot the location of each site
-p1 <- ggplot(areas) +
-  geom_sf(colour = "black", fill = NA) +
+# TODO Place legend on plot in bottom right corner!!
+# p1 <- ggplot(areas) +
+p1 <- ggplot() +
+  geom_tile(
+    data = elev_df,
+    aes(x = x, y = y, fill = elev_bin),
+    width = diff(range(elev_df$x)) / length(unique(elev_df$x)),
+    height = diff(range(elev_df$y)) / length(unique(elev_df$y))
+  ) +
+  # scico::scale_fill_scico_d(
+  #   palette = "bilbao",
+  #   name = "Elevation",
+  #   direction = -1
+  # ) +
+  scale_fill_manual(
+    values = c(
+      "#FFFFFF", "#C5C2B2", "#B19E68",
+      "#A6785B", "#9B5352", "#6D1F23"
+      # "#FFFFFF", "#CBC9C0", "#BBB287",
+      # "#AC8F60", "#A4745A", "#914249"
+    ),
+  ) +
+  labs(x = "", y = "", fill = "Elevation") +
+  # position legend in bottom right of plot
+  theme(
+    legend.direction = "vertical",
+    legend.position = c(0.75, 0.1),
+    legend.title = element_text(size = 12, face = "bold"),
+    legend.text = element_text(size = 12)
+  ) +
+  # NULL
+  # ggsave(filename = "test_map_plot.png", plot = p1, width = 10, height = 8)
+  ggnewscale::new_scale_fill() +
+  geom_sf(data = areas, colour = "black", fill = NA) +
   # points other than two sites
   geom_sf(
     data = filter(data_plot, indicator == "other"),
     colour = "black",
-    size = 3,
+    # size = 3,
+    size = 4,
+    # change shape to hollow circle to better see elevation
+    shape = 21,
+    stroke = 0.9,
     alpha = 0.9,
     show.legend = FALSE
   ) +
@@ -1072,20 +1111,23 @@ p1 <- ggplot(areas) +
   geom_sf(
     data = filter(data_plot, indicator != "other"),
     aes(colour = indicator, size = indicator),
-    # colour = "black",
+    # have thicker border to make it more visible
+    # shape = 21,
+    # stroke = 2,
     alpha = 0.9,
-    # show.legend = TRUE
     show.legend = FALSE
   ) +
   scale_colour_manual(values = c(ggsci::pal_nejm()(2))) +
-  scale_size_manual(values = c(4.5, 4.5)) +
+  # scale_size_manual(values = c(4.5, 4.5)) +
+  scale_size_manual(values = c(5, 5)) +
   labs(colour = "", size = "") +
-  theme +
+  # theme +
+  evc_theme(legend.position = NULL, nejm_pal = FALSE) +
   # remove axis text
   theme(
     axis.text = element_blank(),
-    axis.ticks = element_blank(),
-    legend.key = element_blank()
+    axis.ticks = element_blank() # ,
+    # legend.key = element_blank()
   )
 
 cols <- ggsci::pal_nejm()(4)
@@ -1104,6 +1146,7 @@ p21 <- data_plot %>%
   ggplot(aes(x = rain, y = wind_speed)) +
   # geom_point(aes(colour = name), size = 1.5, alpha = 0.9) +
   geom_point(aes(colour = col), size = 1.5, alpha = 0.9) +
+  # TODO Investigate why these aren't showing up???
   geom_vline(aes(xintercept = quant_rain), linetype = "dashed") +
   geom_hline(aes(yintercept = quant_wind_speed), linetype = "dashed") +
   # facet_wrap(~ name, scales = "free_x") +
@@ -1111,7 +1154,7 @@ p21 <- data_plot %>%
   labs(
     # x = "Weekly total precipitation (mm)",
     x = "precipitation (mm)",
-    y = "wind speed (m/s)", # TODO: What is the unit of ws?
+    y = "wind speed (m/s)",
     colour = ""
   ) +
   guides(colour = "none") +
@@ -1128,16 +1171,32 @@ p21 <- data_plot %>%
 p2 <- data_plot %>%
   filter(name %in% highest_lowest_rain, rain > 0) %>%
   group_by(name) %>%
-  mutate(across(c(rain, wind_speed), ~ quantile(.x, 0.95, na.rm = TRUE), .names = "quant_{.col}")) %>%
+  # mutate(across(c(rain, wind_speed), ~ quantile(.x, 0.95, na.rm = TRUE), .names = "quant_{.col}")) %>%
+  mutate(
+    quant_rain = quantile(rain, 0.95, na.rm = TRUE),
+    quant_wind_speed = quantile(wind_speed, 0.95, na.rm = TRUE)
+  ) |>
   ungroup() %>%
   # ggplot(aes(x = rain, y = wind_speed)) +
   ggplot(aes(x = wind_speed, y = rain)) +
   # geom_point(aes(colour = name), size = 1.5, alpha = 0.9) +
   geom_point(aes(colour = name), size = 1.5, alpha = 0.9) +
-  # geom_vline(aes(xintercept = quant_rain)) +
-  # geom_hline(aes(yintercept = quant_wind_speed)) +
+  geom_vline(aes(xintercept = quant_wind_speed), linetype = "dashed") +
+  geom_hline(aes(yintercept = quant_rain), linetype = "dashed") +
   facet_wrap(~name, scales = "fixed") +
   scale_colour_manual(values = c(ggsci::pal_nejm()(2))) +
+  scale_x_continuous(
+    # limits = c(0, 12),
+    limits = c(2, 12),
+    # breaks = seq(2.5, 12.5, by = 2.5),
+    # breaks = seq(0, 12, by = 2),
+    breaks = seq(2, 12, by = 2),
+    expand = c(0, 0.2)
+  ) +
+  scale_y_continuous(
+    limits = c(0, 310),
+    expand = c(0.02, 0)
+  ) +
   labs(
     # x = "Weekly total precipitation (mm)",
     # x = "precipitation (mm)",
@@ -1153,16 +1212,21 @@ p2 <- data_plot %>%
     strip.text.x = element_blank(),
     legend.key = element_blank()
   )
+# p2
 
 # join plots
 # TODO: Change size of first plot to be larger!
 p_sec_2 <- p1 +
   (p2 + guides(colour = "none", size = "none")) +
   # have common legends
-  plot_layout(guides = "collect") &
-  theme(legend.position = "bottom")
+  # plot_layout(guides = "collect") &
+  # # theme(legend.position = "bottom") +
+  # theme(legend.position = "left") +
+  NULL
 
-ggsave("latex/plots/02_mot_ex_plot.png", p_sec_2, width = 10, height = 6, units = "in")
+ggsave("plot_1_test.png", p_sec_2, width = 12, height = 6, units = "in")
+# ggsave("latex/plots/02_mot_ex_plot.png", p_sec_2, width = 10, height = 6, units = "in")
+# ggsave("latex/plots/02_mot_ex_plot_elev.png", p_sec_2, width = 12, height = 6, units = "in")
 
 
 #### Chi exploration ####
@@ -1373,8 +1437,8 @@ dev.off()
 #### Fit CE ####
 
 # decision: 0.85 for both? Seems to avoid instabilities observed for large q
-# dqu <- 0.85
-dqu <- c("rain" = 0.88, "wind_speed" = 0.85)
+dqu <- 0.85
+# dqu <- c("rain" = 0.88, "wind_speed" = 0.85)
 # dqu <- 0.9
 
 # fit CE model
@@ -1407,6 +1471,7 @@ dep_fit$arg_vals <- list("cond_prob" = dqu)
 # pull dependence paramaters into df
 ab_df <- dep_to_df(dep_fit$dependence)
 
+# OLD OLD OLD (before removing NI sites)
 # why so many locations with low alpha values?
 ab_df |>
   filter(parameter == "a" & value < -0.2)
@@ -1663,13 +1728,13 @@ boot_df |>
 
 #### Clustering: choose k ####
 
-# TODO Do for adjacency matrix as well!
 # extract JS distance matrix
 set.seed(123)
 clust_obj <- js_clust(
   dep_fit_final$dependence,
   scree_k = 1:max_k,
-  n = n_mc
+  n = n_mc,
+  mc_method = "uniform"
 )
 dist_mat <- clust_obj$dist_mat
 
@@ -1821,6 +1886,7 @@ find_k <- \(
   ))
 }
 
+# TODO: Remove elevation legend and add back in after
 k_obj <- find_k(
   ce_fit_final,
   data_lst,
@@ -1855,7 +1921,7 @@ pam_fit <- js_clust(dist_mat = dist_mat, k = k, n = n_mc)
 # plot on map
 # ggsave(filename = "test.png", plt_clust_map(pts, areas, pam_fit))
 # TODO Make dots in plot legend larger!! (or remove altogether?)
-plt_clust_map(pts, areas, pam_fit, plot_medoids = FALSE, elev_df = elev_df)
+plt_clust_map(pts, areas, pam_fit, plot_medoids = FALSE, elev_df = elev_df, rm_elev_leg = FALSE)
 
 # also look at k = 2, k = 4
 plt_clust_map(pts, areas, js_clust(dist_mat = dist_mat, k = 2, n = n_mc))
@@ -2004,7 +2070,8 @@ print_quant_plt(
 dev.off()
 
 # combine all three for DQU = 0.85, our chosen DQU
-x <- which(quantiles == dqu)
+# x <- which(quantiles == dqu)
+x <- which(quantiles == 0.85)
 p <- wrap_plots(list(
   fit_quant[[x]]$map_plot +
     ggtitle("Both"),
@@ -2020,14 +2087,13 @@ p <- wrap_plots(list(
 
 ggsave(
   # filename = "latex/plots/cluster_dqu_sep.png",
-  filename = "latex/plots/cluster_dqu_sep_new.png",
+  filename = "plots/tests/cluster_dqu_sep_new.png",
+  # filename = "latex/plots/cluster_dqu_sep_new.png",
   p,
   width = 12,
   height = 8
 )
 # TODO Create 9 map plots for each likely DQU
-
-
 
 
 ##### Adjacency ####

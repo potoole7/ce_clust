@@ -53,7 +53,7 @@
 % Nature Bibliography style
 % \usepackage[backend=biber,style=nature]{biblatex}
 % \addbibresource{library.bib} 
-\bibliographystyle{unsrtnat}
+\bibliographystyle{apalike}
 
 % number equations by section
 \numberwithin{equation}{section}
@@ -206,6 +206,8 @@ Finally, Section~\ref{sec:discuss} contains a discussion of our findings, includ
 
 % Image of locations and precipitation vs wind speed for two sites
 \todo{Add quantile lines? See Jordan's feedback!}
+\todo{add elevation also!}
+\todo{Add additional RHS tick on x-axis, looks bad}
 \begin{figure}[H]
     \centering
     \includegraphics[width = 0.9\linewidth]{plots/02_mot_ex_plot.png}
@@ -216,7 +218,7 @@ Finally, Section~\ref{sec:discuss} contains a discussion of our findings, includ
 
 We consider the joint extremal behaviour of precipitation and wind speeds at 59 sites across the Republic of Ireland from 1990 to 2020, inclusive.
 % The data we have performed our clustering on is precipitation data for the Republic of Ireland, collected from the Met Éireann website at \citet{metHistoricalData}, and wind speed data from the ERA5 Reanalysis dataset at \citet{Hersbach2020}, corresponding to the closest grid point to each location.
-Precipitation data were collected from the Met Éireann website (accessed 2024-09-01), and wind speed data from the gridded ERA5 Reanalysis dataset citep{metHistoricalData}, \citep{Hersbach2020}.
+Precipitation data were collected from the Met Éireann website (accessed 2024-09-01), and wind speed data from the gridded ERA5 Reanalysis dataset \citep{metHistoricalData}, \citep{Hersbach2020}.
 ERA5 provides averages over a gridded box of $0.25^{\circ} \times 0.25^{\circ}$, so each site will lie within a grid cell, to which the wind speed data corresponds.
 % , taking the closest grid cell corresponding to each precipitation measurement location.
 % While the point estimates of the precipitation data can be considered more precise, it may also be susceptible to preferential sampling, with sites likely to be more densely found in areas with higher precipitation.
@@ -649,11 +651,12 @@ At 5 dimensions, the ARI is close to 1 for all $\rho_{\text{Gauss}}$ values.
 Again, we must be cautious in interpreting these results, as in this example we merely increase the amount of data in our simulation and keep the dependence structure the same across each pair of variables, 
 However, we can still conclude that these results show that our method performs well for extremal clustering in higher dimensions, and motivates such a use. 
 
+\todo{Look into this, is this correct?? Shouldn't the clustering performance be much worse for 0.4 and 0.5?}
 \begin{figure}[H]
     \centering
     % \includegraphics[width = 0.9\linewidth]{plots/sim_01c_js_sens_3_var_dqu_0.9.png}
     \includegraphics[width = 0.9\linewidth]{plots/sim_01d_js_sens_3_var_dqu_0.9mult_var_man.png}
-    \caption{\emph{Evaluation of clustering performance for two to five variables and two equally sized clusters for simulations of 12 ``locations'', each with 1000 observations for each variable, from a mixture of Gaussian and t-copulas. The t-copula correlation parameters for each ``known'' cluster were set to $\rho_{t_1} = 0.4, \rho{t_2} = 0.5$. A grid search was performed over the values of the Gaussian correlation parameter, as represented on the x-axis. This grid search was repeated 500 times. The smoothed lines show the smoothed median of the Adjusted Rand Index for both clustering methods, with smoothing performing using a generalised additive model. Points show individual values of the ARI for a given simulation.}} 
+    \caption{\emph{Evaluation of clustering performance for two to five variables and two equally sized clusters for simulations of 12 ``locations'', each with 1000 observations for each variable, from a mixture of Gaussian and t-copulas. The t-copula correlation parameters for each ``known'' cluster were set to $\rho_{t_1} = 0.4, \rho_{t_2} = 0.5$. A grid search was performed over the values of the Gaussian correlation parameter, as represented on the x-axis. This grid search was repeated 500 times. The smoothed lines show the smoothed median of the Adjusted Rand Index for both clustering methods, with smoothing performing using a generalised additive model. Points show individual values of the ARI for a given simulation.}} 
     \label{fig:02b_5d}
 \end{figure}
 
@@ -886,5 +889,5 @@ It would be interesting to see if we could build on such work via exploratory sp
 
 \newpage
 \bibliography{library}
-
+\bibstyle{apalike}
 \end{document}

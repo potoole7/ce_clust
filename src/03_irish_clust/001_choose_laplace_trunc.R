@@ -18,9 +18,9 @@
 # Add elevation to plots (done)
 # TODO Comment on condition number and 2-norm of dissimilarity matrices
 # Look at each variable (rain and wind) separately, as well as together! (done)
-# TODO Allow for different Laplace caps for each variable?? "Best" seems
-# different for rain and wind speed, somewhat unsurprisingly
+# Allow for different Laplace caps for each variable?? (done)
 # TODO Maybe try different dependence quantiles also?? Load from other file
+
 
 #### Libs ####
 
@@ -70,11 +70,13 @@ n_mc <- 1000
 
 k <- 3 # number of clusters
 
+n_cores <- parallel::detectCores() - 1
+
 # dqu <- c(0.85, 0.88, 0.9)
 # dqu <- 0.85 # happiest with this quantile from bootstrapping
 # TODO Expand to more Laplace quantiles?
-# laplace_q <- seq(0.7, 0.95, by = 0.05)
-laplace_q <- seq(0.65, 0.95, by = 0.05)
+laplace_q <- seq(0.7, 0.95, by = 0.05)
+# laplace_q <- seq(0.65, 0.95, by = 0.05)
 # laplace_q <- c(0.8, 0.85, 0.9)
 
 # grid <- crossing(
@@ -105,9 +107,18 @@ elev_df <- readr::read_csv(
 
 set.seed(123)
 x <- laplace_q[[1]]
-# TODO Parallelise if memory allows
-clust_obj_lst <- lapply(laplace_q, \(x) {
-  print(x)
+# TODO Expand to more quantiles, not that expensive to compute!
+# clust_obj_lst <- lapply(laplace_q, \(x) {
+laplace_q_gran <- seq(
+  min(laplace_q),
+  max(laplace_q),
+  by = abs(diff(laplace_q)[1] / 2) # twice as granular
+)
+laplace_q_gran <- sort(unique(c(laplace_q_gran, 0.975, 0.99, 0.999)))
+
+# Calc divergence, TWGSS and clustering sol for given Lap trunc quantile
+clust_obj_fun <- \(laplace_cap) {
+  print(laplace_cap)
   # First, calculate divergence matrix and TWGSS for scree plot
   dist_obj <- js_clust(
     dep_fit$dependence,
@@ -117,17 +128,9 @@ clust_obj_lst <- lapply(laplace_q, \(x) {
     n = n_mc,
     # mc_method = "uniform"
     mc_method = "laplace_trunc",
-    laplace_cap = x,
+    laplace_cap = laplace_cap,
     return_dist = TRUE
   )
-
-  # # next, cluster
-  # # TODO (for k = 3, presumed to always be best but needs checking!)
-  # clust_obj <- js_clust(
-  #   dist_mat = dist_obj$dist_mat,
-  #   dep_fit$dependence,
-  #   k = k
-  # )
 
   # next, cluster across both variables (together, and separately)
   dist_mats <- c(
@@ -147,6 +150,10 @@ clust_obj_lst <- lapply(laplace_q, \(x) {
     dist_obj$total_within_ss
   )
 
+  names(dist_mats) <- names(clust_obj_var) <- names(twgss) <- c(
+    "combined", vars
+  )
+
   # return distance matrices for each variable, as well as clustering + TWGSS
   return(list(
     "dist_mats" = dist_mats,
@@ -154,13 +161,20 @@ clust_obj_lst <- lapply(laplace_q, \(x) {
     "clust_obj" = clust_obj_var,
     "twgss"     = twgss
   ))
-})
-saveRDS(clust_obj_lst, "data/laplace_trunc_clust_obj.RDS")
+}
 
-# quickly plot TWGSS elbow for each (k = 3 best for each!)
+clust_obj_lst <- mclapply(laplace_q_gran, \(x) {
+  clust_obj_fun(x)
+}, mc.cores = n_cores)
+names(clust_obj_lst) <- laplace_q_gran
+saveRDS(clust_obj_lst, "data/laplace_trunc_clust_obj.RDS")
+# clust_obj_lst <- readRDS("data/laplace_trunc_clust_obj.RDS")
+
+# quickly plot TWGSS elbow for each (k = 3 best for each! Nice)
 p_elbow <- bind_rows(lapply(seq_along(clust_obj_lst), \(i) {
   data.frame(
-    "laplace_q" = laplace_q[i],
+    # "laplace_q" = laplace_q[i],
+    "laplace_q" = laplace_q_gran[i],
     # "twgss"     = clust_obj_lst[[i]]$twgss
     "twgss_combined" = clust_obj_lst[[i]]$twgss[[1]],
     "twgss_rain" = clust_obj_lst[[i]]$twgss[[2]],
@@ -199,52 +213,6 @@ div_lst <- lapply(clust_obj_lst, `[[`, "dist_mats")
 # transpose from laplace_q -> variable list to vice versa
 div_lst <- purrr::transpose(div_lst)
 
-# take first variable as test
-# div_lst_spec <- div_lst[[1]]
-#
-# div_mean <- sapply(div_lst_spec, \(x) mean(x))
-# div_max <- sapply(div_lst_spec, \(x) max(x))
-# div_norm <- sapply(div_lst_spec, \(x) norm(as.matrix(x), type = "2"))
-# div_kappa <- sapply(div_lst_spec, \(x) {
-#   kappa(as.matrix(x), exact = TRUE, triangular = TRUE)
-# })
-#
-# # combine into dataframe
-# div_df <- data.frame(
-#   "laplace_q" = laplace_q,
-#   "mean"      = div_mean,
-#   "max"       = div_max,
-#   "norm"      = div_norm,
-#   "kappa"     = div_kappa
-# )
-#
-# # plot raw values
-# # div_df |>
-#   pivot_longer(cols = -laplace_q) |>
-#   ggplot(aes(x = laplace_q, y = value)) +
-#   geom_line() +
-#   geom_point() +
-#   facet_wrap(~name, scales = "free_y") +
-#   theme
-# # comments:
-#
-# # plot first derivative
-# div_df |>
-#   mutate(
-#     across(c(mean, max, norm, kappa), \(x) {
-#       c(NA, diff(x) / diff(laplace_q))
-#     })
-#   ) |>
-#   pivot_longer(cols = -laplace_q) |>
-#   ggplot(aes(x = laplace_q, y = value)) +
-#   geom_line() +
-#   geom_point() +
-#   facet_wrap(~name, scales = "free_y") +
-#   theme
-# # comments: First big bump occurs at 0.85, so 0.8 may be a good candidate?
-# # lines up well with simulation results!
-
-
 # calculate mean, max, 2-norm and condition number for each
 div_df <- bind_rows(lapply(seq_along(div_lst), \(i) {
   x <- div_lst[[i]]
@@ -255,114 +223,169 @@ div_df <- bind_rows(lapply(seq_along(div_lst), \(i) {
       "max" = max(y),
       "norm" = norm(as.matrix(y), type = "2"),
       "kappa" = kappa(as.matrix(y), exact = TRUE, triangular = TRUE),
-      "laplace_q" = laplace_q[j],
+      # "laplace_q" = laplace_q[j],
+      "laplace_q" = laplace_q_gran[j],
       "variable" = c("Both", vars)[i]
     )
   }))
 }))
 
-# plot raw values
-div_df |>
-  pivot_longer(cols = 1:4) |>
-  # max, mean and 2-norm all tell us much the same thing
-  filter(name %in% c("kappa", "norm")) |>
-  ggplot(aes(x = laplace_q, y = value, colour = variable)) +
-  geom_line() +
-  geom_point() +
-  # change y-axis to scientific notation
-  scale_y_continuous(labels = scales::scientific) +
-  facet_wrap(variable ~ name, scales = "free_y", nrow = 3) +
-  # facet_grid(variable ~ name, scales = "free") +
-  theme
-# Comments
-# Both:
-# Rain:
-# Wind speed:
-# Conclusion:
+plot_div <- \(div_df) {
+  # plot raw values
+  p_raw <- div_df |>
+    pivot_longer(cols = 1:4) |>
+    # max, mean and 2-norm all tell us much the same thing
+    filter(name %in% c("kappa", "norm")) |>
+    mutate(name = factor(name, levels = c("norm", "kappa"))) |>
+    ggplot(aes(x = laplace_q, y = value, colour = variable)) +
+    geom_line() +
+    geom_point() +
+    # change y-axis to scientific notation
+    scale_x_continuous(breaks = laplace_q_gran) +
+    scale_y_continuous(labels = scales::scientific) +
+    facet_wrap(variable ~ name, scales = "free", nrow = 3) +
+    # facet_grid(variable ~ name, scales = "free") +
+    theme +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
-# also plot first derivatives
-div_df |>
-  mutate(
-    across(c(mean, max, norm, kappa), \(x) {
-      # c(NA, diff(x) / diff(laplace_q))
-      c(NA, diff(x))
-    })
-  ) |>
-  pivot_longer(cols = 1:4) |>
-  filter(name %in% c("kappa", "norm")) |>
-  filter(laplace_q > 0.65) |>
-  ggplot(aes(x = laplace_q, y = value, colour = variable)) +
-  ggtitle("Derivatives") +
-  geom_line() +
-  geom_point() +
-  scale_y_continuous(labels = scales::scientific) +
-  facet_wrap(variable ~ name, scales = "free_y", nrow = 3) +
-  theme
+  # also plot first derivatives
+  p_der <- div_df |>
+    mutate(
+      across(c(mean, max, norm, kappa), \(x) {
+        # c(NA, diff(x) / diff(laplace_q))
+        c(NA, diff(x))
+      })
+    ) |>
+    pivot_longer(cols = 1:4) |>
+    filter(name %in% c("kappa", "norm")) |>
+    filter(laplace_q > 0.65) |>
+    ggplot(aes(x = laplace_q, y = value, colour = variable)) +
+    ggtitle("Derivatives") +
+    geom_line() +
+    geom_point() +
+    scale_x_continuous(breaks = laplace_q_gran) +
+    scale_y_continuous(labels = scales::scientific) +
+    facet_wrap(variable ~ name, scales = "free_y", nrow = 3) +
+    theme +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+  return(list("raw" = p_raw, "derivative" = p_der))
+}
+
+plot_div(div_df)
 # Comments:
+
+plot_div(filter(div_df, laplace_q > 0.75, laplace_q <= 0.9))
+
+div_df |>
+  # filter(laplace_q <= 0.95) |>
+  group_by(variable) |>
+  filter(kappa == min(kappa)) |>
+  ungroup()
+# kappa lowest for highest quantiles?? Surprising!
 
 
 #### Plot clustering solutions on map ####
 
-# # plot each clustering solution
-# plt_lst <- lapply(seq_along(clust_obj_lst), \(i) {
-#   plt_clust_map(
-#     pts,
-#     areas,
-#     clust_obj_lst[[i]]$clust_obj,
-#     elev_df = elev_df,
-#     rm_elev_leg = TRUE
-#   ) +
-#     ggtitle(
-#       label = paste0("Laplace truncation at ", laplace_q[i])
-#     )
-# })
+# function to plot each clustering solution, faceting by variable
+facet_map_plot <- \(clust_obj_lst, laplace_q) {
+  clust_obj_lst <- clust_obj_lst[names(clust_obj_lst) %in% laplace_q]
+  plt_lst <- lapply(seq_along(clust_obj_lst), \(i) {
+    wrap_plots(list(
+      plt_clust_map(
+        pts, areas, clust_obj_lst[[i]]$clust_obj[[1]],
+        elev_df = elev_df,
+        rm_elev_leg = TRUE
+      ) +
+        ggtitle("Both"),
+      plt_clust_map(
+        pts, areas, clust_obj_lst[[i]]$clust_obj[[2]],
+        elev_df = elev_df,
+        rm_elev_leg = TRUE
+      ) +
+        ggtitle("Rain"),
+      plt_clust_map(
+        pts, areas, clust_obj_lst[[i]]$clust_obj[[3]],
+        elev_df = elev_df,
+        rm_elev_leg = TRUE
+      ) +
+        ggtitle("Wind Speed")
+    )) +
+      patchwork::plot_annotation(
+        title = paste0("Laplace truncation at ", laplace_q[i]),
+        theme = evc::evc_theme()
+      ) +
+      NULL
+  })
 
-plt_lst <- lapply(seq_along(clust_obj_lst), \(i) {
-  wrap_plots(list(
-    plt_clust_map(
-      pts, areas, clust_obj_lst[[i]]$clust_obj[[1]],
-      elev_df = elev_df,
-      rm_elev_leg = TRUE
-    ) +
-      ggtitle("Both"),
-    plt_clust_map(
-      pts, areas, clust_obj_lst[[i]]$clust_obj[[2]],
-      elev_df = elev_df,
-      rm_elev_leg = TRUE
-    ) +
-      ggtitle("Rain"),
-    plt_clust_map(
-      pts, areas, clust_obj_lst[[i]]$clust_obj[[3]],
-      elev_df = elev_df,
-      rm_elev_leg = TRUE
-    ) +
-      ggtitle("Wind Speed")
-  )) +
-    patchwork::plot_annotation(
-      title = paste0("Laplace truncation at ", laplace_q[i]),
-      theme = evc::evc_theme()
-    ) +
-    NULL
+  return(plt_lst)
+}
+# plt_lst <- facet_map_plot(clust_obj_lst, laplace_q)
+plt_lst <- facet_map_plot(clust_obj_lst, laplace_q_gran)
+
+lapply(seq_along(plt_lst), \(i) {
+  print(i)
+  print(i)
+  if (i < 10) {
+    i_str <- paste0("0", i - 1)
+  } else {
+    i_str <- as.character(i - 1)
+  }
+  ggsave(
+    paste0("laplace_test0", i_str, ".png"),
+    plt_lst[[i]],
+    width = 12,
+    height = 10
+  )
 })
-
-ggsave("laplace_test0.png", plt_lst[[1]], width = 12, height = 12)
-ggsave("laplace_test1.png", plt_lst[[2]], width = 12, height = 12)
-ggsave("laplace_test2.png", plt_lst[[3]], width = 12, height = 12)
-ggsave("laplace_test3.png", plt_lst[[4]], width = 12, height = 12)
-ggsave("laplace_test4.png", plt_lst[[5]], width = 12, height = 12)
-ggsave("laplace_test5.png", plt_lst[[6]], width = 12, height = 12)
-ggsave("laplace_test6.png", plt_lst[[7]], width = 12, height = 12)
 
 # save to inspect (takes ages!!)
 # TODO Why isn't this saving properly??
-pdf(
-  file = "laplace_trunc_test.pdf",
-  width = 12, height = 8
-)
-plt_lst
-dev.off()
-# conclusion: They all look pretty good except 0.7 and 0.95, others are largely
-# similar, 0.75 and 0.9 have nice median sites if that's important!
-# So pretty nice to have relatively stable clustering across truncation points!
+# pdf(
+#   file = "laplace_trunc_test.pdf",
+#   width = 12, height = 8
+# )
+# plt_lst
+# dev.off()
 
-# comments:
+# Comments:
+# Rain: Same for < 0.8, 2 points different for 0.85, then 1 diff for 0.9
+# => Clustering is stable to choice of Laplace truncation
+# Wind: Also same for <0.8, at 0.85 more in West cluster,  for 0.9 more points
+# from East go to Centre, but also one to West cluster, so probably best not
+# to go that far
+# Both: Interestingly the least stable across truncation quantiles!
+# is the same for 0.8 and 0.85, at 0.9 stubborn
+
+#### Different Laplace truncation across variables ####
+
+# also look at clustering solutions for wind_speed at 0.85 and different rain levels
+laplace_q_wind <- 0.85
+# laplace_q_wind <- lapply(laplace_q, \(x) {
+laplace_q_wind <- lapply(laplace_q_gran, \(x) {
+  c("rain" = x, "wind_speed" = laplace_q_wind)
+})
+
+clust_obj_lst_wind <- mclapply(laplace_q_wind, \(x) {
+  clust_obj_fun(x)
+}, mc.cores = n_cores)
+names(clust_obj_lst_wind) <- sapply(laplace_q_wind, `[[`, "rain")
+
+# plot each clustering solution
+plt_lst_wind <- facet_map_plot(clust_obj_lst_wind, sapply(laplace_q_wind, `[[`, "rain"))
+lapply(seq_along(plt_lst_wind), \(i) {
+  print(i)
+  if (i < 10) {
+    i_str <- paste0("0", i - 1)
+  } else {
+    i_str <- as.character(i - 1)
+  }
+  ggsave(
+    paste0("laplace_test_wind", i_str, ".png"),
+    plt_lst_wind[[i]],
+    width = 12,
+    height = 10
+  )
+})
+# Conclusions: Not much difference, at 0.9 again there is no red point in
+# the South

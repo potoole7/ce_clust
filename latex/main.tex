@@ -120,14 +120,17 @@ Clustering is then performed by applying the k-medoids algorithm on the dissimil
 
 % Introduction to EVT
 \todo{Rewrite, kinda crap (look at Jordan's book chapter)}
-Extreme Value Theory (EVT) provides an asymptotically justified framework for projecting beyond the magnitude of observed data into the extreme tails of distributions \citep{Coles2001}.
+% Extreme Value Theory (EVT) provides an asymptotically justified framework for projecting beyond the magnitude of observed data into the extreme tails of distributions \citep{Coles2001}.
+Extreme Value Theory (EVT) provides asymptotically justified models for predicting the probability of events outside the range of observed values \citep{Coles2001}.
 % EVT implicitly assumes that there is an underlying stochastic process generating the data, which is sufficiently smooth to allow extrapolation to unseen levels \citep{Coles2001}.
-EVT is useful anywhere we are interested more in the ``extreme'' tails of the distributions of a phenomenon, rather than the mean or ``bulk'' behaviour.
-This situation can arise in a variety of contexts, and is particularly popular in environmental applications.
-EVT modelling can be used to assess the risk of extreme events, such as floods, droughts, heatwaves and storms, which can have significant impacts on society and the environment.
+% EVT is useful anywhere we are interested more in the ``extreme'' tails of the distributions of a phenomenon, rather than the mean or ``bulk'' behaviour.
+% This situation can arise in a variety of contexts, and is particularly popular in environmental applications.
+% EVT modelling can be used to assess the risk of extreme events, such as floods, droughts, heatwaves and storms, which can have significant impacts on society and the environment.
+Environmental applications are one area where EVT methods are used frequently, because interest lies in estimating the severity of future extreme events, such as heatwaves or storms. 
 Heatwaves can lead to droughts and wild fires \citep{tanarhte2015heat, french2019quantifying, koh2023gradient}.
-Extreme rainfall contributes to storms and flooding, which can cause major damage and trigger large insurance claims \citep{Rohrbeck_flooding, osei2021estimation}.
-High wind speeds can lead to significantly damaging events such as tropical cyclones, and have also seen much focus in the field of EVT \citep{soukissian2015effect, steinkohl2013extreme}.
+% Extreme rainfall contributes to storms and flooding, which can cause major damage and trigger large insurance claims \citep{Rohrbeck_flooding, osei2021estimation}.
+For instance, extreme rainfall and high wind speeds can cause major damage and large insurance claims, and this it is important to understand their likelihood \citep{Rohrbeck_flooding, osei2021estimation, soukissian2015effect, steinkohl2013extreme}. 
+% High wind speeds can lead to significantly damaging events such as tropical cyclones, and have also seen much focus in the field of EVT \citep{soukissian2015effect, steinkohl2013extreme}.
 
 % Dependence modelling
 
@@ -136,7 +139,7 @@ Often, the simultaneous or ``concomitant'' occurrence of extreme events in envir
 These rarer and more devastating occurrences can take the form of extreme events occurring at multiple locations, or for multiple variables concurrently exhibiting extremal behaviour at a single site.
 For example, in the UK in 2015 and 2016, widespread flooding as a result of Storms Desmond, Eva and Frank resulted in damages estimated at £1.3–1.9 billion \citep{FloodsWinter, Rohrbeck2021}.
 The co-occurrence of extreme wind speeds and wave heights have led to devastating tropical cyclones \citep{Sando2022}.
-Climate change is exacerbating the effects of compound environmental hazards, and so these phenomena are becoming increasingly important to understand \citet{AghaKouchak2020-ji}.
+Climate change is exacerbating the effects of compound environmental hazards, and so these phenomena are becoming increasingly important to understand \citep{AghaKouchak2020-ji}.
 To explore multivariate extremes, in addition to an estimate for the marginal extremal distribution for each variable, we also require a model for the tail \emph{dependence} between them.
 
 % Conditional extremes
@@ -161,11 +164,11 @@ Clustering is a popular method in extremes, where data is naturally scarce, ofte
   % \item Extremal clustering is chiefly concerned with the problems of exploratory analysis and improved interpretability of extremal dependence structures, and also in reducing parameter uncertainty.
 
 % Clustering: past work (interpretability)
-Exploratory clustering for improved interpretability, in extremes and elsewhere, generally focuses on deriving some similarity matrix for a given distance metric, and then using performing some generic clustering algorithm such as k-means or k-mediods on this matrix \citet{Lloyd1957} \citet{Kaufman1987}.
+Exploratory clustering for improved interpretability, in extremes and elsewhere, generally focuses on deriving some similarity matrix for a given distance metric, and then using performing some generic clustering algorithm such as k-means or k-mediods on this matrix \citep{Lloyd1957, Kaufman1987}.
 There is a large body of literature concerning such clustering methods for extremes. 
 In \citet{Bernard2013}, a clustering algorithm is derived for weekly precipitation maxima for sites across France, which uses the F-madogram as a distance metric.
 \citet{Vignotto2021} proposes a k-mediods algorithm for clustering locations in Great Britain and Ireland for precipitation and wind speed data.
-These variables are transformed to Pareto margins at each location, and a risk function, namely the maximum across both transformed margins, is used to define extreme observations and partition the bivariate space into three disjoint sets, corresponding to extremal observations for precipitation, wind speed and both, which can be used to compute an empirical estimate of the Kullback-Leibler divergence \citep{Kullback1951} between any two locations.
+These variables are transformed to Pareto margins at each location, and a risk function, namely the maximum across both transformed margins, is used to define extreme observations and partition the bivariate space into three disjoint sets, corresponding to extremal observations for precipitation, wind speed and both, which can be used to compute an empirical estimate of the Kullback-Leibler divergence between any two locations \citep{Kullback1951}.
 This method is our main competitor, similarly focusing on improving interpretation of tail behaviour in a closely related application to our own, but it must be noted that it is limited to the bivariate case.
 In financial applications, \citet{deCarvalho2023} propose a clustering algorithm for stock prices, which uses the extremal index and heteroskedastic function, loosely interpretable as the magnitude and frequency of extreme events, to define a bivariate centroid with which to cluster stocks on the London Stock Exchange. 
 
@@ -205,20 +208,19 @@ Finally, Section~\ref{sec:discuss} contains a discussion of our findings, includ
 \todo{Either move below as intro, or actually motivate need to model this data! (then we could use chi/chibar as plot instead of sites)}
 
 % Image of locations and precipitation vs wind speed for two sites
-\todo{Add quantile lines? See Jordan's feedback!}
-\todo{add elevation also!}
-\todo{Add additional RHS tick on x-axis, looks bad}
+\todo{Move elevation legend onto plot}
 \begin{figure}[H]
     \centering
-    \includegraphics[width = 0.9\linewidth]{plots/02_mot_ex_plot.png}
-    % \includegraphics[width = 0.9\linewidth]{plots/ire_sites_plt.png}
-    \caption{\emph{Left: locations of 59 Met Éireann sites with precipitation data available from 1990 to 2020. Right: scatter plots of the weekly aggregated precipitation and wind speed maxima for Cloone Lake, County Kerry (red), and Malahide Castle, County Dublin (blue), in the Winter months (October -- March), which are the two stations with the highest and lowest mean weekly precipitation, respectively.}}
+    % \includegraphics[width = 0.9\linewidth]{plots/02_mot_ex_plot.png}
+    \includegraphics[width = 0.9\linewidth]{plots/02_mot_ex_plot_elev.png}
+    \caption{\emph{Left: locations of 59 Met Éireann sites with precipitation data available from 1990 to 2020, with elevation in metres above sea level binned into 100m intervals. 
+    Right: scatter plots of the weekly aggregated precipitation and wind speed maxima, with the 95\% quantile of wind speed and precipitation shown as dashed lines, for Cloone Lake, County Kerry (red), and Malahide Castle, County Dublin (blue), in the Winter months (October -- March), which are the two stations with the highest and lowest mean weekly precipitation, respectively.}}
     \label{fig:02_locs}
 \end{figure}
 
 We consider the joint extremal behaviour of precipitation and wind speeds at 59 sites across the Republic of Ireland from 1990 to 2020, inclusive.
 % The data we have performed our clustering on is precipitation data for the Republic of Ireland, collected from the Met Éireann website at \citet{metHistoricalData}, and wind speed data from the ERA5 Reanalysis dataset at \citet{Hersbach2020}, corresponding to the closest grid point to each location.
-Precipitation data were collected from the Met Éireann website (accessed 2024-09-01), and wind speed data from the gridded ERA5 Reanalysis dataset \citep{metHistoricalData}, \citep{Hersbach2020}.
+Precipitation data were collected from the Met Éireann website (accessed 2024-09-01), and wind speed data from the gridded ERA5 Reanalysis dataset \citep{metHistoricalData, Hersbach2020}.
 ERA5 provides averages over a gridded box of $0.25^{\circ} \times 0.25^{\circ}$, so each site will lie within a grid cell, to which the wind speed data corresponds.
 % , taking the closest grid cell corresponding to each precipitation measurement location.
 % While the point estimates of the precipitation data can be considered more precise, it may also be susceptible to preferential sampling, with sites likely to be more densely found in areas with higher precipitation.
@@ -337,7 +339,9 @@ A framework which provides a flexible approach to modelling extremal dependence 
 %   \[
 %     \lim_{z \rightarrow \infty}{\bm{G}_{j \mid i}(\bm{z})} = 1, \forall j \ne i,
 %   \]
-%   ensuring that there is no mass at $+\infty$ for any margin, but allowing for some mass to be at $-\infty$, in order to ensure uniqueness of the solution. \citep{Keef2013}
+%   ensuring that there is no mass at $+\infty$ for any margin, but allowing for
+ %   some mass to be at $-\infty$, in order to ensure uniqueness of the solution
+ %   \citep{Keef2013}.
 %   \item An important consequence of this formulation is the weak assumption that
 %   \begin{equation} \label{eq:limit_independence}
 %   \mathbb{P}(\bm{Z}_{\mid i} \le \bm{z}_{\mid i}, Y_i - u_i = y_i \mid Y_i > u_i) \rightarrow G_{\mid i}(\bm{z}_i) \exp(-y) \text{ as } u_i \rightarrow \infty,
@@ -517,7 +521,7 @@ Furthermore, using the median instead of the mean to define the cluster centre i
 
 % Describe methods for choosing k (AIC, TWGSS) (silhouette not suitable)
 The PAM algorithm takes a single hyperparameter, namely the number of clusters, $k$.
-There is a rich body of literature on methods for selecting $k$, including the silhouette method of \citep{Rousseeuw1987} and the Akaike Information Criterion (AIC) introduced in \citep{Akaike1974}.
+There is a rich body of literature on methods for selecting $k$, including the silhouette method of \citet{Rousseeuw1987} and the Akaike Information Criterion (AIC) introduced in \citet{Akaike1974}.
 However, the silhouette method is not suitable for our application, as it is designed for spherical clusters. \todo{Cite, have reference for this somewhere?}
 The AIC is also unsuitable and has been found to perform poorly for our algorithm.
 This may be because it requires aggregating over each location, which if unweighted assumes independence between the models fit for each site.
@@ -745,7 +749,7 @@ This indicates that there are distinct patterns of extremal dependence in the da
 % Procedure and results pre-clustering (choice of dependence quantile)
 In our analysis, we first transformed the data to Laplace margins, using the empirical cumulative distribution function (ECDF) to approximate density functions for rain and wind speed at each location. \todo{reference specific equation in methods}
   We then fit the CE model to this transformed data.
-  Using the bootstrapping scheme of \citep{Heffernan2004}, we estimated the CE model parameters $\alpha$ and $\beta$ at various dependence quantiles. \todo{Sufficient reference to bootstrapping scheme?}
+  Using the bootstrapping scheme of \citet{Heffernan2004}, we estimated the CE model parameters $\alpha$ and $\beta$ at various dependence quantiles. \todo{Sufficient reference to bootstrapping scheme?}
   This revealed that estimates in general were quite stable up to the 88th quantile.  \todo{Need to expand with more details, could include plots in Appendix?} \todo{Why not use 90 if stable enough?Try in script!}
   Subsequent analysis was also performed at the 85th and 90th quantiles, and shown to provide similar MLEs for our CE parameters, and clustering solutions. \todo{Include in Appendix also?}
   The results of this CE analysis are shown in Figure \ref{fig:a_b_vals}.
@@ -880,7 +884,7 @@ While we advertise our method as being uniquely applicable to any multivariate e
 Therefore, an obvious line of future work would be to extend this application to look at additional variables. 
 The ERA5 reanalysis dataset, for example, where we get our wind speed data contains many variables that could be used in conjunction with our method, such as temperature, humidity, and pressure, all of which may have interesting extremal dependence relationships with rainfall and wind speed which could be explored.
 We could also look at other datasets where multivariate extremal dependence is of interest. 
-  % \item \citep{Vettori2020-fw} derived a method for extremal clustering based on max-stable processes, a competing model to CE, paired with a Reversible Jump MCMC scheme for Bayesian clustering, and applied it to California air pollution data. 
+  % \item \citet{Vettori2020-fw} derived a method for extremal clustering based on max-stable processes, a competing model to CE, paired with a Reversible Jump MCMC scheme for Bayesian clustering, and applied it to California air pollution data. 
   % \item It may be interesting to compare the performance of our method versus a fully parametric approach such as this, as opposed to the semi-parametric approach of \citet{Vignotto2021} which drew comparisons to in our simulation study.
 For example, \citet{Vettori2020} modelled the extremal dependence structure of California state air pollution and environmental data across 21 sites. 
 It would be interesting to see if we could build on such work via exploratory spatial clustering using our method, and whether the CE model would provide greater flexibility than their max-stable process approach, which can only model asymptotic dependence. 

@@ -20,6 +20,8 @@
 # Look at each variable (rain and wind) separately, as well as together! (done)
 # Allow for different Laplace caps for each variable?? (done)
 # TODO Maybe try different dependence quantiles also?? Load from other file
+# TODO Might be better to plot individually for each variable, which might
+# help compare Laplace quantiles more easily (could facet?)
 
 
 #### Libs ####

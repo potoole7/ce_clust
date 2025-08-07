@@ -146,27 +146,40 @@ Extreme rainfall and high wind speeds can cause major damage and large insurance
 % The co-occurrence of extreme wind speeds and wave heights have led to devastating tropical cyclones \citep{Sando2022}.
 % Climate change is exacerbating the effects of compound environmental hazards, and so these phenomena are becoming increasingly important to understand \citep{AghaKouchak2020-ji}.
 % To explore multivariate extremes, in addition to an estimate for the marginal extremal distribution for each variable, we also require a model for the tail \emph{dependence} between them.
-Extreme Value Theory can naturally be extended to the multivariate setting, where the \emph{joint} tail behaviour of a random vector is of interest. 
-In environmental settings, the simultaneous or ``concomitant'' occurrence of extremes can often lead to significantly more catastrophic events \citep{zscheischler2018future, bevacqua2021guidelines}.
-To analyse such multivariate extremes, one first fits marginal extremal distributions for each component and then specifies a model for their tail \emph{dependence}.
+% \todo{Want to introduce interest in spatial dependence modelling early}
+% Extreme Value Theory can naturally be extended to the multivariate setting, where the \emph{joint} tail behaviour of a random vector is of interest. 
+% Multivariate extremes naturally arise in spatial applications, where each component of the random vector may represent a different variable at a single location and/or the same variable observed across multiple locations.
+% In environmental settings, extreme events rarely occur in isolation, and the compounded risk of simultaneous or ``concomitant'' occurrence of extremes can often lead to significantly more catastrophic events \citep{zscheischler2018future, bevacqua2021guidelines, Rohrbeck2021, Sando2022}. 
+% \todo{Do I want to mention marginal models at all here? Probably want to de-emphasise anyway}
+% % To analyse such multivariate extremes, one first fits marginal extremal distributions for each component and then specifies a model for their tail \emph{dependence}.
+% % The compounded risk associated with concomitant extremal events means that when analysing such multivariate extremes, an important consideration is \citep{Zhang2024}
+% These risks can be underestimated unless care is given in modelling the tail \emph{dependence} as part of any multivariate extremes analysis \cite{Zhang2024}.
+Extreme Value Theory can naturally be extended to the multivariate setting, where the \emph{joint} tail behaviour of a random vector is of interest.  
+Multivariate extremes often arise in spatial applications, where each component may correspond to different variables at a single location, the same variable across multiple locations, or both.  
+While our methodology applies broadly across these settings, we focus on the latter case where each location is associated with a multivariate observation, and the aim is to understand how joint tail behaviour varies across space.
+In environmental settings, extremes rarely occur in isolation, and the compounded impact of simultaneous or ``concomitant'' events can lead to significantly more severe outcomes \citep{zscheischler2018future, bevacqua2021guidelines, Rohrbeck2021, Sando2022}.  
+These joint risks can be underestimated unless tail \emph{dependence} is explicitly modelled as part of any multivariate extremes analysis \citep{Zhang2024}.
 
 % Conditional extremes
-\todo{Should I include some references for use of (vanilla) CE model??}
   % \item One such model is the CE model, which combines a univariate Generalised Pareto Distribution (GPD) and a semiparametric regression dependence model \cite{Heffernan2004}. \todo{Don't emphasise GPD, not used below}
 % One such dependence model is the Conditional Extremes model of \citep{Heffernan2004}.
-Herein, we employ the conditional extremes model by \citep{Heffernan2004} to analyse tail dependence. 
+% Herein, we employ the conditional extremes model by \citep{Heffernan2004} to analyse tail dependence. 
+To model tail dependence, we employ the conditional extremes (CE) model of \citet{Heffernan2004}.
+The CE model has seen widespread use for analysing spatial extremes in environmental applications \citep{Keef2012_flooding, Winter2016, Tawn2018, Towe2019}.
 % The CE model describes the tail behaviour of a random vector \emph{conditional} on a separate random variable exceeding a suitably high threshold.
 The CE model describes the tail behaviour of a random vector \emph{conditional} on one of its components exceeding a suitably high threshold.
 It does this via a semiparametric heteroskedastic regression model conditioned on threshold exceedances, which can be used to ascertain the joint tail dependence structure of the random vector.
-The CE model provides many advantages over other competing methods. 
-It is highly flexible in the type of extremal dependence it can model, and is considered to be conceptually simple relative to other models.
-It reduces a difficult multivariate estimation problem to a univariate problem, by individually modelling each element of the random vector, which can then be combined to form a joint model, and so is computationally efficient.
+% The CE model provides many advantages over other competing methods. 
+% It is highly flexible in the type of extremal dependence it can model, and is considered to be conceptually simple relative to other models.
+% It reduces a difficult multivariate estimation problem to a univariate problem, by individually modelling each element of the random vector, which can then be combined to form a joint model, and so is computationally efficient.
+Its conceptual simplicity, flexibility in capturing a wide range of extremal dependence structures, and computational efficiency, reducing a difficult multivariate problem to a series of univariate ones, have made it a popular choice.
 % It involves a robust Gaussian working assumption which facilitates efficient inference, and allows for a closed form expression for the KL divergence, between two sites, allowing for a rather simple clustering framework to be derived, as we will see in Section~\ref{subsec:div} \citep{Kullback1951}.
 % However, as with many models for extremes, which suffer from the natural
 % rarity of extreme data, the CE model is susceptible to high uncertainty in its
 % parameter estimates. \todo{de-emphasise parameter estimation}
 % However, as with many models for extremes, which suffer from the natural rarity of extreme data, the CE model is susceptible to high uncertainty in its parameter estimates, often making interpretation of the structure of tail dependence difficult.
-However, as with many models for extremes, which suffer from the natural rarity of extreme data, the CE model is susceptible to high uncertainty in its parameter estimates, often making it difficult to interpret and identify patterns in the tail dependence structure.
+% However, as with many models for extremes, which suffer from the natural rarity of extreme data, the CE model is susceptible to high uncertainty in its parameter estimates, often making it difficult to interpret and identify patterns in the tail dependence structure.
+However, like many models for extremes, the CE model can be difficult to use for identifying patterns in tail dependence due to the sparsity of joint extreme observations, particularly in high dimensions.
 
 % Clustering: introduction + motivation
 \todo{Should I say something here or above about being interested in the spatial domain?}

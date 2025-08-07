@@ -85,30 +85,50 @@
 
 % \newpage
 
-\begin{abstract}
-  % Intro
-  Conditional extreme value models have proven useful for analysing the joint tail behaviour of random vectors. 
- % Conditional extreme value models have proven useful for analysing the joint tail behaviour of random variables. 
- These models describe the distribution of components of a random vector conditional on one exceeding a suitably high threshold, and have been shown to provide a flexible description of the distribution tails.
- However, one drawback of these methods is that model estimates tend to be highly uncertain due to the natural scarcity of extreme data. 
-%  This motivates the development of clustering methods for this class of models; pooling similar within-cluster data drastically reduces parameter estimation uncertainty.
-%  The development of clustering methods for this class of models is motivated by the need to identify the spatial structure of extremal dependence. 
- 
- While there exists an extensive amount of work to estimate conditional extremes (CE) models in multivariate and spatial applications, the prospect of clustering models of this type has not yet been explored. 
- As a motivating example, we explore tail dependence of meteorological variables across multiple spatial locations and seek to identify sites which exhibit similar multivariate tail behaviour. 
- To this end, we introduce a clustering framework for CE models which provides a novel and principled, parametric methodology for summarising multivariate extremal dependence.
- 
- % Outline of model
- We first define a novel dissimilarity measure for CE models based on the Jensen-Shannon divergence and common working assumptions made when fitting these models. 
- One key advantage of our measure is that it can be applied in any dimensions and, as opposed to existing methods for clustering multivariate extremal dependence, is not restricted to a bivariate setting. 
-% Clustering is then performed by applying the k-medoids algorithm to our novel dissimilarity matrix, which collects the dissimilarity between all pairs of spatial sites. 
-Clustering is then performed by applying the k-medoids algorithm on the dissimilarity measure, calculated for each pair of sites.  
- 
- % Simulation
- A detailed simulation study shows our technique outperforms the leading competitor in the bivariate case across a range of extremal dependence structures and uniquely provides a tool for clustering in the multivariate extremal dependence setting. 
- \todo{May want to place below earlier, before sim?}
- We also outline a methodology for selecting the number of clusters to use in a given application.  Finally, we apply our clustering framework to Irish meteorological data, where we show how it can be used to identify sites with similar tail dependence structures between precipitation and wind speed.
+% \begin{abstract}
+%   % Intro
+%   Conditional extreme value models have proven useful for analysing the joint tail behaviour of random vectors. 
+%  % Conditional extreme value models have proven useful for analysing the joint tail behaviour of random variables. 
+%  These models describe the distribution of components of a random vector conditional on one exceeding a suitably high threshold, and have been shown to provide a flexible description of the distribution tails.
+%  However, one drawback of these methods is that model estimates tend to be highly uncertain due to the natural scarcity of extreme data. 
+% %  This motivates the development of clustering methods for this class of models; pooling similar within-cluster data drastically reduces parameter estimation uncertainty.
+% %  The development of clustering methods for this class of models is motivated by the need to identify the spatial structure of extremal dependence. 
+%  
+%  While there exists an extensive amount of work to estimate conditional extremes (CE) models in multivariate and spatial applications, the prospect of clustering models of this type has not yet been explored. 
+%  As a motivating example, we explore tail dependence of meteorological variables across multiple spatial locations and seek to identify sites which exhibit similar multivariate tail behaviour. 
+%  To this end, we introduce a clustering framework for CE models which provides a novel and principled, parametric methodology for summarising multivariate extremal dependence.
+%  
+%  % Outline of model
+%  We first define a novel dissimilarity measure for CE models based on the Jensen-Shannon divergence and common working assumptions made when fitting these models. 
+%  One key advantage of our measure is that it can be applied in any dimensions and, as opposed to existing methods for clustering multivariate extremal dependence, is not restricted to a bivariate setting. 
+% % Clustering is then performed by applying the k-medoids algorithm to our novel dissimilarity matrix, which collects the dissimilarity between all pairs of spatial sites. 
+% Clustering is then performed by applying the k-medoids algorithm on the dissimilarity measure, calculated for each pair of sites.  
+%  
+%  % Simulation
+%  A detailed simulation study shows our technique outperforms the leading competitor in the bivariate case across a range of extremal dependence structures and uniquely provides a tool for clustering in the multivariate extremal dependence setting. 
+%  \todo{May want to place below earlier, before sim?}
+%  We also outline a methodology for selecting the number of clusters to use in a given application.  Finally, we apply our clustering framework to Irish meteorological data, where we show how it can be used to identify sites with similar tail dependence structures between precipitation and wind speed.
+% 
+% \end{abstract}
 
+% key points you want to make here are:
+% 1. CE models have proven useful
+% 2. We propose a clustering framework for CE Models.
+% 3. Discrepancy between CE models is measured using a generalized version of the Jensen-Shannon divergence.
+% 4. This discrepancy can be calculated in a computationally efficient way.
+% 5. Existing clustering algorithms are applied in combination with the pairwise discrepancies.
+% 6. Simulation studies show that we outperform our competitors.
+% 7. Results for meteorological data illustrate that our method produces clusters that agree with known climatology
+\todo{Centre on the page?}
+\begin{abstract}
+  Conditional extreme value (CE) models have proven useful for analysing the joint tail behaviour of random vectors.
+  % However, their estimation often suffers from high uncertainty due to data scarcity. 
+  We propose a novel clustering framework for CE models, which can be used to identify groups with similar multivariate extremal dependence structures.
+  Our approach introduces a closed-form, computationally efficient dissimilarity metric for comparing CE models, based on a generalized version of the Jensen-Shannon divergence, applicable in any dimension.
+  % Standard clustering algorithms are then applied to the resulting pairwise distances. 
+  Applying standard clustering algorithms to the resulting pairwise distances, we obtain interpretable groups with homogeneous tail dependence characteristics.
+  Simulation studies demonstrate that our method outperforms existing approaches for bivariate cases and uniquely extends to multivariate settings. 
+  Applied to Irish meteorological data, our clustering successfully identifies spatially coherent regions with similar tail dependence between precipitation and wind speed. %, aligning with known climatological patterns.
 \end{abstract}
 
 \newpage

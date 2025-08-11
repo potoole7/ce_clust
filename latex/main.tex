@@ -296,69 +296,19 @@ This parametric approach delivers a unified and statistically principled tool fo
 
 % Structure of paper
 The remainder of this paper is structured as follows.
-In Section~\ref{sec:ire} of this paper, we introduce a motivating example of the joint tail behaviour of precipitation and wind speed in Ireland, which we will use to illustrate our clustering framework.
+% In Section~\ref{sec:ire} of this paper, we introduce a motivating example of the joint tail behaviour of precipitation and wind speed in Ireland, which we will use to illustrate our clustering framework.
 % Section~\ref{sec:method} introduces our clustering framework for CE models,
 % which includes a novel dissimilarity measure based on the Jensen--Shannon (JS) divergence, and a method for selecting the number of clusters.
 Section~\ref{sec:method} introduces our clustering framework for CE models, which includes a novel dissimilarity measure based on the 
 % skew-geometric Jensen--Shannon divergence $\left(\text{JS}^{\textrm{G}_{\alpha}}\right)$, and a method for selecting the number of clusters.
 skew-geometric Jensen--Shannon divergence $\left(\JSGa\right)$, and a method for selecting the number of clusters.
 A simulation study is described and performed in Section~\ref{sec:sim}, to compare our method to the leading competitor in the bivariate case, and show that it outperforms this method across a range of extremal dependence structures.
-In Section~\ref{sec:application}, we apply our clustering framework to the Irish meteorological data, and show how it can be used to identify sites with similar tail dependence structures between precipitation and wind speed.
+In Section~\ref{sec:application}, we apply our clustering framework to Irish meteorological data, and show how it can be used to identify sites with similar tail dependence structures between precipitation and wind speed.
 Finally, Section~\ref{sec:discuss} contains a discussion of our findings, including the limitations of our method and potential future work.
 
-\section{Motivating example: Irish Meteorological Data}~\label{sec:ire}
-
-\todo{Either move below as intro, or actually motivate need to model this data! (then we could use chi/chibar as plot instead of sites)}
-
-% Image of locations and precipitation vs wind speed for two sites
-\todo{Move elevation legend onto plot}
-\begin{figure}[H]
-    \centering
-    % \includegraphics[width = 0.9\linewidth]{plots/02_mot_ex_plot.png}
-    \includegraphics[width = 0.9\linewidth]{plots/02_mot_ex_plot_elev.png}
-    \caption{\emph{Left: locations of 59 Met Éireann sites with precipitation data available from 1990 to 2020, with elevation in metres above sea level binned into 100m intervals. 
-    Right: scatter plots of the weekly aggregated precipitation and wind speed maxima, with the 95\% quantile of wind speed and precipitation shown as dashed lines, for Cloone Lake, County Kerry (red), and Malahide Castle, County Dublin (blue), in the Winter months (October -- March), which are the two stations with the highest and lowest mean weekly precipitation, respectively.}}
-    \label{fig:02_locs}
-\end{figure}
-
-We consider the joint extremal behaviour of precipitation and wind speeds at 59 sites across the Republic of Ireland from 1990 to 2020, inclusive.
-% The data we have performed our clustering on is precipitation data for the Republic of Ireland, collected from the Met Éireann website at \citet{metHistoricalData}, and wind speed data from the ERA5 Reanalysis dataset at \citet{Hersbach2020}, corresponding to the closest grid point to each location.
-Precipitation data were collected from the Met Éireann website (accessed 2024-09-01), and wind speed data from the gridded ERA5 Reanalysis dataset \citep{metHistoricalData, Hersbach2020}.
-ERA5 provides averages over a gridded box of $0.25^{\circ} \times 0.25^{\circ}$, so each site will lie within a grid cell, to which the wind speed data corresponds.
-% , taking the closest grid cell corresponding to each precipitation measurement location.
-% While the point estimates of the precipitation data can be considered more precise, it may also be susceptible to preferential sampling, with sites likely to be more densely found in areas with higher precipitation.
-% Conversely, although reanalysis data is spatially complete, it only has a certain resolution (in this case, $0.25^{\circ} \times 0.25^{\circ}$).
-% The data is averaged over each grid cell, and so often underestimates extreme wind speeds \citep{Gandoin2024}.
-
-% Preprocessing
-These data span the dates 1990-01-01 to 2020-12-31, totalling 11,323 days of consecutive precipitation readings. 
-% Sites which did not have a complete set of data for these dates were removed, leaving us with 50 sites in total, located in 20 of the 26 counties of the Republic of Ireland. \todo{Change this, no longer the case!}
-Following \citet{Vignotto2021}, we thinned the data, looking at the weekly sum of daily precipitation and weekly averages of wind speed maxima, for the winter months (November to March) only.
-This weekly temporal scale was chosen as precipitation and wind in the case of storms is believed to experience a slight lag \citep{Bengtsson2009}.
-It may also remove some of the temporal dependence in the data, which is not accounted for in our model.
-As our interest is in extremes, weeks with no rain are also ignored, leaving us with 5,022 weeks of data for the 59 sites.
-
-% Summaries of dataset
-The maximum weekly precipitation sum observed was 198.6mm at Cloone Lake in county Kerry. 
-% The mean precipitation across all sites for each day was 5.96mm.
-For wind speed, the highest weekly maxima is 20.2 m/s, and was recorded closest to Eskeragh in county Mayo.
-Conversely, the minimum wind speed of 0.95 m/s was recorded at Glenvickee in Kerry. %, with the mean wind speed overall being 6.83 m/s.
-% The difference between the mean and maximum values for each of these marginal extremes suggests that there will be an extreme right tail to the distribution of this data, a situation well suited to the use of EVT.
-These data will be used to showcase the marginal and dependence models we have chosen to use, and illustrate some of their shortcomings, and the need for extremal clustering to address these challenges.
-
-\todo{Actual motivation needed? Or will this be in intro? See Christian's paper for example}
-
-% \subsection{US urban air pollution} \label{subsec:mot_us}
-% \todo{See Huser paper for inspiration}
-% 
-% \begin{itemize}
-%     \item 
-% \end{itemize}
-
-\section{Methodology} \label{sec:method}
+\section{Methodology} \label{sec:method} 
+\todo{Split this into different full sections, since we are doing methods paper?}
 % \subsection{Peaks-over-threshold}
-
-% Christian said not needed! What exactly should we have instead??
 
 \subsection{Asymptotic dependence} \label{subsec:asym_dep}
 
@@ -374,21 +324,23 @@ The coefficient of asymptotic dependence, $\chi \in [0, 1]$, measures the degree
 \]
 If $\chi = 0$, then $X_1$ and $X_2$ are said to be asymptotically independent while, for $\chi > 0$, they are termed asymptotically dependent, with greater strength as $\chi$ increases.
 Thus, $\chi$ gives the limiting probability of $X_1$ being extreme given that $X_2$ is also extreme, and we expect the joint probability of observing extremal events in both variables to be greater when $\chi$ is higher \citep{Rohrbeck2021}.
-Furthermore, $\chi$ is symmetric in $X_1$ and $X_2$.
-% Note, two variables can be asymptotically dependent even if they are not dependent in the classical sense.
-Note, two variables $X_1$ and $X_2$ can exhibit asymptotic dependence even when they are not dependent in the classical sense, i.e.\ they do not exhibit strong correlation in the bulk of their distributions.
-% Another coefficient, $\bar{\chi} \in [-1, 1]$, is used to measure the strength of dependence in the case of asymptotically independent distributions, where $\chi = 0$.
-Another coefficient, $\bar{\chi} \in [-1, 1]$, measures the tail dependence between two variables where $\chi = 0$, the case of asymptotically independent variables.
-This coefficient is defined as $\bar{\chi} = \lim_{u \rightarrow 1}{\bar{\chi}(u)}$, where
-\todo{Is there a better definition than this, given I've changed chi?}
-\[
-  \bar{\chi}(u) = \lim_{u \rightarrow 1} \frac{2\log\mathbb{P}(F_1(X_1) > u)}{ \log{\mathbb{P}(F_1(X_1) > u, F_2(X_2) > u)}} - 1.
-\]
-For asymptotic dependence, $\bar{\chi} = 1$.
-Under asymptotic independence, $\bar{\chi} = 0$, with $\bar{\chi}$ increasing in magnitude as the variables become more positively (for $\bar{\chi} > 0$) or negatively (for $\bar{\chi} < 0$) dependent in their extremes \citep{Vignotto2021}.
+% Furthermore, $\chi$ is symmetric in $X_1$ and $X_2$.
+% % Note, two variables can be asymptotically dependent even if they are not dependent in the classical sense.
+% Note, two variables $X_1$ and $X_2$ can exhibit asymptotic dependence even when they are not dependent in the classical sense, i.e.\ they do not exhibit strong correlation in the bulk of their distributions.
+% % Another coefficient, $\bar{\chi} \in [-1, 1]$, is used to measure the strength of dependence in the case of asymptotically independent distributions, where $\chi = 0$.
+% Another coefficient, $\bar{\chi} \in [-1, 1]$, measures the tail dependence between two variables where $\chi = 0$, the case of asymptotically independent variables.
+% This coefficient is defined as $\bar{\chi} = \lim_{u \rightarrow 1}{\bar{\chi}(u)}$, where
+% \todo{Is there a better definition than this, given I've changed chi?}
+% \[
+%   \bar{\chi}(u) = \lim_{u \rightarrow 1} \frac{2\log\mathbb{P}(F_1(X_1) > u)}{ \log{\mathbb{P}(F_1(X_1) > u, F_2(X_2) > u)}} - 1.
+% \]
+% For asymptotic dependence, $\bar{\chi} = 1$.
+% Under asymptotic independence, $\bar{\chi} = 0$, with $\bar{\chi}$ increasing in magnitude as the variables become more positively (for $\bar{\chi} > 0$) or negatively (for $\bar{\chi} < 0$) dependent in their extremes \citep{Vignotto2021}.
 
-Together, $(\chi, \bar{\chi})$ provide a useful summary of extremal dependence for any pair of random variables.
-However, they do not fully describe the dependence structure of a multivariate distribution, or allow for further inference.
+% Together, $(\chi, \bar{\chi})$ provide a useful summary of extremal dependence for any pair of random variables.
+$\chi$ provides a useful summary of extremal dependence for any pair of random variables. 
+% However, they do not fully describe the dependence structure of a multivariate distribution, or allow for further inference.
+However, it does not fully describe the dependence structure of a multivariate distribution, or allow for further inference.
 For example, probabilities of jointly extreme events for two or more variables cannot be calculated from these coefficients.
 For this, we require a model for extremal dependence.
 % Various approaches to this problem have been proposed, including max-stable processes, Pareto processes, Gaussian processes and copulas.
@@ -410,24 +362,11 @@ A framework which provides a flexible approach to modelling extremal dependence 
 % increase v" (Rohrbeck and Tawn)
 
 % Transformation
-\todo{Finish off!}
  The CE model, like many other models for multivariate extremes, uses a marginal transformation.
  Standardising to common margins is a widespread technique to ensure differences in variable scale do not affect estimation of the dependence structure. 
  A popular choice for CE is to transform to Laplace margins, as introduced in \citet{Keef2013}.
- m This is performing using the following transformation:
- Each marginal random variable $X_i$ is transformed to Laplace margins, whereby it is denoted by $Y_i$, using the following transformation:
- \begin{equation} \label{eq:laplace}
-   Y_i = \begin{cases}
-     \log\left\{2F_{X_i}(X_i)\right\} &\text{ for } X_i < F_{X_i}^{-1}(0.5), \\
-     -\log\left\{2(1 - F_{X_i}(X_i))\right\} &\text{ for } X_i \ge F_{X_i}^{-1}(0.5), \\
-   \end{cases}
- \end{equation}
- where $F_{X_i}$ is the cumulative distribution function (CDF) of $X_i$.
- % \item The Laplace distribution specifically is chosen for its doubly exponential tails, each with mean 1. \todo{More formal?}
- % \item The Laplace distribution specifically is chosen as both its tails are exponential.
- % \item More formally, for any $u > 0$, the distributions of $Y_i - u \mid Y_i > u$ and $(-Y_i + u) \mid Y_i \le -u$ are exponential with mean 1. 
- % \item This ensures that the model for the upper and lower tails, corresponding to positive and negative dependence, is of the same, simple form, namely that of a heteroskedastic regression model.
- % \item Also, the tails of the Laplace distribution converge faster to a non-degenerate distribution as we increase the number of variables in the model, which makes it effective for modelling extremes \citep{Rohrbeck2024-jm}.
+ We will denote our transformed random variables by $Y_i$, where $Y_i$ is the transformed version of the marginal random variable $X_i$.
+ Each marginal random variable $X_i$ is transformed to Laplace margins, as outlined in \eqref{eq:laplace}, and thereafter denoted by $Y_i$.
 
 % Rigorous Conditional Extremes definition
 % \begin{itemize}
@@ -558,35 +497,7 @@ From this, we can define the skew-geometric JS divergence as
     \end{equation}
 The parameter $\alpha$ is called a skew parameter, and controls the divergence skew between P and Q. 
 For our purposes, we will set $\alpha = 0.5$, which corresponds to giving equal weight to both distributions.
-For two multivariate normals, this gives the closed form solution
-    \begin{align*}
-      JS^{G_{\alpha}}(P \mid\mid Q) &= \frac{1}{2} \left( (1 - \alpha) \mu_1^T \Sigma_1^{-1} \mu_1 + \alpha \mu_2^T \Sigma_2^{-1} \mu_2 - \mu_{\alpha}^T \Sigma_{\alpha}^{-1} \mu_{\alpha} + \log{\left( \frac{\abs{\Sigma_1}^{1-\alpha} \abs{\Sigma_2}^{\alpha}}{\abs{\Sigma_{\alpha}}} \right)} \right), \\
-      \Sigma_{\alpha} &= \left( (1 - \alpha) \Sigma_1^{-1} + \alpha \Sigma_2^{-1} \right)^{-1}, \\
-      \mu_{\alpha} &= \Sigma_{\alpha} \left( (1 - \alpha) \Sigma_1^{-1} \mu_1 + \alpha \Sigma_2^{-1} \mu_2 \right), \numberthis \label{eq:js_norm_mvn}
-    \end{align*} 
-    where:
-    \begin{itemize}
-      \item $\mu_1 = (\mu_{1,1}, \mu_{1,2}, \ldots, \mu_{1,n})^\top$ and $\mu_2 = (\mu_{2,1}, \mu_{2,2}, \ldots, \mu_{2,n})^\top$ are the mean vectors,
-      \item $\Sigma_1 = \text{diag}(\sigma_{1,1}^2, \sigma_{1,2}^2, \ldots, \sigma_{1,n}^2)$ and $\Sigma_2 = \text{diag}(\sigma_{2,1}^2, \sigma_{2,2}^2, \ldots, \sigma_{2,n}^2)$ are diagonal covariance matrices, \todo{Are they diagonal??}
-      \item $\sigma_{1,i}^2$ and $\sigma_{2,i}^2$ denote the $i$-th diagonal element of $\Sigma_1$ and $\Sigma_2$, respectively.
-    \end{itemize}
-    For diagonal covariance matrices, \citet{Thiagarajan2025} show that this simplifies to
-    \todo{Double check about dash in Thiagarajan formula, also check for backwards JSGa use}
-    \todo{Double check this formula is correct (R should give same as above)}
-    \todo{Standardise use of brackets, varies a lot}
-    % \begin{align*}
-    %   JS-G(P \mid \mid Q) = \frac{1}{2} \sum^n_{i=1} \left[ \frac{\alpha \sigma_{1, i}^2 + (1-\alpha)\sigma_{2, i}^2}{\sigma_{\alpha, i}^2} + \log{\left( \frac{\sigma_{\alpha, i}^2}{\sigma_{1, i}^{(2\alpha)}\sigma_{2, i}^{2(1 - \alpha)}} \right)} + \alpha \frac{(\mu_{\alpha, i} - \mu_{1, i})^2}{\sigma_{\alpha, i}^2} + (1 - \alpha) \frac{(\mu_{\alpha, i} - \mu_{2, i})^2}{\sigma_{\alpha, i}^2} -1 \right],
-    % \end{align*}
-    \todo{Should I use a different notation here, since I also use mu, sigma for the CE model?}
-    \begin{align}
-    JS^{G_{\alpha}}(P \mid\mid Q) = \frac{1}{2} \sum_{i=1}^n \Bigg[
-        & \frac{\alpha \sigma_{1,i}^2 + (1 - \alpha) \sigma_{2,i}^2}{\sigma_{\alpha,i}^2} 
-        + \log\left( \frac{\sigma_{\alpha,i}^2}{\sigma_{1,i}^{2\alpha} \sigma_{2,i}^{2(1 - \alpha)}} \right) \nonumber \\
-        & + \alpha \frac{(\mu_{\alpha,i} - \mu_{1,i})^2}{\sigma_{\alpha,i}^2} 
-        + (1 - \alpha) \frac{(\mu_{\alpha,i} - \mu_{2,i})^2}{\sigma_{\alpha,i}^2}
-        - 1 \Bigg],
-    \end{align}
-where $\sigma_{\alpha, i}^2 = \frac{\sigma_{1, i}^2 \sigma_{2, i}^2}{\alpha\sigma_{1, i}^2 + (1 - \alpha)\sigma_{2, i}^2}$, and $\mu_{\alpha, i} = \sigma_{\alpha, i}^2 \left( \frac{\alpha\mu_{1, i}}{\sigma_{1, i}^2} + \frac{(1 - \alpha) \mu_{2, i}}{\sigma_{2, i}^2} \right)$, respectively.
+The exact form of this divergence for two multivariate normals is given in \eqref{eq:js_norm_mvn}.
   % \item Thus we have a closed form, computationally efficient and symmetric measure of dissimilarity between any two conditional distributions as given by equation \ref{eq:ce_norm} for two sites, with which we can cluster locations based on their extremal dependence structure. 
   % \item Thus we have a closed form, computationally efficient and symmetric measure of dissimilarity between any conditional multivariate normal distributions as given by \eqref{eq:ce_norm}, representing the extremal dependence structure at each site. 
 Thus we have a closed form, computationally efficient and symmetric dissimilarity measure between any two CE models assuming \eqref{eq:ce_norm}, representing the extremal dependence structure at each site.
@@ -639,6 +550,62 @@ Specifically, the TWGSS is defined as
     \end{equation}
     where $d_{ij}$ is the dissimilarity between site $j$ and the centroid of cluster $i$, which we measure using the $JS^{G_{\alpha}}$ divergence defined in section \ref{subsec:div}, and $n_i$ is the number of observations in cluster $i$.
 We then plot $\mathrm{TWGSS}(k)$ vs.\ $k$, and choose $k^*$, the optimal number of clusters, as the value of $k$ at which the TWGSS reduction sharply slows, or equivalently, the point at which the curve has an ``elbow''.
+
+\subsection{Estimation} \label{subsec:estimation}
+
+\todo{What to put in this section? Anything that hurts our narrative flow?}
+\todo{Rewrite these sections, just copied in here}
+
+% Laplace transformation
+Each marginal random variable $X_i$ is transformed to Laplace margins, whereby it is denoted by $Y_i$, using the following transformation:
+ \begin{equation} \label{eq:laplace}
+   Y_i = \begin{cases}
+     \log\left\{2F_{X_i}(X_i)\right\} &\text{ for } X_i < F_{X_i}^{-1}(0.5), \\
+     -\log\left\{2(1 - F_{X_i}(X_i))\right\} &\text{ for } X_i \ge F_{X_i}^{-1}(0.5), \\
+   \end{cases}
+ \end{equation}
+ where $F_{X_i}$ is the cumulative distribution function (CDF) of $X_i$.
+ % \item The Laplace distribution specifically is chosen for its doubly exponential tails, each with mean 1. \todo{More formal?}
+ % \item The Laplace distribution specifically is chosen as both its tails are exponential.
+ % \item More formally, for any $u > 0$, the distributions of $Y_i - u \mid Y_i > u$ and $(-Y_i + u) \mid Y_i \le -u$ are exponential with mean 1. 
+ % \item This ensures that the model for the upper and lower tails, corresponding to positive and negative dependence, is of the same, simple form, namely that of a heteroskedastic regression model.
+ % \item Also, the tails of the Laplace distribution converge faster to a non-degenerate distribution as we increase the number of variables in the model, which makes it effective for modelling extremes \citep{Rohrbeck2024-jm}.
+
+% JSGa form
+For two multivariate normals, this gives the closed form solution
+\begin{align*} \label{eq:js_norm_mvn}
+  JS^{G_{\alpha}}(P \mid\mid Q) &= \frac{1}{2} \left( (1 - \alpha) \mu_1^T \Sigma_1^{-1} \mu_1 + \alpha \mu_2^T \Sigma_2^{-1} \mu_2 - \mu_{\alpha}^T \Sigma_{\alpha}^{-1} \mu_{\alpha} + \log{\left( \frac{\abs{\Sigma_1}^{1-\alpha} \abs{\Sigma_2}^{\alpha}}{\abs{\Sigma_{\alpha}}} \right)} \right), \\
+  \Sigma_{\alpha} &= \left( (1 - \alpha) \Sigma_1^{-1} + \alpha \Sigma_2^{-1} \right)^{-1}, \\
+  \mu_{\alpha} &= \Sigma_{\alpha} \left( (1 - \alpha) \Sigma_1^{-1} \mu_1 + \alpha \Sigma_2^{-1} \mu_2 \right), \numberthis \label{eq:js_norm_mvn}
+\end{align*} 
+where:
+\begin{itemize}
+  \item $\mu_1 = (\mu_{1,1}, \mu_{1,2}, \ldots, \mu_{1,n})^\top$ and $\mu_2 = (\mu_{2,1}, \mu_{2,2}, \ldots, \mu_{2,n})^\top$ are the mean vectors,
+  \item $\Sigma_1 = \text{diag}(\sigma_{1,1}^2, \sigma_{1,2}^2, \ldots, \sigma_{1,n}^2)$ and $\Sigma_2 = \text{diag}(\sigma_{2,1}^2, \sigma_{2,2}^2, \ldots, \sigma_{2,n}^2)$ are diagonal covariance matrices, \todo{Are they diagonal??}
+  \item $\sigma_{1,i}^2$ and $\sigma_{2,i}^2$ denote the $i$-th diagonal element of $\Sigma_1$ and $\Sigma_2$, respectively.
+\end{itemize}
+For diagonal covariance matrices, \citet{Thiagarajan2025} show that this simplifies to
+\todo{Double check about dash in Thiagarajan formula, also check for backwards JSGa use}
+\todo{Double check this formula is correct (R should give same output as above non-diagonal method)}
+\todo{Standardise use of brackets, varies a lot}
+% \begin{align*}
+%   JS-G(P \mid \mid Q) = \frac{1}{2} \sum^n_{i=1} \left[ \frac{\alpha \sigma_{1, i}^2 + (1-\alpha)\sigma_{2, i}^2}{\sigma_{\alpha, i}^2} + \log{\left( \frac{\sigma_{\alpha, i}^2}{\sigma_{1, i}^{(2\alpha)}\sigma_{2, i}^{2(1 - \alpha)}} \right)} + \alpha \frac{(\mu_{\alpha, i} - \mu_{1, i})^2}{\sigma_{\alpha, i}^2} + (1 - \alpha) \frac{(\mu_{\alpha, i} - \mu_{2, i})^2}{\sigma_{\alpha, i}^2} -1 \right],
+% \end{align*}
+\todo{Should I use a different notation here, since I also use mu, sigma for the CE model?}
+\begin{align} \label{eq:js_norm_mvn_diag}
+JS^{G_{\alpha}}(P \mid\mid Q) = \frac{1}{2} \sum_{i=1}^n \Bigg[
+    & \frac{\alpha \sigma_{1,i}^2 + (1 - \alpha) \sigma_{2,i}^2}{\sigma_{\alpha,i}^2} 
+    + \log\left( \frac{\sigma_{\alpha,i}^2}{\sigma_{1,i}^{2\alpha} \sigma_{2,i}^{2(1 - \alpha)}} \right) \nonumber \\
+    & + \alpha \frac{(\mu_{\alpha,i} - \mu_{1,i})^2}{\sigma_{\alpha,i}^2} 
+    + (1 - \alpha) \frac{(\mu_{\alpha,i} - \mu_{2,i})^2}{\sigma_{\alpha,i}^2}
+    - 1 \Bigg],
+\end{align}
+where $\sigma_{\alpha, i}^2 = \frac{\sigma_{1, i}^2 \sigma_{2, i}^2}{\alpha\sigma_{1, i}^2 + (1 - \alpha)\sigma_{2, i}^2}$, and $\mu_{\alpha, i} = \sigma_{\alpha, i}^2 \left( \frac{\alpha\mu_{1, i}}{\sigma_{1, i}^2} + \frac{(1 - \alpha) \mu_{2, i}}{\sigma_{2, i}^2} \right)$, respectively.
+
+
+
+
+
 
 \section{Simulation study} \label{sec:sim}
 % \todo{May not be subsections, but will form structure of this section}
@@ -771,7 +738,8 @@ However, we can still conclude that these results show that our method performs 
 
 \subsubsection{More realistic example} \label{subsubsec:sim_realistic}
 
-We also design a more realistic example to somewhat mimic the structure of the Irish dataset introduced in Section \ref{sec:ire}.
+% We also design a more realistic example to somewhat mimic the structure of the Irish dataset introduced in Section \ref{sec:ire}.
+We also design a more realistic example to somewhat mimic the structure of the Irish dataset in our application in Section \ref{sec:application}.
 We generated data from 60 locations, each with 1000 observations of two variables, using a mixture of Gaussian and t-copulas with Laplace margins.
 The 60 locations had three known clusters, with 10, 20, and 30 locations in each cluster, respectively.
 A constant $\rho_{\text{Gauss}}$ of 0.5 was used for all locations and simulations, to reduce the dimensionality of the grid search.
@@ -830,31 +798,96 @@ The conditional expectation is higher for the higher t-copula correlation cluste
 
 \section{Application to Irish meteorological data} \label{sec:application}
 
-\todo{Go into more detail (with bootstrapping) or not?}
+% Section Intro
+\todo{Where to put first plot? And which plot to have as first?}
+In this section, we introduce and explore a real-world application of our clustering method, using meteorological data from the Republic of Ireland.
+In section \ref{subsec:app_data}, we describe the data we have collected, and in Section \ref{subsec:app_explore} we perform some exploratory analysis of the data, using the $\chi$ statistic to assess the asymptotic dependence between precipitation and wind speed across the country. 
+In Sections \ref{subsec:app_ce} and \ref{subsec:app_clust}, we fit the CE model to the data, and apply our clustering method to the estimated parameters, respectively, to determine the spatial dependence structure of the data.
 
-% chi + chi-bar plots as quick exploratory analysis
-As a brief exploration of the dependence profile in our data, we looked at the $\chi$ and $\bar{\chi}$ statistics introduced in Section \ref{subsec:asym_dep}.
-Specifically, we estimated $\chi$ and $\bar{\chi}$ at the 95th quantile for each of our 59 sites, to determine the extent of asymptotic dependence between our variables, and whether any spatial patterns in this dependence emerge. 
-These values are shown in Figure \ref{fig:chi}.
-We can see that $\chi$ and $\bar{\chi}$ are positive for almost all sites, indicating positive asymptotic dependence of varying degree between rain and wind speed.
-A clear spatial pattern emerges, whereby extremal dependence is progressively stronger for locations further south and west, being highest along the west coast of Ireland, in counties such as Kerry, Galway, Mayo and Donegal. 
-Conversely, sites in Dublin, Wicklow and Wexford have lower values of $\chi$ and $\bar{\chi}$, indicating weaker extremal dependence along the east coast. \todo{And Louth?}
-This indicates that there are distinct patterns of extremal dependence in the data, which our CE analysis and clustering may support and provide insight into. 
+\subsection{Ireland meteorological data} \label{subsec:app_data}
 
-\todo{Replace chi, chibar in words with symbols (with no clipping)}
-\todo{No Wexford in cropped plot? Recrop other one!}
+% Image of locations and precipitation vs wind speed for two sites
+\todo{Move elevation legend onto plot}
+\todo{If keeping this plot, need to comment on heterogeneity motivating analysis!}
 \begin{figure}[H]
     \centering
-    \includegraphics[width = 0.9\linewidth]{plots/041_chi_plots_man.png}
-    \caption{\emph{$\chi$ and $\bar{\chi} $ statistics for each of the 59 locations in our Irish meteorological dataset, estimated at the 95th quantile. The $\bar{chi}$ statistic is shown on the left, and $\chi$ on the right. For both maps, darker colours indicate stronger asymptotic dependence.}}
+    % \includegraphics[width = 0.9\linewidth]{plots/02_mot_ex_plot.png}
+    \includegraphics[width = 0.9\linewidth]{plots/02_mot_ex_plot_elev.png}
+    \caption{\emph{Left: locations of 59 Met Éireann sites with precipitation data available from 1990 to 2020, with elevation in metres above sea level binned into 100m intervals. 
+    Right: scatter plots of the weekly aggregated precipitation and wind speed maxima, with the 95\% quantile of wind speed and precipitation shown as dashed lines, for Cloone Lake, County Kerry (red), and Malahide Castle, County Dublin (blue), in the Winter months (October -- March), which are the two stations with the highest and lowest mean weekly precipitation, respectively.}}
+    \label{fig:02_locs}
+\end{figure}
+
+We consider the joint extremal behaviour of precipitation and wind speeds at 59 sites across the Republic of Ireland from 1990 to 2020, inclusive.
+% The data we have performed our clustering on is precipitation data for the Republic of Ireland, collected from the Met Éireann website at \citet{metHistoricalData}, and wind speed data from the ERA5 Reanalysis dataset at \citet{Hersbach2020}, corresponding to the closest grid point to each location.
+Precipitation data were collected from the Met Éireann website (accessed 2024-09-01), and wind speed data from the gridded ERA5 Reanalysis dataset \citep{metHistoricalData, Hersbach2020}.
+ERA5 provides averages over a gridded box of $0.25^{\circ} \times 0.25^{\circ}$, so each site will lie within a grid cell, to which the wind speed data corresponds.
+% , taking the closest grid cell corresponding to each precipitation measurement location.
+% While the point estimates of the precipitation data can be considered more precise, it may also be susceptible to preferential sampling, with sites likely to be more densely found in areas with higher precipitation.
+% Conversely, although reanalysis data is spatially complete, it only has a certain resolution (in this case, $0.25^{\circ} \times 0.25^{\circ}$).
+% The data is averaged over each grid cell, and so often underestimates extreme wind speeds \citep{Gandoin2024}.
+
+% Preprocessing
+These data span the dates 1990-01-01 to 2020-12-31, totalling 11,323 days of consecutive precipitation readings. 
+% Sites which did not have a complete set of data for these dates were removed, leaving us with 50 sites in total, located in 20 of the 26 counties of the Republic of Ireland. \todo{Change this, no longer the case!}
+Following \citet{Vignotto2021}, we thinned the data, looking at the weekly sum of daily precipitation and weekly averages of wind speed maxima, for the winter months (November to March) only.
+This weekly temporal scale was chosen as precipitation and wind in the case of storms is believed to experience a slight lag \citep{Bengtsson2009}.
+It may also remove some of the temporal dependence in the data, which is not accounted for in our model.
+As our interest is in extremes, weeks with no rain are also ignored, leaving us with 5,022 weeks of data for the 59 sites.
+
+% Summaries of dataset
+% \todo{Why have this? To highlight extremes/spatial heterogeneity?}
+% The maximum weekly precipitation sum observed was 198.6mm at Cloone Lake in county Kerry. 
+% % The mean precipitation across all sites for each day was 5.96mm.
+% For wind speed, the highest weekly maxima is 20.2 m/s, and was recorded closest to Eskeragh in county Mayo.
+% Conversely, the minimum wind speed of 0.95 m/s was recorded at Glenvickee in Kerry. %, with the mean wind speed overall being 6.83 m/s.
+% The difference between the mean and maximum values for each of these marginal extremes suggests that there will be an extreme right tail to the distribution of this data, a situation well suited to the use of EVT.
+% These data will be used to showcase the marginal and dependence models we have chosen to use, and illustrate some of their shortcomings, and the need for extremal clustering to address these challenges.
+
+\subsection{Exploratory analysis} \label{subsec:app_explore}
+
+\todo{Remove/add in longitude/latitude?}
+\todo{Make plot larger before saving, blurry when cropped}
+\todo{move legends to bottom?}
+\todo{Change binning? heights above 610m are mountains, not 500m!}
+\todo{Bounding box for two maps is different, fix}
+\begin{figure}[H]
+    \centering
+    % \includegraphics[width = 0.9\linewidth]{plots/041_chi_plots_man.png}
+    \includegraphics[width = 0.9\linewidth]{plots/043_chi_elevation_man.png}
+    % \caption{\emph{$\chi$ and $\bar{\chi} $ statistics for each of the 59 locations in our Irish meteorological dataset, estimated at the 95th quantile. The $\bar{chi}$ statistic is shown on the left, and $\chi$ on the right. For both maps, darker colours indicate stronger asymptotic dependence.}}
+    \caption{emph{Left: elevation profile of Ireland, with elevation in metres above sea level binned into 100m intervals with the highest bin for elevations above 500m.
+    Right: $\chi$ statistics between rain and wind speed at all 59 locations, estimated at the 95th quantile. Darker colours and larger points indicate stronger asymptotic dependence.}}
     \label{fig:chi}
 \end{figure}
 
+% \todo{Remove reference to chibar}
+\todo{Also comment on how $\chi$ seems larger in East over Wicklow Mountains}
+\todo{Any other elevation points to method?)}
+% chi + chi-bar plots as quick exploratory analysis
+% As a brief exploration of the dependence profile in our data, we looked at the $\chi$ and $\bar{\chi}$ statistics introduced in Section \ref{subsec:asym_dep}.
+% As a brief exploration of the dependence profile in our data, we looked at the $\chi$ statistic introduced in Section \ref{subsec:asym_dep}.
+Specifically, we estimated $\chi$ at the 95th quantile for each of our 59 sites, to determine the extent of asymptotic dependence between our variables, and whether any spatial patterns in this dependence emerge. 
+% These values are shown in Figure \ref{fig:chi}.
+These values, along with an elevation profile of Ireland, are shown in Figure \ref{fig:chi}.
+We can see that $\chi$ is positive for almost all sites, indicating positive asymptotic dependence of varying degree between rain and wind speed.
+While some outliers exist, a clear spatial pattern emerges, whereby extremal dependence gets progressively stronger for locations further south and west, being highest along the west coast of Ireland, in counties such as Kerry, Galway, Mayo and Donegal. 
+\todo{Comment on Wicklow mountains whave higher!}
+% Conversely, sites in Dublin, Wicklow and Wexford have lower values of $\chi$ and $\bar{\chi}$, indicating weaker extremal dependence along the east coast. \todo{And Louth?}
+Conversely, in counties such as Dublin, Wexford and Louth, lower values of $\chi$ indicate weaker extremal dependence along the east coast.
+Interestingly, in Wicklow we see comparatively higher values of $\chi$ for the east, which may be due to the influence of the Wicklow Mountains, as clearly observed in the elevation profile.
+% This indicates that there are distinct patterns of extremal dependence in the data, which our CE analysis and clustering may support and provide insight into. 
+This indicates that there are distinct spatial patterns of extremal dependence in the data, motivating an analysis using the CE model, which we describe in the next section.
+
+
+\subsection{Conditional extremes model} \label{subsec:app_ce}
+
 % Procedure and results pre-clustering (choice of dependence quantile)
+\todo{Check this section again after results are changed!}
 In our analysis, we first transformed the data to Laplace margins, using the empirical cumulative distribution function (ECDF) to approximate density functions for rain and wind speed at each location. \todo{reference specific equation in methods}
   We then fit the CE model to this transformed data.
   Using the bootstrapping scheme of \citet{Heffernan2004}, we estimated the CE model parameters $\alpha$ and $\beta$ at various dependence quantiles. \todo{Sufficient reference to bootstrapping scheme?}
-  This revealed that estimates in general were quite stable up to the 88th quantile.  \todo{Need to expand with more details, could include plots in Appendix?} \todo{Why not use 90 if stable enough?Try in script!}
+  This revealed that estimates in general were quite stable up to the 88th quantile.  \todo{Need to expand with more details, could include plots in Appendix?}
   Subsequent analysis was also performed at the 85th and 90th quantiles, and shown to provide similar MLEs for our CE parameters, and clustering solutions. \todo{Include in Appendix also?}
   The results of this CE analysis are shown in Figure \ref{fig:a_b_vals}.
   Interpretation of these plots is difficult, but we can see some, albeit uneven, increases in the $\alpha$ values for both variables as we move further West and particularly South. \todo{Should I estimate/show uncertainty in these estimates somehow? these estimates have been bootstrapped!}
@@ -869,6 +902,8 @@ In our analysis, we first transformed the data to Laplace margins, using the emp
     \caption{\emph{Map of conditional extremes model parameters $\alpha$ and $\beta$ for rain conditional on wind speed (left) and wind speed conditional on rain (right), estimated at the 88th dependence quantile. The $\alpha$ parameter is shown in the top row, and $\beta$ in the bottom row. The colour scale is the same for both variables, with darker red indicating larger positive values of $\alpha$ and $\beta$, and darker blue indicating larger negative values.}}
     \label{fig:a_b_vals}
 \end{figure}
+
+\subsection{Clustering} \label{subsec:app_clust}
 
 % Clustering (including choice of k for each metric)
 We clustered the locations using the $JS^{G_{\alpha}}$ dissimilarity matrix for their CE parameters, as described in Section \ref{subsec:div}, for the CE models fit to rain conditional on extreme wind speed and vice versa, separately. 

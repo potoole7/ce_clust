@@ -61,7 +61,8 @@ data <- sim_cop_dat(
   n_locs     = n_locs,
   n_vars     = n_vars,
   n          = n,
-  cor_gauss  = cor_gauss,
+  # cor_gauss  = cor_gauss,
+  cor_gauss  = c(0.3, 0.3),
   cor_t      = cor_t,
   df_t       = df_t,
   # params_gpd = c(scale_gpd, shape_gpd),
@@ -69,7 +70,52 @@ data <- sim_cop_dat(
   qfun       = evd::qgpd,
   qargs      = c("scale" = scale_gpd, "shape" = shape_gpd)
 )
+data_gauss <- data$gauss_cop
+data_t <- data$t_cop
 data_mix <- data$data_mix
+
+# plot
+# plot(data_gauss[[12]])
+# points(data_t[[12]], col = "red", pch = 19, cex = 0.5)
+
+bind_rows(
+  bind_rows(
+    data.frame(data_gauss[[1]]) |>
+      mutate(name = "Gaussian Copula"),
+    data.frame(data_t[[1]]) |>
+      mutate(name = "t-Copula")
+  ) |>
+    mutate(cor_gauss = cor_gauss[1], cor_t = cor_t[1]),
+  bind_rows(
+    data.frame(data_gauss[[12]]) |>
+      mutate(name = "Gaussian Copula"),
+    data.frame(data_t[[12]]) |>
+      mutate(name = "t-Copula")
+  ) |>
+    mutate(cor_gauss = cor_gauss[1], cor_t = cor_t[2]),
+) |>
+  group_by(cor_t) |>
+  mutate(
+    quant_x = quantile(X1, 0.99),
+    quant_y = quantile(X2, 0.99)
+  ) |>
+  ungroup() |>
+  ggplot(aes(x = X1, y = X2, colour = name)) +
+  geom_point(alpha = 0.4) +
+  facet_wrap(~cor_t, scale = "fixed") +
+  geom_vline(aes(xintercept = quant_x), linetype = "dashed") +
+  geom_hline(aes(yintercept = quant_y), linetype = "dashed") +
+  labs(x = "", y = "") +
+  guides(colour = "none") +
+  evc::evc_theme() +
+  scale_x_continuous(
+    sec.axis = sec_axis(
+      ~.,
+      name = expression(rho[t]),
+      breaks = NULL,
+      labels = NULL
+    )
+  )
 
 # Fit CE model
 dependence <- fit_ce(

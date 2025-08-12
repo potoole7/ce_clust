@@ -87,7 +87,7 @@ grid <- tidyr::crossing(
 
 # run kl_sim_eval for each row in grid
 # TODO: Functionalise loop, used many times in other scripts
-n_times <- 500
+n_times <- 1
 # vectors to store results (lri == local rand index)
 results_vec <- lri_vec <- lri_mean_vec <- vector(length = n_times)
 set.seed(seed_number)
@@ -110,7 +110,7 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
       # params_gpd = c(scale_gpd, shape_gpd),
       mix_p      = c(0.5, 0.5),
       qfun       = evd::qgpd,
-      qargs      = c("scale" = scale_gpd, "shape" = shape_gpd)
+      qargs      = c("loc" = 0, "scale" = scale_gpd, "shape" = shape_gpd)
     ))$data_mix
 
     # Perform Vignotto clustering

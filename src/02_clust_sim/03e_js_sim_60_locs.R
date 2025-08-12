@@ -20,6 +20,7 @@ devtools::load_all("../evc")
 library(tidyr)
 library(ggplot2)
 library(parallel)
+library(mgcv)
 # library(ggtern)
 
 source("src/functions.R")
@@ -225,29 +226,30 @@ p1 <- results_grid_plt %>%
     aes(x = cor_t1, y = mean_rand),
     colour = "#C11432",
     linewidth = 1
-  )
-# geom_smooth(formula = y ~ splines::bs(x, df = 4),
-#   aes(x = cor_t1, y = adj_rand),
-#   colour = "#C11432",
-#   se = TRUE,
-#   linewidth = 1
-# )
+  ) +
+  # geom_smooth(formula = y ~ splines::bs(x, df = 4),
+  #   aes(x = cor_t1, y = adj_rand),
+  #   colour = "#C11432",
+  #   se = TRUE,
+  #   linewidth = 1
+  # ) +
+  NULL
 
 # TODO save
 # Can clearly see that clustering is best where correlation parameters in
 # t-copula for different clusters are the most different
 # Unsurprisingly, cor_tx = (0.1, 0.5, 0.9) has the best ARI, reflecting this
-p1 <- common_plot_items(
-  p1,
-  # xlab = expression(rho[t[3]]),
-  xlab = expression(rho[t[1]]),
-  # x_sec_lab = expression(rho[t[2]]),
-  x_sec_lab = expression(rho[t[3]]),
-  # y_sec_lab = expression(rho[t[1]]),
-  y_sec_lab = expression(rho[t[2]]),
-  facet_form = (cor_t2 ~ cor_t3)
-) +
-  scale_x_continuous(breaks = unique(results_grid_plt$cor_t1)) +
+p1 <- (p1 +
+  scale_x_continuous(
+    breaks = unique(results_grid_plt$cor_t1)
+  )) |>
+  common_plot_items(
+    xlab = expression(rho[t[1]]),
+    x_sec_lab = expression(rho[t[3]]),
+    # x_sec_lab = "test_x",
+    y_sec_lab = expression(rho[t[2]]),
+    facet_form = (cor_t2 ~ cor_t3)
+  ) +
   NULL
 
 ggsave(
@@ -257,7 +259,6 @@ ggsave(
   width = 10,
   height = 7
 )
-
 
 # Above plot, but this time with smoothed LOESS line rather than geom_line
 smooth_plt <- \(data, col) {
@@ -274,8 +275,8 @@ smooth_plt <- \(data, col) {
       aes(x = {{ col }}, y = adj_rand),
       colour = "#C11432",
       fill = "#C11432",
-      # formula = y ~ splines::bs(x = x, knots = 3),
-      formula = y ~ splines::bs(x = x, knots = length(unique(data[[col]]))),
+      method = "loess",
+      span = 0.9,
       se = TRUE,
       linewidth = 1
     ) +
@@ -290,8 +291,26 @@ smooth_plt <- \(data, col) {
 }
 
 # doesn't work any more as cor_gauss is fixed!
-p1_smooth <- smooth_plt(results_grid_plt, cor_gauss)
-p2_smooth <- smooth_plt(results_grid_plt, cor_t1)
+# p1_smooth <- smooth_plt(results_grid_plt, cor_gauss)
+p2_smooth <- (smooth_plt(results_grid_plt, cor_t1) +
+  scale_x_continuous(breaks = unique(results_grid_plt$cor_t1))) |>
+  common_plot_items(
+    xlab = expression(rho[t[1]]),
+    x_sec_lab = expression(rho[t[3]]),
+    y_sec_lab = expression(rho[t[2]]),
+    facet_form = (cor_t2 ~ cor_t3)
+  ) +
+  NULL
+
+
+ggsave(
+  plot = p2_smooth,
+  # paste0("latex/plots/01e_js_sens_3_var_dqu_", cond_prob, ".png"),
+  paste0("latex/plots/01c2_js_sens_sim_60_locs_dqu_", cond_prob, "_smooth.png"),
+  width = 10,
+  height = 7
+)
+
 
 # ternary plot
 # TODO: Fix (do I even bother??)

@@ -183,7 +183,8 @@ find_k <- \(ce_fit, data_mix, max_clust, fixed_b = FALSE) {
 cond_prob <- 0.9 # conditional probability
 # n_clust <- 2 # number of clusters
 n_clust <- 3
-cor_gauss <- c(0.3, 0.6, 0.9)
+# cor_gauss <- c(0.3, 0.6, 0.9)
+cor_gauss <- c(0.1, 0.5, 0.9)
 cluster_mem <- rep(1:n_clust, each = n_locs / n_clust) # cluster membership
 fixed_b <- FALSE
 
@@ -266,8 +267,7 @@ p <- bind_rows(
   guides(colour = "none") +
   ggsci::scale_colour_nejm()
 
-ggsave("latex/plots/gauss_sim_ex.png", p, width = 8, height = 8)
-
+ggsave("latex/plots/gauss_sim_ex.png", p, width = 8, height = 6)
 
 # look at chi and chibar for both
 do.call(`+`, ggplot(texmex::chi(data_mix[[min_max_rho[1]]]), plot. = FALSE)) /
@@ -293,8 +293,8 @@ ce_fit <- lapply(seq_along(data_mix), \(i) {
 
 # function to extract a and b values
 extract_pars <- \(ce_fit) {
-  x <- ce_fit[[1]]
-  y <- ce_fit[[1]][[1]]
+  # x <- ce_fit[[1]]
+  # y <- ce_fit[[1]][[1]]
   bind_rows(lapply(ce_fit, \(x) { # loop through "locations"
     data.frame(
       vapply(x, \(y) { # loop through "variables"

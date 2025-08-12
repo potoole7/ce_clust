@@ -452,7 +452,7 @@ Some special cases of the CE model are:
 \todo{Keep here, or move to last section?}
 \citet{Heffernan2004} shows that inference can be made about the extremal dependence of a random vector $\bm{Y}_{-i} = \bm{Y} \backslash Y_i$ on $Y_i$ by conditioning on the exceedance of a high threshold $u$ by $Y_i$, and assuming that this conditional distribution is a diagonal multivariate Gaussian distribution: % with vector mean and standard deviation:
 \begin{equation} \label{eq:ce_norm}
-  \bigl( \bm{Y}_{-i} \mid Y_i \bigr) = y_i \sim N\left(\bm{\alpha}_{\mid i} y_i + y_i^{\bm{\beta}_i} \bm{\mu}_{\mid i}, y_i^{\bm{\beta}_i} \bm{\sigma_{\mid i}}\right), Y_i > u,
+  \bigl( \bm{Y}_{-i} \mid Y_i  = y_i \bigr) \sim N\left(\bm{\alpha}_{\mid i} y_i + y_i^{\bm{\beta}_i} \bm{\mu}_{\mid i}, y_i^{\bm{\beta}_i} \bm{\sigma_{\mid i}}\right), Y_i > u,
   % Y_{j} \mid Y_{i} = y_i \sim N\left(\alpha_{j \mid i} y_i + y_i^{\beta_i} \mu_{j \mid i}, y_i^{\beta_i} \sigma_{j \mid i}\right),
 \end{equation}
 where $\bm{\alpha}_{\mid i}, \bm{\beta}_{\mid i}, \bm{\mu}_{\mid i}, \bm{\sigma}_{\mid i} \in \mathbb{R}^{(d-1)}$ are the parameters of the CE model.
@@ -1020,7 +1020,8 @@ Interpreting these results is much easier post-clustering. \todo{More detail her
 % Points to consider
 \todo{Say something about $\alpha$!}
 \todo{Laplace truncation: how truncation point may lead to errors in severly unbalanced data}
-\todo{JSGa choice: why not use standard JS or Jeffreys?}
+\todo{Also, if empirical quantile exceeds any sitewise maxima, will perform extrapolation; if a problem use `minima of maxima' approach}
+\todo{JSGa choice: why not use standard JS, Jeffreys or other metrics (2-Wasserstein, one beginning with H?)?}
 
 % Rewrite Intro: Methods
 In this paper, we introduced a novel method for clustering spatial locations based on their multivariate extremal dependence structure, as estimated by the conditional extremes model.

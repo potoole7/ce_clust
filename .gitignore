@@ -1,6 +1,7 @@
 # ignore old stuff
 # latex/old
 **/old
+src/0_testing/* 
 
 # text files 
 *.txt
@@ -12,8 +13,10 @@
 *.geojson
 *.nc
 data/**
+data_pre_mc/
+test_plots/
 
-#### R
+#### R ####
 
 # History files
 .Rhistory

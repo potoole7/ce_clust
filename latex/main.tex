@@ -45,6 +45,7 @@
 \DeclareMathOperator{\KL}{KL}
 \DeclareMathOperator*{\argmin}{arg\,min}
 \DeclarePairedDelimiter\abs{\lvert}{\rvert}%
+\DeclareMathOperator{\EX}{\mathbb{E}}% expected value
 % \newcommand{\JSGa}[1]{\mathrm{JS}^{\mathrm{G}_{#1}}}
 \newcommand{\JSGa}[1]{\mathrm{JS}^{\mathrm{G}_{\alpha}}}
 
@@ -72,16 +73,23 @@
 
 \maketitle
 
+% Code
+
+% Writing
 \todo{Same (present), tense throughout if possible}
 \todo{Check citep, citet}
 \todo{Tidy up maths, notation and acronyms so nothing is repeated (or different!)}
 \todo{correct spelling mistakes}
+\todo{Citations aren't showing in APA style anymore?}
+\todo{Replace JS with upright version (same with KL) throught}
+\todo{Whole paper needs improving, read more carefully!}
+\todo{Replace mu and sigma in CE with superscript version}
+\todo{Use u as threshold, or variable specific??}
 
+% Plotting
 \todo{Crop (map) plots that have too much whitespace}
 \todo{Plots need some tidying up!}
 \todo{Ensure all plots include all sites}
-\todo{Need to compare results in Ireland to that of Vignotto}
-\todo{Try 90th quantile for clustering, if similar to 88th results use them}
 
 % \newpage
 
@@ -366,7 +374,7 @@ A framework which provides a flexible approach to modelling extremal dependence 
  Standardising to common margins is a widespread technique to ensure differences in variable scale do not affect estimation of the dependence structure. 
  A popular choice for CE is to transform to Laplace margins, as introduced in \citet{Keef2013}.
  We will denote our transformed random variables by $Y_i$, where $Y_i$ is the transformed version of the marginal random variable $X_i$.
- Each marginal random variable $X_i$ is transformed to Laplace margins, as outlined in \eqref{eq:laplace}, and thereafter denoted by $Y_i$.
+ Each marginal random variable $X_i$ is transformed to Laplace margins, as outlined in equation \eqref{eq:laplace}, and thereafter denoted by $Y_i$.
 
 % Rigorous Conditional Extremes definition
 % \begin{itemize}
@@ -416,7 +424,7 @@ so that in the limit as $u_i \to \infty$, the extremal exceedances $Y_i - u_i$ a
 % Methods for assessing the validity of this assumption and hence the CE model for a given application are explored in section \ref{subsubsec:ce_diagnostics}.
 
 % Heteroskedastic regression
-The limiting distribution in \eqref{eq:ce_limiting_dist} can be rearranged to give the heteroskedastic regression equation defined by
+The limiting distribution in equation \eqref{eq:ce_limiting_dist} can be rearranged to give the heteroskedastic regression equation defined by
 \begin{equation} \label{eq:ce_model}
     % \bm{Y}_{-i} \bm{\alpha}_{\mid i}\bm{y}_i + \bm{y}_i^{\bm{\beta}_{\mid i}}\bm{Z}_{\mid i}, \text{ for } Y_i = y_i > u_{Y_i}.
   \bigl(\bm{Y}_{-i} \mid Y_i = y_i \bigr) = \bm{\alpha}_{\mid i}\bm{y}_i + \bm{y}_i^{\bm{\beta}_{\mid i}}\bm{Z}_{\mid i}, \text{ for } y_i > u_{Y_i}.
@@ -449,7 +457,7 @@ Some special cases of the CE model are:
 \end{equation}
 where $\bm{\alpha}_{\mid i}, \bm{\beta}_{\mid i}, \bm{\mu}_{\mid i}, \bm{\sigma}_{\mid i} \in \mathbb{R}^{(d-1)}$ are the parameters of the CE model.
 % Therefore, when seeking to compare the extremal dependence structure of two locations, a sensible approach is to compare the conditional distributions given by equation \ref{eq:ce_norm} for each variable at both sites. 
-Therefore, under this model, when comparing the extremal dependence structure between variables at any given sites, we are effectively comparing the conditional distributions given by \eqref{eq:ce_norm}.
+Therefore, under this model, when comparing the extremal dependence structure between variables at any given sites, we are effectively comparing the conditional distributions given by equation \eqref{eq:ce_norm}.
 
 % Introduce KL divergence 
 One common measure of dissimilarity between two distributions $P$ and $Q$ is the Kullback-Leibler (KL) divergence, defined as
@@ -463,7 +471,8 @@ where $p(y)$ and $q(y)$ are the densities of $P$ and $Q$, respectively \citep{Ku
 % \Sigma_1)$, Q \sim N(\mu_2, \Sigma_2)$ in $\mathbb{R}^n$ has closed form
 % solution.
 The KL divergence is always non-negative and zero if and only if $P = Q$.
-For two multivariate normal distributions $P \sim N(\mu_1, \Sigma_1), Q \sim N(\mu_2, \Sigma_2) \in \mathbb{R}^n$ with diagonal covariance matrices, $KL(P \mid\mid Q)$ has closed form.
+% For two multivariate normal distributions $P \sim N(\mu_1, \Sigma_1), Q \sim N(\mu_2, \Sigma_2) \in \mathbb{R}^n$ with diagonal covariance matrices, $KL(P \mid\mid Q)$ has closed form.
+A well known result is that the KL divergence between two multivariate normal distributions $P \sim N(\mu_1, \Sigma_1)$ and $Q \sim N(\mu_2, \Sigma_2)$ in $\mathbb{R}^n$ has a closed form solution.
   % \item In the case where both covariance matrices are diagonal, this simplifies to
     % \begin{equation} \label{eq:kl_mvn_diag}
     %   KL(P \mid\mid Q) = \frac{1}{2} \sum_{i=1}^{n} \left( \frac{\sigma_{1,i}^2}{\sigma_{2,i}^2} + \frac{(\mu_{1,i} - \mu_{2,i})^2}{\sigma_{2,i}^2} - 1 - \log\left(\frac{\sigma_{1,i}^2}{\sigma_{2,i}^2}\right) \right),
@@ -474,15 +483,16 @@ For two multivariate normal distributions $P \sim N(\mu_1, \Sigma_1), Q \sim N(\
     %     \item $\Sigma_1 = \text{diag}(\sigma_{1,1}^2, \sigma_{1,2}^2, \ldots, \sigma_{1,n}^2)$ and $\Sigma_2 = \text{diag}(\sigma_{2,1}^2, \sigma_{2,2}^2, \ldots, \sigma_{2,n}^2)$ are diagonal covariance matrices,
     %     \item $\sigma_{1,i}^2$ and $\sigma_{2,i}^2$ denote the $i$-th diagonal element of $\Sigma_1$ and $\Sigma_2$, respectively.
     % \end{itemize}
-However, the KL divergence is asymmetric, unbounded and not a true divergence metric, making it unsuitable for clustering.
+However, the KL divergence is asymmetric, unbounded and not a true divergence metric, making it unsuitable for clustering. \todo{need to be more specific here, kinda wishy washy}
 
-\todo{Do we need to use the backward Geometric mean, as described in Deasy and Thiagarajan? Fine if using alpha = 0.5}
+\todo{Do we need to use the backward Geometric mean, as described in Deasy and Thiagarajan? Fine if using alpha = 0.5?}
 The JS divergence is a simple extension of the KL divergence, defined as
-    \begin{equation} \label{eq:js}
-      JS(P \mid\mid Q) = \frac{1}{2} KL(P \mid\mid M) + \frac{1}{2} KL(Q \mid\mid M),
-    \end{equation}
-    % where $M = \frac{1}{2}(P + Q)$ is a mixture distribution \citep{Lin1991}.
-    where $M$ is the two-component mixture of $P$ and $Q$. 
+\begin{equation} \label{eq:js}
+  % JS(P \mid\mid Q) = \frac{1}{2} KL(P \mid\mid M) + \frac{1}{2} KL(Q \mid\mid M),
+  JS(P \mid\mid Q) = \frac{1}{2} \left\{ KL(P \mid\mid M) + KL(Q \mid\mid M) \right\},
+\end{equation}
+% where $M = \frac{1}{2}(P + Q)$ is a mixture distribution \citep{Lin1991}.
+where $M$ is the two-component mixture of $P$ and $Q$. 
 The JS divergence provides a symmetric measure of dissimilarity between two distributions.
   % \item The JS divergence is a true metric bounded by $[0, \log{(2)}]$, unlike the simple sum of the forward and backward KL divergences $KL(P \mid\mid Q) + KL(Q \mid\mid P)$.
 The JS divergence is a true metric unlike the simple sum of the forward and backward KL divergences $KL(P \mid\mid Q) + KL(Q \mid\mid P)$. % don't reference bounds, as JS-G doesn't have any
@@ -491,16 +501,30 @@ The JS divergence is a true metric unlike the simple sum of the forward and back
 A problem arises from the fact that the mixture distribution $M$ of two normals is not itself normal, and so the KL divergence does not have a closed form solution for multivariate normals.
 \citet{Nielsen2019} overcomes this problem by using the weighted geometric mean $G_{\alpha}(P, Q) = P^{\alpha} Q^{1 - \alpha}, \alpha \in [0, 1]$, instead of the arithmetic mean. 
 This allows us to exploit the property that the weighted product of exponential family distributions is itself a member of the same family, and so $G_{\alpha}(P, Q)$ will also be a multivariate normal distribution.
-From this, we can define the skew-geometric JS divergence as
-    \begin{equation} \label{eq:js_norm}
-      JS^{G_{\alpha}}(P \mid\mid Q) = \frac{1}{2} KL(P \mid\mid G_{\alpha}(P, Q)) + \frac{1}{2} KL(Q \mid\mid G_{\alpha}(P, Q)).
-    \end{equation}
+\todo{Need to use backward version instead?}
+From this, we define the skew-geometric JS divergence as
+\begin{equation} \label{eq:js_norm}
+  % JS^{G_{\alpha}}(P \mid\mid Q) = \frac{1}{2} KL(P \mid\mid G_{\alpha}(P, Q)) + \frac{1}{2} KL(Q \mid\mid G_{\alpha}(P, Q)).
+  JS^{G_{\alpha}}(P \mid\mid Q) = \frac{1}{2} \left\{ KL(P \mid\mid G_{\alpha}(P, Q)) + KL(Q \mid\mid G_{\alpha}(P, Q)) \right\}.
+\end{equation}
 The parameter $\alpha$ is called a skew parameter, and controls the divergence skew between P and Q. 
-For our purposes, we will set $\alpha = 0.5$, which corresponds to giving equal weight to both distributions.
-The exact form of this divergence for two multivariate normals is given in \eqref{eq:js_norm_mvn}.
+For our purposes, we will set $\alpha = 0.5$, which corresponds to giving equal weight to both distributions. \todo{Need to explore this further!}
+The exact form of this divergence for two multivariate normals is given in equation \eqref{eq:js_norm_mvn}, and the simplified form for the case of diagonal covariance matrices is given in equation \eqref{eq:js_norm_mvn_diag}. 
   % \item Thus we have a closed form, computationally efficient and symmetric measure of dissimilarity between any two conditional distributions as given by equation \ref{eq:ce_norm} for two sites, with which we can cluster locations based on their extremal dependence structure. 
   % \item Thus we have a closed form, computationally efficient and symmetric measure of dissimilarity between any conditional multivariate normal distributions as given by \eqref{eq:ce_norm}, representing the extremal dependence structure at each site. 
-Thus we have a closed form, computationally efficient and symmetric dissimilarity measure between any two CE models assuming \eqref{eq:ce_norm}, representing the extremal dependence structure at each site.
+
+\todo{Hard/confusing to describe using Yi, swithc to another notation?}
+Since the models $P$ and $Q$ depend on the value of $Y_i$, the conditioning variable, we define the expected value
+\todo{Need to clean up expectation?}
+\begin{equation} \label{eq:js_integral}
+  \EX_{y_i \mid y_i > u}{\left[ JS^{G_{\alpha}}(P(y_i) \mid\mid Q(y_i)) \right]} = \int_{u}^\infty JS^{G_{\alpha}}(P(y_i) \mid\mid Q(y_i)) f(y_i) \mathrm{d}y_i,
+\end{equation}
+\todo{What threshold to use here?}
+where $f(y_i)$ is the marginal density for $Y_i \mid Y_i > u$. % , the standard Laplace distribution (not standard Laplace, exponential!} 
+This integral gives us our dissimilarity measure or ``distance'' between the two conditional distributions, averaged over the distribution of $Y_i$.
+We can estimate this integral using Monte Carlo (MC) methods, as described in Section \ref{subsec:estimation}. \todo{reference specific equation/algorithm?}
+
+Thus we have a closed form, computationally efficient and symmetric dissimilarity measure between any two CE models assuming equation \eqref{eq:ce_norm}, representing the extremal dependence structure at each site.
 We can calculate a dissimilarity matrix between each pair of locations in this way.
 
 % \todo{Revisit this!}
@@ -516,6 +540,7 @@ We can calculate a dissimilarity matrix between each pair of locations in this w
 
 % PAM (K-means not suitable as clusters cannot be assumed to be spherical) (see
 % Vignotto)
+\todo{Check and double check that this is a metric!!}
 Now we have a metric over which to compute the dissimilarity matrix of pairwise ``distances'' between sites.
 The choice remains as to which algorithm to use to cluster this matrix. 
 As in \citet{Vignotto2021}, we use the Partitioning Around Medoids (PAM) algorithm, which is a variant of the popular k-medoids algorithm of \citet{Kaufman1987}.
@@ -542,7 +567,7 @@ The AIC is also unsuitable and has been found to perform poorly for our algorith
 This may be because it requires aggregating over each location, which if unweighted assumes independence between the models fit for each site.
 However, this assumption is often violated in spatial applications.
 We revert, therefore, to the simple method of \citet{Thorndike1953-ie}, which uses the total within-cluster sum of squares (TWGSS) to select $k$. \todo{Fix citation?}
-This method has been found to perform well in both our simulation study and our Irish meterological application, making clear suggestions as to the value of $k$ to use. 
+This method has been found to perform well in both our simulation study in Section \ref{sec:sim} and our Irish meterological application in Section \ref{sec:application}, making clear suggestions as to the value of $k$ to use. 
 Specifically, the TWGSS is defined as
     \begin{equation} \label{eq:twgss}
       % \mathrm{TWGSS}(k) = \sum_{i=1}^{k} \sum_{j=1}^{n_i} d_{ij}^2,
@@ -554,10 +579,12 @@ We then plot $\mathrm{TWGSS}(k)$ vs.\ $k$, and choose $k^*$, the optimal number 
 \subsection{Estimation} \label{subsec:estimation}
 
 \todo{What to put in this section? Anything that hurts our narrative flow?}
+\todo{How complicated do I need things?}
 \todo{Rewrite these sections, just copied in here}
 
 % Laplace transformation
-Each marginal random variable $X_i$ is transformed to Laplace margins, whereby it is denoted by $Y_i$, using the following transformation:
+% Each marginal random variable $X_i$ is transformed to Laplace margins, whereby it is denoted by $Y_i$, using the following transformation:
+Each marginal random variable $X_i$ is transformed to standard Laplace margins, whereby it is denoted by $Y_i$, using the following transformation: \todo{see Keef, Heff for more succint description}
  \begin{equation} \label{eq:laplace}
    Y_i = \begin{cases}
      \log\left\{2F_{X_i}(X_i)\right\} &\text{ for } X_i < F_{X_i}^{-1}(0.5), \\
@@ -572,7 +599,7 @@ Each marginal random variable $X_i$ is transformed to Laplace margins, whereby i
  % \item Also, the tails of the Laplace distribution converge faster to a non-degenerate distribution as we increase the number of variables in the model, which makes it effective for modelling extremes \citep{Rohrbeck2024-jm}.
 
 % JSGa form
-For two multivariate normals, this gives the closed form solution
+ For two multivariate normals, \citet{Nielsen2019} shows that the $\JSGa{}$ divergence introduced in equation \eqref{eq:js_norm} has the closed form solution
 \begin{align*} \label{eq:js_norm_mvn}
   JS^{G_{\alpha}}(P \mid\mid Q) &= \frac{1}{2} \left( (1 - \alpha) \mu_1^T \Sigma_1^{-1} \mu_1 + \alpha \mu_2^T \Sigma_2^{-1} \mu_2 - \mu_{\alpha}^T \Sigma_{\alpha}^{-1} \mu_{\alpha} + \log{\left( \frac{\abs{\Sigma_1}^{1-\alpha} \abs{\Sigma_2}^{\alpha}}{\abs{\Sigma_{\alpha}}} \right)} \right), \\
   \Sigma_{\alpha} &= \left( (1 - \alpha) \Sigma_1^{-1} + \alpha \Sigma_2^{-1} \right)^{-1}, \\
@@ -584,6 +611,8 @@ where:
   \item $\Sigma_1 = \text{diag}(\sigma_{1,1}^2, \sigma_{1,2}^2, \ldots, \sigma_{1,n}^2)$ and $\Sigma_2 = \text{diag}(\sigma_{2,1}^2, \sigma_{2,2}^2, \ldots, \sigma_{2,n}^2)$ are diagonal covariance matrices, \todo{Are they diagonal??}
   \item $\sigma_{1,i}^2$ and $\sigma_{2,i}^2$ denote the $i$-th diagonal element of $\Sigma_1$ and $\Sigma_2$, respectively.
 \end{itemize}
+
+\todo{Need to keep?}
 For diagonal covariance matrices, \citet{Thiagarajan2025} show that this simplifies to
 \todo{Double check about dash in Thiagarajan formula, also check for backwards JSGa use}
 \todo{Double check this formula is correct (R should give same output as above non-diagonal method)}
@@ -602,7 +631,35 @@ JS^{G_{\alpha}}(P \mid\mid Q) = \frac{1}{2} \sum_{i=1}^n \Bigg[
 \end{align}
 where $\sigma_{\alpha, i}^2 = \frac{\sigma_{1, i}^2 \sigma_{2, i}^2}{\alpha\sigma_{1, i}^2 + (1 - \alpha)\sigma_{2, i}^2}$, and $\mu_{\alpha, i} = \sigma_{\alpha, i}^2 \left( \frac{\alpha\mu_{1, i}}{\sigma_{1, i}^2} + \frac{(1 - \alpha) \mu_{2, i}}{\sigma_{2, i}^2} \right)$, respectively.
 
+% Integral plan
+\begin{itemize}
+  \item Integral given in equation \eqref{eq:js_integral} gives us the $\JSGa{}$ dissimilarity between CE models $P$ and $Q$ averaged over the marginal distribution of $Y_i \mid Y_i > u$.
+  \item Since $Y_i$ follows a standard Laplace distribution, by memorylessness its tail values $Y_i \mid Y_i > u$ follow a standard exponential distribution. \todo{Express more mathematically?} 
+  \item Therefore, we can use a simple MC method to estimate this integral as
+    \todo{Switch to E hat?}
+    \begin{align}
+      \int_{u}^\infty JS^{G_{\alpha}}(P(y_i) \mid\mid Q(y_i)) f(y_i) \mathrm{d}y_i &\approx \frac{1}{N} \sum_{j=1}^{N} JS^{G_{\alpha}}(P(y_i) \mid\mid Q(y_i)),
+    \end{align}
+  for $N$ samples. 
+  \item However, in estimation, we want to be careful about sampling points too far into the tail. 
+  \item Such values may introduce numerical instability into our divergence calculations.
+  \item Furthermore, we also want to be careful about performing significant extrapolation from the data with which our CE models were fitted. 
+    \todo{May want to switch to parameterising using Laplace quantiles, not exponential!}
+  % \item Therefore, we sample our values of $y_i$ from the truncated Laplace distribution, with the truncation quantile $q_{Laplace}$. \todo{truncation point (currently) comes from exponential distribution, may have to rewrite}
+  \item Therefore, we sample our values of $y_i$ from the truncated Laplace distribution, truncated above by the $p$-th quantile of the standard exponential distribution, $Q_{Exp(1)}(p)$. \todo{Change to Laplace quantile to match u! Also set quantile to some variable}
+  \item Our MC method follows the simple alternating scheme for $N$ samples of
+    \begin{enumerate}
+      \item Simulating $y_i \sim truncLaplace(0, 1; u, u + Q_{Exp(1)}(p))$, \todo{ugly}
+      \item Calculating $\JSGa{P(y_i) \mid \mid Q(y_i)}$ using \eqref{eq_js_mvn},
+    \end{enumerate}
+    before averaging over the $N$ samples to estimate the integral in equation \eqref{eq:js_integral}.
+\end{itemize}
 
+% Estimating the integral 
+% To estimate the integral in Section \ref{subsec:div}, we use a Monte Carlo method, where we sample $N$ values from the distribution of $Y_i \mid Y_i > u_{Y_i}$, and estimate the integral as
+% \begin{equation} \label{eq:mc_integral}
+%   \int_{u}^\infty JS^{G_{\alpha}}(P(y_i) \mid\mid Q(y_i)) f(y_i) \mathrm{d}y_i \approx \frac{1}{N} \sum_{j=1}^{N} JS^{G_{\alpha}}(P(y_j) \mid\mid Q(y_j)),
+% \end{equation}
 
 
 
@@ -781,7 +838,7 @@ We can bootstrap this conditional expectation to evaluate the reduction in uncer
 
 % Results
 We take an example for which we know the clustering algorithm performs well, namely the same simulation design as in Section \ref{subsubsec:sim_competing_methods}, with $\rho_{\text{Gauss}} = 0.5$, and $\rho_{t} = 0.1$ and $0.9$ for the two clusters.
-We estimate the CE model parameters pre- and post-clustering, and generate 500 bootstrap samples for  the conditional expectation of \eqref{eq:boot}.
+We estimate the CE model parameters pre- and post-clustering, and generate 500 bootstrap samples for  the conditional expectation of equation \eqref{eq:boot}.
 The results are plotted in Figure \ref{fig:04_bootstrap}.
 We can see that the uncertainty in the bootstrapped estimates has markedly reduced post-clustering, as desired.
 The conditional expectation is higher for the higher t-copula correlation cluster, as expected. \todo{Anything else need to be said here? Be more specific with results?}
@@ -850,13 +907,13 @@ As our interest is in extremes, weeks with no rain are also ignored, leaving us 
 \todo{Make plot larger before saving, blurry when cropped}
 \todo{move legends to bottom?}
 \todo{Change binning? heights above 610m are mountains, not 500m!}
-\todo{Bounding box for two maps is different, fix}
+\todo{Bounding box for two maps different, set coordsf(expand = FALSE))}
 \begin{figure}[H]
     \centering
     % \includegraphics[width = 0.9\linewidth]{plots/041_chi_plots_man.png}
     \includegraphics[width = 0.9\linewidth]{plots/043_chi_elevation_man.png}
     % \caption{\emph{$\chi$ and $\bar{\chi} $ statistics for each of the 59 locations in our Irish meteorological dataset, estimated at the 95th quantile. The $\bar{chi}$ statistic is shown on the left, and $\chi$ on the right. For both maps, darker colours indicate stronger asymptotic dependence.}}
-    \caption{emph{Left: elevation profile of Ireland, with elevation in metres above sea level binned into 100m intervals with the highest bin for elevations above 500m.
+    \caption{\emph{Left: elevation profile of Ireland, with elevation in metres above sea level binned into 100m intervals with the highest bin for elevations above 500m.
     Right: $\chi$ statistics between rain and wind speed at all 59 locations, estimated at the 95th quantile. Darker colours and larger points indicate stronger asymptotic dependence.}}
     \label{fig:chi}
 \end{figure}
@@ -871,14 +928,17 @@ Specifically, we estimated $\chi$ at the 95th quantile for each of our 59 sites,
 % These values are shown in Figure \ref{fig:chi}.
 These values, along with an elevation profile of Ireland, are shown in Figure \ref{fig:chi}.
 We can see that $\chi$ is positive for almost all sites, indicating positive asymptotic dependence of varying degree between rain and wind speed.
-While some outliers exist, a clear spatial pattern emerges, whereby extremal dependence gets progressively stronger for locations further south and west, being highest along the west coast of Ireland, in counties such as Kerry, Galway, Mayo and Donegal. 
+A clear spatial pattern emerges, whereby extremal dependence gets progressively stronger for locations further south and west, being highest along the west coast of Ireland, in counties such as Kerry, Galway, Mayo and Donegal. 
 \todo{Comment on Wicklow mountains whave higher!}
 % Conversely, sites in Dublin, Wicklow and Wexford have lower values of $\chi$ and $\bar{\chi}$, indicating weaker extremal dependence along the east coast. \todo{And Louth?}
 Conversely, in counties such as Dublin, Wexford and Louth, lower values of $\chi$ indicate weaker extremal dependence along the east coast.
-Interestingly, in Wicklow we see comparatively higher values of $\chi$ for the east, which may be due to the influence of the Wicklow Mountains, as clearly observed in the elevation profile.
-% This indicates that there are distinct patterns of extremal dependence in the data, which our CE analysis and clustering may support and provide insight into. 
-This indicates that there are distinct spatial patterns of extremal dependence in the data, motivating an analysis using the CE model, which we describe in the next section.
-
+This indicates that there are distinct spatial patterns of extremal dependence in the data, motivating an analysis using the CE model and possibly clustering to better understand this dependence structure.
+% , which we describe in the next section.
+% \todo{Note outliers, can say in results that clustering helps identify it!}
+\todo{Name sites}
+Some outliers do appear to exist, most notable being the site at Kilcar, which although on the west coast of Donegal, has a relatively low $\chi$ value. 
+Interestingly, for some sites in Wicklow, we see comparatively higher values of $\chi$ for the east, which may be attributed the influence of the Wicklow Mountains, as clearly observed in the elevation profile.
+It may be of interest to investigate if these outliers are reflected in the CE model parameters, and whether clustering can help identify them.
 
 \subsection{Conditional extremes model} \label{subsec:app_ce}
 
@@ -956,6 +1016,8 @@ Interpreting these results is much easier post-clustering. \todo{More detail her
 % \end{itemize}
 
 \section{Discussion} \label{sec:discuss}
+
+\todo{Say something about $\alpha$!}
 
 % Rewrite Intro: Methods
 In this paper, we introduced a novel method for clustering spatial locations based on their multivariate extremal dependence structure, as estimated by the conditional extremes model.

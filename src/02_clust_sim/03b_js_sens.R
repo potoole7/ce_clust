@@ -37,6 +37,11 @@ kl_prob <- 0.9 # quantile for conditional probability
 # TODO Change confidence intervals to use quantiles rather than normal assumption (??)
 conf_level <- 0.9 # confidence level for CIs in plot
 
+# parameters for MC estimation of JSGa
+n_mc <- 500 # number of MC samples
+mc_method <- "laplace_trunc2" # truncate Laplace using empirical dist quant
+laplace_cap <- 0.99 # Take 99th quantile
+
 # Number of cores to use for parallel computation
 n_cores <- detectCores() - 1
 
@@ -65,8 +70,8 @@ grid <- tidyr::crossing(
   filter(cor_gauss1 == cor_gauss2)
 
 # run kl_sim_eval for each row in grid
-# n_times <- 100
-n_times <- 500
+# n_times <- 500
+n_times <- 2
 results_vec <- lri_vec <- lri_mean_vec <- vector(length = n_times)
 set.seed(seed_number)
 i <- 275
@@ -116,7 +121,12 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
         })
 
         # "true" number of clusters known from simulation design
-        js_clust(ce_fit, k = n_clust, cluster_mem = cluster_mem)
+        js_clust(
+          ce_fit,
+          trans = data_mix_trans,
+          k = n_clust, cluster_mem = cluster_mem,
+          n = n_mc, mc_method = mc_method, laplace_cap = laplace_cap
+        )
       },
       error = function(cond) {
         return(list("adj_rand" = NA))

@@ -17,6 +17,9 @@
 # TODO Facet clustering solution for various DQU
 # Plot bootstrapped uncertainty before/after clustering (done)
 
+# TODO Final diagnostics for chosen models!
+# TODO May have to choose number of clusters after Laplace truncation point?
+
 #### Libs ####
 
 library(sf)
@@ -1003,10 +1006,8 @@ county_key_df <- data |>
 pts <- data %>%
   distinct(name, lon, lat) %>%
   st_to_sf()
-readr::write_csv(
-  pts,
-  "data/met_eireann/final/met_eir_pts.csv"
-)
+sf::write_sf(pts, "data/met_eireann/final/irl_points.geojson")
+
 
 # calculate adjacency matrix from Voronoi cells,
 # to restrict clustering to adjacent sites
@@ -1479,6 +1480,7 @@ ce_fit <- lapply(Y_lst, \(x) {
     nruns = 3
   )
 })
+saveRDS(ce_fit, "data/ce_fit.RDS")
 
 # pull dependence parameters and residuals out separately
 dep_fit <- lapply(c("resid", "params"), \(x) {
@@ -1490,6 +1492,7 @@ names(dep_fit) <- c("residual", "dependence")
 dep_fit$transformed <- Y_lst
 dep_fit$original <- data_week
 dep_fit$arg_vals <- list("cond_prob" = dqu)
+saveRDS(dep_fit, "data/dep_fit.RDS")
 
 # pull dependence paramaters into df
 ab_df <- dep_to_df(dep_fit$dependence)

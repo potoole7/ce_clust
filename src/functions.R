@@ -826,11 +826,30 @@ sim_cop_dat <- \(
       #   # TODO This could just be an rlaplace/rmvlaplace function!
       #   evc:::inv_laplace_trans(u)
       # }
+      # TODO Functionalise, the same for t-copula as well!
       # use supplied quantile function; defaults to default parameters
       if (!is.null(qfun) && is.null(qargs)) {
         return(do.call(qfun, list(u)))
-      } else if (!is.null(qfun)) {
+        # if marginal parameters are the same for all variables
+      } else if (!is.null(qfun) && !is.list(qargs)) {
         return(do.call(qfun, c(list(u), qargs)))
+        # if marginal parameters are different for each variable
+      } else if (!is.null(qfun) && is.list(qargs)) {
+        return(tryCatch(
+          {
+            mapply(
+              \(u, qarg) {
+                do.call(qfun, c(list(u), qarg))
+              },
+              as.list(as.data.frame(u)),
+              qargs,
+              SIMPLIFY = TRUE
+            )
+          },
+          error = function(e) {
+            browser()
+          }
+        ))
       } else {
         return(u)
       }
@@ -881,10 +900,35 @@ sim_cop_dat <- \(
       #   message("No GPD parameters supplied, assuming Laplace margins")
       #   evc:::inv_laplace_trans(u)
       # }
-      if (is.null(qargs)) {
+      # if (is.null(qargs)) {
+      #   return(do.call(qfun, list(u)))
+      # } else {
+      #   return(do.call(qfun, c(list(u), qargs)))
+      # }
+      if (!is.null(qfun) && is.null(qargs)) {
         return(do.call(qfun, list(u)))
-      } else {
+        # if marginal parameters are the same for all variables
+      } else if (!is.null(qfun) && !is.list(qargs)) {
         return(do.call(qfun, c(list(u), qargs)))
+        # if marginal parameters are different for each variable
+      } else if (!is.null(qfun) && is.list(qargs)) {
+        return(tryCatch(
+          {
+            mapply(
+              \(u, qarg) {
+                do.call(qfun, c(list(u), qarg))
+              },
+              as.list(as.data.frame(u)),
+              qargs,
+              SIMPLIFY = TRUE
+            )
+          },
+          error = function(e) {
+            browser()
+          }
+        ))
+      } else {
+        return(u)
       }
     })
     return(t_cop)

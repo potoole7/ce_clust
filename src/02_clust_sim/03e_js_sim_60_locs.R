@@ -47,6 +47,11 @@ marg_prob <- 0.9
 cond_prob <- 0.9
 conf_level <- 0.95 # confidence level for CIs in plot
 
+# parameters for MC estimation of JSGa
+n_mc <- 500 # number of MC samples
+mc_method <- "laplace_trunc2" # truncate Laplace using empirical dist quant
+laplace_cap <- 0.99 # Take 99th quantile
+
 # Number of cores to use for parallel computation
 n_cores <- detectCores() - 1
 
@@ -79,8 +84,8 @@ grid <- tidyr::crossing(
   identity()
 
 # run kl_sim_eval for each row in grid
-# n_times <- 50
-n_times <- 100
+n_times <- 200
+# n_times <- 2
 results_vec <- vector(length = n_times)
 set.seed(seed_number)
 # # test: seq w/ biggest cor diffs between clusters; should be easy to cluster
@@ -89,6 +94,7 @@ set.seed(seed_number)
 #   which(cor_t1 == 0 & cor_t2 == 0.4 & cor_t3 == 0.8)
 # )
 # results_grid <- bind_rows(mclapply(test_seq, \(i) {
+i <- j <- 1
 results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
   system(sprintf(
     'echo "\n%s\n"',
@@ -130,7 +136,12 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
         })
 
         # "true" number of clusters known from simulation design
-        js_clust(ce_fit, k = n_clust, cluster_mem = cluster_mem)
+        js_clust(
+          ce_fit,
+          trans = data_mix_trans,
+          k = n_clust, cluster_mem = cluster_mem,
+          n = n_mc, mc_method = mc_method, laplace_cap = laplace_cap
+        )
       },
       error = function(cond) {
         return(list("adj_rand" = NA))

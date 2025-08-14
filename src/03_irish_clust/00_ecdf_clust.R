@@ -1001,6 +1001,10 @@ if (!is.factor(elev_df$elev_bin)) {
 # pull just site names, counties and provinces
 county_key_df <- data |>
   distinct(name, county, province)
+readr::write_csv(
+  county_key_df,
+  "data/met_eireann/final/ire_county_key.csv"
+)
 
 # extract point location of each station for plotting on map
 pts <- data %>%

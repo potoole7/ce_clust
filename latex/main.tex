@@ -48,7 +48,6 @@
 \DeclareMathOperator{\EX}{\mathbb{E}}% expected value
 % \newcommand{\JSGa}[1]{\mathrm{JS}^{\mathrm{G}_{#1}}}
 \newcommand{\JSGa}[1]{\mathrm{JS}^{\mathrm{G}_{\alpha}}}
-
 \newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
 
 % comment to turn on TODO notes on pdf
@@ -81,6 +80,8 @@
 \todo{Tidy up maths, notation and acronyms so nothing is repeated (or different!)}
 \todo{Replace JS with upright version (same with KL) throught}
 \todo{Replace mu and sigma in CE with superscript version}
+\todo{Change uyi to ui throughout, simpler notation}
+\todo{Should G be bold!}
 
 % Writing
 \todo{Same (present), tense throughout if possible}
@@ -202,7 +203,7 @@ It does this via a semiparametric heteroskedastic regression model conditioned o
 % The CE model provides many advantages over other competing methods. 
 % It is highly flexible in the type of extremal dependence it can model, and is considered to be conceptually simple relative to other models.
 % It reduces a difficult multivariate estimation problem to a univariate problem, by individually modelling each element of the random vector, which can then be combined to form a joint model, and so is computationally efficient.
-Its conceptual simplicity, flexibility in capturing a wide range of extremal dependence structures, and computational efficiency, reducing a difficult multivariate problem to a series of univariate ones, have made it a popular choice.
+Its conceptual simplicity, flexibility in capturing a wide range of extremal/tail dependence structures, and computational efficiency, reducing a difficult multivariate problem to a series of univariate ones, have made it a popular choice.
 % It involves a robust Gaussian working assumption which facilitates efficient inference, and allows for a closed form expression for the KL divergence, between two sites, allowing for a rather simple clustering framework to be derived, as we will see in Section~\ref{subsec:div} \citep{Kullback1951}.
 % However, as with many models for extremes, which suffer from the natural
 % rarity of extreme data, the CE model is susceptible to high uncertainty in its
@@ -325,12 +326,15 @@ We begin in Section~\ref{subsec:asym_dep} by defining the concepts of asymptotic
 We then introduce the CE model in Section~\ref{subsec:ce_model}, which is used to model the joint tail behaviour of a random vector conditional on one of its components exceeding a suitably high threshold.
 We explain how inference with this model is equivalent to estimating a multivariate Gaussian distribution. 
 Section~\ref{subsec:div} describes our chosen dissimilarity measure, the $\JSGa{}$ divergence, which has analytical form when comparing Gaussian distributions, and is used to efficiently quantify the pairwise dissimilarity between CE models fit to different sites.
-Section~\ref{subsec:clustering} concerns how we perform k-medoids clustering on this dissimilarity measure, and how the number of clusters is selected.
-Finally, in Section~\ref{subsec:estimation} we describe some of the computational details which are important for estimating the CE model and computing the $\JSGa{}$ divergence.
+Finally, Section~\ref{subsec:clustering} concerns how we perform k-medoids clustering on this dissimilarity measure, and how the number of clusters is selected, to identify sites with similar tail dependence structures.
+% Finally, in Section~\ref{subsec:estimation} we describe some of the computational details which are important for estimating the CE model and computing the $\JSGa{}$ divergence.
 
 \subsection{Asymptotic dependence}~\label{subsec:asym_dep}
 
-To characterise extremal dependence, we first introduce the concepts of asymptotic dependence and independence, as described in \citet{Coles1999}.
+\todo{Need to distinguish between asymptotic and extremal/tail dependence}
+\todo{Use extremal and tail dependence interchangeably? Or just extremal dependence?}
+
+To characterise tail dependence, we first introduce the concepts of asymptotic dependence and independence, as described in \citet{Coles1999}.
 % The coefficient of asymptotic dependence, $\chi \in [0, 1]$, measures the degree of asymptotic dependence between two random variables $X_1$ and $X_2$ with corresponding CDFs $F_1$ and $F_2$, under the class of asymptotically dependent distributions.
 The coefficient of asymptotic dependence, $\chi \in [0, 1]$, measures the degree of extremal dependence between two random variables $X_1$ and $X_2$ with corresponding distribution functions $F_1$ and $F_2$, and is given by % , under the class of asymptotically dependent distributions, and is given by 
 % It is defined as $\chi = \lim_{u \rightarrow 1}{\chi(u)}$, where
@@ -382,11 +386,19 @@ One such model which provides a flexible framework for describing tail dependenc
 % increase v" (Rohrbeck and Tawn)
 
 % Transformation
- The CE model, like many other models for multivariate extremes, uses a marginal transformation.
- Standardising to common margins is a widespread technique to ensure differences in variable scale do not affect estimation of the dependence structure. 
- A popular choice for CE is to transform to Laplace margins, as introduced in \citet{Keef2013}.
- We will denote our transformed random variables by $Y_i$, where $Y_i$ is the transformed version of the marginal random variable $X_i$.
- Each marginal random variable $X_i$ is transformed to Laplace margins, as outlined in equation~\eqref{eq:laplace}, and thereafter denoted by $Y_i$.
+The CE model, like many other models for multivariate extremes, requires a marginal transformation.
+Standardising to common margins is a widespread technique to ensure differences in variable scale do not affect estimation of the dependence structure. 
+A popular choice for CE is to transform to Laplace margins, as introduced in \citet{Keef2013}.
+% Each marginal random variable $X_i$ is transformed to Laplace margins, as outlined in equation~\eqref{eq:laplace}, and thereafter denoted by $Y_i$.
+To transform each marginal random variable $X_i$ to Laplace margins, denoted by $Y_i$, we let:
+ \begin{equation}~\label{eq:laplace}
+   Y_i = \begin{cases}
+     \log\left\{2F_{X_i}(X_i)\right\} &\text{ for } X_i < F_{X_i}^{-1}(0.5), \\
+     -\log\left\{2(1 - F_{X_i}(X_i))\right\} &\text{ for } X_i \ge F_{X_i}^{-1}(0.5), \\
+   \end{cases}
+ \end{equation}
+ \todo{trying to be brief, but would like to have quick line about why we use Laplace!}
+ where $F_{X_i}$ is the cumulative distribution function (CDF) of $X_i$. 
 
 % Rigorous Conditional Extremes definition
 % \begin{itemize}
@@ -588,92 +600,93 @@ Specifically, the TWGSS is defined as
     where $d_{ij}$ is the dissimilarity between site $j$ and the centroid of cluster $i$, which we measure using the $JS^{G_{\alpha}}$ divergence defined in section \ref{subsec:div}, and $n_i$ is the number of observations in cluster $i$.
 We then plot $\mathrm{TWGSS}(k)$ vs.\ $k$, and choose $k^*$, the optimal number of clusters, as the value of $k$ at which the TWGSS reduction sharply slows, or equivalently, the point at which the curve has an ``elbow''.
 
-\subsection{Estimation}~\label{subsec:estimation}
-
-\todo{What to put in this section? Anything that hurts our narrative flow?}
-\todo{How complicated do I need things?}
-\todo{Rewrite these sections, just copied in here}
-
-% Laplace transformation
-% Each marginal random variable $X_i$ is transformed to Laplace margins, whereby it is denoted by $Y_i$, using the following transformation:
-Each marginal random variable $X_i$ is transformed to standard Laplace margins, whereby it is denoted by $Y_i$, using the following transformation: \todo{see Keef, Heff for more succint description}
- \begin{equation}~\label{eq:laplace}
-   Y_i = \begin{cases}
-     \log\left\{2F_{X_i}(X_i)\right\} &\text{ for } X_i < F_{X_i}^{-1}(0.5), \\
-     -\log\left\{2(1 - F_{X_i}(X_i))\right\} &\text{ for } X_i \ge F_{X_i}^{-1}(0.5), \\
-   \end{cases}
- \end{equation}
- where $F_{X_i}$ is the cumulative distribution function (CDF) of $X_i$.
- % \item The Laplace distribution specifically is chosen for its doubly exponential tails, each with mean 1. \todo{More formal?}
- % \item The Laplace distribution specifically is chosen as both its tails are exponential.
- % \item More formally, for any $u > 0$, the distributions of $Y_i - u \mid Y_i > u$ and $(-Y_i + u) \mid Y_i \le -u$ are exponential with mean 1. 
- % \item This ensures that the model for the upper and lower tails, corresponding to positive and negative dependence, is of the same, simple form, namely that of a heteroskedastic regression model.
- % \item Also, the tails of the Laplace distribution converge faster to a non-degenerate distribution as we increase the number of variables in the model, which makes it effective for modelling extremes \citep{Rohrbeck2024-jm}.
-
-% JSGa form
- For two multivariate normals, \citet{Nielsen2019} shows that the $\JSGa{}$ divergence introduced in equation~\eqref{eq:js_norm} has the closed form solution
-\begin{align*}~\label{eq:js_norm_mvn}
-  JS^{G_{\alpha}}(P \mid\mid Q) &= \frac{1}{2} \left( (1 - \alpha) \mu_1^T \Sigma_1^{-1} \mu_1 + \alpha \mu_2^T \Sigma_2^{-1} \mu_2 - \mu_{\alpha}^T \Sigma_{\alpha}^{-1} \mu_{\alpha} + \log{\left( \frac{\abs{\Sigma_1}^{1-\alpha} \abs{\Sigma_2}^{\alpha}}{\abs{\Sigma_{\alpha}}} \right)} \right), \\
-  \Sigma_{\alpha} &= \left( (1 - \alpha) \Sigma_1^{-1} + \alpha \Sigma_2^{-1} \right)^{-1}, \\
-  \mu_{\alpha} &= \Sigma_{\alpha} \left( (1 - \alpha) \Sigma_1^{-1} \mu_1 + \alpha \Sigma_2^{-1} \mu_2 \right), \numberthis~\label{eq:js_norm_mvn1}
-\end{align*} 
-where:
-\begin{itemize}
-  \item $\mu_1 = (\mu_{1,1}, \mu_{1,2}, \ldots, \mu_{1,n})^\top$ and $\mu_2 = (\mu_{2,1}, \mu_{2,2}, \ldots, \mu_{2,n})^\top$ are the mean vectors,
-  \item $\Sigma_1 = \text{diag}(\sigma_{1,1}^2, \sigma_{1,2}^2, \ldots, \sigma_{1,n}^2)$ and $\Sigma_2 = \text{diag}(\sigma_{2,1}^2, \sigma_{2,2}^2, \ldots, \sigma_{2,n}^2)$ are diagonal covariance matrices, \todo{Are they diagonal??}
-  \item $\sigma_{1,i}^2$ and $\sigma_{2,i}^2$ denote the $i$-th diagonal element of $\Sigma_1$ and $\Sigma_2$, respectively.
-\end{itemize}
-
-\todo{Need to keep?}
-For diagonal covariance matrices, \citet{Thiagarajan2025} show that this simplifies to
-\todo{Double check about dash in Thiagarajan formula, also check for backwards JSGa use}
-\todo{Double check this formula is correct (R should give same output as above non-diagonal method)}
-\todo{Standardise use of brackets, varies a lot}
-% \begin{align*}
-%   JS-G(P \mid \mid Q) = \frac{1}{2} \sum^n_{i=1} \left[ \frac{\alpha \sigma_{1, i}^2 + (1-\alpha)\sigma_{2, i}^2}{\sigma_{\alpha, i}^2} + \log{\left( \frac{\sigma_{\alpha, i}^2}{\sigma_{1, i}^{(2\alpha)}\sigma_{2, i}^{2(1 - \alpha)}} \right)} + \alpha \frac{(\mu_{\alpha, i} - \mu_{1, i})^2}{\sigma_{\alpha, i}^2} + (1 - \alpha) \frac{(\mu_{\alpha, i} - \mu_{2, i})^2}{\sigma_{\alpha, i}^2} -1 \right],
-% \end{align*}
-\todo{Should I use a different notation here, since I also use mu, sigma for the CE model?}
-\begin{align}~\label{eq:js_norm_mvn_diag}
-JS^{G_{\alpha}}(P \mid\mid Q) = \frac{1}{2} \sum_{i=1}^n \Bigg[
-    & \frac{\alpha \sigma_{1,i}^2 + (1 - \alpha) \sigma_{2,i}^2}{\sigma_{\alpha,i}^2} 
-    + \log\left( \frac{\sigma_{\alpha,i}^2}{\sigma_{1,i}^{2\alpha} \sigma_{2,i}^{2(1 - \alpha)}} \right) \nonumber \\
-    & + \alpha \frac{(\mu_{\alpha,i} - \mu_{1,i})^2}{\sigma_{\alpha,i}^2} 
-    + (1 - \alpha) \frac{(\mu_{\alpha,i} - \mu_{2,i})^2}{\sigma_{\alpha,i}^2}
-    - 1 \Bigg],
-\end{align}
-where $\sigma_{\alpha, i}^2 = \frac{\sigma_{1, i}^2 \sigma_{2, i}^2}{\alpha\sigma_{1, i}^2 + (1 - \alpha)\sigma_{2, i}^2}$, and $\mu_{\alpha, i} = \sigma_{\alpha, i}^2 \left( \frac{\alpha\mu_{1, i}}{\sigma_{1, i}^2} + \frac{(1 - \alpha) \mu_{2, i}}{\sigma_{2, i}^2} \right)$, respectively.
-
-% Integral plan
-\begin{itemize}
-  \item Integral given in equation~\eqref{eq:js_integral} gives us the $\JSGa{}$ dissimilarity between CE models $P$ and $Q$ averaged over the marginal distribution of $Y_i \mid Y_i > u$.
-  \item Since $Y_i$ follows a standard Laplace distribution, by memorylessness its tail values $Y_i \mid Y_i > u$ follow a standard exponential distribution. \todo{Express more mathematically?} 
-  \item Therefore, we can use a simple MC method to estimate this integral as
-    \todo{Switch to E hat?}
-    \begin{align}
-      \int_{u}^\infty JS^{G_{\alpha}}(P(y_i) \mid\mid Q(y_i)) f(y_i) \mathrm{d}y_i &\approx \frac{1}{N} \sum_{j=1}^{N} JS^{G_{\alpha}}(P(y_i) \mid\mid Q(y_i)),
-    \end{align}
-  for $N$ samples. 
-  \item However, in estimation, we want to be careful about sampling points too far into the tail. 
-  \item Such values may introduce numerical instability into our divergence calculations.
-  \item Furthermore, we also want to be careful about performing significant extrapolation from the data with which our CE models were fitted. 
-    \todo{May want to switch to parameterising using Laplace quantiles, not exponential!}
-  % \item Therefore, we sample our values of $y_i$ from the truncated Laplace distribution, with the truncation quantile $q_{Laplace}$. \todo{truncation point (currently) comes from exponential distribution, may have to rewrite}
-  \item Therefore, we sample our values of $y_i$ from the truncated Laplace distribution, truncated above by the $p$-th quantile of the standard exponential distribution, $Q_{Exp(1)}(p)$. \todo{Change to Laplace quantile to match u! Also set quantile to some variable}
-  \item Our MC method follows the simple alternating scheme for $N$ samples of
-    \begin{enumerate}
-      \item Simulating $y_i \sim truncLaplace(0, 1; u, u + Q_{Exp(1)}(p))$, \todo{ugly}
-      \item Calculating $\JSGa{P(y_i) \mid \mid Q(y_i)}$ using equation \eqref{eq:js_norm_mvn1}.
-    \end{enumerate}
-    before averaging over the $N$ samples to estimate the integral in equation~\eqref{eq:js_integral}.
-\end{itemize}
-
-% Estimating the integral 
-% To estimate the integral in Section~\ref{subsec:div}, we use a Monte Carlo method, where we sample $N$ values from the distribution of $Y_i \mid Y_i > u_{Y_i}$, and estimate the integral as
-% \begin{equation}~\label{eq:mc_integral}
-%   \int_{u}^\infty JS^{G_{\alpha}}(P(y_i) \mid\mid Q(y_i)) f(y_i) \mathrm{d}y_i \approx \frac{1}{N} \sum_{j=1}^{N} JS^{G_{\alpha}}(P(y_j) \mid\mid Q(y_j)),
-% \end{equation}
-
-
+% \subsection{Estimation}~\label{subsec:estimation}
+% 
+% \todo{What to put in this section? Anything that hurts our narrative flow?}
+% \todo{How complicated do I need things?}
+% \todo{Rewrite these sections, just copied in here}
+% 
+% % Laplace transformation
+% % Each marginal random variable $X_i$ is transformed to Laplace margins, whereby it is denoted by $Y_i$, using the following transformation:
+% % Each marginal random variable $X_i$ is transformed to standard Laplace margins, whereby it is denoted by $Y_i$, using the following transformation: \todo{see Keef, Heff for more succint description}
+% As mentioned in Section~\ref{subsec:ce_model}, we transform each original marginal random variable $X_i$ to standard Laplace margins, whereby it is denoted by $Y_i$.
+% % To transform the original marginal random variable $X_i$ to Laplace margins, we let 
+% To tranform each $X_i$ to Laplace margins, we let
+%  \begin{equation}~\label{eq:laplace}
+%    Y_i = \begin{cases}
+%      \log\left\{2F_{X_i}(X_i)\right\} &\text{ for } X_i < F_{X_i}^{-1}(0.5), \\
+%      -\log\left\{2(1 - F_{X_i}(X_i))\right\} &\text{ for } X_i \ge F_{X_i}^{-1}(0.5), \\
+%    \end{cases}
+%  \end{equation}
+%  where $F_{X_i}$ is the cumulative distribution function (CDF) of $X_i$.
+%  % \item The Laplace distribution specifically is chosen for its doubly exponential tails, each with mean 1. \todo{More formal?}
+%  % \item The Laplace distribution specifically is chosen as both its tails are exponential.
+%  % \item More formally, for any $u > 0$, the distributions of $Y_i - u \mid Y_i > u$ and $(-Y_i + u) \mid Y_i \le -u$ are exponential with mean 1. 
+%  % \item This ensures that the model for the upper and lower tails, corresponding to positive and negative dependence, is of the same, simple form, namely that of a heteroskedastic regression model.
+%  % \item Also, the tails of the Laplace distribution converge faster to a non-degenerate distribution as we increase the number of variables in the model, which makes it effective for modelling extremes \citep{Rohrbeck2024-jm}.
+% 
+% % JSGa form
+%  For two multivariate normals, \citet{Nielsen2019} shows that the $\JSGa{}$ divergence introduced in equation~\eqref{eq:js_norm} has the closed form solution
+% \begin{align*}~\label{eq:js_norm_mvn}
+%   JS^{G_{\alpha}}(P \mid\mid Q) &= \frac{1}{2} \left( (1 - \alpha) \mu_1^T \Sigma_1^{-1} \mu_1 + \alpha \mu_2^T \Sigma_2^{-1} \mu_2 - \mu_{\alpha}^T \Sigma_{\alpha}^{-1} \mu_{\alpha} + \log{\left( \frac{\abs{\Sigma_1}^{1-\alpha} \abs{\Sigma_2}^{\alpha}}{\abs{\Sigma_{\alpha}}} \right)} \right), \\
+%   \Sigma_{\alpha} &= \left( (1 - \alpha) \Sigma_1^{-1} + \alpha \Sigma_2^{-1} \right)^{-1}, \\
+%   \mu_{\alpha} &= \Sigma_{\alpha} \left( (1 - \alpha) \Sigma_1^{-1} \mu_1 + \alpha \Sigma_2^{-1} \mu_2 \right), \numberthis~\label{eq:js_norm_mvn1}
+% \end{align*} 
+% where:
+% \begin{itemize}
+%   \item $\mu_1 = (\mu_{1,1}, \mu_{1,2}, \ldots, \mu_{1,n})^\top$ and $\mu_2 = (\mu_{2,1}, \mu_{2,2}, \ldots, \mu_{2,n})^\top$ are the mean vectors,
+%   \item $\Sigma_1 = \text{diag}(\sigma_{1,1}^2, \sigma_{1,2}^2, \ldots, \sigma_{1,n}^2)$ and $\Sigma_2 = \text{diag}(\sigma_{2,1}^2, \sigma_{2,2}^2, \ldots, \sigma_{2,n}^2)$ are diagonal covariance matrices, \todo{Are they diagonal??}
+%   \item $\sigma_{1,i}^2$ and $\sigma_{2,i}^2$ denote the $i$-th diagonal element of $\Sigma_1$ and $\Sigma_2$, respectively.
+% \end{itemize}
+% 
+% \todo{Need to keep?}
+% For diagonal covariance matrices, \citet{Thiagarajan2025} show that this simplifies to
+% \todo{Double check about dash in Thiagarajan formula, also check for backwards JSGa use}
+% \todo{Double check this formula is correct (R should give same output as above non-diagonal method)}
+% \todo{Standardise use of brackets, varies a lot}
+% % \begin{align*}
+% %   JS-G(P \mid \mid Q) = \frac{1}{2} \sum^n_{i=1} \left[ \frac{\alpha \sigma_{1, i}^2 + (1-\alpha)\sigma_{2, i}^2}{\sigma_{\alpha, i}^2} + \log{\left( \frac{\sigma_{\alpha, i}^2}{\sigma_{1, i}^{(2\alpha)}\sigma_{2, i}^{2(1 - \alpha)}} \right)} + \alpha \frac{(\mu_{\alpha, i} - \mu_{1, i})^2}{\sigma_{\alpha, i}^2} + (1 - \alpha) \frac{(\mu_{\alpha, i} - \mu_{2, i})^2}{\sigma_{\alpha, i}^2} -1 \right],
+% % \end{align*}
+% \todo{Should I use a different notation here, since I also use mu, sigma for the CE model?}
+% \begin{align}~\label{eq:js_norm_mvn_diag}
+% JS^{G_{\alpha}}(P \mid\mid Q) = \frac{1}{2} \sum_{i=1}^n \Bigg[
+%     & \frac{\alpha \sigma_{1,i}^2 + (1 - \alpha) \sigma_{2,i}^2}{\sigma_{\alpha,i}^2} 
+%     + \log\left( \frac{\sigma_{\alpha,i}^2}{\sigma_{1,i}^{2\alpha} \sigma_{2,i}^{2(1 - \alpha)}} \right) \nonumber \\
+%     & + \alpha \frac{(\mu_{\alpha,i} - \mu_{1,i})^2}{\sigma_{\alpha,i}^2} 
+%     + (1 - \alpha) \frac{(\mu_{\alpha,i} - \mu_{2,i})^2}{\sigma_{\alpha,i}^2}
+%     - 1 \Bigg],
+% \end{align}
+% where $\sigma_{\alpha, i}^2 = \frac{\sigma_{1, i}^2 \sigma_{2, i}^2}{\alpha\sigma_{1, i}^2 + (1 - \alpha)\sigma_{2, i}^2}$, and $\mu_{\alpha, i} = \sigma_{\alpha, i}^2 \left( \frac{\alpha\mu_{1, i}}{\sigma_{1, i}^2} + \frac{(1 - \alpha) \mu_{2, i}}{\sigma_{2, i}^2} \right)$, respectively.
+% 
+% % Integral plan
+% \begin{itemize}
+%   \item Integral given in equation~\eqref{eq:js_integral} gives us the $\JSGa{}$ dissimilarity between CE models $P$ and $Q$ averaged over the marginal distribution of $Y_i \mid Y_i > u$.
+%   \item Since $Y_i$ follows a standard Laplace distribution, by memorylessness its tail values $Y_i \mid Y_i > u$ follow a standard exponential distribution. \todo{Express more mathematically?} 
+%   \item Therefore, we can use a simple MC method to estimate this integral as
+%     \todo{Switch to E hat?}
+%     \begin{align}
+%       \int_{u}^\infty JS^{G_{\alpha}}(P(y_i) \mid\mid Q(y_i)) f(y_i) \mathrm{d}y_i &\approx \frac{1}{N} \sum_{j=1}^{N} JS^{G_{\alpha}}(P(y_i) \mid\mid Q(y_i)),
+%     \end{align}
+%   for $N$ samples. 
+%   \item However, in estimation, we want to be careful about sampling points too far into the tail. 
+%   \item Such values may introduce numerical instability into our divergence calculations.
+%   \item Furthermore, we also want to be careful about performing significant extrapolation from the data with which our CE models were fitted. 
+%     \todo{May want to switch to parameterising using Laplace quantiles, not exponential!}
+%   % \item Therefore, we sample our values of $y_i$ from the truncated Laplace distribution, with the truncation quantile $q_{Laplace}$. \todo{truncation point (currently) comes from exponential distribution, may have to rewrite}
+%   \item Therefore, we sample our values of $y_i$ from the truncated Laplace distribution, truncated above by the $p$-th quantile of the standard exponential distribution, $Q_{Exp(1)}(p)$. \todo{Change to Laplace quantile to match u! Also set quantile to some variable}
+%   \item Our MC method follows the simple alternating scheme for $N$ samples of
+%     \begin{enumerate}
+%       \item Simulating $y_i \sim truncLaplace(0, 1; u, u + Q_{Exp(1)}(p))$, \todo{ugly}
+%       \item Calculating $\JSGa{P(y_i) \mid \mid Q(y_i)}$ using equation \eqref{eq:js_norm_mvn1}.
+%     \end{enumerate}
+%     before averaging over the $N$ samples to estimate the integral in equation~\eqref{eq:js_integral}.
+% \end{itemize}
+% 
+% % Estimating the integral 
+% % To estimate the integral in Section~\ref{subsec:div}, we use a Monte Carlo method, where we sample $N$ values from the distribution of $Y_i \mid Y_i > u_{Y_i}$, and estimate the integral as
+% % \begin{equation}~\label{eq:mc_integral}
+% %   \int_{u}^\infty JS^{G_{\alpha}}(P(y_i) \mid\mid Q(y_i)) f(y_i) \mathrm{d}y_i \approx \frac{1}{N} \sum_{j=1}^{N} JS^{G_{\alpha}}(P(y_j) \mid\mid Q(y_j)),
+% % \end{equation}
 
 
 \section{Simulation study}~\label{sec:sim}

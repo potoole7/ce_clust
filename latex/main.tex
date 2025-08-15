@@ -81,7 +81,8 @@
 \todo{Replace JS with upright version (same with KL) throught}
 \todo{Replace mu and sigma in CE with superscript version}
 \todo{Change uyi to ui throughout, simpler notation}
-\todo{Should G be bold!}
+% \todo{G should be bold!}
+\todo{Replace backslash with setminus}
 
 % Writing
 \todo{Same (present), tense throughout if possible}
@@ -454,24 +455,33 @@ The distribution $\bm{G}_{\mid i}$ is non-degenerate on $\mathbb{R}^{d-1}$ and, 
 Equation~\eqref{eq:ce_joint_limit} implies that, in the limit $u_i\to\infty$, the exceedances $Y_i-u_i$ and the standardised residuals $\bm{Z}_{\mid i} = \frac{\bm{Y}_{-i} - \bm{\alpha}_{\mid i} Y_{i}}{Y_{i}^{\bm{\beta}_{\mid i}}}$, where $\bm{Z}_{\mid i} \sim \bm{G}_{\mid i}$, are asymptotically independent.
 
 % Heteroskedastic regression
-The limiting distribution in equation~\eqref{eq:ce_limiting_dist} can be rearranged to give the heteroskedastic regression equation defined by
+% The limiting distribution in equation~\eqref{eq:ce_limiting_dist} can be written as a heteroskedastic regression equation defined by
+The limiting distribution in equation~\eqref{eq:ce_limiting_dist} can be expressed as a heteroskedastic regression equation, defined by
+\todo{Should we be explicit that the equals here really should be an equality in distribution?}
 \begin{equation}~\label{eq:ce_model}
-    % \bm{Y}_{-i} \bm{\alpha}_{\mid i}\bm{y}_i + \bm{y}_i^{\bm{\beta}_{\mid i}}\bm{Z}_{\mid i}, \text{ for } Y_i = y_i > u_{Y_i}.
-  \bigl(\bm{Y}_{-i} \mid Y_i = y_i \bigr) = \bm{\alpha}_{\mid i}\bm{y}_i + \bm{y}_i^{\bm{\beta}_{\mid i}}\bm{Z}_{\mid i}, \text{ for } y_i > u_{Y_i}.
+  \bigl(\bm{Y}_{-i} \mid Y_i = y_i \bigr) = \bm{\alpha}_{\mid i}\bm{y}_i + \bm{y}_i^{\bm{\beta}_{\mid i}}\bm{Z}_{\mid i}, \text{ for } y_i > u_{Y_i},
 \end{equation}
-% with residual vector $\bm{Z}_{\mid i} \sim \bm{G}_{\mid i}$.
+with residual vector $\bm{Z}_{\mid i} \sim \bm{G}_{\mid i}$.
 The slope or linear regression coefficient $\bm{\alpha}_{\mid i} \in [-1, 1]$ describes the strength of association between $Y_{-i}$ and large $Y_i$. 
 % \item $\bm{\beta}_{\mid i} \in [-\infty, 1]$ can be interpretated as a ``spread'' parameter, controlling the levels of heteroskedasticity in the model.
-The parameter $\bm{\beta}_{\mid i} \in [-\infty, 1]$ can be interpreted as a ``spread'' or heteroskedastic parameter, controlling the impact of the residual term $\bm{Z}_{\mid i}$ on the dependence between $\bm{Y}_{-i}$ and $\bm{Y}_i$.
-Higher values of $\bm{\beta}_{\mid i}$ indicate that the distribution of $Y_{-i}$ is more spread out for larger values of $Y_i$, while lower values indicate a more strongly deterministic relationship. 
+\item $\bm{\beta}_{\mid i} \in [-\infty, 1]$ can be loosely interpreted as a ``spread'' parameter, controlling the levels of heteroskedasticity in the model.
   % \item Several choices for $\bm{G}_{\mid i}$, the distribution of $\bm{Z}_{\mid i}$, were proposed in \citet{Heffernan2004}, before ultimately settling on a multivariate normal distribution with vector nuisance parameters $\bm{\mu}_{\mid i} \in \mathbb{R}^{(d-1)}$ and $\bm{\sigma}_{\mid i} \in \mathbb{R}^{(d-1)}$.
-The distribution of $\bm{Z}_{\mid i}$, the residuals of the model, is assumed to be multivariate normal with vector nuisance parameters $\bm{\mu}_{\mid i} \in \mathbb{R}^{(d-1)}$ and $\bm{\sigma}_{\mid i} \in \mathbb{R}^{(d-1)}$, as proposed in \citet{Heffernan2004}.
-\todo{Jordan says that below isn't quite right, focus on components!}
-Some special cases of the CE model are:
+% The distribution of $\bm{Z}_{\mid i}$, the residuals of the model, is assumed to be multivariate normal with vector nuisance parameters $\bm{\mu}_{\mid i} \in \mathbb{R}^{(d-1)}$ and $\bm{\sigma}_{\mid i} \in \mathbb{R}^{(d-1)}$.
+% \todo{Jordan says that below isn't quite right, focus on components!}
+% Some special cases of the CE model are:
+% \begin{itemize}
+%   \item $\bm{\alpha}_{\mid i} = 0, \bm{\beta}_{\mid i} = 0$, for which we have perfect independence between $Y_i$ and $Y_{-i}$.
+%   \item $\bm{\alpha}_{\mid i} = 0, \bm{\beta}_{\mid i} = 0$, for which we have perfect independence between $Y_i$ and $Y_{-i}$.
+%   \item $\bm{\alpha}_{\mid i} = -1(+1), \bm{\beta}_{\mid i} = 0$, which corresponds to perfect positive/negative dependence, 
+%   \item $-1 < \bm{\alpha}_{\mid i} < 1$, which suggests asymptotic independence between $Y_{-i}$ and large $Y_{i}$.
+% \end{itemize}
+% The values $\bm{\alpha}_{j \mid i}$ and $\bm{\beta}_{j \mid i}$ for $j \ne i$ are the components of the vectors $\bm{\alpha}_{\mid i}$ and $\bm{\beta}_{\mid i}$ corresponding to the variable $Y_j$, $j \in \{1,\ldots,d\}\setminus\{i\}$. % Defined so next bit makes sense
+  Some special componentwise special cases (for each $j\in\{1,\ldots,d\}\setminus\{i\}$) of the CE model are:
 \begin{itemize}
-  \item $\bm{\alpha}_{\mid i} = 0, \bm{\beta}_{\mid i} = 0$, for which we have perfect independence between $Y_i$ and $Y_{-i}$.
-  \item $\bm{\alpha}_{\mid i} = -1(+1), \bm{\beta}_{\mid i} = 0$, which corresponds to perfect positive/negative dependence, 
-  \item $-1 < \bm{\alpha}_{\mid i} < 1$, which suggests asymptotic independence between $Y_{-i}$ and large $Y_{i}$.
+  \item $\bm{\alpha}_{j \mid i} = 0, \bm{\beta}_{j \mid i} = 0$, for which we have perfect independence between $Y_j$ and large $Y_i$.
+  \item $\bm{\alpha}_{j \mid i} = 0, \bm{\beta}_{j \mid i} = 0$, for which we have perfect independence,
+  \item $\bm{\alpha}_{j \mid i} = -1(+1), \bm{\beta}_{j \mid i} = 0$, which corresponds to perfect positive/negative dependence,
+  \item $-1 < \bm{\alpha}_{j \mid i} < 1$, which suggests asymptotic independence between $Y_j$ and large $Y_i$, with dependence weakening as $Y_i \to \infty$. 
 \end{itemize}
 
 \subsection{Divergence metric}~\label{subsec:div}
@@ -480,14 +490,22 @@ Some special cases of the CE model are:
 
 % Intro: CE gives distributions, which need to be compared
 \todo{Keep here, or move to last section?}
-\citet{Heffernan2004} shows that inference can be made about the extremal dependence of a random vector $\bm{Y}_{-i} = \bm{Y} \backslash Y_i$ on $Y_i$ by conditioning on the exceedance of a high threshold $u$ by $Y_i$, and assuming that this conditional distribution is a diagonal multivariate Gaussian distribution: % with vector mean and standard deviation:
+The residual process $\bm{Z}_{\mid i}$ of the model in equation~\eqref{eq:ce_model} is assumed to follow a multivariate Gaussian distribution with vector nuisance parameters $\bm{\mu}_{\mid i} \in \mathbb{R}^{(d-1)}$ and $\bm{\sigma}_{\mid i} \in \mathbb{R}^{(d-1)}$.
+\todo{Heff04 assumes diagonal sigma, should we say we use full covariance?}
+% This is a working assumption proposed in \citet{Heffernan2004} after testing several candidate distributions. %, and is still most commonly used in the literature \todo{citations?}
+% This is the key assumption of the CE model on which we derive our divergence metric, and was chosen in \citet{Heffernan2004} after testing several candidate distributions.
+This is the key aspect of the CE model with which we derive our divergence metric, and is a working assumption chosen in \citet{Heffernan2004} after testing several candidate distributions.
+
+% \citet{Heffernan2004} shows that inference can be made about the extremal dependence of a random vector $\bm{Y}_{-i} = \bm{Y} \backslash Y_i$ on $Y_i$ by conditioning on the exceedance of a high threshold $u$ by $Y_i$, and assuming that this conditional distribution is a diagonal multivariate Gaussian distribution: % with vector mean and standard deviation:
+An important consequence which follows from this assumption is that inference can be made about the extremal dependence of a random vector $\bm{Y}_{-i} = \bm{Y} \setminus \{Y_i\}$ on $Y_i$ by conditioning on the exceedance of a high threshold $u_i$ by $Y_i$, and assuming that this conditional distribution is a multivariate Gaussian distribution, i.e.\ 
 \begin{equation}~\label{eq:ce_norm}
-  \bigl( \bm{Y}_{-i} \mid Y_i  = y_i \bigr) \sim N\left(\bm{\alpha}_{\mid i} y_i + y_i^{\bm{\beta}_i} \bm{\mu}_{\mid i}, y_i^{\bm{\beta}_i} \bm{\sigma_{\mid i}}\right), Y_i > u,
+  \bigl( \bm{Y}_{-i} \mid Y_i  = y_i \bigr) \sim N\left(\bm{\alpha}_{\mid i} y_i + y_i^{\bm{\beta}_i} \bm{\mu}_{\mid i}, y_i^{\bm{\beta}_i} \bm{\sigma_{\mid i}}\right), Y_i > u_i,
   % Y_{j} \mid Y_{i} = y_i \sim N\left(\alpha_{j \mid i} y_i + y_i^{\beta_i} \mu_{j \mid i}, y_i^{\beta_i} \sigma_{j \mid i}\right),
 \end{equation}
 where $\bm{\alpha}_{\mid i}, \bm{\beta}_{\mid i}, \bm{\mu}_{\mid i}, \bm{\sigma}_{\mid i} \in \mathbb{R}^{(d-1)}$ are the parameters of the CE model.
 % Therefore, when seeking to compare the extremal dependence structure of two locations, a sensible approach is to compare the conditional distributions given by equation~\ref{eq:ce_norm} for each variable at both sites. 
-Therefore, under this model, when comparing the extremal dependence structure between variables at any given sites, we are effectively comparing the conditional distributions given by equation~\eqref{eq:ce_norm}.
+% Therefore, under this model, when comparing the extremal dependence structure between variables at any given sites, we are effectively comparing the conditional distributions given by equation~\eqref{eq:ce_norm}.
+Therefore, under this model, when comparing the multivariate tail dependence structure at different sites, we are effectively comparing the conditional distributions given by equation~\eqref{eq:ce_norm}.
 
 % Introduce KL divergence 
 One common measure of dissimilarity between two distributions $P$ and $Q$ is the Kullback-Leibler (KL) divergence, defined as

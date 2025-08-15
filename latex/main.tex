@@ -316,11 +316,19 @@ A simulation study is described and performed in Section~\ref{sec:sim}, to compa
 In Section~\ref{sec:application}, we apply our clustering framework to Irish meteorological data, and show how it can be used to identify sites with similar tail dependence structures between precipitation and wind speed.
 Finally, Section~\ref{sec:discuss} contains a discussion of our findings, including the limitations of our method and potential future work.
 
-\section{Methodology} \label{sec:method} 
+\section{Methodology}~\label{sec:method}
 \todo{Split this into different full sections, since we are doing methods paper?}
 % \subsection{Peaks-over-threshold}
 
-\subsection{Asymptotic dependence} \label{subsec:asym_dep}
+In this Section, we introduce our clustering framework for CE models.
+We begin in Section~\ref{subsec:asym_dep} by defining the concepts of asymptotic dependence and independence, which are used to characterise extremal dependence.
+We then introduce the CE model in Section~\ref{subsec:ce_model}, which is used to model the joint tail behaviour of a random vector conditional on one of its components exceeding a suitably high threshold.
+We explain how inference with this model is equivalent to estimating a multivariate Gaussian distribution. 
+Section~\ref{subsec:div} describes our chosen dissimilarity measure, the $\JSGa{}$ divergence, which has analytical form when comparing Gaussian distributions, and is used to efficiently quantify the pairwise dissimilarity between CE models fit to different sites.
+Section~\ref{subsec:clustering} concerns how we perform k-medoids clustering on this dissimilarity measure, and how the number of clusters is selected.
+Finally, in Section~\ref{subsec:estimation} we describe some of the computational details which are important for estimating the CE model and computing the $\JSGa{}$ divergence.
+
+\subsection{Asymptotic dependence}~\label{subsec:asym_dep}
 
 To characterise extremal dependence, we first introduce the concepts of asymptotic dependence and independence, as described in \citet{Coles1999}.
 % The coefficient of asymptotic dependence, $\chi \in [0, 1]$, measures the degree of asymptotic dependence between two random variables $X_1$ and $X_2$ with corresponding CDFs $F_1$ and $F_2$, under the class of asymptotically dependent distributions.
@@ -360,7 +368,7 @@ For this, we require a model for extremal dependence.
 % A framework which provides a more flexible approach to modelling extremal dependence is the CE model of \citet{Heffernan2004}.
 A framework which provides a flexible approach to modelling extremal dependence is the CE model of \citet{Heffernan2004}. 
 
-\subsection{Conditional extremes}
+\subsection{Conditional extremes}~\label{subsec:ce_model}
 
 % See Jordan's paper for quick summary (TFR a bit long winded) (and Keef)
 % Need to talk about marginals, transformations and then model itself
@@ -383,7 +391,7 @@ A framework which provides a flexible approach to modelling extremal dependence 
 %   \todo{Replace with defition that has alpha and beta instead of a and b (like in Jordan's paper)}
 %   \todo{Need to define Y -1, and also what alpha mid i is}
 %   \item The conditional extremes model of \citet{Heffernan2004} assumes that there exists vector normalising functions $\bm{a}_{\mid i}(y_i),\bm{b}_{\mid i}(y_i), \in \mathbb{R} \rightarrow \mathbb{R}^{(d-1)}$ such that for fixed $\bm{z}_{\mid i}$,
-%   % \begin{equation} \label{eq:ce_limiting_dist}
+%   % \begin{equation}~\label{eq:ce_limiting_dist}
 %   %       \lim_{y_i \rightarrow \infty}\{\mathbb{P}(\bm{Y}_{-i} \le \bm{a}_{\mid i}(y_i) + \bm{b}_{\mid i}(y_i)\bm{z}_{\mid i} \mid Y_i = y_i)\} = \bm{G}_{\mid i}(\bm{z}_{\mid i}),
 %   % \end{equation}
 %   where $G_{j \mid i}$ is non-degenerate for all $j \ne i$. 
@@ -395,7 +403,7 @@ A framework which provides a flexible approach to modelling extremal dependence 
  %   some mass to be at $-\infty$, in order to ensure uniqueness of the solution
  %   \citep{Keef2013}.
 %   \item An important consequence of this formulation is the weak assumption that
-%   \begin{equation} \label{eq:limit_independence}
+%   \begin{equation}~\label{eq:limit_independence}
 %   \mathbb{P}(\bm{Z}_{\mid i} \le \bm{z}_{\mid i}, Y_i - u_i = y_i \mid Y_i > u_i) \rightarrow G_{\mid i}(\bm{z}_i) \exp(-y) \text{ as } u_i \rightarrow \infty,
 %   \end{equation}
 %   so that in the limit as $u_i \to \infty$, the extremal exceedances $Y_i - u_i$ and $\bm{Z}_{\mid i}$ are independent.
@@ -408,7 +416,7 @@ We use $Y_{-i} = \bm{Y} \backslash Y_{i}, \bm{Y} \in \mathbb{R}^d, y \in (1, \ld
 % \item The CE model of \citet{Heffernan2004} assumes that there exists vector normalising parameters $\alpha_{\mid i} := \bm{a}_{\mid i}(y_i), \beta_{\mid i} := \bm{b}_{\mid i}(y_i) \in \mathbb{R} \rightarrow \mathbb{R}^{(d-1)}$ such that for fixed $\bm{z}_{\mid i} \in \mathbb{R}^{(d-1)}$,
 The CE model of \citet{Heffernan2004} assumes that there exists vector normalising parameters $\bm{\alpha}_{\mid i} := \left\{\alpha_{j \mid i} : j \in (1, \ldots, d) \backslash i \right\} \in [-1, 1]^{(d-1)}$ and $\bm{\beta}_{\mid i} := \left\{\beta_{j \mid i} : j \in (1, \ldots, d) \backslash i \right\} \in [-\infty, 1]^{(d-1)}$ such that for fixed $\bm{z}_{\mid i} \in \mathbb{R}^{(d-1)}$, $y_i > 0$,
     \todo{Check if probably is for equal to yi or greater than yi}
-    \begin{equation} \label{eq:ce_limiting_dist}
+    \begin{equation}~\label{eq:ce_limiting_dist}
       \mathbb{P}\left(\frac{\bm{Y}_{-i} - \bm{\alpha}_{\mid i} Y_{i}}{Y_{i}^{\bm{\beta}_{\mid i}}} \le \bm{z}_{\mid i}, Y_i - u_i = y_i \mid Y_i > u_i \right) \rightarrow G_{\mid i}(\bm{z}_{\mid i}) \exp(-y_i) \text{ as } u_i \rightarrow \infty,
     \end{equation}
 where $G_{j \mid i}$ is non-degenerate for all $j \ne i$. 
@@ -419,7 +427,7 @@ To ensure $\bm{G}_{\mid i}$ is well-defined, we have the constraint that
 \]
 ensuring that there is no mass at $+\infty$ for any margin, but allowing for some mass to be at $-\infty$, in order to ensure uniqueness of the solution \citep{Keef2013}.
 An important consequence of this formulation is the weak assumption that
-\begin{equation} \label{eq:limit_independence}
+\begin{equation}~\label{eq:limit_independence}
   \mathbb{P}(\bm{Z}_{\mid i} \le \bm{z}_{\mid i}, Y_i - u_i = y_i \mid Y_i > u_i) \rightarrow G_{\mid i}(\bm{z}_{\mid i}) \exp(-y_i) \text{ as } u_i \rightarrow \infty,
 \end{equation}
 so that in the limit as $u_i \to \infty$, the extremal exceedances $Y_i - u_i$ and the standardised residuals $\bm{Z}_{\mid i} = \frac{\bm{Y}_{-i} - \bm{\alpha}_{\mid i} Y_{i}}{Y_{i}^{\bm{\beta}_{\mid i}}}, \bm{Z}_{\mid i} \sim G_{\mid i}$ are independent.
@@ -427,7 +435,7 @@ so that in the limit as $u_i \to \infty$, the extremal exceedances $Y_i - u_i$ a
 
 % Heteroskedastic regression
 The limiting distribution in equation~\eqref{eq:ce_limiting_dist} can be rearranged to give the heteroskedastic regression equation defined by
-\begin{equation} \label{eq:ce_model}
+\begin{equation}~\label{eq:ce_model}
     % \bm{Y}_{-i} \bm{\alpha}_{\mid i}\bm{y}_i + \bm{y}_i^{\bm{\beta}_{\mid i}}\bm{Z}_{\mid i}, \text{ for } Y_i = y_i > u_{Y_i}.
   \bigl(\bm{Y}_{-i} \mid Y_i = y_i \bigr) = \bm{\alpha}_{\mid i}\bm{y}_i + \bm{y}_i^{\bm{\beta}_{\mid i}}\bm{Z}_{\mid i}, \text{ for } y_i > u_{Y_i}.
 \end{equation}
@@ -438,7 +446,7 @@ The parameter $\bm{\beta}_{\mid i} \in [-\infty, 1]$ can be interpreted as a ``s
 Higher values of $\bm{\beta}_{\mid i}$ indicate that the distribution of $Y_{-i}$ is more spread out for larger values of $Y_i$, while lower values indicate a more strongly deterministic relationship. 
   % \item Several choices for $G_{\mid i}$, the distribution of $\bm{Z}_{\mid i}$, were proposed in \citet{Heffernan2004}, before ultimately settling on a multivariate normal distribution with vector nuisance parameters $\bm{\mu}_{\mid i} \in \mathbb{R}^{(d-1)}$ and $\bm{\sigma}_{\mid i} \in \mathbb{R}^{(d-1)}$.
 The distribution of $\bm{Z}_{\mid i}$, the residuals of the model, is assumed to be multivariate normal with vector nuisance parameters $\bm{\mu}_{\mid i} \in \mathbb{R}^{(d-1)}$ and $\bm{\sigma}_{\mid i} \in \mathbb{R}^{(d-1)}$, as proposed in \citet{Heffernan2004}.
-\todo{Jordan says this isn't quite right, focus on components!}
+\todo{Jordan says that below isn't quite right, focus on components!}
 Some special cases of the CE model are:
 \begin{itemize}
   \item $\bm{\alpha}_{\mid i} = 0, \bm{\beta}_{\mid i} = 0$, for which we have perfect independence between $Y_i$ and $Y_{-i}$.
@@ -453,7 +461,7 @@ Some special cases of the CE model are:
 % Intro: CE gives distributions, which need to be compared
 \todo{Keep here, or move to last section?}
 \citet{Heffernan2004} shows that inference can be made about the extremal dependence of a random vector $\bm{Y}_{-i} = \bm{Y} \backslash Y_i$ on $Y_i$ by conditioning on the exceedance of a high threshold $u$ by $Y_i$, and assuming that this conditional distribution is a diagonal multivariate Gaussian distribution: % with vector mean and standard deviation:
-\begin{equation} \label{eq:ce_norm}
+\begin{equation}~\label{eq:ce_norm}
   \bigl( \bm{Y}_{-i} \mid Y_i  = y_i \bigr) \sim N\left(\bm{\alpha}_{\mid i} y_i + y_i^{\bm{\beta}_i} \bm{\mu}_{\mid i}, y_i^{\bm{\beta}_i} \bm{\sigma_{\mid i}}\right), Y_i > u,
   % Y_{j} \mid Y_{i} = y_i \sim N\left(\alpha_{j \mid i} y_i + y_i^{\beta_i} \mu_{j \mid i}, y_i^{\beta_i} \sigma_{j \mid i}\right),
 \end{equation}
@@ -463,7 +471,7 @@ Therefore, under this model, when comparing the extremal dependence structure be
 
 % Introduce KL divergence 
 One common measure of dissimilarity between two distributions $P$ and $Q$ is the Kullback-Leibler (KL) divergence, defined as
-\begin{equation} \label{eq:kl}
+\begin{equation}~\label{eq:kl}
   KL(P \mid\mid Q) = \int_{-\infty}^{\infty} p(y) \log\left(\frac{p(y)}{q(y)}\right) dy.
 \end{equation}
 \todo{define mid mid!?}
@@ -476,7 +484,7 @@ The KL divergence is always non-negative and zero if and only if $P = Q$.
 % For two multivariate normal distributions $P \sim N(\mu_1, \Sigma_1), Q \sim N(\mu_2, \Sigma_2) \in \mathbb{R}^n$ with diagonal covariance matrices, $KL(P \mid\mid Q)$ has closed form.
 A well known result is that the KL divergence between two multivariate normal distributions $P \sim N(\mu_1, \Sigma_1)$ and $Q \sim N(\mu_2, \Sigma_2)$ in $\mathbb{R}^n$ has a closed form solution.
   % \item In the case where both covariance matrices are diagonal, this simplifies to
-    % \begin{equation} \label{eq:kl_mvn_diag}
+    % \begin{equation}~\label{eq:kl_mvn_diag}
     %   KL(P \mid\mid Q) = \frac{1}{2} \sum_{i=1}^{n} \left( \frac{\sigma_{1,i}^2}{\sigma_{2,i}^2} + \frac{(\mu_{1,i} - \mu_{2,i})^2}{\sigma_{2,i}^2} - 1 - \log\left(\frac{\sigma_{1,i}^2}{\sigma_{2,i}^2}\right) \right),
     % \end{equation}
     % where: \todo{Should I use a different notation here, since I also use mu, sigma for the CE model?}
@@ -489,7 +497,7 @@ However, the KL divergence is asymmetric, unbounded and not a true divergence me
 
 \todo{Do we need to use the backward Geometric mean, as described in Deasy and Thiagarajan? Fine if using alpha = 0.5?}
 The JS divergence is a simple extension of the KL divergence, defined as
-\begin{equation} \label{eq:js}
+\begin{equation}~\label{eq:js}
   % JS(P \mid\mid Q) = \frac{1}{2} KL(P \mid\mid M) + \frac{1}{2} KL(Q \mid\mid M),
   JS(P \mid\mid Q) = \frac{1}{2} \left\{ KL(P \mid\mid M) + KL(Q \mid\mid M) \right\},
 \end{equation}
@@ -505,20 +513,20 @@ A problem arises from the fact that the mixture distribution $M$ of two normals 
 This allows us to exploit the property that the weighted product of exponential family distributions is itself a member of the same family, and so $G_{\alpha}(P, Q)$ will also be a multivariate normal distribution.
 \todo{Need to use backward version instead?}
 From this, we define the skew-geometric JS divergence as
-\begin{equation} \label{eq:js_norm}
+\begin{equation}~\label{eq:js_norm}
   % JS^{G_{\alpha}}(P \mid\mid Q) = \frac{1}{2} KL(P \mid\mid G_{\alpha}(P, Q)) + \frac{1}{2} KL(Q \mid\mid G_{\alpha}(P, Q)).
   JS^{G_{\alpha}}(P \mid\mid Q) = \frac{1}{2} \left\{ KL(P \mid\mid G_{\alpha}(P, Q)) + KL(Q \mid\mid G_{\alpha}(P, Q)) \right\}.
 \end{equation}
 The parameter $\alpha$ is called a skew parameter, and controls the divergence skew between P and Q. 
 For our purposes, we will set $\alpha = 0.5$, which corresponds to giving equal weight to both distributions. \todo{Need to explore this further!}
-The exact form of this divergence for two multivariate normals is given in equation~\eqref{eq:js_norm_mvn}, and the simplified form for the case of diagonal covariance matrices is given in equation~\eqref{eq:js_norm_mvn_diag}. 
+The exact form of this divergence for two multivariate normals is given in equation~\eqref{eq:js_norm_mvn1}, and the simplified form for the case of diagonal covariance matrices is given in equation~\eqref{eq:js_norm_mvn_diag}. 
   % \item Thus we have a closed form, computationally efficient and symmetric measure of dissimilarity between any two conditional distributions as given by equation~\ref{eq:ce_norm} for two sites, with which we can cluster locations based on their extremal dependence structure. 
   % \item Thus we have a closed form, computationally efficient and symmetric measure of dissimilarity between any conditional multivariate normal distributions as given by \eqref{eq:ce_norm}, representing the extremal dependence structure at each site. 
 
 \todo{Hard/confusing to describe using Yi, swithc to another notation?}
 Since the models $P$ and $Q$ depend on the value of $Y_i$, the conditioning variable, we define the expected value
 \todo{Need to clean up expectation?}
-\begin{equation} \label{eq:js_integral}
+\begin{equation}~\label{eq:js_integral}
   \EX_{y_i \mid y_i > u}{\left[ JS^{G_{\alpha}}(P(y_i) \mid\mid Q(y_i)) \right]} = \int_{u}^\infty JS^{G_{\alpha}}(P(y_i) \mid\mid Q(y_i)) f(y_i) \mathrm{d}y_i,
 \end{equation}
 \todo{What threshold to use here?}
@@ -535,7 +543,7 @@ We can calculate a dissimilarity matrix between each pair of locations in this w
 % However, $JS^{G_{\alpha}}$ is also unbounded. The generalized JS divergence from \citet{Thiagarajan2025} is bounded, but must be estimated using MC, as it has no closed form solution. Should I use/try it out?
 % \end{itemize}
 
-\subsection{Clustering}
+\subsection{Clustering}~\label{subsec:clustering}
 
 % Describe clustering process via JS divergence and k-medoids/PAM algorithm (give?
 % See Vignotto)
@@ -559,7 +567,7 @@ Firstly, since our clustering is designed to be performed in a spatial setting, 
 Secondly, as we are clustering over a dissimilarity matrix defined over a functional space, we cannot assume that the clusters are spherical or equally sized, as k-means does. \todo{cite}
 Furthermore, using the median instead of the mean to define the cluster centre is more robust to outliers, which is important in an extremal setting where data for some or many sites may be scarce. 
 
-\subsubsection{Choice of k} \label{subsubsec:choose_k}
+\subsubsection{Choice of k}~\label{subsubsec:choose_k}
 
 % Describe methods for choosing k (AIC, TWGSS) (silhouette not suitable)
 The PAM algorithm takes a single hyperparameter, namely the number of clusters, $k$.
@@ -571,14 +579,14 @@ However, this assumption is often violated in spatial applications.
 We revert, therefore, to the simple method of \citet{Thorndike1953-ie}, which uses the total within-cluster sum of squares (TWGSS) to select $k$. \todo{Fix citation?}
 This method has been found to perform well in both our simulation study in Section~\ref{sec:sim} and our Irish meterological application in Section~\ref{sec:application}, making clear suggestions as to the value of $k$ to use. 
 Specifically, the TWGSS is defined as
-    \begin{equation} \label{eq:twgss}
+    \begin{equation}~\label{eq:twgss}
       % \mathrm{TWGSS}(k) = \sum_{i=1}^{k} \sum_{j=1}^{n_i} d_{ij}^2,
       \mathrm{TWGSS}(k) = \sum_{i=1}^{k} \sum_{j=1}^{n_i} d_{ij}^2,
     \end{equation}
     where $d_{ij}$ is the dissimilarity between site $j$ and the centroid of cluster $i$, which we measure using the $JS^{G_{\alpha}}$ divergence defined in section \ref{subsec:div}, and $n_i$ is the number of observations in cluster $i$.
 We then plot $\mathrm{TWGSS}(k)$ vs.\ $k$, and choose $k^*$, the optimal number of clusters, as the value of $k$ at which the TWGSS reduction sharply slows, or equivalently, the point at which the curve has an ``elbow''.
 
-\subsection{Estimation} \label{subsec:estimation}
+\subsection{Estimation}~\label{subsec:estimation}
 
 \todo{What to put in this section? Anything that hurts our narrative flow?}
 \todo{How complicated do I need things?}
@@ -587,7 +595,7 @@ We then plot $\mathrm{TWGSS}(k)$ vs.\ $k$, and choose $k^*$, the optimal number 
 % Laplace transformation
 % Each marginal random variable $X_i$ is transformed to Laplace margins, whereby it is denoted by $Y_i$, using the following transformation:
 Each marginal random variable $X_i$ is transformed to standard Laplace margins, whereby it is denoted by $Y_i$, using the following transformation: \todo{see Keef, Heff for more succint description}
- \begin{equation} \label{eq:laplace}
+ \begin{equation}~\label{eq:laplace}
    Y_i = \begin{cases}
      \log\left\{2F_{X_i}(X_i)\right\} &\text{ for } X_i < F_{X_i}^{-1}(0.5), \\
      -\log\left\{2(1 - F_{X_i}(X_i))\right\} &\text{ for } X_i \ge F_{X_i}^{-1}(0.5), \\
@@ -602,10 +610,10 @@ Each marginal random variable $X_i$ is transformed to standard Laplace margins, 
 
 % JSGa form
  For two multivariate normals, \citet{Nielsen2019} shows that the $\JSGa{}$ divergence introduced in equation~\eqref{eq:js_norm} has the closed form solution
-\begin{align*} \label{eq:js_norm_mvn}
+\begin{align*}~\label{eq:js_norm_mvn}
   JS^{G_{\alpha}}(P \mid\mid Q) &= \frac{1}{2} \left( (1 - \alpha) \mu_1^T \Sigma_1^{-1} \mu_1 + \alpha \mu_2^T \Sigma_2^{-1} \mu_2 - \mu_{\alpha}^T \Sigma_{\alpha}^{-1} \mu_{\alpha} + \log{\left( \frac{\abs{\Sigma_1}^{1-\alpha} \abs{\Sigma_2}^{\alpha}}{\abs{\Sigma_{\alpha}}} \right)} \right), \\
   \Sigma_{\alpha} &= \left( (1 - \alpha) \Sigma_1^{-1} + \alpha \Sigma_2^{-1} \right)^{-1}, \\
-  \mu_{\alpha} &= \Sigma_{\alpha} \left( (1 - \alpha) \Sigma_1^{-1} \mu_1 + \alpha \Sigma_2^{-1} \mu_2 \right), \numberthis \label{eq:js_norm_mvn}
+  \mu_{\alpha} &= \Sigma_{\alpha} \left( (1 - \alpha) \Sigma_1^{-1} \mu_1 + \alpha \Sigma_2^{-1} \mu_2 \right), \numberthis~\label{eq:js_norm_mvn1}
 \end{align*} 
 where:
 \begin{itemize}
@@ -623,7 +631,7 @@ For diagonal covariance matrices, \citet{Thiagarajan2025} show that this simplif
 %   JS-G(P \mid \mid Q) = \frac{1}{2} \sum^n_{i=1} \left[ \frac{\alpha \sigma_{1, i}^2 + (1-\alpha)\sigma_{2, i}^2}{\sigma_{\alpha, i}^2} + \log{\left( \frac{\sigma_{\alpha, i}^2}{\sigma_{1, i}^{(2\alpha)}\sigma_{2, i}^{2(1 - \alpha)}} \right)} + \alpha \frac{(\mu_{\alpha, i} - \mu_{1, i})^2}{\sigma_{\alpha, i}^2} + (1 - \alpha) \frac{(\mu_{\alpha, i} - \mu_{2, i})^2}{\sigma_{\alpha, i}^2} -1 \right],
 % \end{align*}
 \todo{Should I use a different notation here, since I also use mu, sigma for the CE model?}
-\begin{align} \label{eq:js_norm_mvn_diag}
+\begin{align}~\label{eq:js_norm_mvn_diag}
 JS^{G_{\alpha}}(P \mid\mid Q) = \frac{1}{2} \sum_{i=1}^n \Bigg[
     & \frac{\alpha \sigma_{1,i}^2 + (1 - \alpha) \sigma_{2,i}^2}{\sigma_{\alpha,i}^2} 
     + \log\left( \frac{\sigma_{\alpha,i}^2}{\sigma_{1,i}^{2\alpha} \sigma_{2,i}^{2(1 - \alpha)}} \right) \nonumber \\
@@ -652,21 +660,21 @@ where $\sigma_{\alpha, i}^2 = \frac{\sigma_{1, i}^2 \sigma_{2, i}^2}{\alpha\sigm
   \item Our MC method follows the simple alternating scheme for $N$ samples of
     \begin{enumerate}
       \item Simulating $y_i \sim truncLaplace(0, 1; u, u + Q_{Exp(1)}(p))$, \todo{ugly}
-      \item Calculating $\JSGa{P(y_i) \mid \mid Q(y_i)}$ using \eqref{eq_js_mvn},
+      \item Calculating $\JSGa{P(y_i) \mid \mid Q(y_i)}$ using equation \eqref{eq:js_norm_mvn1}.
     \end{enumerate}
     before averaging over the $N$ samples to estimate the integral in equation~\eqref{eq:js_integral}.
 \end{itemize}
 
 % Estimating the integral 
 % To estimate the integral in Section~\ref{subsec:div}, we use a Monte Carlo method, where we sample $N$ values from the distribution of $Y_i \mid Y_i > u_{Y_i}$, and estimate the integral as
-% \begin{equation} \label{eq:mc_integral}
+% \begin{equation}~\label{eq:mc_integral}
 %   \int_{u}^\infty JS^{G_{\alpha}}(P(y_i) \mid\mid Q(y_i)) f(y_i) \mathrm{d}y_i \approx \frac{1}{N} \sum_{j=1}^{N} JS^{G_{\alpha}}(P(y_j) \mid\mid Q(y_j)),
 % \end{equation}
 
 
 
 
-\section{Simulation study} \label{sec:sim}
+\section{Simulation study}~\label{sec:sim}
 % \todo{May not be subsections, but will form structure of this section}
 % \todo{May want tables instead of figures for some/all simulation results}
 % \todo{Should I smooth across points in sum plots with geom smooth? Or continue to use 90\% credible interval (which would improve for 500 simulations vs 200 I've provisionally used}
@@ -679,7 +687,7 @@ In Section~\ref{subsec:sim_gauss}, a simple simulation design using a Gaussian c
 In Section~\ref{subsec:sim_mixture}, we extend this study to a more complex simulation design using a mixture of Gaussian and t-copulas, for a variety of simple and more complex dependence structures and scenarios. 
 We evaluate our clustering solution using the adjusted rand index (ARI), and in Section~\ref{subsubsec:boot} ascertain the improvement of parameter estimation post-clustering using a bootstrapping scheme. 
 
-\subsection{Gaussian copula} \label{subsec:sim_gauss}
+\subsection{Gaussian copula}~\label{subsec:sim_gauss}
 
 % Single location
 Our Gaussian copula simulation design for a single ``location'', nomenclature chosen to match the spatial nature of our applications, is as follows:
@@ -716,11 +724,11 @@ Post-clustering, the same patterns emerge, but the variability in the estimates 
     \centering
     \includegraphics[width = 0.9\linewidth]{plots/sim_01_gauss_cop.png}
     \caption{Boxplots of \emph{$\alpha$ and $\beta$ parameter estimates for the conditional extremes model pre- and post-clustering for a bivariate Gaussian copula simulation of 12 datasets, or ``locations'', each with 1000 observations of each variable, belonging equally to three known clusters. Simulations were repeated 500 times. The x-axis represents the conditional quantile used to fit the conditional extremes model, and the boxes are coloured by their Gaussian copula correlation parameter, $\rho_{\text{Gauss}}$. Dotted horizontal lines indicate the theoretical asymptotic values of $\alpha$ and $\beta$ for a bivariate Gaussian copula, coloured by the same $\rho_{\text{Gauss}}$ values for $\alpha$ and black for $\beta$ to indicate the same value across all clusters, at $1/2$.}}
-    \label{fig:00_gauss_cop}
+   ~\label{fig:00_gauss_cop}
 \end{figure}
 
 
-\subsection{Mixture models} \label{subsec:sim_mixture}
+\subsection{Mixture models}~\label{subsec:sim_mixture}
 
 In this section, we extend our simulation design to a mixture of Gaussian and t-copulas, where we control the dependence structure through their respective correlation parameters, $\rho_{\text{Gauss}}$ and $\rho_{t}$, with each t-copula having 3 degrees of freedom.
 The idea behind this design is that the Gaussian copula generates observations exhibiting extremal independence, whereas the t-copula induces extremal dependence, the strength of which is determined by their respective correlation parameters.
@@ -730,7 +738,7 @@ In Section~\ref{subsubsec:sim_competing_methods}, we compare our method to the l
 A more realistic setting is considered in Section~\ref{subsubsec:sim_realistic}, where we simulate data from 60 locations with three unequally sized clusters, and perturb the correlation parameters to make the clustering solution more challenging.
 We can also evaluate the improvement in parameter estimation post-clustering using the bootstrapping scheme described in \cite{Heffernan2004}, as done in Section~\ref{subsubsec:boot}.
 
-\subsubsection{Comparison to competing methods} \label{subsubsec:sim_competing_methods}
+\subsubsection{Comparison to competing methods}~\label{subsubsec:sim_competing_methods}
 
 \todo{Extend to 500 simulations, only ran 200 times\!}
 We compared our method to the leading competitor in the bivariate case, \citet{Vignotto2021}.
@@ -751,11 +759,11 @@ Both models also perform better when Gaussian and t-copula correlation are highe
     \includegraphics[width = 0.9\linewidth]{plots/sim_01b_ce_vs_vi_dqu_0.9_man.png}
     % \caption{\emph{Comparison of clustering methods for two variables and two equally sized clusters for simulations of 12 ``locations'', each with 1000 observations of each variable, from a mixture of Normal and Gaussian copulas. A grid search was performed,  with the x-axis representing the Gaussian correlation parameter used for both clusters, and the facet labels showing the t-copula correlation parameters for each ``known'' cluster. This grid search was repeated 500 times. The lines show the median of the Adjusted Rand Index for both clustering methods, with uncertainty coming from the 90\% credible interval.}} % The proposed method is shown to be superior to the leading competitor in the bivariate case, that of \cite{Vignotto2021}. Both models perform better when the difference in the t-copula correlation parameters between the two clusters is larger, and when Gaussian correlation is higher.}}
     \caption{\emph{Comparison of clustering methods for two variables and two equally sized clusters for simulations of 12 ``locations'', each with 1000 observations of each variable, from a mixture of Normal and Gaussian copulas. A grid search was performed, with the x-axis representing the Gaussian correlation parameter used for both clusters, and the facet labels showing the t-copula correlation parameters for each ``known'' cluster. This grid search was repeated 500 times. The smoothed lines show the smoothed median of the Adjusted Rand Index for both clustering methods, with smoothing performing using a generalised additive model.}} % The lines show the median of the Adjusted Rand Index for both clustering methods, with uncertainty coming from the 90\% credible interval.}} % The proposed method is shown to be superior to the leading competitor in the bivariate case, that of \cite{Vignotto2021}. Both models perform better when the difference in the t-copula correlation parameters between the two clusters is larger, and when Gaussian correlation is higher.
-    \label{fig:01_ce_vs_vi}
+   ~\label{fig:01_ce_vs_vi}
 \end{figure}
 
 
-\subsubsection{Extension to $>2$ dimensions} \label{subsubsec:sim_extension}
+\subsubsection{Extension to $>2$ dimensions}~\label{subsubsec:sim_extension}
 
 % \begin{itemize}
 %     \item Also shown to work well for three dimensions ...
@@ -773,7 +781,7 @@ This comes with the caveat that in these simulations, the variables all have the
     % \includegraphics[width = 0.9\linewidth]{plots/sim_01c_js_sens_3_var_dqu_0.9.png}
     \includegraphics[width = 0.9\linewidth]{plots/sim_01d_js_sens_3_var_dqu_0.9_man.png}
     \caption{\emph{Evaluation of clustering performance for three variables and two equally sized clusters for simulations of 12 ``locations'', each with 1000 observations for each variable, from a mixture of Gaussian and t-copulas. A grid search was performed,  with the x-axis representing the Gaussian correlation parameter used for both clusters, and the facet labels showing the t-copula correlation parameters for each ``known'' cluster. This grid search was repeated 500 times. The smoothed lines show the smoothed median of the Adjusted Rand Index for both clustering methods, with smoothing performing using a generalised additive model. Points show individual values of the ARI for a given simulation.}} 
-    \label{fig:02_3d}
+   ~\label{fig:02_3d}
 \end{figure}
 
 % Expand to up to 5 dimensions!
@@ -791,11 +799,11 @@ However, we can still conclude that these results show that our method performs 
     % \includegraphics[width = 0.9\linewidth]{plots/sim_01c_js_sens_3_var_dqu_0.9.png}
     \includegraphics[width = 0.9\linewidth]{plots/sim_01d_js_sens_3_var_dqu_0.9mult_var_man.png}
     \caption{\emph{Evaluation of clustering performance for two to five variables and two equally sized clusters for simulations of 12 ``locations'', each with 1000 observations for each variable, from a mixture of Gaussian and t-copulas. The t-copula correlation parameters for each ``known'' cluster were set to $\rho_{t_1} = 0.4, \rho_{t_2} = 0.5$. A grid search was performed over the values of the Gaussian correlation parameter, as represented on the x-axis. This grid search was repeated 500 times. The smoothed lines show the smoothed median of the Adjusted Rand Index for both clustering methods, with smoothing performing using a generalised additive model. Points show individual values of the ARI for a given simulation.}} 
-    \label{fig:02b_5d}
+   ~\label{fig:02b_5d}
 \end{figure}
 
 
-\subsubsection{More realistic example} \label{subsubsec:sim_realistic}
+\subsubsection{More realistic example}~\label{subsubsec:sim_realistic}
 
 % We also design a more realistic example to somewhat mimic the structure of the Irish dataset introduced in Section~\ref{sec:ire}.
 We also design a more realistic example to somewhat mimic the structure of the Irish dataset in our application in Section~\ref{sec:application}.
@@ -814,10 +822,10 @@ The variability in ARI across simulations is also quite low, indicating that the
     \includegraphics[width = 0.9\linewidth]{plots/01c2_js_sens_sim_60_locs_dqu_0.9_smooth_man.png}
     \caption{\emph{Evaluation of clustering performance for two variables and three clusters for simulations from a mixture of Gaussian and t-copulas in a more realistic clustering setting. 60 locations with 1000 observations for each variable were simulated, with 10, 20 and 30 belonging to each respective cluster. A grid search was performed, with the x-axis and facet labels showing the t-copula correlation parameters for each of the three ``known'' clusters, for a Gaussian copula correlation of 0.5. Perturbations were added to these parameters. This grid search was repeated 500 times. The smoothed lines show the smoothed median of the Adjusted Rand Index for both clustering methods, with smoothing performing using a generalised additive model. Points show individual values of the ARI for a given simulation.}} 
  % The line shows the median of the Adjusted Rand Index for both clustering methods, with uncertainty coming from the 90\% credible interval. Points show individual values of the ARI for a given simulation.}} 
-    \label{fig:03_realistic}
+   ~\label{fig:03_realistic}
 \end{figure}
 
-\subsubsection{Parameter estimation pre- and post-clustering} \label{subsubsec:boot}
+\subsubsection{Parameter estimation pre- and post-clustering}~\label{subsubsec:boot}
 
 % \begin{itemize}
 %     \item Desire to ascertain whether dependence parameters are less uncertain after clustering. 
@@ -832,7 +840,7 @@ We can use the bootstrapping scheme described in \cite{Heffernan2004} to determi
 As we are estimating two parameters, $\alpha$ and $\beta$, for which we do not know the true values, it may be that although our uncertainty is diminished post-clustering, the estimates may still be biased, with the parameters unidentifiable.
 There are also many possible combinations of $\alpha$ and $\beta$ that could give the same conditional estimates, and so the estimates may be biased in this sense as well.
 To avoid this, we adopt the approach of \cite{Richards2021-qm} in calculating the conditional expectation of one variable given the other at the $98\%$ marginal quantile $u$ for the conditioning variable, given by
-  \begin{equation} \label{eq:boot}
+  \begin{equation}~\label{eq:boot}
     \mathbb{E}[X_1 | X_2 = u] = \hat{\alpha} u + u^{\hat{\beta}} \hat{\mu},
   \end{equation}
   where ($\hat{\alpha}, \hat{\beta}, \hat{\mu}$) are the estimated CE model parameters.
@@ -851,11 +859,11 @@ The conditional expectation is higher for the higher t-copula correlation cluste
     \centering
     \includegraphics[width = 0.9\linewidth]{plots/sim_01e_bootstrap_box_man.png}
     \caption{\emph{Boxplots of 500 bootstrapped conditional expectations of one variable given the other is at the $98\%$ marginal quantile $u$, pre- and post-clustering for a simulation of 12 ``locations'', each with 1000 observations for each variable, from a mixture of Normal and Gaussian copulas, with the Gaussian correlation set to 0.5. The t-copula correlation parameters for the two clusters were set to 0.1 and 0.9, as shown on the x-axis.}}
-    \label{fig:04_bootstrap}
+   ~\label{fig:04_bootstrap}
 \end{figure}
 
 
-\section{Application to Irish meteorological data} \label{sec:application}
+\section{Application to Irish meteorological data}~\label{sec:application}
 
 \todo{Add image of distance matrices coloured by cluster}
 \todo{Add something on robustness to choice of DQU? Have plots for this!}
@@ -866,7 +874,7 @@ This section introduces and explores a real-world application for our clustering
 In Section~\ref{subsec:app_data}, we describe the data we have collected, and in Section~\ref{subsec:app_explore} we perform some exploratory analysis of the data, using the $\chi$ statistic to assess the asymptotic dependence between precipitation and wind speed across the country. 
 In Sections \ref{subsec:app_ce} and \ref{subsec:app_clust}, we fit the CE model to the data, and apply our clustering method to the estimated parameters, respectively, to determine the spatial dependence structure of the data.
 
-\subsection{Ireland meteorological data} \label{subsec:app_data}
+\subsection{Ireland meteorological data}~\label{subsec:app_data}
 
 % % Image of locations and precipitation vs wind speed for two sites
 % \todo{Move elevation legend onto plot}
@@ -877,7 +885,7 @@ In Sections \ref{subsec:app_ce} and \ref{subsec:app_clust}, we fit the CE model 
 %     \includegraphics[width = 0.9\linewidth]{plots/02_mot_ex_plot_elev.png}
 %     \caption{\emph{Left: locations of 59 Met Éireann sites with precipitation data available from 1990 to 2020, with elevation in metres above sea level binned into 100m intervals. 
 %     Right: scatter plots of the weekly aggregated precipitation and wind speed maxima, with the 95\% quantile of wind speed and precipitation shown as dashed lines, for Cloone Lake, County Kerry (red), and Malahide Castle, County Dublin (blue), in the Winter months (October -- March), which are the two stations with the highest and lowest mean weekly precipitation, respectively.}}
-%     \label{fig:02_locs}
+%    ~\label{fig:02_locs}
 % \end{figure}
 
 We consider the joint extremal behaviour of precipitation and wind speeds at 59 sites across the Republic of Ireland from 1990 to 2020, inclusive.
@@ -908,7 +916,7 @@ Weeks with no rain are also ignored, leaving us with 5,022 weeks of data for the
 % The difference between the mean and maximum values for each of these marginal extremes suggests that there will be an extreme right tail to the distribution of this data, a situation well suited to the use of EVT.
 % These data will be used to showcase the marginal and dependence models we have chosen to use, and illustrate some of their shortcomings, and the need for extremal clustering to address these challenges.
 
-\subsection{Exploratory analysis} \label{subsec:app_explore}
+\subsection{Exploratory analysis}~\label{subsec:app_explore}
 
 \todo{Remove/add in longitude/latitude?}
 \todo{Make plot larger before saving, blurry when cropped}
@@ -922,7 +930,7 @@ Weeks with no rain are also ignored, leaving us with 5,022 weeks of data for the
     % \caption{\emph{$\chi$ and $\bar{\chi} $ statistics for each of the 59 locations in our Irish meteorological dataset, estimated at the 95th quantile. The $\bar{chi}$ statistic is shown on the left, and $\chi$ on the right. For both maps, darker colours indicate stronger asymptotic dependence.}}
     \caption{\emph{Left: elevation profile of Ireland, with elevation in metres above sea level binned into 100m intervals with the highest bin for elevations above 500m.
     Right: $\chi$ statistics between rain and wind speed at all 59 locations, estimated at the 95th quantile. Darker colours and larger points indicate stronger asymptotic dependence.}}
-    \label{fig:chi}
+   ~\label{fig:chi}
 \end{figure}
 
 % \todo{Remove reference to chibar}
@@ -953,7 +961,7 @@ Interestingly, for some sites in Wicklow, we see comparatively large values of $
 This may be somewhat attributable to the influence of the Wicklow Mountains, as clearly observed in the elevation profile.
 It may be of interest to investigate if these outliers in $\chi$ and $\bar{\chi}$  are reflected in the CE model parameters, and whether clustering can help identify them.
 
-\subsection{Conditional extremes model} \label{subsec:app_ce}
+\subsection{Conditional extremes model}~\label{subsec:app_ce}
 
 % Procedure and results pre-clustering (choice of dependence quantile)
 \todo{Check this section again after results are changed!}
@@ -973,10 +981,10 @@ In our analysis, we first transformed the data to Laplace margins, using the emp
     \centering
     \includegraphics[width = 0.9\linewidth]{plots/ire_ce_new.png}
     \caption{\emph{Map of conditional extremes model parameters $\alpha$ and $\beta$ for rain conditional on wind speed (left) and wind speed conditional on rain (right), estimated at the 88th dependence quantile. The $\alpha$ parameter is shown in the top row, and $\beta$ in the bottom row. The colour scale is the same for both variables, with darker red indicating larger positive values of $\alpha$ and $\beta$, and darker blue indicating larger negative values.}}
-    \label{fig:a_b_vals}
+   ~\label{fig:a_b_vals}
 \end{figure}
 
-\subsection{Clustering} \label{subsec:app_clust}
+\subsection{Clustering}~\label{subsec:app_clust}
 
 % Clustering (including choice of k for each metric)
 We clustered the locations using the $JS^{G_{\alpha}}$ dissimilarity matrix for their CE parameters, as described in Section~\ref{subsec:div}, for the CE models fit to rain conditional on extreme wind speed and vice versa, separately. 
@@ -996,7 +1004,7 @@ This may also be due to our wind speeds coming from the ERA5 reanalysis dataset,
     \centering
     \includegraphics[width = 0.9\linewidth]{plots/cluster_dqu_sep.pdf}
     \caption{\emph{ Clustering solutions for the conditional extremes model parameters estimated at the 88th dependence quantile across all 59 sites, using the $JS^{G_{\alpha}}$ dissimilarity matrix for rain conditional on wind speed (centre), wind speed conditional on rain (right), and the combined dissimilarity matrix (left). The clusters are shown in different colours.}}
-    \label{fig:clust_sol}
+   ~\label{fig:clust_sol}
 \end{figure}
 
 % Results and intrepretation post-clustering
@@ -1019,16 +1027,16 @@ Interpreting these results is much easier post-clustering. \todo{More detail her
     \centering
     \includegraphics[width = 0.9\linewidth]{plots/ab_map_post_clust.png}
     \caption{\emph{Estimated conditional extremes model parameters $\alpha$ and $\beta$ for rain conditional on wind speed (left) and wind speed conditional on rain (right), estimated at the 88th dependence quantile, post-clustering. The $\alpha$ parameter is shown in the top row, and $\beta$ in the bottom row. The colour scale is the same for both variables, with darker red indicating larger positive values of $\alpha$ and $\beta$, and darker blue indicating larger negative values.}}
-    \label{fig:ce_post_clust}
+   ~\label{fig:ce_post_clust}
 \end{figure}
 
-% \subsection{US urban air pollution data} \label{subsec:app_us}
+% \subsection{US urban air pollution data}~\label{subsec:app_us}
 % 
 % \begin{itemize}
 %     \item 
 % \end{itemize}
 
-\section{Discussion} \label{sec:discuss}
+\section{Discussion}~\label{sec:discuss}
 
 % Points to consider
 \todo{Say something about $\alpha$!}

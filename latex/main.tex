@@ -48,6 +48,7 @@
 \DeclareMathOperator{\EX}{\mathbb{E}}% expected value
 % \newcommand{\JSGa}[1]{\mathrm{JS}^{\mathrm{G}_{#1}}}
 \newcommand{\JSGa}[1]{\mathrm{JS}^{\mathrm{G}_{\alpha}}}
+\newcommand{\JSG}[1]{\mathrm{JS}^{\mathrm{G}}}
 \newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
 
 % comment to turn on TODO notes on pdf
@@ -136,7 +137,7 @@
   Conditional extreme value (CE) models have proven useful for analysing the joint tail behaviour of random vectors.
   % However, their estimation often suffers from high uncertainty due to data scarcity. 
   We propose a novel clustering framework for CE models, which can be used to identify groups with similar multivariate extremal dependence structures.
-  Our approach introduces a closed-form, computationally efficient dissimilarity metric for comparing CE models, based on a generalized version of the Jensen-Shannon divergence, applicable in any dimension.
+  Our approach introduces a closed-form, computationally efficient dissimilarity measure for comparing CE models, based on a generalized version of the Jensen-Shannon divergence, applicable in any dimension.
   % Standard clustering algorithms are then applied to the resulting pairwise distances. 
   Applying standard clustering algorithms to the resulting pairwise distances, we obtain interpretable groups with homogeneous tail dependence characteristics.
   Simulation studies demonstrate that our method outperforms existing approaches for bivariate cases and uniquely extends to multivariate settings. 
@@ -232,20 +233,22 @@ Clustering is an unsupervised learning technique which seeks to group similar da
 In a spatial context with multivariate observations at each location, we can partition sites into clusters exhibiting similar joint tail behaviour, thereby revealing spatial patterns in complex dependence structures.
 
 % Clustering: past work (interpretability)
-% Exploratory clustering for improved interpretability, in extremes and elsewhere, generally focuses on deriving some similarity matrix for a given distance metric, and then using performing some generic clustering algorithm such as k-means or k-mediods on this matrix \citep{Lloyd1957, Kaufman1987}.
+% Exploratory clustering for improved interpretability, in extremes and
+% elsewhere, generally focuses on deriving some similarity matrix for a given
+% distance, and then using performing some generic clustering algorithm such as k-means or k-mediods on this matrix \citep{Lloyd1957, Kaufman1987}.
 \todo{C: Be clearer on the aspects considered in clustering}
 % \todo{Cut down on detail? Longest section!}
-One common approach for extremal clustering is to define a distance metric quantifying the pairwise similarity in the tail of random variables/vectors, and then apply a generic clustering algorithm such as k-means or k-medoids \citep{Lloyd1957, Kaufman1987}.
+One common approach for extremal clustering is to define a distance measure quantifying the pairwise similarity in the tail of random variables/vectors, and then apply a generic clustering algorithm such as k-means or k-medoids \citep{Lloyd1957, Kaufman1987}.
 There is a large body of literature concerning such clustering methods for extremes. 
 % In \citet{Bernard2013}, a clustering algorithm is derived for weekly
 % precipitation maxima for sites across France, which uses the F-madogram as a
-% distance metric. \todo{C: be more clear about the tail characteristics used for clustering}
+% distance measure. \todo{C: be more clear about the tail characteristics used for clustering}
 % In financial applications, \citet{deCarvalho2023} proposes a clustering algorithm for stock prices, which uses the extremal index and heteroskedastic function, loosely interpretable as the magnitude and frequency of extreme events, to define a bivariate centroid with which to cluster stocks on the London Stock Exchange. 
 \todo{Bit of a non sequitur given emphasis on envoronmental extremes elsewhere?}
 \todo{Or should I be less focused on purely spatial applications elsewhere?}
 In financial applications, \citet{deCarvalho2023} proposes a clustering algorithm for grouping stocks on the London Stock Exchange based on their tail behaviour. %, using the extremal index and heteroskedastic function, which can be loosely interpreted as the magnitude and frequency of extreme events.
 In environmental extremes, \citet{Bernard2013} describes a clustering algorithm of weekly precipitation maxima across France.
-Focusing on the spatial tail dependence structure of the data, this method uses the F-madogram, an extremal analogue of the classical variogram, as a distance metric.
+Focusing on the spatial tail dependence structure of the data, this method uses the F-madogram, an extremal analogue of the classical variogram, as a distance measure.
 % \citet{Vignotto2021} proposes a k-mediods algorithm for clustering locations in Great Britain and Ireland for precipitation and wind speed data.
 % \citet{Vignotto2021} proposes a k-medoids algorithm for clustering locations in Great Britain and Ireland based on the joint tail behaviour of gridded precipitation and wind speed data from ERA5 \citep{Hersbach2020}.
 % Individually at each location, bivariate data are transformed to Pareto margins.
@@ -303,7 +306,7 @@ Alternatively, frequentist approaches often use the Expectation–Maximisation (
 Clustering has evidently seen widespread use in the analysis of multivariate extremes. 
 Our main contributions to this literature are to adapt some of these existing approaches to the Conditional Extremes (CE) model, which has not previously been explored in clustering. 
 This enables parametric exploration of tail‐dependence structures in arbitrary dimensions, in contrast to the existing non-parametric approach of \citet{Vignotto2021} which is restricted to the bivariate case. 
-The Gaussian working assumption in the CE model allows for a simple, closed form divergence metric upon which to base our clustering framework.
+The Gaussian working assumption in the CE model allows for a simple, closed form divergence measure upon which to base our clustering framework.
 This parametric approach delivers a unified and statistically principled tool for exploratory analysis of multivariate extremes, facilitating the identification of spatial locations with homogeneous tail‐dependence characteristics.  
 
 % Structure of paper
@@ -484,17 +487,18 @@ The slope or linear regression coefficient $\bm{\alpha}_{\mid i} \in [-1, 1]$ de
   \item $-1 < \bm{\alpha}_{j \mid i} < 1$, which suggests asymptotic independence between $Y_j$ and large $Y_i$, with dependence weakening as $Y_i \to \infty$. 
 \end{itemize}
 
-\subsection{Divergence metric}~\label{subsec:div}
+\subsection{Divergence measure}~\label{subsec:div}
 
 \todo{Need some references for use of this metric! In intro}
 
 % Intro: CE gives distributions, which need to be compared
 \todo{Keep here, or move to last section?}
+% Definition of Z moved here to be impactful than after eq:ce_model
 The residual process $\bm{Z}_{\mid i}$ of the model in equation~\eqref{eq:ce_model} is assumed to follow a multivariate Gaussian distribution with vector nuisance parameters $\bm{\mu}_{\mid i} \in \mathbb{R}^{(d-1)}$ and $\bm{\sigma}_{\mid i} \in \mathbb{R}^{(d-1)}$.
 \todo{Heff04 assumes diagonal sigma, should we say we use full covariance?}
 % This is a working assumption proposed in \citet{Heffernan2004} after testing several candidate distributions. %, and is still most commonly used in the literature \todo{citations?}
-% This is the key assumption of the CE model on which we derive our divergence metric, and was chosen in \citet{Heffernan2004} after testing several candidate distributions.
-This is the key aspect of the CE model with which we derive our divergence metric, and is a working assumption chosen in \citet{Heffernan2004} after testing several candidate distributions.
+% This is the key assumption of the CE model on which we derive our divergence measure, and was chosen in \citet{Heffernan2004} after testing several candidate distributions.
+This is the key aspect of the CE model with which we derive our divergence measure, and is a working assumption chosen in \citet{Heffernan2004} after testing several candidate distributions.
 
 % \citet{Heffernan2004} shows that inference can be made about the extremal dependence of a random vector $\bm{Y}_{-i} = \bm{Y} \backslash Y_i$ on $Y_i$ by conditioning on the exceedance of a high threshold $u$ by $Y_i$, and assuming that this conditional distribution is a diagonal multivariate Gaussian distribution: % with vector mean and standard deviation:
 An important consequence which follows from this assumption is that inference can be made about the extremal dependence of a random vector $\bm{Y}_{-i} = \bm{Y} \setminus \{Y_i\}$ on $Y_i$ by conditioning on the exceedance of a high threshold $u_i$ by $Y_i$, and assuming that this conditional distribution is a multivariate Gaussian distribution, i.e.\ 
@@ -507,59 +511,67 @@ where $\bm{\alpha}_{\mid i}, \bm{\beta}_{\mid i}, \bm{\mu}_{\mid i}, \bm{\sigma}
 % Therefore, under this model, when comparing the extremal dependence structure between variables at any given sites, we are effectively comparing the conditional distributions given by equation~\eqref{eq:ce_norm}.
 Therefore, under this model, when comparing the multivariate tail dependence structure at different sites, we are effectively comparing the conditional distributions given by equation~\eqref{eq:ce_norm}.
 
-% Introduce KL divergence 
-One common measure of dissimilarity between two distributions $P$ and $Q$ is the Kullback-Leibler (KL) divergence, defined as
-\begin{equation}~\label{eq:kl}
-  KL(P \mid\mid Q) = \int_{-\infty}^{\infty} p(y) \log\left(\frac{p(y)}{q(y)}\right) dy.
-\end{equation}
-\todo{define mid mid!?}
-where $p(y)$ and $q(y)$ are the densities of $P$ and $Q$, respectively \citep{Kullback1951}.
-% \item The KL divergence is always non-negative and zero if and only if $P =
-% Q$, and for two multivariate normal distributions $P \sim N(\mu_1,
-% \Sigma_1)$, Q \sim N(\mu_2, \Sigma_2)$ in $\mathbb{R}^n$ has closed form
-% solution.
-The KL divergence is always non-negative and zero if and only if $P = Q$.
-% For two multivariate normal distributions $P \sim N(\mu_1, \Sigma_1), Q \sim N(\mu_2, \Sigma_2) \in \mathbb{R}^n$ with diagonal covariance matrices, $KL(P \mid\mid Q)$ has closed form.
-A well known result is that the KL divergence between two multivariate normal distributions $P \sim N(\mu_1, \Sigma_1)$ and $Q \sim N(\mu_2, \Sigma_2)$ in $\mathbb{R}^n$ has a closed form solution.
-  % \item In the case where both covariance matrices are diagonal, this simplifies to
-    % \begin{equation}~\label{eq:kl_mvn_diag}
-    %   KL(P \mid\mid Q) = \frac{1}{2} \sum_{i=1}^{n} \left( \frac{\sigma_{1,i}^2}{\sigma_{2,i}^2} + \frac{(\mu_{1,i} - \mu_{2,i})^2}{\sigma_{2,i}^2} - 1 - \log\left(\frac{\sigma_{1,i}^2}{\sigma_{2,i}^2}\right) \right),
-    % \end{equation}
-    % where: \todo{Should I use a different notation here, since I also use mu, sigma for the CE model?}
-    % \begin{itemize}
-    %     \item $\mu_1 = (\mu_{1,1}, \mu_{1,2}, \ldots, \mu_{1,n})^\top$ and $\mu_2 = (\mu_{2,1}, \mu_{2,2}, \ldots, \mu_{2,n})^\top$ are the mean vectors,
-    %     \item $\Sigma_1 = \text{diag}(\sigma_{1,1}^2, \sigma_{1,2}^2, \ldots, \sigma_{1,n}^2)$ and $\Sigma_2 = \text{diag}(\sigma_{2,1}^2, \sigma_{2,2}^2, \ldots, \sigma_{2,n}^2)$ are diagonal covariance matrices,
-    %     \item $\sigma_{1,i}^2$ and $\sigma_{2,i}^2$ denote the $i$-th diagonal element of $\Sigma_1$ and $\Sigma_2$, respectively.
-    % \end{itemize}
-However, the KL divergence is asymmetric, unbounded and not a true divergence metric, making it unsuitable for clustering. \todo{need to be more specific here, kinda wishy washy}
+There are several qualities we desire from a divergence measure for clustering based on the CE model.
+For clustering, the measure must be symmetric, as the ``distance'' between two sites as defined by the divergence between their CE models should be the same regardless of the order in which they are compared.
+We would also like to exploit the fact that the CE model is a multivariate Gaussian distribution to provide some gains in computational efficiency, and for our divergence to more generally be cheap to compute.
+\todo{Need reference for this?}
+% Ideally, our measure should also be bounded above by a finite value, as smaller divergences lead to more well-defined clusters, and very large divergences can lead to numerical instability.
+Ideally, our measure should also have an upper bound, as smaller divergences lead to more well-defined clusters, and very large divergences can lead to numerical instability. \todo{Citation!}
+% Finally, we would like our measure to be a true metric, so that it satisfies the triangle inequality and is non-negative, and this is known to improve the performance of clustering algorithms \todo{Again, citation?}.
 
-\todo{Do we need to use the backward Geometric mean, as described in Deasy and Thiagarajan? Fine if using alpha = 0.5?}
-The JS divergence is a simple extension of the KL divergence, defined as
-\begin{equation}~\label{eq:js}
-  % JS(P \mid\mid Q) = \frac{1}{2} KL(P \mid\mid M) + \frac{1}{2} KL(Q \mid\mid M),
-  JS(P \mid\mid Q) = \frac{1}{2} \left\{ KL(P \mid\mid M) + KL(Q \mid\mid M) \right\},
-\end{equation}
-% where $M = \frac{1}{2}(P + Q)$ is a mixture distribution \citep{Lin1991}.
-where $M$ is the two-component mixture of $P$ and $Q$. 
-The JS divergence provides a symmetric measure of dissimilarity between two distributions.
-  % \item The JS divergence is a true metric bounded by $[0, \log{(2)}]$, unlike the simple sum of the forward and backward KL divergences $KL(P \mid\mid Q) + KL(Q \mid\mid P)$.
-The JS divergence is a true metric unlike the simple sum of the forward and backward KL divergences $KL(P \mid\mid Q) + KL(Q \mid\mid P)$. % don't reference bounds, as JS-G doesn't have any
-  % \item A problem arises from the fact that the mixture distribution $M$ of two normals is not itself normal.
-  % \item In fact, $M$ becomes increasingly bimodal as $P$ and $Q$ become more dissimilar, and so the JS divergence does not have a closed form solution for multivariate normals.
-A problem arises from the fact that the mixture distribution $M$ of two normals is not itself normal, and so the KL divergence does not have a closed form solution for multivariate normals.
-\citet{Nielsen2019} overcomes this problem by using the weighted geometric mean $G_{\alpha}(P, Q) = P^{\alpha} Q^{1 - \alpha}, \alpha \in [0, 1]$, instead of the arithmetic mean. 
-This allows us to exploit the property that the weighted product of exponential family distributions is itself a member of the same family, and so $G_{\alpha}(P, Q)$ will also be a multivariate normal distribution.
-\todo{Need to use backward version instead?}
-From this, we define the skew-geometric JS divergence as
-\begin{equation}~\label{eq:js_norm}
-  % JS^{G_{\alpha}}(P \mid\mid Q) = \frac{1}{2} KL(P \mid\mid G_{\alpha}(P, Q)) + \frac{1}{2} KL(Q \mid\mid G_{\alpha}(P, Q)).
-  JS^{G_{\alpha}}(P \mid\mid Q) = \frac{1}{2} \left\{ KL(P \mid\mid G_{\alpha}(P, Q)) + KL(Q \mid\mid G_{\alpha}(P, Q)) \right\}.
-\end{equation}
-The parameter $\alpha$ is called a skew parameter, and controls the divergence skew between P and Q. 
-For our purposes, we will set $\alpha = 0.5$, which corresponds to giving equal weight to both distributions. \todo{Need to explore this further!}
-The exact form of this divergence for two multivariate normals is given in equation~\eqref{eq:js_norm_mvn1}, and the simplified form for the case of diagonal covariance matrices is given in equation~\eqref{eq:js_norm_mvn_diag}. 
-  % \item Thus we have a closed form, computationally efficient and symmetric measure of dissimilarity between any two conditional distributions as given by equation~\ref{eq:ce_norm} for two sites, with which we can cluster locations based on their extremal dependence structure. 
-  % \item Thus we have a closed form, computationally efficient and symmetric measure of dissimilarity between any conditional multivariate normal distributions as given by \eqref{eq:ce_norm}, representing the extremal dependence structure at each site. 
+% % Introduce KL divergence 
+% One common measure of dissimilarity between two distributions $P$ and $Q$ is the Kullback-Leibler (KL) divergence, defined as
+% \begin{equation}~\label{eq:kl}
+%   KL(P \mid\mid Q) = \int_{-\infty}^{\infty} p(y) \log\left(\frac{p(y)}{q(y)}\right) dy.
+% \end{equation}
+% \todo{define mid mid!?}
+% where $p(y)$ and $q(y)$ are the densities of $P$ and $Q$, respectively \citep{Kullback1951}.
+% % \item The KL divergence is always non-negative and zero if and only if $P =
+% % Q$, and for two multivariate normal distributions $P \sim N(\mu_1,
+% % \Sigma_1)$, Q \sim N(\mu_2, \Sigma_2)$ in $\mathbb{R}^n$ has closed form
+% % solution.
+% The KL divergence is always non-negative and zero if and only if $P = Q$.
+% % For two multivariate normal distributions $P \sim N(\mu_1, \Sigma_1), Q \sim N(\mu_2, \Sigma_2) \in \mathbb{R}^n$ with diagonal covariance matrices, $KL(P \mid\mid Q)$ has closed form.
+% A well known result is that the KL divergence between two multivariate normal distributions $P \sim N(\mu_1, \Sigma_1)$ and $Q \sim N(\mu_2, \Sigma_2)$ in $\mathbb{R}^n$ has a closed form solution.
+%   % \item In the case where both covariance matrices are diagonal, this simplifies to
+%     % \begin{equation}~\label{eq:kl_mvn_diag}
+%     %   KL(P \mid\mid Q) = \frac{1}{2} \sum_{i=1}^{n} \left( \frac{\sigma_{1,i}^2}{\sigma_{2,i}^2} + \frac{(\mu_{1,i} - \mu_{2,i})^2}{\sigma_{2,i}^2} - 1 - \log\left(\frac{\sigma_{1,i}^2}{\sigma_{2,i}^2}\right) \right),
+%     % \end{equation}
+%     % where: \todo{Should I use a different notation here, since I also use mu, sigma for the CE model?}
+%     % \begin{itemize}
+%     %     \item $\mu_1 = (\mu_{1,1}, \mu_{1,2}, \ldots, \mu_{1,n})^\top$ and $\mu_2 = (\mu_{2,1}, \mu_{2,2}, \ldots, \mu_{2,n})^\top$ are the mean vectors,
+%     %     \item $\Sigma_1 = \text{diag}(\sigma_{1,1}^2, \sigma_{1,2}^2, \ldots, \sigma_{1,n}^2)$ and $\Sigma_2 = \text{diag}(\sigma_{2,1}^2, \sigma_{2,2}^2, \ldots, \sigma_{2,n}^2)$ are diagonal covariance matrices,
+%     %     \item $\sigma_{1,i}^2$ and $\sigma_{2,i}^2$ denote the $i$-th diagonal element of $\Sigma_1$ and $\Sigma_2$, respectively.
+%     % \end{itemize}
+% However, the KL divergence is asymmetric, unbounded and not a true divergence metric, making it unsuitable for clustering. \todo{need to be more specific here, kinda wishy washy}
+% 
+% \todo{Do we need to use the backward Geometric mean, as described in Deasy and Thiagarajan? Fine if using alpha = 0.5?}
+% The JS divergence is a simple extension of the KL divergence, defined as
+% \begin{equation}~\label{eq:js}
+%   % JS(P \mid\mid Q) = \frac{1}{2} KL(P \mid\mid M) + \frac{1}{2} KL(Q \mid\mid M),
+%   JS(P \mid\mid Q) = \frac{1}{2} \left\{ KL(P \mid\mid M) + KL(Q \mid\mid M) \right\},
+% \end{equation}
+% % where $M = \frac{1}{2}(P + Q)$ is a mixture distribution \citep{Lin1991}.
+% where $M$ is the two-component mixture of $P$ and $Q$. 
+% The JS divergence provides a symmetric measure of dissimilarity between two distributions.
+%   % \item The JS divergence is a true metric bounded by $[0, \log{(2)}]$, unlike the simple sum of the forward and backward KL divergences $KL(P \mid\mid Q) + KL(Q \mid\mid P)$.
+% The JS divergence is a true metric unlike the simple sum of the forward and backward KL divergences $KL(P \mid\mid Q) + KL(Q \mid\mid P)$. % don't reference bounds, as JS-G doesn't have any
+%   % \item A problem arises from the fact that the mixture distribution $M$ of two normals is not itself normal.
+%   % \item In fact, $M$ becomes increasingly bimodal as $P$ and $Q$ become more dissimilar, and so the JS divergence does not have a closed form solution for multivariate normals.
+% A problem arises from the fact that the mixture distribution $M$ of two normals is not itself normal, and so the KL divergence does not have a closed form solution for multivariate normals.
+% \citet{Nielsen2019} overcomes this problem by using the weighted geometric mean $G_{\alpha}(P, Q) = P^{\alpha} Q^{1 - \alpha}, \alpha \in [0, 1]$, instead of the arithmetic mean. 
+% This allows us to exploit the property that the weighted product of exponential family distributions is itself a member of the same family, and so $G_{\alpha}(P, Q)$ will also be a multivariate normal distribution.
+% \todo{Need to use backward version instead?}
+% From this, we define the skew-geometric JS divergence as
+% \begin{equation}~\label{eq:js_norm}
+%   % JS^{G_{\alpha}}(P \mid\mid Q) = \frac{1}{2} KL(P \mid\mid G_{\alpha}(P, Q)) + \frac{1}{2} KL(Q \mid\mid G_{\alpha}(P, Q)).
+%   JS^{G_{\alpha}}(P \mid\mid Q) = \frac{1}{2} \left\{ KL(P \mid\mid G_{\alpha}(P, Q)) + KL(Q \mid\mid G_{\alpha}(P, Q)) \right\}.
+% \end{equation}
+% The parameter $\alpha$ is called a skew parameter, and controls the divergence skew between P and Q. 
+% For our purposes, we will set $\alpha = 0.5$, which corresponds to giving equal weight to both distributions. \todo{Need to explore this further!}
+% The exact form of this divergence for two multivariate normals is given in equation~\eqref{eq:js_norm_mvn1}, and the simplified form for the case of diagonal covariance matrices is given in equation~\eqref{eq:js_norm_mvn_diag}. 
+%   % \item Thus we have a closed form, computationally efficient and symmetric measure of dissimilarity between any two conditional distributions as given by equation~\ref{eq:ce_norm} for two sites, with which we can cluster locations based on their extremal dependence structure. 
+%   % \item Thus we have a closed form, computationally efficient and symmetric measure of dissimilarity between any conditional multivariate normal distributions as given by \eqref{eq:ce_norm}, representing the extremal dependence structure at each site. 
 
 \todo{Hard/confusing to describe using Yi, swithc to another notation?}
 Since the models $P$ and $Q$ depend on the value of $Y_i$, the conditioning variable, we define the expected value
@@ -588,15 +600,14 @@ We can calculate a dissimilarity matrix between each pair of locations in this w
 
 % PAM (K-means not suitable as clusters cannot be assumed to be spherical) (see
 % Vignotto)
-\todo{Check and double check that this is a metric!!}
-Now we have a metric over which to compute the dissimilarity matrix of pairwise ``distances'' between sites.
+Now we have a distance measure over which to compute the dissimilarity matrix of pairwise ``distances'' between sites.
 The choice remains as to which algorithm to use to cluster this matrix. 
 As in \citet{Vignotto2021}, we use the Partitioning Around Medoids (PAM) algorithm, which is a variant of the popular k-medoids algorithm of \citet{Kaufman1987}.
 A brief description of the algorithm is as follows:
     \todo{Have as algorithm block?}
     \begin{itemize} 
       \item The algorithm begins by randomly selecting $k$ medoids from the dataset as our cluster centroids. 
-      \item Each observation is then assigned to the cluster of the nearest medoid, using the dissimilarity metric defined in \ref{subsec:div}.
+      \item Each observation is then assigned to the cluster of the nearest medoid, using the dissimilarity measure defined in \ref{subsec:div}.
       \item The centroids are updated by selecting the observation in each cluster which minimises the sum of dissimilarities to all other observations in that cluster.
       \item This process is repeated until convergence, when no observations change clusters.
     \end{itemize}
@@ -1025,7 +1036,7 @@ In our analysis, we first transformed the data to Laplace margins, using the emp
 
 \subsection{Clustering}~\label{subsec:app_clust}
 
-% Clustering (including choice of k for each metric)
+% Clustering (including choice of k for each measure)
 We clustered the locations using the $JS^{G_{\alpha}}$ dissimilarity matrix for their CE parameters, as described in Section~\ref{subsec:div}, for the CE models fit to rain conditional on extreme wind speed and vice versa, separately. 
 We also combine information from both models to cluster by summing their dissimilarity matrices.
 The number of clusters $k$ was chosen via the method described in Section~\ref{subsubsec:choose_k}, using the elbow plot of the TWGSS. 
@@ -1084,15 +1095,15 @@ Interpreting these results is much easier post-clustering. \todo{More detail her
 \todo{But min(maxima) approach for unbalanced data may also be lower than sitewise thresholds}
 \todo{Could also say Laplace truncation point could be tuned further to improve clustering performance?}
 \todo{Also, if empirical quantile exceeds any sitewise maxima, will perform extrapolation; if a problem use `minima of maxima' approach}
-\todo{JSGa choice: why not use standard JS, Jeffreys or other metrics (2-Wasserstein, one beginning with H?)?}
+\todo{JSGa choice: why not use standard JS, Jeffreys or other measure (2-Wasserstein, one beginning with H?)?}
 \todo{In multidimensional case, currently restricted to using same DQU for e.g. X2 | X1 and X3 | X1, could extend}
 
 % Rewrite Intro: Methods
 In this paper, we introduced a novel method for clustering spatial locations based on their multivariate extremal dependence structure, as estimated by the conditional extremes model.
-The $JS^{G_{\alpha}}$ divergence metric of \citet{Nielsen2019} is proposed as a dissimilarity measure to compare locations based on their estimated CE parameters, $\alpha$ and $\beta$, which together describe the strength and ``stochasticity'' of each set of bivariate extremal relationships. 
+The $JS^{G_{\alpha}}$ divergence measure of \citet{Nielsen2019} is proposed as a dissimilarity measure to compare locations based on their estimated CE parameters, $\alpha$ and $\beta$, which together describe the strength and ``stochasticity'' of each set of bivariate extremal relationships. 
 This method exploits the fact that inference based on the CE model follows a multivariate Gaussian distribution, following from the Gaussian assumption for the residual process.
 This allows us to derive a closed form for the $JS^{G_{\alpha}}$ divergence, making it computationally efficient to use in clustering.
-K-medoids clustering is performed on the dissimilarity matrix derived from this metric.
+K-medoids clustering is performed on the dissimilarity matrix derived from this measure.
 This preserves the spatial nature of the data and ensures that actual spatial locations with fitted CE models, as opposed to some aggregation, serve as cluster centroids. 
 We can also choose to cluster on some or all of the bivariate extremal relationships in our data, and can aggregate information from multiple CE models to improve clustering performance.
 

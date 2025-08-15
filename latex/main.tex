@@ -90,6 +90,7 @@
 \todo{correct spelling mistakes}
 \todo{Whole paper needs improving, read more carefully!}
 \todo{Use u as threshold, or variable specific??}
+\todo{Replace JSGa with GJS}
 
 % Plotting
 \todo{Crop (map) plots that have too much whitespace}
@@ -489,7 +490,8 @@ The slope or linear regression coefficient $\bm{\alpha}_{\mid i} \in [-1, 1]$ de
 
 \subsection{Divergence measure}~\label{subsec:div}
 
-\todo{Need some references for use of this metric! In intro}
+\todo{Should I use divergence interchangeably with more commonly used distance?}
+\todo{Need some references for applications of this metric! In intro, or here?}
 
 % Intro: CE gives distributions, which need to be compared
 \todo{Keep here, or move to last section?}
@@ -514,10 +516,40 @@ Therefore, under this model, when comparing the multivariate tail dependence str
 There are several qualities we desire from a divergence measure for clustering based on the CE model.
 For clustering, the measure must be symmetric, as the ``distance'' between two sites as defined by the divergence between their CE models should be the same regardless of the order in which they are compared.
 We would also like to exploit the fact that the CE model is a multivariate Gaussian distribution to provide some gains in computational efficiency, and for our divergence to more generally be cheap to compute.
-\todo{Need reference for this?}
 % Ideally, our measure should also be bounded above by a finite value, as smaller divergences lead to more well-defined clusters, and very large divergences can lead to numerical instability.
 Ideally, our measure should also have an upper bound, as smaller divergences lead to more well-defined clusters, and very large divergences can lead to numerical instability. \todo{Citation!}
 % Finally, we would like our measure to be a true metric, so that it satisfies the triangle inequality and is non-negative, and this is known to improve the performance of clustering algorithms \todo{Again, citation?}.
+\todo{Any other properties? Convex (as KL is?) (which may be better?) (need citation)}
+
+% Introduce JSGa
+\todo{Add citations of uses of JSGa!}
+One divergence measure introduced in \citet{Nielsen2019} which satisfies these properties is the skew-geometric Jensen--Shannon divergence ($\JSGa{}$), a generalisation of the Jensen--Shannon (JS) divergence \citep{Lin1991}.
+\todo{Improve definition of P, Q, as measures? Or with detail as to their relation to CE?}
+The $\JSGa{}$ divergence between two distributions $P$ and $Q$ is given by
+\begin{equation}~\label{eq:js}
+  \JSGa{(P \mid\mid Q)} = \frac{1}{2} \left\{ KL(P \mid\mid G_{\alpha}(P, Q)) + KL(Q \mid\mid G_{\alpha}(P, Q)) \right\}.
+  = \frac{1}{2} \left\{KL(P \mid\mid G_{\alpha}(P, Q)) + KL(Q \mid\mid G_{\alpha}(P, Q)) \right\},
+\end{equation}
+where $G_{\alpha}(P, Q) = P^{\alpha} Q^{1 - \alpha}, \alpha \in [0, 1]$ is the weighted geometric mean of $P$ and $Q$, with $\alpha$ controlling the weighting between them, and $KL(P \mid\mid Q)$ is the Kullback--Leibler divergence between $P$ and $Q$ \citep{Killback1951}. \todo{talk about alpha}
+% The Kullback--Leibler (KL) divergence, $KL(P \mid\mid Q)$, is defined as
+% \begin{equation}~\label{eq:kl}
+%   KL(P \mid\mid Q) = \int_{-\infty}^{\infty} p(y) \log\left(\frac{p(y)}{q(y)}\right) dy.
+% \end{equation}
+% The $\JSGa{}$ divergence is derived from the popular Kullback--Leibler ($KL$) divergence \citep{Killback1951}. 
+
+% Explain why it is a good dissimilarity metric to use
+For two multivariate Gaussian distributions, the $KL$ divergence has a closed form, analytical solution \citep{Duchi2007}.
+The $\JSGa{}$ divergence exploits the property that the (weighted) product of two members of the same exponential family is itself a member of the same exponential family distribution. 
+It follows that $G_{\alpha}(P, Q)$ is multivariate Gaussian, and so the KL divergences in equation~\eqref{eq:js} are between multivariate Gaussian distributions and can be computed in closed form.
+Hence, $\JSGa{}$ itself has a closed form solution \citep{Nielsen2019}, and so is computationally efficient to compute.
+Furthermore, it is clearly symmetric and non-negative, as the sum of two $KL$ divergences, which is also important for clustering.
+Finally, it can be shown that where $\alpha = 0.5$, it is bounded above with
+\begin{equation}~\label{eq:js_bound}
+  \JSGa{(P \mid\mid Q)} \leq \frac{1}{4} \mathrm{J}(P \mid\mid Q),
+\end{equation}
+where the Jeffreys' divergence $J(P \mid\mid Q) = KL(P \mid\mid Q) + KL(Q \mid\mid P)$ is simply the sum of the forward and backward KL divergences \citep{Nielsen2025}.
+Therefore, $\JSGa{}$ provides more well-defined clusters than the Jeffreys' divergence, motivating the higher conceptual complexity by comparison. 
+More details on the choice of divergence measure are given in the discussion in Section~\ref{sec:discussion}.
 
 % % Introduce KL divergence 
 % One common measure of dissimilarity between two distributions $P$ and $Q$ is the Kullback-Leibler (KL) divergence, defined as
@@ -573,7 +605,11 @@ Ideally, our measure should also have an upper bound, as smaller divergences lea
 %   % \item Thus we have a closed form, computationally efficient and symmetric measure of dissimilarity between any two conditional distributions as given by equation~\ref{eq:ce_norm} for two sites, with which we can cluster locations based on their extremal dependence structure. 
 %   % \item Thus we have a closed form, computationally efficient and symmetric measure of dissimilarity between any conditional multivariate normal distributions as given by \eqref{eq:ce_norm}, representing the extremal dependence structure at each site. 
 
-\todo{Hard/confusing to describe using Yi, swithc to another notation?}
+% Explicit form of JSGa
+\todo{Explicit version for MVNs}
+
+% Expectation definition
+\todo{Hard/confusing to describe using Yi, switch to another notation?}
 Since the models $P$ and $Q$ depend on the value of $Y_i$, the conditioning variable, we define the expected value
 \todo{Need to clean up expectation?}
 \begin{equation}~\label{eq:js_integral}

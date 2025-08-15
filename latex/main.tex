@@ -408,7 +408,7 @@ To transform each marginal random variable $X_i$ to Laplace margins, denoted by 
 %   % \begin{equation}~\label{eq:ce_limiting_dist}
 %   %       \lim_{y_i \rightarrow \infty}\{\mathbb{P}(\bm{Y}_{-i} \le \bm{a}_{\mid i}(y_i) + \bm{b}_{\mid i}(y_i)\bm{z}_{\mid i} \mid Y_i = y_i)\} = \bm{G}_{\mid i}(\bm{z}_{\mid i}),
 %   % \end{equation}
-%   where $G_{j \mid i}$ is non-degenerate for all $j \ne i$. 
+%   where $\bm{G}_{j \mid i}$ is non-degenerate for all $j \ne i$. 
 %   \item Furthermore, to ensure $\bm{G}_{\mid i}$ is well-defined, we have the constraint that 
 %   \[
 %     \lim_{z \rightarrow \infty}{\bm{G}_{j \mid i}(\bm{z})} = 1, \forall j \ne i,
@@ -418,7 +418,7 @@ To transform each marginal random variable $X_i$ to Laplace margins, denoted by 
  %   \citep{Keef2013}.
 %   \item An important consequence of this formulation is the weak assumption that
 %   \begin{equation}~\label{eq:limit_independence}
-%   \mathbb{P}(\bm{Z}_{\mid i} \le \bm{z}_{\mid i}, Y_i - u_i = y_i \mid Y_i > u_i) \rightarrow G_{\mid i}(\bm{z}_i) \exp(-y) \text{ as } u_i \rightarrow \infty,
+%   \mathbb{P}(\bm{Z}_{\mid i} \le \bm{z}_{\mid i}, Y_i - u_i = y_i \mid Y_i > u_i) \rightarrow \bm{G}_{\mid i}(\bm{z}_i) \exp(-y) \text{ as } u_i \rightarrow \infty,
 %   \end{equation}
 %   so that in the limit as $u_i \to \infty$, the extremal exceedances $Y_i - u_i$ and $\bm{Z}_{\mid i}$ are independent.
 %   % \item Methods for assessing the validity of this assumption and hence the conditional extremes model for a given application are explored in section \ref{subsubsec:ce_diagnostics}.
@@ -426,26 +426,32 @@ To transform each marginal random variable $X_i$ to Laplace margins, denoted by 
 % \end{itemize}
 
 % say Y in d dimensions
-We use $Y_{-i} = \bm{Y} \backslash Y_{i}, \bm{Y} \in \mathbb{R}^d, y \in (1, \ldots, d)$ to denote the vector of all variables in $\bm{Y}$ except $Y_i$, and assume all operations are performed component-wise.
+% We use $Y_{-i} = \bm{Y} \backslash Y_{i}, \bm{Y} \in \mathbb{R}^d, y \in (1, \ldots, d)$ to denote the vector of all variables in $\bm{Y}$ except $Y_i$, and assume all operations hereafter are performed component-wise.
+We use $ \bm{Y} \in \mathbb{R}^d$ and for $i \in \{1,\ldots,d\}$ write $Y_{-i} = \bm{Y}\setminus\{Y_i\}$ to denote the $(d-1)$-dimensional random vector of all components except $Y_i$, and assume all operations below are component-wise. 
 % \item The CE model of \citet{Heffernan2004} assumes that there exists vector normalising parameters $\alpha_{\mid i} := \bm{a}_{\mid i}(y_i), \beta_{\mid i} := \bm{b}_{\mid i}(y_i) \in \mathbb{R} \rightarrow \mathbb{R}^{(d-1)}$ such that for fixed $\bm{z}_{\mid i} \in \mathbb{R}^{(d-1)}$,
-The CE model of \citet{Heffernan2004} assumes that there exists vector normalising parameters $\bm{\alpha}_{\mid i} := \left\{\alpha_{j \mid i} : j \in (1, \ldots, d) \backslash i \right\} \in [-1, 1]^{(d-1)}$ and $\bm{\beta}_{\mid i} := \left\{\beta_{j \mid i} : j \in (1, \ldots, d) \backslash i \right\} \in [-\infty, 1]^{(d-1)}$ such that for fixed $\bm{z}_{\mid i} \in \mathbb{R}^{(d-1)}$, $y_i > 0$,
-    \todo{Check if probably is for equal to yi or greater than yi}
-    \begin{equation}~\label{eq:ce_limiting_dist}
-      \mathbb{P}\left(\frac{\bm{Y}_{-i} - \bm{\alpha}_{\mid i} Y_{i}}{Y_{i}^{\bm{\beta}_{\mid i}}} \le \bm{z}_{\mid i}, Y_i - u_i = y_i \mid Y_i > u_i \right) \rightarrow G_{\mid i}(\bm{z}_{\mid i}) \exp(-y_i) \text{ as } u_i \rightarrow \infty,
-    \end{equation}
-where $G_{j \mid i}$ is non-degenerate for all $j \ne i$. 
-\todo{below points needed, or can some of this be removed?}
-To ensure $\bm{G}_{\mid i}$ is well-defined, we have the constraint that 
-\[
-  \lim_{z \rightarrow \infty}{\bm{G}_{j \mid i}(\bm{z})} = 1, \forall j \ne i,
-\]
-ensuring that there is no mass at $+\infty$ for any margin, but allowing for some mass to be at $-\infty$, in order to ensure uniqueness of the solution \citep{Keef2013}.
-An important consequence of this formulation is the weak assumption that
-\begin{equation}~\label{eq:limit_independence}
-  \mathbb{P}(\bm{Z}_{\mid i} \le \bm{z}_{\mid i}, Y_i - u_i = y_i \mid Y_i > u_i) \rightarrow G_{\mid i}(\bm{z}_{\mid i}) \exp(-y_i) \text{ as } u_i \rightarrow \infty,
+The CE model of \citet{Heffernan2004} assumes that there exist vector normalising parameter vectors $\bm{\alpha}_{\mid i} := \left\{\alpha_{j \mid i} : j\in\{1,\dots,d\}\setminus\{i\}\right\} \in [-1, 1]^{(d-1)}$ and $\bm{\beta}_{\mid i} := \left\{\beta_{j \mid i} : j\in\{1,\dots,d\}\setminus\{i\} \right\} \in [-\infty, 1]^{(d-1)}$ such that for fixed $\bm{z}_{\mid i} \in \mathbb{R}^{(d-1)}$, $y_i > 0$,
+% \todo{Check if probably is for equal to yi or greater than yi}
+\todo{Should I use ui or uyi? Need to be consistent!}
+\begin{equation}~\label{eq:ce_limiting_dist}
+      \mathbb{P}\left(\frac{\bm{Y}_{-i} - \bm{\alpha}_{\mid i} Y_{i}}{Y_{i}^{\bm{\beta}_{\mid i}}} \le \bm{z}_{\mid i}, Y_i - u_i > y_i \mid Y_i > u_i \right) \longrightarrow \bm{G}_{\mid i}(\bm{z}_{\mid i}) \exp(-y_i) \text{ as } u_i \rightarrow \infty,
 \end{equation}
-so that in the limit as $u_i \to \infty$, the extremal exceedances $Y_i - u_i$ and the standardised residuals $\bm{Z}_{\mid i} = \frac{\bm{Y}_{-i} - \bm{\alpha}_{\mid i} Y_{i}}{Y_{i}^{\bm{\beta}_{\mid i}}}, \bm{Z}_{\mid i} \sim G_{\mid i}$ are independent.
-% Methods for assessing the validity of this assumption and hence the CE model for a given application are explored in section \ref{subsubsec:ce_diagnostics}.
+% where $u_i$ is a suitably high threshold for $Y_i$, and $\bm{G}_{j \mid i}$ is non-degenerate for all $j \ne i$. 
+% \todo{below points needed, or can some of this be removed?}
+% To ensure $\bm{G}_{\mid i}$ is well-defined, we have the constraint that 
+% \[
+%   \lim_{z \rightarrow \infty}{\bm{G}_{j \mid i}(\bm{z})} = 1, \forall j \ne i,
+% \]
+% ensuring that there is no mass at $+\infty$ for any margin, but allowing for some mass to be at $-\infty$, in order to ensure uniqueness of the solution \citep{Keef2013}.
+where $u_i$ is a suitably high threshold for $Y_i$.
+The distribution $\bm{G}_{\mid i}$ is non-degenerate on $\mathbb{R}^{d-1}$ and, for each margin $j\neq i$, $\lim\limits_{z\to\infty}\bm{G}_{j\mid i}(z)=1$, so that there is no mass at $+\infty$, while mass at $-\infty$ is permitted to ensure uniqueness \citep{Keef2013}. 
+
+% An important consequence of this formulation is the weak assumption that
+% \begin{equation}~\label{eq:limit_independence}
+%   \mathbb{P}(\bm{Z}_{\mid i} \le \bm{z}_{\mid i}, Y_i - u_i = y_i \mid Y_i > u_i) \rightarrow \bm{G}_{\mid i}(\bm{z}_{\mid i}) \exp(-y_i) \text{ as } u_i \rightarrow \infty,
+% \end{equation}
+% so that in the limit as $u_i \to \infty$, the extremal exceedances $Y_i - u_i$ and the standardised residuals $\bm{Z}_{\mid i} = \frac{\bm{Y}_{-i} - \bm{\alpha}_{\mid i} Y_{i}}{Y_{i}^{\bm{\beta}_{\mid i}}}, \bm{Z}_{\mid i} \sim \bm{G}_{\mid i}$ are independent.
+% Equation~\eqref{eq:ce_joint_limit} implies that, in the limit $u_i\to\infty$, the exceedances $Y_i-u_i$ and the standardised residuals $\bm{Z}_{\mid i} = \frac{\bm{Y}_{-i} - \bm{\alpha}_{\mid i} Y_{i}}{Y_{i}^{\bm{\beta}_{\mid i}}}, \bm{Z}_{\mid i} \sim \bm{G}_{\mid i}$ are asymptotically independent. \todo{Should G be bold?} \todo{not sure I like two statements about Z here}
+Equation~\eqref{eq:ce_joint_limit} implies that, in the limit $u_i\to\infty$, the exceedances $Y_i-u_i$ and the standardised residuals $\bm{Z}_{\mid i} = \frac{\bm{Y}_{-i} - \bm{\alpha}_{\mid i} Y_{i}}{Y_{i}^{\bm{\beta}_{\mid i}}}$, where $\bm{Z}_{\mid i} \sim \bm{G}_{\mid i}$, are asymptotically independent.
 
 % Heteroskedastic regression
 The limiting distribution in equation~\eqref{eq:ce_limiting_dist} can be rearranged to give the heteroskedastic regression equation defined by
@@ -453,12 +459,12 @@ The limiting distribution in equation~\eqref{eq:ce_limiting_dist} can be rearran
     % \bm{Y}_{-i} \bm{\alpha}_{\mid i}\bm{y}_i + \bm{y}_i^{\bm{\beta}_{\mid i}}\bm{Z}_{\mid i}, \text{ for } Y_i = y_i > u_{Y_i}.
   \bigl(\bm{Y}_{-i} \mid Y_i = y_i \bigr) = \bm{\alpha}_{\mid i}\bm{y}_i + \bm{y}_i^{\bm{\beta}_{\mid i}}\bm{Z}_{\mid i}, \text{ for } y_i > u_{Y_i}.
 \end{equation}
-% with residual vector $\bm{Z}_{\mid i} \sim G_{\mid i}$.
+% with residual vector $\bm{Z}_{\mid i} \sim \bm{G}_{\mid i}$.
 The slope or linear regression coefficient $\bm{\alpha}_{\mid i} \in [-1, 1]$ describes the strength of association between $Y_{-i}$ and large $Y_i$. 
 % \item $\bm{\beta}_{\mid i} \in [-\infty, 1]$ can be interpretated as a ``spread'' parameter, controlling the levels of heteroskedasticity in the model.
 The parameter $\bm{\beta}_{\mid i} \in [-\infty, 1]$ can be interpreted as a ``spread'' or heteroskedastic parameter, controlling the impact of the residual term $\bm{Z}_{\mid i}$ on the dependence between $\bm{Y}_{-i}$ and $\bm{Y}_i$.
 Higher values of $\bm{\beta}_{\mid i}$ indicate that the distribution of $Y_{-i}$ is more spread out for larger values of $Y_i$, while lower values indicate a more strongly deterministic relationship. 
-  % \item Several choices for $G_{\mid i}$, the distribution of $\bm{Z}_{\mid i}$, were proposed in \citet{Heffernan2004}, before ultimately settling on a multivariate normal distribution with vector nuisance parameters $\bm{\mu}_{\mid i} \in \mathbb{R}^{(d-1)}$ and $\bm{\sigma}_{\mid i} \in \mathbb{R}^{(d-1)}$.
+  % \item Several choices for $\bm{G}_{\mid i}$, the distribution of $\bm{Z}_{\mid i}$, were proposed in \citet{Heffernan2004}, before ultimately settling on a multivariate normal distribution with vector nuisance parameters $\bm{\mu}_{\mid i} \in \mathbb{R}^{(d-1)}$ and $\bm{\sigma}_{\mid i} \in \mathbb{R}^{(d-1)}$.
 The distribution of $\bm{Z}_{\mid i}$, the residuals of the model, is assumed to be multivariate normal with vector nuisance parameters $\bm{\mu}_{\mid i} \in \mathbb{R}^{(d-1)}$ and $\bm{\sigma}_{\mid i} \in \mathbb{R}^{(d-1)}$, as proposed in \citet{Heffernan2004}.
 \todo{Jordan says that below isn't quite right, focus on components!}
 Some special cases of the CE model are:

@@ -91,6 +91,8 @@
 \todo{Whole paper needs improving, read more carefully!}
 \todo{Use u as threshold, or variable specific??}
 \todo{Replace JSGa with GJS}
+\todo{Add citations of uses of JSGa somewhere (introduction?)!}
+\todo{Replace mu and sigma for CE parameters with mu CE and sigma CE, so it doesn't clash with JSGa formula}
 
 % Plotting
 \todo{Crop (map) plots that have too much whitespace}
@@ -394,16 +396,16 @@ One such model which provides a flexible framework for describing tail dependenc
 The CE model, like many other models for multivariate extremes, requires a marginal transformation.
 Standardising to common margins is a widespread technique to ensure differences in variable scale do not affect estimation of the dependence structure. 
 A popular choice for CE is to transform to Laplace margins, as introduced in \citet{Keef2013}.
-% Each marginal random variable $X_i$ is transformed to Laplace margins, as outlined in equation~\eqref{eq:laplace}, and thereafter denoted by $Y_i$.
-To transform each marginal random variable $X_i$ to Laplace margins, denoted by $Y_i$, we let:
- \begin{equation}~\label{eq:laplace}
-   Y_i = \begin{cases}
-     \log\left\{2F_{X_i}(X_i)\right\} &\text{ for } X_i < F_{X_i}^{-1}(0.5), \\
-     -\log\left\{2(1 - F_{X_i}(X_i))\right\} &\text{ for } X_i \ge F_{X_i}^{-1}(0.5), \\
-   \end{cases}
- \end{equation}
- \todo{trying to be brief, but would like to have quick line about why we use Laplace!}
- where $F_{X_i}$ is the cumulative distribution function (CDF) of $X_i$. 
+Each marginal random variable $X_i$ is transformed to Laplace margins, as outlined in equation~\eqref{eq:laplace} in Section \ref{subsec:estimation}, and thereafter denoted by $Y_i$.
+% To transform each marginal random variable $X_i$ to Laplace margins, denoted by $Y_i$, we let:
+%  \begin{equation}~\label{eq:laplace}
+%    Y_i = \begin{cases}
+%      \log\left\{2F_{X_i}(X_i)\right\} &\text{ for } X_i < F_{X_i}^{-1}(0.5), \\
+%      -\log\left\{2(1 - F_{X_i}(X_i))\right\} &\text{ for } X_i \ge F_{X_i}^{-1}(0.5), \\
+%    \end{cases}
+%  \end{equation}
+%  \todo{trying to be brief, but would like to have quick line about why we use Laplace!}
+%  where $F_{X_i}$ is the cumulative distribution function (CDF) of $X_i$. 
 
 % Rigorous Conditional Extremes definition
 % \begin{itemize}
@@ -469,8 +471,13 @@ with residual vector $\bm{Z}_{\mid i} \sim \bm{G}_{\mid i}$.
 The slope or linear regression coefficient $\bm{\alpha}_{\mid i} \in [-1, 1]$ describes the strength of association between $Y_{-i}$ and large $Y_i$. 
 % \item $\bm{\beta}_{\mid i} \in [-\infty, 1]$ can be interpretated as a ``spread'' parameter, controlling the levels of heteroskedasticity in the model.
 \item $\bm{\beta}_{\mid i} \in [-\infty, 1]$ can be loosely interpreted as a ``spread'' parameter, controlling the levels of heteroskedasticity in the model.
-  % \item Several choices for $\bm{G}_{\mid i}$, the distribution of $\bm{Z}_{\mid i}$, were proposed in \citet{Heffernan2004}, before ultimately settling on a multivariate normal distribution with vector nuisance parameters $\bm{\mu}_{\mid i} \in \mathbb{R}^{(d-1)}$ and $\bm{\sigma}_{\mid i} \in \mathbb{R}^{(d-1)}$.
-% The distribution of $\bm{Z}_{\mid i}$, the residuals of the model, is assumed to be multivariate normal with vector nuisance parameters $\bm{\mu}_{\mid i} \in \mathbb{R}^{(d-1)}$ and $\bm{\sigma}_{\mid i} \in \mathbb{R}^{(d-1)}$.
+  % \item Several choices for $\bm{G}_{\mid i}$, the distribution of
+% $\bm{Z}_{\mid i}$, were proposed in \citet{Heffernan2004}, before ultimately
+% settling on a multivariate normal distribution with vector nuisance parameters
+% $\bm{\mu}_{\mid i} \in \mathbb{R}^{(d-1)}$ and $\bm{\Sigma}_{\mid i} \in \mathbb{R}^{(d-1)}$.
+% The distribution of $\bm{Z}_{\mid i}$, the residuals of the model, is assumed
+% to be multivariate normal with vector nuisance parameters $\bm{\mu}_{\mid i}
+% \in \mathbb{R}^{(d-1)}$ and $\bm{\Sigma}_{\mid i} \in \mathbb{R}^{(d-1)}$.
 % \todo{Jordan says that below isn't quite right, focus on components!}
 % Some special cases of the CE model are:
 % \begin{itemize}
@@ -494,43 +501,51 @@ The slope or linear regression coefficient $\bm{\alpha}_{\mid i} \in [-1, 1]$ de
 \todo{Need some references for applications of this metric! In intro, or here?}
 
 % Intro: CE gives distributions, which need to be compared
-\todo{Keep here, or move to last section?}
 % Definition of Z moved here to be impactful than after eq:ce_model
-The residual process $\bm{Z}_{\mid i}$ of the model in equation~\eqref{eq:ce_model} is assumed to follow a multivariate Gaussian distribution with vector nuisance parameters $\bm{\mu}_{\mid i} \in \mathbb{R}^{(d-1)}$ and $\bm{\sigma}_{\mid i} \in \mathbb{R}^{(d-1)}$.
+% The residual process $\bm{Z}_{\mid i}$ in equation~\eqref{eq:ce_model} is
+% assumed to follow a multivariate Gaussian distribution with vector nuisance
+% parameters $\bm{\mu}_{\mid i} \in \mathbb{R}^{(d-1)}$ and $\bm{\Sigma}_{\mid i} \in \mathbb{R}^{(d-1)}$.
+The residual vector $\bm{Z}_{\mid i}$ in equation~\eqref{eq:ce_model} is assumed to follow a multivariate Gaussian distribution with mean vector $\bm{\mu}_{\mid i}\in\mathbb{R}^{d-1}$ and covariance matrix $\Sigma_{\mid i}\in\mathbb{R}^{(d-1)\times(d-1)}$. 
 \todo{Heff04 assumes diagonal sigma, should we say we use full covariance?}
 % This is a working assumption proposed in \citet{Heffernan2004} after testing several candidate distributions. %, and is still most commonly used in the literature \todo{citations?}
 % This is the key assumption of the CE model on which we derive our divergence measure, and was chosen in \citet{Heffernan2004} after testing several candidate distributions.
-This is the key aspect of the CE model with which we derive our divergence measure, and is a working assumption chosen in \citet{Heffernan2004} after testing several candidate distributions.
+% This is the key aspect of the CE model with which we derive our divergence measure, and is a working assumption chosen in \citet{Heffernan2004} after testing several candidate distributions.
+This Gaussian working assumption, proposed in \citet{Heffernan2004} after testing several candidate distributions, is the key property we wish to exploit when deriving a closed-form divergence for clustering.
 
 % \citet{Heffernan2004} shows that inference can be made about the extremal dependence of a random vector $\bm{Y}_{-i} = \bm{Y} \backslash Y_i$ on $Y_i$ by conditioning on the exceedance of a high threshold $u$ by $Y_i$, and assuming that this conditional distribution is a diagonal multivariate Gaussian distribution: % with vector mean and standard deviation:
-An important consequence which follows from this assumption is that inference can be made about the extremal dependence of a random vector $\bm{Y}_{-i} = \bm{Y} \setminus \{Y_i\}$ on $Y_i$ by conditioning on the exceedance of a high threshold $u_i$ by $Y_i$, and assuming that this conditional distribution is a multivariate Gaussian distribution, i.e.\ 
+% An important consequence following from this assumption is that inference can be made about the extremal dependence of a random vector $\bm{Y}_{-i} = \bm{Y} \setminus \{Y_i\}$ on $Y_i$ by conditioning on the exceedance of a high threshold $u_i$ by $Y_i$, and assuming that this conditional distribution is a multivariate Gaussian distribution, i.e.\ 
+Consequently, inference can be made about the extremal dependence of a random vector $\bm{Y}_{-i} = \bm{Y} \setminus \{Y_i\}$ on $Y_i$ by conditioning on the exceedance of a high threshold $u_i$ by $Y_i$, and assuming that this conditional distribution is a multivariate Gaussian distribution, i.e.\
 \begin{equation}~\label{eq:ce_norm}
-  \bigl( \bm{Y}_{-i} \mid Y_i  = y_i \bigr) \sim N\left(\bm{\alpha}_{\mid i} y_i + y_i^{\bm{\beta}_i} \bm{\mu}_{\mid i}, y_i^{\bm{\beta}_i} \bm{\sigma_{\mid i}}\right), Y_i > u_i,
-  % Y_{j} \mid Y_{i} = y_i \sim N\left(\alpha_{j \mid i} y_i + y_i^{\beta_i} \mu_{j \mid i}, y_i^{\beta_i} \sigma_{j \mid i}\right),
+  \bigl( \bm{Y}_{-i} \mid Y_i  = y_i \bigr) \sim N\left(\bm{\alpha}_{\mid i} y_i + y_i^{\bm{\beta}_{\mid i}} \bm{\mu}_{\mid i}, y_i^{\bm{\beta}_{\mid i}} \bm{\Sigma_{\mid i}}\right), Y_i > u_i,
 \end{equation}
-where $\bm{\alpha}_{\mid i}, \bm{\beta}_{\mid i}, \bm{\mu}_{\mid i}, \bm{\sigma}_{\mid i} \in \mathbb{R}^{(d-1)}$ are the parameters of the CE model.
+% where $\bm{\alpha}_{\mid i}, \bm{\beta}_{\mid i}, \bm{\mu}_{\mid i}, \bm{\Sigma}_{\mid i} \in \mathbb{R}^{(d-1)}$ are the parameters of the CE model.
+where $\bm{\alpha}_{\mid i}, \bm{\beta}_{\mid i}, \bm{\mu}_{\mid i}, \bm{\Sigma}_{\mid i} \in \mathbb{R}^{(d-1)}$ are the parameters of the CE model. 
 % Therefore, when seeking to compare the extremal dependence structure of two locations, a sensible approach is to compare the conditional distributions given by equation~\ref{eq:ce_norm} for each variable at both sites. 
 % Therefore, under this model, when comparing the extremal dependence structure between variables at any given sites, we are effectively comparing the conditional distributions given by equation~\eqref{eq:ce_norm}.
-Therefore, under this model, when comparing the multivariate tail dependence structure at different sites, we are effectively comparing the conditional distributions given by equation~\eqref{eq:ce_norm}.
+% Therefore, under this model, when comparing the multivariate tail dependence structure at different sites, we are effectively comparing the conditional distributions given by equation~\eqref{eq:ce_norm}.
+Therefore, to compare tail dependence at different sites, we can compare the conditional distributions in \eqref{eq:ce_norm}, i.e.\ the induced multivariate Gaussian distributions parameterised by $(\bm{\alpha}_{\mid i},\bm{\beta}_{\mid i},\bm{\mu}_{\mid i},\Sigma_{\mid i})$ (or a chosen subset thereof).
 
-There are several qualities we desire from a divergence measure for clustering based on the CE model.
-For clustering, the measure must be symmetric, as the ``distance'' between two sites as defined by the divergence between their CE models should be the same regardless of the order in which they are compared.
-We would also like to exploit the fact that the CE model is a multivariate Gaussian distribution to provide some gains in computational efficiency, and for our divergence to more generally be cheap to compute.
+There are several qualities we desire from a divergence measure for clustering based on the conditional distribution in equation~\eqref{eq:ce_norm}.
+% We would like to exploit the fact that the CE model is a multivariate Gaussian distribution to provide some gains in computational efficiency, and for our divergence to more generally be cheap to compute.
+We particularly want to exploit the multivariate Gaussian nature of the CE model, to provide computational efficiency through a closed-form solution, and for our divergence to be generally cheap to compute.
+For clustering, the measure must be non-negative and symmetric, as the ``distance'' between two sites as defined by the divergence between their CE models should be the same regardless of the order in which they are compared.
 % Ideally, our measure should also be bounded above by a finite value, as smaller divergences lead to more well-defined clusters, and very large divergences can lead to numerical instability.
-Ideally, our measure should also have an upper bound, as smaller divergences lead to more well-defined clusters, and very large divergences can lead to numerical instability. \todo{Citation!}
+% Ideally, our measure should also have some form of upper bound, as smaller divergences lead to more well-defined clusters, and very large divergences can lead to numerical instability. \todo{Citation!}
+Ideally, our measure should also have an upper bound, as larger divergences can lead to numerical instability and less stable and well-defined clusters. \todo{Need citation?}
 % Finally, we would like our measure to be a true metric, so that it satisfies the triangle inequality and is non-negative, and this is known to improve the performance of clustering algorithms \todo{Again, citation?}.
 \todo{Any other properties? Convex (as KL is?) (which may be better?) (need citation)}
 
 % Introduce JSGa
-\todo{Add citations of uses of JSGa!}
-One divergence measure introduced in \citet{Nielsen2019} which satisfies these properties is the skew-geometric Jensen--Shannon divergence ($\JSGa{}$), a generalisation of the Jensen--Shannon (JS) divergence \citep{Lin1991}.
+One divergence measure introduced in \citet{Nielsen2019} which satisfies these properties is the skew-geometric Jensen--Shannon divergence ($\JSGa{}$), a generalisation of the Jensen--Shannon (JS) divergence \citep{Lin1991}. 
 \todo{Improve definition of P, Q, as measures? Or with detail as to their relation to CE?}
 The $\JSGa{}$ divergence between two distributions $P$ and $Q$ is given by
 \begin{equation}~\label{eq:js}
-  \JSGa{(P \mid\mid Q)} = \frac{1}{2} \left\{ KL(P \mid\mid G_{\alpha}(P, Q)) + KL(Q \mid\mid G_{\alpha}(P, Q)) \right\}.
-  = \frac{1}{2} \left\{KL(P \mid\mid G_{\alpha}(P, Q)) + KL(Q \mid\mid G_{\alpha}(P, Q)) \right\},
+  % \JSGa{(P \mid\mid Q)} = \frac{1}{2} \left\{ KL(P \mid\mid G_{\alpha}(P, Q)) + KL(Q \mid\mid G_{\alpha}(P, Q)) \right\}.
+  \JSGa{(P \mid\mid Q)} = \frac{1}{2} \left\{KL(P \mid\mid G_{\alpha}(P, Q)) + KL(Q \mid\mid G_{\alpha}(P, Q)) \right\},
 \end{equation}
-where $G_{\alpha}(P, Q) = P^{\alpha} Q^{1 - \alpha}, \alpha \in [0, 1]$ is the weighted geometric mean of $P$ and $Q$, with $\alpha$ controlling the weighting between them, and $KL(P \mid\mid Q)$ is the Kullback--Leibler divergence between $P$ and $Q$ \citep{Killback1951}. \todo{talk about alpha}
+where $G_{\alpha}(P, Q) = P^{\alpha} Q^{1 - \alpha}, \alpha \in [0, 1]$ is the weighted geometric mean of $P$ and $Q$, with $\alpha$ controlling the weighting between them, and $KL(P \mid\mid Q)$ is the Kullback--Leibler divergence between $P$ and $Q$ \citep{Kullback1951}. \todo{talk about alpha}
+% Here, $P$ and $Q$ represent the conditional multivariate Gaussian distributions induced by the CE model at two different sites.
+In this context, $P$ and $Q$ represent the conditional multivariate Gaussian distributions induced by the CE model at two different sites.
 % The Kullback--Leibler (KL) divergence, $KL(P \mid\mid Q)$, is defined as
 % \begin{equation}~\label{eq:kl}
 %   KL(P \mid\mid Q) = \int_{-\infty}^{\infty} p(y) \log\left(\frac{p(y)}{q(y)}\right) dy.
@@ -542,14 +557,17 @@ For two multivariate Gaussian distributions, the $KL$ divergence has a closed fo
 The $\JSGa{}$ divergence exploits the property that the (weighted) product of two members of the same exponential family is itself a member of the same exponential family distribution. 
 It follows that $G_{\alpha}(P, Q)$ is multivariate Gaussian, and so the KL divergences in equation~\eqref{eq:js} are between multivariate Gaussian distributions and can be computed in closed form.
 Hence, $\JSGa{}$ itself has a closed form solution \citep{Nielsen2019}, and so is computationally efficient to compute.
-Furthermore, it is clearly symmetric and non-negative, as the sum of two $KL$ divergences, which is also important for clustering.
-Finally, it can be shown that where $\alpha = 0.5$, it is bounded above with
+% Furthermore, it is clearly symmetric and non-negative, as the sum of two $KL$ divergences, which is also important for clustering.
+Furthermore, it is clearly symmetric and non-negative, as the average of two $KL$ divergences.
+Finally, where $\alpha = 0.5$, $\JSGa{}$ is bounded above by
 \begin{equation}~\label{eq:js_bound}
   \JSGa{(P \mid\mid Q)} \leq \frac{1}{4} \mathrm{J}(P \mid\mid Q),
 \end{equation}
 where the Jeffreys' divergence $J(P \mid\mid Q) = KL(P \mid\mid Q) + KL(Q \mid\mid P)$ is simply the sum of the forward and backward KL divergences \citep{Nielsen2025}.
-Therefore, $\JSGa{}$ provides more well-defined clusters than the Jeffreys' divergence, motivating the higher conceptual complexity by comparison. 
-More details on the choice of divergence measure are given in the discussion in Section~\ref{sec:discussion}.
+% Therefore, $\JSGa{}$ provides more well-defined clusters than the Jeffreys' divergence, motivating the higher conceptual complexity by comparison. 
+Therefore, the $\JSGa{}$ divergence is less susceptible to runaway distances and numerical instability than this simple sum, and also provides more tightly defined clusters.
+Hence, we identify the $\JSGa{}$ divergence as a suitable measure of dissimilarity for clustering based on the CE model.
+An explicit form for the $\JSGa{}$ divergence for two multivariate Gaussian distributions is given in Section \ref{subsec:estimation}, and more details on this choice of divergence measure is addressed further in Section~\ref{sec:discuss}.
 
 % % Introduce KL divergence 
 % One common measure of dissimilarity between two distributions $P$ and $Q$ is the Kullback-Leibler (KL) divergence, defined as
@@ -605,23 +623,29 @@ More details on the choice of divergence measure are given in the discussion in 
 %   % \item Thus we have a closed form, computationally efficient and symmetric measure of dissimilarity between any two conditional distributions as given by equation~\ref{eq:ce_norm} for two sites, with which we can cluster locations based on their extremal dependence structure. 
 %   % \item Thus we have a closed form, computationally efficient and symmetric measure of dissimilarity between any conditional multivariate normal distributions as given by \eqref{eq:ce_norm}, representing the extremal dependence structure at each site. 
 
-% Explicit form of JSGa
-\todo{Explicit version for MVNs}
-
 % Expectation definition
-\todo{Hard/confusing to describe using Yi, switch to another notation?}
-Since the models $P$ and $Q$ depend on the value of $Y_i$, the conditioning variable, we define the expected value
+% \todo{Hard/confusing to describe using Yi, switch to another notation?}
+% Since the models $P$ and $Q$ depend on the value of $Y_i$, the conditioning variable, we define the expected value
+% Since the conditional distributions $P$ and $Q$ are functions of the conditioning variable $Y_i$, the divergence between them depends on the specific value of $Y_i$. 
+Since the conditional distributions $P$ and $Q$ depend on the value of the conditioning variable $Y_i$, the divergence between them also depends on $Y_i$. 
+To obtain a single measure of dissimilarity, we define the expected divergence
 \todo{Need to clean up expectation?}
 \begin{equation}~\label{eq:js_integral}
-  \EX_{y_i \mid y_i > u}{\left[ JS^{G_{\alpha}}(P(y_i) \mid\mid Q(y_i)) \right]} = \int_{u}^\infty JS^{G_{\alpha}}(P(y_i) \mid\mid Q(y_i)) f(y_i) \mathrm{d}y_i,
+\mathbb{E}\!\left[ JS^{G_{\alpha}}(P(y_i)\, \| \, Q(y_i)) \,\middle|\, Y_i > u_i \right] 
+= \int_{u_i}^\infty JS^{G_{\alpha}}(P(y_i)\, \| \, Q(y_i)) \, f(y_i \mid Y_i > u_i)\, dy_i,
 \end{equation}
-\todo{What threshold to use here?}
-where $f(y_i)$ is the marginal density for $Y_i \mid Y_i > u$. % , the standard Laplace distribution (not standard Laplace, exponential!} 
+where $f(y_i \mid Y_i > u_i)$ is the conditional density of $Y_i$ given exceedance of the threshold. 
 This integral gives us our dissimilarity measure or ``distance'' between the two conditional distributions, averaged over the distribution of $Y_i$.
-We can estimate this integral using Monte Carlo (MC) methods, as described in Section~\ref{subsec:estimation}. \todo{reference specific equation/algorithm?}
+% We can estimate this integral using Monte Carlo (MC) methods, noting that the distribution of $Y_i$ is given by the standard Laplace distribution. 
+We can estimate this integral using Monte Carlo (MC) methods, noting that $Y_i$ follows a standard Laplace distribution.
+In practice, very large values of $Y_i$ can lead to unstable estimates, and we also wish to avoid extrapolating beyond the range of observed $Y_i$ used to fit the CE model. 
+Hence, we truncate the expectation at the 99th percentile of the empirical distribution of $Y_i$ across all sites.
 
-Thus we have a closed form, computationally efficient and symmetric dissimilarity measure between any two CE models assuming equation~\eqref{eq:ce_norm}, representing the extremal dependence structure at each site.
-We can calculate a dissimilarity matrix between each pair of locations in this way.
+% Summary
+% In summary, we define a dissimilarity measure between any two CE models based on the $\JSGa{}$ divergence, which is symmetric, non-negative, and computationally efficient. 
+In summary, we define a dissimilarity measure between any two CE models based on the $\JSGa{}$ divergence, which is computationally efficient, symmetric, non-negative and bounded above. \todo{Can we say its bounded above when its only by another metric?}
+For each pair of sites, the divergence depends on the conditional distributions of $\bm{Y}_{-i} \mid Y_i$ and we integrate over the distribution of $Y_i$ above the threshold to obtain an expected divergence. 
+This procedure allows us to construct a matrix of pairwise dissimilarities, or distances, between all sites, representing differences in their extremal dependence structures and providing a basis for clustering.
 
 % \todo{Revisit this!}
 % \begin{itemize}
@@ -671,64 +695,66 @@ Specifically, the TWGSS is defined as
     where $d_{ij}$ is the dissimilarity between site $j$ and the centroid of cluster $i$, which we measure using the $JS^{G_{\alpha}}$ divergence defined in section \ref{subsec:div}, and $n_i$ is the number of observations in cluster $i$.
 We then plot $\mathrm{TWGSS}(k)$ vs.\ $k$, and choose $k^*$, the optimal number of clusters, as the value of $k$ at which the TWGSS reduction sharply slows, or equivalently, the point at which the curve has an ``elbow''.
 
-% \subsection{Estimation}~\label{subsec:estimation}
-% 
-% \todo{What to put in this section? Anything that hurts our narrative flow?}
-% \todo{How complicated do I need things?}
-% \todo{Rewrite these sections, just copied in here}
-% 
-% % Laplace transformation
-% % Each marginal random variable $X_i$ is transformed to Laplace margins, whereby it is denoted by $Y_i$, using the following transformation:
-% % Each marginal random variable $X_i$ is transformed to standard Laplace margins, whereby it is denoted by $Y_i$, using the following transformation: \todo{see Keef, Heff for more succint description}
-% As mentioned in Section~\ref{subsec:ce_model}, we transform each original marginal random variable $X_i$ to standard Laplace margins, whereby it is denoted by $Y_i$.
-% % To transform the original marginal random variable $X_i$ to Laplace margins, we let 
-% To tranform each $X_i$ to Laplace margins, we let
-%  \begin{equation}~\label{eq:laplace}
-%    Y_i = \begin{cases}
-%      \log\left\{2F_{X_i}(X_i)\right\} &\text{ for } X_i < F_{X_i}^{-1}(0.5), \\
-%      -\log\left\{2(1 - F_{X_i}(X_i))\right\} &\text{ for } X_i \ge F_{X_i}^{-1}(0.5), \\
-%    \end{cases}
-%  \end{equation}
-%  where $F_{X_i}$ is the cumulative distribution function (CDF) of $X_i$.
-%  % \item The Laplace distribution specifically is chosen for its doubly exponential tails, each with mean 1. \todo{More formal?}
-%  % \item The Laplace distribution specifically is chosen as both its tails are exponential.
-%  % \item More formally, for any $u > 0$, the distributions of $Y_i - u \mid Y_i > u$ and $(-Y_i + u) \mid Y_i \le -u$ are exponential with mean 1. 
-%  % \item This ensures that the model for the upper and lower tails, corresponding to positive and negative dependence, is of the same, simple form, namely that of a heteroskedastic regression model.
-%  % \item Also, the tails of the Laplace distribution converge faster to a non-degenerate distribution as we increase the number of variables in the model, which makes it effective for modelling extremes \citep{Rohrbeck2024-jm}.
-% 
-% % JSGa form
-%  For two multivariate normals, \citet{Nielsen2019} shows that the $\JSGa{}$ divergence introduced in equation~\eqref{eq:js_norm} has the closed form solution
-% \begin{align*}~\label{eq:js_norm_mvn}
-%   JS^{G_{\alpha}}(P \mid\mid Q) &= \frac{1}{2} \left( (1 - \alpha) \mu_1^T \Sigma_1^{-1} \mu_1 + \alpha \mu_2^T \Sigma_2^{-1} \mu_2 - \mu_{\alpha}^T \Sigma_{\alpha}^{-1} \mu_{\alpha} + \log{\left( \frac{\abs{\Sigma_1}^{1-\alpha} \abs{\Sigma_2}^{\alpha}}{\abs{\Sigma_{\alpha}}} \right)} \right), \\
-%   \Sigma_{\alpha} &= \left( (1 - \alpha) \Sigma_1^{-1} + \alpha \Sigma_2^{-1} \right)^{-1}, \\
-%   \mu_{\alpha} &= \Sigma_{\alpha} \left( (1 - \alpha) \Sigma_1^{-1} \mu_1 + \alpha \Sigma_2^{-1} \mu_2 \right), \numberthis~\label{eq:js_norm_mvn1}
-% \end{align*} 
-% where:
-% \begin{itemize}
-%   \item $\mu_1 = (\mu_{1,1}, \mu_{1,2}, \ldots, \mu_{1,n})^\top$ and $\mu_2 = (\mu_{2,1}, \mu_{2,2}, \ldots, \mu_{2,n})^\top$ are the mean vectors,
-%   \item $\Sigma_1 = \text{diag}(\sigma_{1,1}^2, \sigma_{1,2}^2, \ldots, \sigma_{1,n}^2)$ and $\Sigma_2 = \text{diag}(\sigma_{2,1}^2, \sigma_{2,2}^2, \ldots, \sigma_{2,n}^2)$ are diagonal covariance matrices, \todo{Are they diagonal??}
-%   \item $\sigma_{1,i}^2$ and $\sigma_{2,i}^2$ denote the $i$-th diagonal element of $\Sigma_1$ and $\Sigma_2$, respectively.
-% \end{itemize}
-% 
-% \todo{Need to keep?}
-% For diagonal covariance matrices, \citet{Thiagarajan2025} show that this simplifies to
-% \todo{Double check about dash in Thiagarajan formula, also check for backwards JSGa use}
-% \todo{Double check this formula is correct (R should give same output as above non-diagonal method)}
-% \todo{Standardise use of brackets, varies a lot}
-% % \begin{align*}
-% %   JS-G(P \mid \mid Q) = \frac{1}{2} \sum^n_{i=1} \left[ \frac{\alpha \sigma_{1, i}^2 + (1-\alpha)\sigma_{2, i}^2}{\sigma_{\alpha, i}^2} + \log{\left( \frac{\sigma_{\alpha, i}^2}{\sigma_{1, i}^{(2\alpha)}\sigma_{2, i}^{2(1 - \alpha)}} \right)} + \alpha \frac{(\mu_{\alpha, i} - \mu_{1, i})^2}{\sigma_{\alpha, i}^2} + (1 - \alpha) \frac{(\mu_{\alpha, i} - \mu_{2, i})^2}{\sigma_{\alpha, i}^2} -1 \right],
-% % \end{align*}
-% \todo{Should I use a different notation here, since I also use mu, sigma for the CE model?}
-% \begin{align}~\label{eq:js_norm_mvn_diag}
-% JS^{G_{\alpha}}(P \mid\mid Q) = \frac{1}{2} \sum_{i=1}^n \Bigg[
-%     & \frac{\alpha \sigma_{1,i}^2 + (1 - \alpha) \sigma_{2,i}^2}{\sigma_{\alpha,i}^2} 
-%     + \log\left( \frac{\sigma_{\alpha,i}^2}{\sigma_{1,i}^{2\alpha} \sigma_{2,i}^{2(1 - \alpha)}} \right) \nonumber \\
-%     & + \alpha \frac{(\mu_{\alpha,i} - \mu_{1,i})^2}{\sigma_{\alpha,i}^2} 
-%     + (1 - \alpha) \frac{(\mu_{\alpha,i} - \mu_{2,i})^2}{\sigma_{\alpha,i}^2}
-%     - 1 \Bigg],
-% \end{align}
-% where $\sigma_{\alpha, i}^2 = \frac{\sigma_{1, i}^2 \sigma_{2, i}^2}{\alpha\sigma_{1, i}^2 + (1 - \alpha)\sigma_{2, i}^2}$, and $\mu_{\alpha, i} = \sigma_{\alpha, i}^2 \left( \frac{\alpha\mu_{1, i}}{\sigma_{1, i}^2} + \frac{(1 - \alpha) \mu_{2, i}}{\sigma_{2, i}^2} \right)$, respectively.
-% 
+\subsection{Estimation}~\label{subsec:estimation}
+
+\todo{What to put in this section? Anything that hurts our narrative flow?}
+\todo{How complicated do I need things?}
+\todo{Rewrite these sections, just copied in here}
+
+In this section, we describe some of the technical details for estimating the CE model and the $\JSGa{}$ divergence measure.
+
+% Laplace transformation
+% Each marginal random variable $X_i$ is transformed to Laplace margins, whereby it is denoted by $Y_i$, using the following transformation:
+% Each marginal random variable $X_i$ is transformed to standard Laplace margins, whereby it is denoted by $Y_i$, using the following transformation: \todo{see Keef, Heff for more succint description}
+As mentioned in Section~\ref{subsec:ce_model}, we transform each original marginal random variable $X_i$ to standard Laplace margins, whereby it is denoted by $Y_i$.
+% To transform the original marginal random variable $X_i$ to Laplace margins, we let 
+To tranform each $X_i$ to Laplace margins, we let
+ \begin{equation}~\label{eq:laplace}
+   Y_i = \begin{cases}
+     \log\left\{2F_{X_i}(X_i)\right\} &\text{ for } X_i < F_{X_i}^{-1}(0.5), \\
+     -\log\left\{2(1 - F_{X_i}(X_i))\right\} &\text{ for } X_i \ge F_{X_i}^{-1}(0.5), \\
+   \end{cases}
+ \end{equation}
+ where $F_{X_i}$ is the cumulative distribution function (CDF) of $X_i$. \todo{any further details necessary?}
+ % \item The Laplace distribution specifically is chosen for its doubly exponential tails, each with mean 1. \todo{More formal?}
+ % \item The Laplace distribution specifically is chosen as both its tails are exponential.
+ % \item More formally, for any $u > 0$, the distributions of $Y_i - u \mid Y_i > u$ and $(-Y_i + u) \mid Y_i \le -u$ are exponential with mean 1. 
+ % \item This ensures that the model for the upper and lower tails, corresponding to positive and negative dependence, is of the same, simple form, namely that of a heteroskedastic regression model.
+ % \item Also, the tails of the Laplace distribution converge faster to a non-degenerate distribution as we increase the number of variables in the model, which makes it effective for modelling extremes \citep{Rohrbeck2024-jm}.
+
+% JSGa form
+ For two multivariate normals, \citet{Nielsen2019} shows that the $\JSGa{}$ divergence introduced in equation~\eqref{eq:js_norm} has the closed form solution
+\begin{align*}~\label{eq:js_norm_mvn}
+  JS^{G_{\alpha}}(P \mid\mid Q) &= \frac{1}{2} \left( (1 - \alpha) \mu_1^T \Sigma_1^{-1} \mu_1 + \alpha \mu_2^T \Sigma_2^{-1} \mu_2 - \mu_{\alpha}^T \Sigma_{\alpha}^{-1} \mu_{\alpha} + \log{\left( \frac{\abs{\Sigma_1}^{1-\alpha} \abs{\Sigma_2}^{\alpha}}{\abs{\Sigma_{\alpha}}} \right)} \right), \\
+  \Sigma_{\alpha} &= \left( (1 - \alpha) \Sigma_1^{-1} + \alpha \Sigma_2^{-1} \right)^{-1}, \\
+  \mu_{\alpha} &= \Sigma_{\alpha} \left( (1 - \alpha) \Sigma_1^{-1} \mu_1 + \alpha \Sigma_2^{-1} \mu_2 \right), \numberthis~\label{eq:js_norm_mvn1}
+\end{align*} 
+where:
+\begin{itemize}
+  \item $\mu_1 = (\mu_{1,1}, \mu_{1,2}, \ldots, \mu_{1,n})^\top$ and $\mu_2 = (\mu_{2,1}, \mu_{2,2}, \ldots, \mu_{2,n})^\top$ are the mean vectors,
+  \item $\Sigma_1 = \text{diag}(\sigma_{1,1}^2, \sigma_{1,2}^2, \ldots, \sigma_{1,n}^2)$ and $\Sigma_2 = \text{diag}(\sigma_{2,1}^2, \sigma_{2,2}^2, \ldots, \sigma_{2,n}^2)$ are diagonal covariance matrices, \todo{Are they diagonal??}
+  \item $\sigma_{1,i}^2$ and $\sigma_{2,i}^2$ denote the $i$-th diagonal element of $\Sigma_1$ and $\Sigma_2$, respectively.
+\end{itemize}
+
+\todo{Need to keep?}
+We may also assume that our covariance matrices are diagonal, as is often the case in practice.
+In this case, \citet{Thiagarajan2025} shows that the $\JSGa{}$ divergence simplifies to
+\todo{Double check this formula is correct (R should give same output as above non-diagonal method)}
+\todo{Standardise use of brackets, varies a lot}
+% \begin{align*}
+%   JS-G(P \mid \mid Q) = \frac{1}{2} \sum^n_{i=1} \left[ \frac{\alpha \sigma_{1, i}^2 + (1-\alpha)\sigma_{2, i}^2}{\sigma_{\alpha, i}^2} + \log{\left( \frac{\sigma_{\alpha, i}^2}{\sigma_{1, i}^{(2\alpha)}\sigma_{2, i}^{2(1 - \alpha)}} \right)} + \alpha \frac{(\mu_{\alpha, i} - \mu_{1, i})^2}{\sigma_{\alpha, i}^2} + (1 - \alpha) \frac{(\mu_{\alpha, i} - \mu_{2, i})^2}{\sigma_{\alpha, i}^2} -1 \right],
+% \end{align*}
+\todo{Should I use a different notation here, since I also use mu, sigma for the CE model?}
+\begin{align}~\label{eq:js_norm_mvn_diag}
+JS^{G_{\alpha}}(P \mid\mid Q) = \frac{1}{2} \sum_{i=1}^n \Bigg[
+    & \frac{\alpha \sigma_{1,i}^2 + (1 - \alpha) \sigma_{2,i}^2}{\sigma_{\alpha,i}^2} 
+    + \log\left( \frac{\sigma_{\alpha,i}^2}{\sigma_{1,i}^{2\alpha} \sigma_{2,i}^{2(1 - \alpha)}} \right) \nonumber \\
+    & + \alpha \frac{(\mu_{\alpha,i} - \mu_{1,i})^2}{\sigma_{\alpha,i}^2} 
+    + (1 - \alpha) \frac{(\mu_{\alpha,i} - \mu_{2,i})^2}{\sigma_{\alpha,i}^2}
+    - 1 \Bigg],
+\end{align}
+where $\sigma_{\alpha, i}^2 = \frac{\sigma_{1, i}^2 \sigma_{2, i}^2}{\alpha\sigma_{1, i}^2 + (1 - \alpha)\sigma_{2, i}^2}$, and $\mu_{\alpha, i} = \sigma_{\alpha, i}^2 \left( \frac{\alpha\mu_{1, i}}{\sigma_{1, i}^2} + \frac{(1 - \alpha) \mu_{2, i}}{\sigma_{2, i}^2} \right)$, respectively.
+
 % % Integral plan
 % \begin{itemize}
 %   \item Integral given in equation~\eqref{eq:js_integral} gives us the $\JSGa{}$ dissimilarity between CE models $P$ and $Q$ averaged over the marginal distribution of $Y_i \mid Y_i > u$.
@@ -752,12 +778,12 @@ We then plot $\mathrm{TWGSS}(k)$ vs.\ $k$, and choose $k^*$, the optimal number 
 %     \end{enumerate}
 %     before averaging over the $N$ samples to estimate the integral in equation~\eqref{eq:js_integral}.
 % \end{itemize}
-% 
-% % Estimating the integral 
-% % To estimate the integral in Section~\ref{subsec:div}, we use a Monte Carlo method, where we sample $N$ values from the distribution of $Y_i \mid Y_i > u_{Y_i}$, and estimate the integral as
-% % \begin{equation}~\label{eq:mc_integral}
-% %   \int_{u}^\infty JS^{G_{\alpha}}(P(y_i) \mid\mid Q(y_i)) f(y_i) \mathrm{d}y_i \approx \frac{1}{N} \sum_{j=1}^{N} JS^{G_{\alpha}}(P(y_j) \mid\mid Q(y_j)),
-% % \end{equation}
+
+% Estimating the integral 
+% To estimate the integral in Section~\ref{subsec:div}, we use a Monte Carlo method, where we sample $N$ values from the distribution of $Y_i \mid Y_i > u_{Y_i}$, and estimate the integral as
+% \begin{equation}~\label{eq:mc_integral}
+%   \int_{u}^\infty JS^{G_{\alpha}}(P(y_i) \mid\mid Q(y_i)) f(y_i) \mathrm{d}y_i \approx \frac{1}{N} \sum_{j=1}^{N} JS^{G_{\alpha}}(P(y_j) \mid\mid Q(y_j)),
+% \end{equation}
 
 
 \section{Simulation study}~\label{sec:sim}

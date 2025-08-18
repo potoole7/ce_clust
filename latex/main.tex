@@ -1157,6 +1157,27 @@ This site also has the distinction of having the lowest mean weekly precipitatio
 We also see that Kilcar in county Donegal, which had a low $\chi$ value relative to other sites on the west coast as shown in Figure \ref{fig:chi}, is the member of the eastern cluster with the lowest dissimilarity to the members of the western cluster, reflecting its geographical location in the northwest of Ireland, despite its low $\chi$ value.
 Indeed, if we only fit two clusters, we find that most of the central cluster members are assigned to the western cluster, but even then Kilcar is still assigned to the eastern cluster.
 
+\begin{figure}[H]
+    \centering
+    % \includegraphics[width = 0.9\linewidth]{plots/ire_dist_heatmap.png}
+    \includegraphics[width = 0.9\linewidth]{plots/cluster_dqu_sep.png}
+    % \caption{\emph{ Clustering solutions for the conditional extremes model parameters estimated at the 88th dependence quantile across all 59 sites, using the $\JSGa{}$ dissimilarity matrix for rain conditional on wind speed (centre), wind speed conditional on rain (right), and the combined dissimilarity matrix (left). The clusters are shown in different colours.}}
+    \caption{\emph{Clustering solutions for the conditional extremes model parameters estimated at the 85th, 88th and 90th dependence quantiles across all 59 sites, using the combined $\JSGa{}$ dissimilarity matrix for rain conditional on wind speed and wind speed conditional on rain. The clusters are shown in different colours.}}
+    ~\label{fig:clust_sens}
+\end{figure}
+
+% Sensitivity Analysis (to choice of DQU)
+Another interesting aspect of our clustering method is its robustness to the choice of dependence quantile.
+We performed a sensitivity analysis of the clustering solution to the choice of dependence quantile, using the 85th, 88th and 90th quantiles, the results of which are shown in Figure~\ref{fig:clust_sens}.
+The clustering solutions are clearly quite similar across the three quantiles.
+There are some small differences, however. 
+Noticeably, Kilcar in county Donegal is assigned to the eastern cluster for the 85th and 90th quantile, but to the central cluster for the 88th quantile.
+% Also, Costelloe Fishery in county Galway is assigned to the wester cluster for the 85th quantile, but to the central cluster for the 88th and 90th quantiles.
+\todo{Name some of these sites?}
+Also, there are more sites in the western cluster for the 85th quantile, with some sites moving to the central cluster for the 88th quantile. 
+Interestingly, some of these sites are then moved back to the western cluster for the 90th quantile.
+Apart from these observations, the clustering solutions are generally quite similar across the three quantiles, and so we can conclude that our clustering method is relatively robust to the choice of dependence quantile, as desired. 
+
 % Results and interpretation post-clustering
 \todo{Write again to make clearer/tighter}
 \todo{Use hat(alpha) rather than alpha (and beta)?}

@@ -480,10 +480,10 @@ The slope or linear regression coefficient $\bm{\alpha}_{\mid i}^{(\CE{})} \in [
   % \item Several choices for $\bm{G}_{\mid i}$, the distribution of
 % $\bm{Z}_{\mid i}$, were proposed in \citet{Heffernan2004}, before ultimately
 % settling on a multivariate normal distribution with vector nuisance parameters
-% $\bm{\mu}_{\mid i} \in \mathbb{R}^{(d-1)}$ and $\bm{\Sigma}_{\mid i} \in \mathbb{R}^{(d-1)}$.
+% $\bm{\mu}_{\mid i} \in \mathbb{R}^{(d-1)}$ and $\Sigma_{\mid i} \in \mathbb{R}^{(d-1)}$.
 % The distribution of $\bm{Z}_{\mid i}$, the residuals of the model, is assumed
 % to be multivariate normal with vector nuisance parameters $\bm{\mu}_{\mid i}
-% \in \mathbb{R}^{(d-1)}$ and $\bm{\Sigma}_{\mid i} \in \mathbb{R}^{(d-1)}$.
+% \in \mathbb{R}^{(d-1)}$ and $\Sigma_{\mid i} \in \mathbb{R}^{(d-1)}$.
 % \todo{Jordan says that below isn't quite right, focus on components!}
 % Some special cases of the CE model are:
 % \begin{itemize}
@@ -510,7 +510,7 @@ The slope or linear regression coefficient $\bm{\alpha}_{\mid i}^{(\CE{})} \in [
 % Definition of Z moved here to be impactful than after eq:ce_model
 % The residual process $\bm{Z}_{\mid i}$ in equation~\eqref{eq:ce_model} is
 % assumed to follow a multivariate Gaussian distribution with vector nuisance
-% parameters $\bm{\mu}_{\mid i} \in \mathbb{R}^{(d-1)}$ and $\bm{\Sigma}_{\mid i} \in \mathbb{R}^{(d-1)}$.
+% parameters $\bm{\mu}_{\mid i} \in \mathbb{R}^{(d-1)}$ and $\Sigma_{\mid i} \in \mathbb{R}^{(d-1)}$.
 % The residual vector $\bm{Z}_{\mid i}$ in equation~\eqref{eq:ce_model} is assumed to follow a multivariate Gaussian distribution with mean vector $\bm{\mu}_{\mid i}\in\mathbb{R}^{d-1}$ and covariance matrix $\Sigma_{\mid i}\in\mathbb{R}^{(d-1)\times(d-1)}$. 
 % \todo{Use (CE) superscript for mu and Sigma to distinguish from clustering}
 The residual vector $\bm{Z}_{\mid i}$ in equation~\eqref{eq:ce_model} is assumed to follow a multivariate Gaussian distribution with mean vector $\bm{\mu}_{\mid i}^{(\CE{})}\in\mathbb{R}^{d-1}$ and covariance matrix $\Sigma_{\mid i}^{(\CE{})} \in\mathbb{R}^{(d-1)\times(d-1)}$. 
@@ -525,10 +525,10 @@ This Gaussian working assumption, proposed in \citet{Heffernan2004} after testin
 Consequently, inference can be made about the extremal dependence of a random vector $\bm{Y}_{-i} = \bm{Y} \setminus \{Y_i\}$ on $Y_i$ by conditioning on the exceedance of a high threshold $u_i$ by $Y_i$, and assuming that this conditional distribution is a multivariate Gaussian distribution, i.e.\
 \begin{equation}~\label{eq:ce_norm}
   % \bigl( \bm{Y}_{-i} \mid Y_i  = y_i \bigr) \sim N\left(\bm{\alpha}_{\mid i} y_i + y_i^{\bm{\beta}_{\mid i}} \bm{\mu}_{\mid i}, y_i^{\bm{\beta}_{\mid i}} \bm{\Sigma_{\mid i}}\right), Y_i > u_i,
-  \bigl( \bm{Y}_{-i} \mid Y_i  = y_i \bigr) \sim N\left(\bm{\alpha}_{\mid i}^{(\CE{})} y_i + y_i^{\bm{\beta}_{\mid i}^{(\CE{})}} \bm{\mu}_{\mid i}^{(\CE{})}, y_i^{\bm{\beta}_{\mid i}^{(\CE{})}} \bm{\Sigma}_{\mid i}^{(\CE{})}\right), Y_i > u_i,
+  \bigl( \bm{Y}_{-i} \mid Y_i  = y_i \bigr) \sim N\left(\bm{\alpha}_{\mid i}^{(\CE{})} y_i + y_i^{\bm{\beta}_{\mid i}^{(\CE{})}} \bm{\mu}_{\mid i}^{(\CE{})}, y_i^{\bm{\beta}_{\mid i}^{(\CE{})}} \Sigma_{\mid i}^{(\CE{})}\right), Y_i > u_i,
 \end{equation}
-% where $\bm{\alpha}_{\mid i}, \bm{\beta}_{\mid i}, \bm{\mu}_{\mid i}, \bm{\Sigma}_{\mid i} \in \mathbb{R}^{(d-1)}$ are the parameters of the CE model.
-where $\bm{\alpha}_{\mid i}^{(\CE{})}, \bm{\beta}_{\mid i}^{(\CE{})}, \bm{\mu}_{\mid i}^{(\CE{})}, \bm{\Sigma}_{\mid i}^{(\CE{})} \in \mathbb{R}^{(d-1)}$ are the parameters of the CE model. 
+% where $\bm{\alpha}_{\mid i}, \bm{\beta}_{\mid i}, \bm{\mu}_{\mid i}, \Sigma_{\mid i} \in \mathbb{R}^{(d-1)}$ are the parameters of the CE model.
+where $\bm{\alpha}_{\mid i}^{(\CE{})}, \bm{\beta}_{\mid i}^{(\CE{})}, \bm{\mu}_{\mid i}^{(\CE{})}, \Sigma_{\mid i}^{(\CE{})} \in \mathbb{R}^{(d-1)}$ are the parameters of the CE model. 
 % Therefore, when seeking to compare the extremal dependence structure of two locations, a sensible approach is to compare the conditional distributions given by equation~\ref{eq:ce_norm} for each variable at both sites. 
 % Therefore, under this model, when comparing the extremal dependence structure between variables at any given sites, we are effectively comparing the conditional distributions given by equation~\eqref{eq:ce_norm}.
 % Therefore, under this model, when comparing the multivariate tail dependence structure at different sites, we are effectively comparing the conditional distributions given by equation~\eqref{eq:ce_norm}.

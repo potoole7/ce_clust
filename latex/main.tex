@@ -42,13 +42,16 @@
 
 % Define custom maths equations 
 \DeclareMathOperator{\Tr}{Tr}
-\DeclareMathOperator{\KL}{KL}
+\DeclareMathOperator{\KL}{\mathrm{KL}}
+\DeclareMathOperator{\JS}{\mathrm{JS}}
 \DeclareMathOperator*{\argmin}{arg\,min}
 \DeclarePairedDelimiter\abs{\lvert}{\rvert}%
 \DeclareMathOperator{\EX}{\mathbb{E}}% expected value
 % \newcommand{\JSGa}[1]{\mathrm{JS}^{\mathrm{G}_{#1}}}
-\newcommand{\JSGa}[1]{\mathrm{JS}^{\mathrm{G}_{\alpha}}}
-\newcommand{\JSG}[1]{\mathrm{JS}^{\mathrm{G}}}
+% \newcommand{\JSGa}[1]{\mathrm{JS}^{\mathrm{G}_{\alpha}}}
+\DeclareMathOperator{\JSGa}{\mathrm{JS}^{\mathrm{G}_{\alpha}}}
+% \newcommand{\GJS}[1]{\mathrm{JS}^{\mathrm{G}}}
+\DeclareMathOperator{\GJS}{\mathrm{JS}^{\mathrm{G}}}
 \newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
 
 % comment to turn on TODO notes on pdf
@@ -79,7 +82,7 @@
 \todo{Fix references, no longer APA style for some reason?}
 \todo{Check citep, citet}
 \todo{Tidy up maths, notation and acronyms so nothing is repeated (or different!)}
-\todo{Replace JS with upright version (same with KL) throught}
+% \todo{Replace JS with upright version (same with KL) throught}
 \todo{Replace mu and sigma in CE with superscript version}
 \todo{Change uyi to ui throughout, simpler notation}
 % \todo{G should be bold!}
@@ -274,7 +277,7 @@ Focusing on the spatial tail dependence structure of the data, this method uses 
 % Furthermore, reliance on the empirical frequencies of bivariate and univariate extremes, which are inherently rare, may lead to poor clustering performance unless sufficiently large datasets are available.
 \citet{Vignotto2021} introduces a non-parametric clustering method that groups locations in Great Britain and Ireland based on the joint tail behaviour of gridded precipitation and wind speed data.
 Tail dependence at each location is described non-parametrically using empirical counts of extreme events in transformed bivariate observations, ignoring any spatial dependence.
-These counts are used to estimate the Kullback--Leibler ($\KL$) divergence between each pair of locations \citep{Kullback1951}, and $k$-medoids clustering is then applied to group sites with similar bivariate tail structures.
+These counts are used to estimate the Kullback--Leibler ($\KL{}$) divergence between each pair of locations \citep{Kullback1951}, and $k$-medoids clustering is then applied to group sites with similar bivariate tail structures.
 This method is our main competitor, as the setting closely resembles the multivariate spatial framework we consider. 
 % However, this approach has several limitations, in that it is limited to the bivariate case, and, being non-parametric, lacks a generative model for tail dependence inference, and may perform poorly on small datasets due to reliance on rare empirical extremes.  
 However, this approach has several limitations, in that it is limited to the bivariate case, and, being non-parametric, lacks a generative model for tail dependence inference, and may perform poorly without large datasets due to reliance on sufficient empirical occurrences of joint and marginal extremes to characterize tail dependence.
@@ -320,7 +323,7 @@ The remainder of this paper is structured as follows.
 % which includes a novel dissimilarity measure based on the Jensen--Shannon (JS) divergence, and a method for selecting the number of clusters.
 Section~\ref{sec:method} introduces our clustering framework for CE models, which includes a novel dissimilarity measure based on the 
 % skew-geometric Jensen--Shannon divergence $\left(\text{JS}^{\textrm{G}_{\alpha}}\right)$, and a method for selecting the number of clusters.
-skew-geometric Jensen--Shannon divergence $\left(\JSGa\right)$, and a method for selecting the number of clusters.
+skew-geometric Jensen--Shannon divergence $\left(\JSGa{}\right)$, and a method for selecting the number of clusters.
 A simulation study is described and performed in Section~\ref{sec:sim}, to compare our method to the leading competitor in the bivariate case, and show that it outperforms this method across a range of extremal dependence structures.
 In Section~\ref{sec:application}, we apply our clustering framework to Irish meteorological data, and show how it can be used to identify sites with similar tail dependence structures between precipitation and wind speed.
 Finally, Section~\ref{sec:discuss} contains a discussion of our findings, including the limitations of our method and potential future work.
@@ -537,14 +540,14 @@ Ideally, our measure should also have an upper bound, as larger divergences can 
 \todo{Any other properties? Convex (as KL is?) (which may be better?) (need citation)}
 
 % Introduce JSGa
-One divergence measure introduced in \citet{Nielsen2019} which satisfies these properties is the skew-geometric Jensen--Shannon divergence ($\JSGa{}$), a generalisation of the Jensen--Shannon (JS) divergence \citep{Lin1991}. 
+One divergence measure introduced in \citet{Nielsen2019} which satisfies these properties is the skew-geometric Jensen--Shannon divergence ($\JSGa{}$), a generalisation of the Jensen--Shannon ($\JS{}$) divergence \citep{Lin1991}. 
 \todo{Improve definition of P, Q, as measures? Or with detail as to their relation to CE?}
 The $\JSGa{}$ divergence between two distributions $P$ and $Q$ is given by
 \begin{equation}~\label{eq:js}
   % \JSGa{(P \mid\mid Q)} = \frac{1}{2} \left\{ KL(P \mid\mid G_{\alpha}(P, Q)) + KL(Q \mid\mid G_{\alpha}(P, Q)) \right\}.
-  \JSGa{(P \mid\mid Q)} = \frac{1}{2} \left\{KL(P \mid\mid G_{\alpha}(P, Q)) + KL(Q \mid\mid G_{\alpha}(P, Q)) \right\},
+  \JSGa{(P \mid\mid Q)} = \frac{1}{2} \left\{\KL{(P \mid\mid G_{\alpha}(P, Q))} + \KL{(Q \mid\mid G_{\alpha}(P, Q))} \right\},
 \end{equation}
-where $G_{\alpha}(P, Q) = P^{\alpha} Q^{1 - \alpha}, \alpha \in [0, 1]$ is the weighted geometric mean of $P$ and $Q$, with $\alpha$ controlling the weighting between them, and $KL(P \mid\mid Q)$ is the Kullback--Leibler divergence between $P$ and $Q$ \citep{Kullback1951}. \todo{talk about alpha}
+where $G_{\alpha}(P, Q) = P^{\alpha} Q^{1 - \alpha}, \alpha \in [0, 1]$ is the weighted geometric mean of $P$ and $Q$, with $\alpha$ controlling the weighting between them, and $\KL{(P \mid\mid Q)}$ is the Kullback--Leibler divergence between $P$ and $Q$ \citep{Kullback1951}. \todo{talk about alpha}
 % Here, $P$ and $Q$ represent the conditional multivariate Gaussian distributions induced by the CE model at two different sites.
 In this context, $P$ and $Q$ represent the conditional multivariate Gaussian distributions induced by the CE model at two different sites.
 % The Kullback--Leibler (KL) divergence, $KL(P \mid\mid Q)$, is defined as
@@ -554,17 +557,17 @@ In this context, $P$ and $Q$ represent the conditional multivariate Gaussian dis
 % The $\JSGa{}$ divergence is derived from the popular Kullback--Leibler ($KL$) divergence \citep{Killback1951}. 
 
 % Explain why it is a good dissimilarity metric to use
-For two multivariate Gaussian distributions, the $KL$ divergence has a closed form, analytical solution \citep{Duchi2007}.
+For two multivariate Gaussian distributions, the $\KL{}$ divergence has a closed form, analytical solution \citep{Duchi2007}.
 The $\JSGa{}$ divergence exploits the property that the (weighted) product of two members of the same exponential family is itself a member of the same exponential family distribution. 
-It follows that $G_{\alpha}(P, Q)$ is multivariate Gaussian, and so the KL divergences in equation~\eqref{eq:js} are between multivariate Gaussian distributions and can be computed in closed form.
+It follows that $G_{\alpha}(P, Q)$ is multivariate Gaussian, and so the $\KL{}$ divergences in equation~\eqref{eq:js} are between multivariate Gaussian distributions and can be computed in closed form.
 Hence, $\JSGa{}$ itself has a closed form solution \citep{Nielsen2019}, and so is computationally efficient to compute.
 % Furthermore, it is clearly symmetric and non-negative, as the sum of two $KL$ divergences, which is also important for clustering.
-Furthermore, it is clearly symmetric and non-negative, as the average of two $KL$ divergences.
+Furthermore, it is clearly symmetric and non-negative, as the average of two $\KL{}$ divergences.
 Finally, where $\alpha = 0.5$, $\JSGa{}$ is bounded above by
 \begin{equation}~\label{eq:js_bound}
   \JSGa{(P \mid\mid Q)} \leq \frac{1}{4} \mathrm{J}(P \mid\mid Q),
 \end{equation}
-where the Jeffreys' divergence $J(P \mid\mid Q) = KL(P \mid\mid Q) + KL(Q \mid\mid P)$ is simply the sum of the forward and backward KL divergences \citep{Nielsen2025}.
+where the Jeffreys' divergence $J(P \mid\mid Q) = \KL{(P \mid\mid Q)} + \KL{(Q \mid\mid P)}$ is simply the sum of the forward and backward $\KL{}$ divergences \citep{Nielsen2025}.
 % Therefore, $\JSGa{}$ provides more well-defined clusters than the Jeffreys' divergence, motivating the higher conceptual complexity by comparison. 
 Therefore, the $\JSGa{}$ divergence is less susceptible to runaway distances and numerical instability than this simple sum, and also provides more tightly defined clusters.
 Hence, we identify the $\JSGa{}$ divergence as a suitable measure of dissimilarity for clustering based on the CE model.
@@ -632,8 +635,9 @@ Since the conditional distributions $P$ and $Q$ depend on the value of the condi
 To obtain a single measure of dissimilarity, we define the expected divergence
 \todo{Need to clean up expectation?}
 \begin{equation}~\label{eq:js_integral}
-\mathbb{E}\!\left[ JS^{G_{\alpha}}(P(y_i)\, \| \, Q(y_i)) \,\middle|\, Y_i > u_i \right] 
-= \int_{u_i}^\infty JS^{G_{\alpha}}(P(y_i)\, \| \, Q(y_i)) \, f(y_i \mid Y_i > u_i)\, dy_i,
+% \mathbb{E}\!\left[ JS^{G_{\alpha}}(P(y_i)\, \| \, Q(y_i)) \,\middle|\, Y_i > u_i \right] 
+% = \int_{u_i}^\infty JS^{G_{\alpha}}(P(y_i)\, \| \, Q(y_i)) \, f(y_i \mid Y_i > u_i)\, dy_i,
+  \mathbb{E}\!\left[ \JSGa{(P(y_i)\, \| \, Q(y_i))} \,\middle|\, Y_i > u_i \right] = \int_{u_i}^\infty \JSGa{(P(y_i)\, \| \, Q(y_i))} \, f(y_i \mid Y_i > u_i)\, dy_i,
 \end{equation}
 where $f(y_i \mid Y_i > u_i)$ is the conditional density of $Y_i$ given exceedance of the threshold. 
 This integral gives us our dissimilarity measure or ``distance'' between the two conditional distributions, averaged over the distribution of $Y_i$.
@@ -1127,7 +1131,7 @@ This may also be due to our wind speeds coming from the ERA5 reanalysis dataset,
     \centering
     % \includegraphics[width = 0.9\linewidth]{plots/ire_dist_heatmap.png}
     \includegraphics[width = 0.9\linewidth]{plots/ire_dist_heatmap_man.png}
-    \caption{\emph{Heatmap of the $JS^{G_{\alpha}}$ dissimilarity matrix for the conditional extremes model parameters estimated at the 85th dependence quantile across all 59 sites, using the combined dissimilarity matrix. The names of each site are coloured and ordered according to the clustering solution, matching that of Figure \ref{fig:clust_sol}. The dissimilarity colour scale is shown on the right, with darker colours indicating larger values.}}
+    \caption{\emph{Heatmap of the $\JSGa{}$ dissimilarity matrix for the conditional extremes model parameters estimated at the 85th dependence quantile across all 59 sites, using the combined dissimilarity matrix. The names of each site are coloured and ordered according to the clustering solution, matching that of Figure \ref{fig:clust_sol}. The dissimilarity colour scale is shown on the right, with darker colours indicating larger values.}}
     ~\label{fig:dist_heatmap}
 \end{figure}
 

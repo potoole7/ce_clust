@@ -20,6 +20,7 @@ devtools::load_all("../evc")
 library(tidyr)
 library(ggplot2)
 library(parallel)
+library(mgcv)
 # library(ggtern)
 
 source("src/functions.R")
@@ -45,6 +46,11 @@ shape_gpd <- -0.05
 marg_prob <- 0.9
 cond_prob <- 0.9
 conf_level <- 0.95 # confidence level for CIs in plot
+
+# parameters for MC estimation of JSGa
+n_mc <- 500 # number of MC samples
+mc_method <- "laplace_trunc2" # truncate Laplace using empirical dist quant
+laplace_cap <- 0.99 # Take 99th quantile
 
 # Number of cores to use for parallel computation
 n_cores <- detectCores() - 1
@@ -78,8 +84,8 @@ grid <- tidyr::crossing(
   identity()
 
 # run kl_sim_eval for each row in grid
-# n_times <- 50
-n_times <- 100
+n_times <- 200
+# n_times <- 2
 results_vec <- vector(length = n_times)
 set.seed(seed_number)
 # # test: seq w/ biggest cor diffs between clusters; should be easy to cluster
@@ -88,6 +94,7 @@ set.seed(seed_number)
 #   which(cor_t1 == 0 & cor_t2 == 0.4 & cor_t3 == 0.8)
 # )
 # results_grid <- bind_rows(mclapply(test_seq, \(i) {
+i <- j <- 1
 results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
   system(sprintf(
     'echo "\n%s\n"',
@@ -129,7 +136,12 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
         })
 
         # "true" number of clusters known from simulation design
-        js_clust(ce_fit, k = n_clust, cluster_mem = cluster_mem)
+        js_clust(
+          ce_fit,
+          trans = data_mix_trans,
+          k = n_clust, cluster_mem = cluster_mem,
+          n = n_mc, mc_method = mc_method, laplace_cap = laplace_cap
+        )
       },
       error = function(cond) {
         return(list("adj_rand" = NA))
@@ -225,29 +237,30 @@ p1 <- results_grid_plt %>%
     aes(x = cor_t1, y = mean_rand),
     colour = "#C11432",
     linewidth = 1
-  )
-# geom_smooth(formula = y ~ splines::bs(x, df = 4),
-#   aes(x = cor_t1, y = adj_rand),
-#   colour = "#C11432",
-#   se = TRUE,
-#   linewidth = 1
-# )
+  ) +
+  # geom_smooth(formula = y ~ splines::bs(x, df = 4),
+  #   aes(x = cor_t1, y = adj_rand),
+  #   colour = "#C11432",
+  #   se = TRUE,
+  #   linewidth = 1
+  # ) +
+  NULL
 
 # TODO save
 # Can clearly see that clustering is best where correlation parameters in
 # t-copula for different clusters are the most different
 # Unsurprisingly, cor_tx = (0.1, 0.5, 0.9) has the best ARI, reflecting this
-p1 <- common_plot_items(
-  p1,
-  # xlab = expression(rho[t[3]]),
-  xlab = expression(rho[t[1]]),
-  # x_sec_lab = expression(rho[t[2]]),
-  x_sec_lab = expression(rho[t[3]]),
-  # y_sec_lab = expression(rho[t[1]]),
-  y_sec_lab = expression(rho[t[2]]),
-  facet_form = (cor_t2 ~ cor_t3)
-) +
-  scale_x_continuous(breaks = unique(results_grid_plt$cor_t1)) +
+p1 <- (p1 +
+  scale_x_continuous(
+    breaks = unique(results_grid_plt$cor_t1)
+  )) |>
+  common_plot_items(
+    xlab = expression(rho[t[1]]),
+    x_sec_lab = expression(rho[t[3]]),
+    # x_sec_lab = "test_x",
+    y_sec_lab = expression(rho[t[2]]),
+    facet_form = (cor_t2 ~ cor_t3)
+  ) +
   NULL
 
 ggsave(
@@ -257,7 +270,6 @@ ggsave(
   width = 10,
   height = 7
 )
-
 
 # Above plot, but this time with smoothed LOESS line rather than geom_line
 smooth_plt <- \(data, col) {
@@ -274,8 +286,8 @@ smooth_plt <- \(data, col) {
       aes(x = {{ col }}, y = adj_rand),
       colour = "#C11432",
       fill = "#C11432",
-      # formula = y ~ splines::bs(x = x, knots = 3),
-      formula = y ~ splines::bs(x = x, knots = length(unique(data[[col]]))),
+      method = "loess",
+      span = 0.9,
       se = TRUE,
       linewidth = 1
     ) +
@@ -290,8 +302,26 @@ smooth_plt <- \(data, col) {
 }
 
 # doesn't work any more as cor_gauss is fixed!
-p1_smooth <- smooth_plt(results_grid_plt, cor_gauss)
-p2_smooth <- smooth_plt(results_grid_plt, cor_t1)
+# p1_smooth <- smooth_plt(results_grid_plt, cor_gauss)
+p2_smooth <- (smooth_plt(results_grid_plt, cor_t1) +
+  scale_x_continuous(breaks = unique(results_grid_plt$cor_t1))) |>
+  common_plot_items(
+    xlab = expression(rho[t[1]]),
+    x_sec_lab = expression(rho[t[3]]),
+    y_sec_lab = expression(rho[t[2]]),
+    facet_form = (cor_t2 ~ cor_t3)
+  ) +
+  NULL
+
+
+ggsave(
+  plot = p2_smooth,
+  # paste0("latex/plots/01e_js_sens_3_var_dqu_", cond_prob, ".png"),
+  paste0("latex/plots/01c2_js_sens_sim_60_locs_dqu_", cond_prob, "_smooth.png"),
+  width = 10,
+  height = 7
+)
+
 
 # ternary plot
 # TODO: Fix (do I even bother??)

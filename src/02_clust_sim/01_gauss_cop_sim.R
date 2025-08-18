@@ -2,7 +2,7 @@
 
 # Assess performance of Jensen-Shannon clustering algorithm on simulation
 # dataset generated from Gaussian copulas, for which we have certain
-# theoretical guarentees
+# theoretical guarantees
 # Do so for a number of simulations and correlation parameters
 
 # NOTE
@@ -49,6 +49,11 @@ max_clust <- n_locs - 1 # maximum number of clusters to choose from
 n_clusts <- c(2, 3)
 # vars <- c("rain", "wind_speed") # dummy names for variables
 
+# parameters for MC estimation of JSGa
+n_mc <- 500 # number of MC samples
+mc_method <- "laplace_trunc2" # truncate Laplace using empirical dist quant
+laplace_cap <- 0.99 # Take 99th quantile
+
 # fix b to a given value? Run for both
 fixed_bs <- c(TRUE, FALSE)
 
@@ -61,9 +66,18 @@ get_pars <- \(ce_fit) lapply(ce_fit, \(x) lapply(x, `[[`, "params"))
 
 # function to find K thorugh combination of TWGSS, AIC and LRT
 # TODO Allow use of cluster start values, only works with default for now
-find_k <- \(ce_fit, data_mix, max_clust, fixed_b = FALSE) {
+# NOTE Not running now for simulations as too slow, method works well though
+find_k <- \(ce_fit, data_mix, data_mix_gauss, max_clust, fixed_b = FALSE) {
   # Pull JS distance matrix
-  dist <- js_clust(ce_fit, scree_k = 1:max_clust)$dist_mat
+  # dist <- js_clust(ce_fit, scree_k = 1:max_clust)$dist_mat
+  dist <- js_clust(
+    ce_fit,
+    trans = data_mix,
+    scree_k = 1:max_clust,
+    n = n_mc,
+    mc_method = mc_method,
+    laplace_cap = laplace_cap
+  )$dist_mat
   # extract TWGSS
   twgss <- evc::scree_plot(dist, k = 1:max_clust)
 
@@ -78,16 +92,23 @@ find_k <- \(ce_fit, data_mix, max_clust, fixed_b = FALSE) {
   # for (k in 2:max_clust) {
   for (k in 1:max_clust) {
     # cluster
-    pam_fit <- js_clust(dist_mat = dist, k = k, return_dist = TRUE)
-    # refit CE model
+    pam_fit <- js_clust(
+      dist_mat = dist,
+      k = k,
+      n = n_mc,
+      mc_method = mc_method,
+      laplace_cap = laplace_cap,
+      return_dist = TRUE
+    )
+    # refit CE model (no margins, just dependence, just a shortcut function)
     dependence_clust <- fit_optim_clust(
       pam_fit$pam$clustering,
-      data_mix,
+      data_mix_gauss,
       n_vars = n_vars,
       cond_prob = cond_prob,
       trans_fun = trans_fun,
       # TODO Fix so that we can use cluster start values
-      # Could use correlation in data_mix sample before sampling??
+      # Could use correlation in data_mix_gauss sample before sampling??
       # start_vals = start_vals
       start_vals = c(0.01, 0.01),
       fixed_b = fixed_b
@@ -183,7 +204,8 @@ find_k <- \(ce_fit, data_mix, max_clust, fixed_b = FALSE) {
 cond_prob <- 0.9 # conditional probability
 # n_clust <- 2 # number of clusters
 n_clust <- 3
-cor_gauss <- c(0.3, 0.6, 0.9)
+# cor_gauss <- c(0.3, 0.6, 0.9)
+cor_gauss <- c(0.1, 0.5, 0.9)
 cluster_mem <- rep(1:n_clust, each = n_locs / n_clust) # cluster membership
 fixed_b <- FALSE
 
@@ -217,11 +239,12 @@ data_mix_gauss <- data_mix
 trans_fun <- \(x) laplace_trans(pnorm(x))
 data_mix <- lapply(data_mix, trans_fun)
 
-# cluster with minimum and max rho/correlation parameter
+# Find first location in clusters with min and max rho/correlation parameter
 min_max_rho <- c(
   which(cluster_mem == min(cluster_mem))[1],
   which(cluster_mem == max(cluster_mem))[1]
 )
+
 
 #### Exploratory plots ####
 
@@ -266,8 +289,7 @@ p <- bind_rows(
   guides(colour = "none") +
   ggsci::scale_colour_nejm()
 
-ggsave("latex/plots/gauss_sim_ex.png", p, width = 8, height = 8)
-
+ggsave("latex/plots/gauss_sim_ex.png", p, width = 8, height = 6)
 
 # look at chi and chibar for both
 do.call(`+`, ggplot(texmex::chi(data_mix[[min_max_rho[1]]]), plot. = FALSE)) /
@@ -293,8 +315,8 @@ ce_fit <- lapply(seq_along(data_mix), \(i) {
 
 # function to extract a and b values
 extract_pars <- \(ce_fit) {
-  x <- ce_fit[[1]]
-  y <- ce_fit[[1]][[1]]
+  # x <- ce_fit[[1]]
+  # y <- ce_fit[[1]][[1]]
   bind_rows(lapply(ce_fit, \(x) { # loop through "locations"
     data.frame(
       vapply(x, \(y) { # loop through "variables"
@@ -351,24 +373,29 @@ diff_from_start(pars_df, start_vals)
 # In particular, beta -> 1/2 as rho -> 1, as expected
 
 # Pull JS distance (for later clustering)
-# TODO Do with new version of clustering
-dist <- js_clust(ce_fit, scree_k = 1:max_clust)$dist_mat
+dist <- js_clust(
+  ce_fit,
+  scree_k = 1:max_clust,
+  n = n_mc,
+  trans = data_mix,
+  mc_method = mc_method,
+  laplace_cap = laplace_cap
+)$dist_mat
 
 # Find optimal k value using AIC, TWGSS and LRT
 # TODO Investigate why k is 7 for LRT when k_true = 3!!
-k_est <- find_k(ce_fit, data_mix_gauss, max_clust = 10, fixed_b = fixed_b)
+k_est <- find_k(ce_fit, data_mix, data_mix_gauss, max_clust = 10, fixed_b = fixed_b)
 (k_est$k_method) # see individual estimates
 k_est$plot # plot looks great!!
 k <- k_est$k
 k == n_clust
 
 # cluster for k = n_clust
-pam_fit <- js_clust(
-  dist_mat = dist, k = k, cluster_mem = cluster_mem
-)
+pam_fit <- js_clust(dist_mat = dist, k = k, cluster_mem = cluster_mem)
 pam_fit$adj_rand == 1 # perfect clustering
 
-clust_mem <- pam_fit$pam$clustering
+# clust_mem <- pam_fit$pam$clustering
+clust_mem <- pam_fit$clustering
 # correct clustering if required
 # if (clust_mem[1] == 2) clust_mem <- 3 - clust_mem
 # TODO Fix this!!
@@ -429,15 +456,14 @@ grid <- data.frame(
   mutate(cor_gauss3 = ifelse(n_clust == 2, NA, cor_gauss3))
 
 # number of simulations to run for each
-# n_times <- 2
 n_times <- 500
-# n_times <- 200
-# n_times <- 20
+# n_times <- 500
 # objects for saving parameter values and cluster assignment
 results_orig <- results_clust <- clust_assign <- vector(
   mode = "list", length = n_times
 )
 set.seed(seed_number)
+i <- j <- 1
 results_grid <- mclapply(seq_len(nrow(grid)), \(i) {
   # results_grid <- lapply(seq_len(nrow(grid)), \(i) {
   print(paste0("Progress: ", round(i / nrow(grid), 3) * 100, "%"))
@@ -509,19 +535,50 @@ results_grid <- mclapply(seq_len(nrow(grid)), \(i) {
       )
 
     # Pull JS distance (for later clustering)
-    dist <- js_clust(ce_fit, scree_k = 1:max_clust)$dist_mat
+    clust_obj <- tryCatch(
+      {
+        ret <- js_clust(
+          ce_fit,
+          trans = data_mix,
+          scree_k = 1:max_clust,
+          n = n_mc,
+          mc_method = mc_method,
+          laplace_cap = laplace_cap
+        )
+        message("Working!")
+        ret$mc_method <- "laplace_trunc2"
+        ret
+      },
+      error = \(e) {
+        message("Error encountered, switching method.")
+        ret <- js_clust(
+          ce_fit,
+          trans = data_mix,
+          scree_k = 1:max_clust,
+          n = n_mc,
+          mc_method = "laplace_trunc3"
+        )
+        ret$mc_method <- "laplace_trunc3"
+        ret
+      }
+    )
+
+    dist <- clust_obj$dist_mat
 
     # Find optimal k value using AIC, TWGSS and LRT
-    # TODO Fix, currently causes an error
-    k_estimate <- find_k(
-      ce_fit, data_mix_gauss,
-      max_clust = 10, fixed_b = fixed_b
-    )
+    # k_estimate <- find_k(
+    #   ce_fit, data_mix, data_mix_gauss,
+    #   max_clust = 10, fixed_b = fixed_b
+    # )
 
     # cluster and refit
     pam_fit <- js_clust(
       dist_mat = dist,
+      trans = data_mix,
       k = row$n_clust, # NOTE Still use "true" k, easier to plot!!
+      n = n_mc,
+      mc_method = mc_method,
+      laplace_cap = laplace_cap,
       return_dist = TRUE
     )
 
@@ -548,11 +605,12 @@ results_grid <- mclapply(seq_len(nrow(grid)), \(i) {
       rename(cluster = location) |>
       mutate(
         # estimates for k (overall and for different methods)
-        k_est    = k_estimate$k,
-        k_aic    = k_estimate$k_method[["k_aic"]],
-        k_twgss  = k_estimate$k_method[["k_twgss"]],
-        k_lr     = k_estimate$k_method[["k_lr"]],
-        sim      = j, # simulation number
+        # k_est    = k_estimate$k,
+        # k_aic    = k_estimate$k_method[["k_aic"]],
+        # k_twgss  = k_estimate$k_method[["k_twgss"]],
+        # k_lr     = k_estimate$k_method[["k_lr"]],
+        sim = j, # simulation number
+        mc_method = clust_obj$mc_method, # method used for MC estimation
         adj_rand = pam_fit$adj_rand # clustering performance
       )
   }

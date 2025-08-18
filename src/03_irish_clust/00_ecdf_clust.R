@@ -17,6 +17,9 @@
 # TODO Facet clustering solution for various DQU
 # Plot bootstrapped uncertainty before/after clustering (done)
 
+# TODO Final diagnostics for chosen models!
+# TODO May have to choose number of clusters after Laplace truncation point?
+
 #### Libs ####
 
 library(sf)
@@ -984,14 +987,31 @@ elev_df <- readr::read_csv(
   show_col_types = FALSE
 )
 
+# TODO Change height bins?? > 600m is a mountain, so would make sense!
+if (!is.factor(elev_df$elev_bin)) {
+  elev_df$elev_bin <- factor(
+    elev_df$elev_bin,
+    levels = c(
+      "0–100 m", "100–200 m",
+      "200–300 m", "300–400 m", "400–500 m", "> 500 m"
+    )
+  )
+}
+
 # pull just site names, counties and provinces
 county_key_df <- data |>
   distinct(name, county, province)
+readr::write_csv(
+  county_key_df,
+  "data/met_eireann/final/ire_county_key.csv"
+)
 
 # extract point location of each station for plotting on map
 pts <- data %>%
   distinct(name, lon, lat) %>%
   st_to_sf()
+sf::write_sf(pts, "data/met_eireann/final/irl_points.geojson")
+
 
 # calculate adjacency matrix from Voronoi cells,
 # to restrict clustering to adjacent sites
@@ -1060,41 +1080,41 @@ data_plot <- data_week %>%
   arrange(desc(indicator)) %>%
   st_to_sf()
 
-# First, plot the location of each site
+# elevation plot (can superimpose others on top)
 # TODO Place legend on plot in bottom right corner!!
-# p1 <- ggplot(areas) +
-p1 <- ggplot() +
+p_terrain <- ggplot() +
   geom_tile(
     data = elev_df,
     aes(x = x, y = y, fill = elev_bin),
     width = diff(range(elev_df$x)) / length(unique(elev_df$x)),
     height = diff(range(elev_df$y)) / length(unique(elev_df$y))
   ) +
-  # scico::scale_fill_scico_d(
-  #   palette = "bilbao",
-  #   name = "Elevation",
-  #   direction = -1
+  scico::scale_fill_scico_d(
+    palette = "bilbao",
+    name = "Elevation",
+    direction = -1
+  ) +
+  # scale_fill_manual(
+  #   values = c(
+  #     "#FFFFFF", "#C5C2B2", "#B19E68",
+  #     "#A6785B", "#9B5352", "#6D1F23"
+  #   )
   # ) +
-  scale_fill_manual(
-    values = c(
-      "#FFFFFF", "#C5C2B2", "#B19E68",
-      "#A6785B", "#9B5352", "#6D1F23"
-      # "#FFFFFF", "#CBC9C0", "#BBB287",
-      # "#AC8F60", "#A4745A", "#914249"
-    ),
-  ) +
   labs(x = "", y = "", fill = "Elevation") +
-  # position legend in bottom right of plot
-  theme(
-    legend.direction = "vertical",
-    legend.position = c(0.75, 0.1),
-    legend.title = element_text(size = 12, face = "bold"),
-    legend.text = element_text(size = 12)
-  ) +
-  # NULL
-  # ggsave(filename = "test_map_plot.png", plot = p1, width = 10, height = 8)
+  theme +
+  # TODO position legend in bottom right of plot?
+  # theme(
+  #   legend.direction = "vertical",
+  #   legend.position = c(0.75, 0.1),
+  #   legend.title = element_text(size = 12, face = "bold"),
+  #   legend.text = element_text(size = 12)
+  # ) +
   ggnewscale::new_scale_fill() +
   geom_sf(data = areas, colour = "black", fill = NA) +
+  NULL
+
+# plot the location of each site
+p1 <- p_terrain +
   # points other than two sites
   geom_sf(
     data = filter(data_plot, indicator == "other"),
@@ -1129,6 +1149,8 @@ p1 <- ggplot() +
     axis.ticks = element_blank() # ,
     # legend.key = element_blank()
   )
+
+# ggsave(filename = "test_map_plot.png", plot = p1, width = 10, height = 8)
 
 cols <- ggsci::pal_nejm()(4)
 cols[2] <- "black"
@@ -1368,6 +1390,12 @@ chi_p <- chi_map_plot(chi_95_sf, "chi") +
 ggsave("latex/plots/041_chi_plots.png", chi_plots, width = 6.3, height = 6, units = "in")
 ggsave("latex/plots/chi_map_ire.png", chi_p, width = 6, height = 6, units = "in")
 
+# Also combine chi plot with elevation plot
+# p_terrain_chi <- p_terrain + (chi_p + theme(legend.position = "bottom"))
+p_terrain_chi <- (p_terrain + theme(legend.position = "right")) + chi_p
+p_terrain_chi
+
+
 
 #### ECDF -> Laplace Transformation ####
 
@@ -1456,6 +1484,7 @@ ce_fit <- lapply(Y_lst, \(x) {
     nruns = 3
   )
 })
+saveRDS(ce_fit, "data/ce_fit.RDS")
 
 # pull dependence parameters and residuals out separately
 dep_fit <- lapply(c("resid", "params"), \(x) {
@@ -1467,6 +1496,7 @@ names(dep_fit) <- c("residual", "dependence")
 dep_fit$transformed <- Y_lst
 dep_fit$original <- data_week
 dep_fit$arg_vals <- list("cond_prob" = dqu)
+saveRDS(dep_fit, "data/dep_fit.RDS")
 
 # pull dependence paramaters into df
 ab_df <- dep_to_df(dep_fit$dependence)

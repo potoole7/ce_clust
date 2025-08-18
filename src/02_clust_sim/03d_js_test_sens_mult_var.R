@@ -42,6 +42,12 @@ marg_prob <- 0.9 # marginal probability for GPD
 cond_prob <- 0.9 # quantile for conditional probability
 conf_level <- 0.9 # confidence level for CIs in plot
 
+# parameters for MC estimation of JSGa
+n_mc <- 500 # number of MC samples
+mc_method <- "laplace_trunc2" # truncate Laplace using empirical dist quant
+laplace_cap <- 0.99 # Take 99th quantile
+
+
 # Number of cores to use for parallel computation
 n_cores <- detectCores() - 1
 
@@ -61,7 +67,8 @@ data <- sim_cop_dat(
   n_locs     = n_locs,
   n_vars     = n_vars,
   n          = n,
-  cor_gauss  = cor_gauss,
+  # cor_gauss  = cor_gauss,
+  cor_gauss  = c(0.3, 0.3),
   cor_t      = cor_t,
   df_t       = df_t,
   # params_gpd = c(scale_gpd, shape_gpd),
@@ -69,16 +76,64 @@ data <- sim_cop_dat(
   qfun       = evd::qgpd,
   qargs      = c("scale" = scale_gpd, "shape" = shape_gpd)
 )
+data_gauss <- data$gauss_cop
+data_t <- data$t_cop
 data_mix <- data$data_mix
 
+# plot
+# plot(data_gauss[[12]])
+# points(data_t[[12]], col = "red", pch = 19, cex = 0.5)
+
+bind_rows(
+  bind_rows(
+    data.frame(data_gauss[[1]]) |>
+      mutate(name = "Gaussian Copula"),
+    data.frame(data_t[[1]]) |>
+      mutate(name = "t-Copula")
+  ) |>
+    mutate(cor_gauss = cor_gauss[1], cor_t = cor_t[1]),
+  bind_rows(
+    data.frame(data_gauss[[12]]) |>
+      mutate(name = "Gaussian Copula"),
+    data.frame(data_t[[12]]) |>
+      mutate(name = "t-Copula")
+  ) |>
+    mutate(cor_gauss = cor_gauss[1], cor_t = cor_t[2]),
+) |>
+  group_by(cor_t) |>
+  mutate(
+    quant_x = quantile(X1, 0.99),
+    quant_y = quantile(X2, 0.99)
+  ) |>
+  ungroup() |>
+  ggplot(aes(x = X1, y = X2, colour = name)) +
+  geom_point(alpha = 0.4) +
+  facet_wrap(~cor_t, scale = "fixed") +
+  geom_vline(aes(xintercept = quant_x), linetype = "dashed") +
+  geom_hline(aes(yintercept = quant_y), linetype = "dashed") +
+  labs(x = "", y = "") +
+  guides(colour = "none") +
+  evc::evc_theme() +
+  scale_x_continuous(
+    sec.axis = sec_axis(
+      ~.,
+      name = expression(rho[t]),
+      breaks = NULL,
+      labels = NULL
+    )
+  )
+
 # Fit CE model
-dependence <- fit_ce(
+# TODO
+ce_fit <- fit_ce(
   data        = data_mix,
   # vars        = vars,
   marg_prob   = marg_prob,
   cond_prob   = cond_prob,
-  fit_no_keef = TRUE
-)$dependence
+  fit_no_keef = TRUE,
+  output_all  = TRUE
+)
+dependence <- ce_fit$dependence
 
 # check that all dependence models have run successfully
 sapply(dependence, \(x) lapply(x, length))
@@ -86,10 +141,17 @@ sapply(dependence, \(x) lapply(x, length))
 # Perform PAM and k-means clustering, as an exploratory analysis
 
 # first, produce distance matrix and associated elbow plot
-js_mat <- js_clust(dependence)$dist_mat # suggests k = 2, as desired
+js_mat <- js_clust(
+  ce_fit,
+  n = n_mc, mc_method = mc_method, laplace_cap = laplace_cap
+)$dist_mat # suggests k = 2, as desired
 
 # cluster and assess performance
-js_clust(dependence, k = 2, dist_mat = js_mat, cluster_mem = cluster_mem)
+js_clust(
+  dependence,
+  k = 2, dist_mat = js_mat, cluster_mem = cluster_mem,
+  n = n_mc, mc_method = mc_method, laplace_cap = laplace_cap
+)
 # adj_rand == 1, as desired (perfect clustering!)
 
 #### Sensitivity Analysis ####
@@ -116,8 +178,7 @@ grid <- tidyr::crossing(
   )
 
 # run kl_sim_eval for each row in grid
-# n_times <- 500
-n_times <- 1
+n_times <- 500
 results_vec <- lri_vec <- lri_mean_vec <- vector(length = n_times)
 set.seed(seed_number)
 # i <- 11
@@ -161,7 +222,12 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
         })
 
         # "true" number of clusters known from simulation design
-        js_clust(ce_fit, k = n_clust, cluster_mem = cluster_mem)
+        js_clust(
+          ce_fit,
+          trans = data_mix_trans,
+          k = n_clust, cluster_mem = cluster_mem,
+          n = n_mc, mc_method = mc_method, laplace_cap = laplace_cap
+        )
       },
       error = function(cond) {
         return(list("adj_rand" = NA))

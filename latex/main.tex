@@ -96,6 +96,7 @@
 
 % Plotting
 \todo{Crop (map) plots that have too much whitespace}
+\todo{Ireland maps should be simmilarly sized, centred and coloured}
 \todo{Plots need some tidying up!}
 \todo{Ensure all plots include all sites}
 
@@ -1119,7 +1120,29 @@ This may also be due to our wind speeds coming from the ERA5 reanalysis dataset,
    ~\label{fig:clust_sol}
 \end{figure}
 
-% Results and intrepretation post-clustering
+\todo{Make site names larger}
+\todo{Manually save to avoid clipping!}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width = 0.9\linewidth]{plots/ire_dist_heatmap.png}
+    \caption{\emph{Heatmap of the $JS^{G_{\alpha}}$ dissimilarity matrix for the conditional extremes model parameters estimated at the 85th dependence quantile across all 59 sites, using the combined dissimilarity matrix. The names of each site are coloured and ordered according to the clustering solution, matching that of Figure \ref{fig:clust_sol}. The dissimilarity colour scale is shown on the right, with darker colours indicating larger values.}}
+    ~\label{fig:dist_heatmap}
+\end{figure}
+
+% Analysis of dissimilarity matrix
+We can also visualise the dissimilarity matrix for the combined clustering solution, as shown in Figure \ref{fig:dist_heatmap}.
+This shows that the clusters are quite distinct, with the dissimilarity between clusters being much larger than within-cluster dissimilarity, which rarely exceeds 0.01.
+In particular, the difference between the eastern and western clusters is quite pronounced, with the central cluster being somewhat intermediate, acting as somewhat of a `buffer' between the two.
+A noticeable outlier in the dissimilarity matrix is the site at Malahide Castle, which is located in Dublin, which even amongst its own cluster has a relatively high dissimilarity to the other sites.
+\todo{Double check this!} 
+\todo{Should I look into this further?}
+This site also has the distinction of having the lowest mean weekly precipitation, and the second lowest maximum wind speed, of all sites in our dataset, which may explain its outlying behaviour, even amongst the eastern cluster, which is generally characterised by lower $\alpha$ estimates and $\chi$ values. 
+We also see that Kilcar, which had a low $\chi$ value for the west coast in Figure \ref{fig:chi}, is the member of the eastern cluster with the lowest dissimilarity to the members of the western cluster, reflecting its geographical location in the northwest of Ireland, despite its low $\chi$ value.
+
+
+
+
+% Results and interpretation post-clustering
 \todo{Write again to make clearer/tighter}
 \todo{Use hat(alpha) rather than alpha (and beta)?}
 Taking the clustering results for the combined dissimilarity matrices, we can combine the data from the three clusters to estimate the CE model parameters for each cluster.

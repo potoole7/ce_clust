@@ -446,7 +446,16 @@ The CE model of \citet{Heffernan2004} assumes that there exist vector normalisin
 % \todo{Check if probably is for equal to yi or greater than yi}
 \todo{Should I use ui or uyi? Need to be consistent!}
 \begin{equation}~\label{eq:ce_limiting_dist}
-  \mathbb{P}\left(\frac{\bm{Y}_{-i} - \bm{\alpha}_{\mid i}^{(\CE{})} Y_{i}}{Y_{i}^{\bm{\beta}_{\mid i}^{(\CE{})}} \le \bm{z}_{\mid i}, Y_i - u_i > y_i \mid Y_i > u_i \right) \longrightarrow \bm{G}_{\mid i}(\bm{z}_{\mid i}) \exp(-y_i) \text{ as } u_i \rightarrow \infty,
+  % \mathbb{P}\left(\frac{\bm{Y}_{-i} - \bm{\alpha}_{\mid i}^{(\CE{})} Y_{i}}{Y_{i}^{\bm{\beta}_{\mid i}^{(\CE{})}} \le \bm{z}_{\mid i}, Y_i - u_i > y_i \mid Y_i > u_i \right) \longrightarrow \bm{G}_{\mid i}(\bm{z}_{\mid i}) \exp(-y_i) \text{ as } u_i \rightarrow \infty,
+  \mathbb{P}\!\left(
+  \frac{\bm{Y}_{-i} - \bm{\alpha}_{\mid i}^{(\mathrm{CE})} Y_{i}}
+       {Y_{i}^{\bm{\beta}_{\mid i}^{(\mathrm{CE})}}}
+  \le \bm{z}_{\mid i},\; 
+  Y_i - u_i > y_i \;\Big|\; Y_i > u_i
+  \right)
+  \longrightarrow
+  \bm{G}_{\mid i}(\bm{z}_{\mid i})\,e^{-y_i}
+  \quad\text{as } u_i \to \infty,
 \end{equation}
 % where $u_i$ is a suitably high threshold for $Y_i$, and $\bm{G}_{j \mid i}$ is non-degenerate for all $j \ne i$. 
 % \todo{below points needed, or can some of this be removed?}
@@ -457,14 +466,13 @@ The CE model of \citet{Heffernan2004} assumes that there exist vector normalisin
 % ensuring that there is no mass at $+\infty$ for any margin, but allowing for some mass to be at $-\infty$, in order to ensure uniqueness of the solution \citep{Keef2013}.
 where $u_i$ is a suitably high threshold for $Y_i$.
 The distribution $\bm{G}_{\mid i}$ is non-degenerate on $\mathbb{R}^{d-1}$ and, for each margin $j\neq i$, $\lim\limits_{z\to\infty}\bm{G}_{j\mid i}(z)=1$, so that there is no mass at $+\infty$, while mass at $-\infty$ is permitted to ensure uniqueness \citep{Keef2013}. 
-
 % An important consequence of this formulation is the weak assumption that
 % \begin{equation}~\label{eq:limit_independence}
 %   \mathbb{P}(\bm{Z}_{\mid i} \le \bm{z}_{\mid i}, Y_i - u_i = y_i \mid Y_i > u_i) \rightarrow \bm{G}_{\mid i}(\bm{z}_{\mid i}) \exp(-y_i) \text{ as } u_i \rightarrow \infty,
 % \end{equation}
 % so that in the limit as $u_i \to \infty$, the extremal exceedances $Y_i - u_i$ and the standardised residuals $\bm{Z}_{\mid i} = \frac{\bm{Y}_{-i} - \bm{\alpha}_{\mid i} Y_{i}}{Y_{i}^{\bm{\beta}_{\mid i}}}, \bm{Z}_{\mid i} \sim \bm{G}_{\mid i}$ are independent.
 % Equation~\eqref{eq:ce_joint_limit} implies that, in the limit $u_i\to\infty$, the exceedances $Y_i-u_i$ and the standardised residuals $\bm{Z}_{\mid i} = \frac{\bm{Y}_{-i} - \bm{\alpha}_{\mid i} Y_{i}}{Y_{i}^{\bm{\beta}_{\mid i}}}, \bm{Z}_{\mid i} \sim \bm{G}_{\mid i}$ are asymptotically independent. \todo{Should G be bold?} \todo{not sure I like two statements about Z here}
-Equation~\eqref{eq:ce_joint_limit} implies that, in the limit $u_i\to\infty$, the exceedances $Y_i-u_i$ and the standardised residuals $\bm{Z}_{\mid i} = \frac{\bm{Y}_{-i} - \bm{\alpha}_{\mid i}^{(\CE{})} Y_{i}}{Y_{i}^{\bm{\beta}_{\mid i}^{(\CE{})}}}$, where $\bm{Z}_{\mid i} \sim \bm{G}_{\mid i}$, are asymptotically independent.
+Equation~\eqref{eq:ce_limiting_dist} implies that, in the limit $u_i\to\infty$, the exceedances $Y_i-u_i$ and the standardised residuals $\bm{Z}_{\mid i} = \frac{\bm{Y}_{-i} - \bm{\alpha}_{\mid i}^{(\CE{})} Y_{i}}{Y_{i}^{\bm{\beta}_{\mid i}^{(\CE{})}}}$, where $\bm{Z}_{\mid i} \sim \bm{G}_{\mid i}$, are asymptotically independent.
 
 % Heteroskedastic regression
 % The limiting distribution in equation~\eqref{eq:ce_limiting_dist} can be written as a heteroskedastic regression equation defined by
@@ -476,7 +484,7 @@ The limiting distribution in equation~\eqref{eq:ce_limiting_dist} can be express
 with residual vector $\bm{Z}_{\mid i} \sim \bm{G}_{\mid i}$.
 The slope or linear regression coefficient $\bm{\alpha}_{\mid i}^{(\CE{})} \in [-1, 1]$ describes the strength of association between $Y_{-i}$ and large $Y_i$ above the threshold $u_i$.
 % \item $\bm{\beta}_{\mid i} \in [-\infty, 1]$ can be interpretated as a ``spread'' parameter, controlling the levels of heteroskedasticity in the model.
-\item $\bm{\beta}_{\mid i}^{(\CE{})} \in [-\infty, 1]$ can be loosely interpreted as a ``spread'' parameter, controlling the levels of heteroskedasticity in the model.
+The levels of heteroskedasticity in the model is controlled by $\bm{\beta}_{\mid i}^{(\CE{})} \in [-\infty, 1]$, and can be loosely interpreted as a ``spread'' parameter.
   % \item Several choices for $\bm{G}_{\mid i}$, the distribution of
 % $\bm{Z}_{\mid i}$, were proposed in \citet{Heffernan2004}, before ultimately
 % settling on a multivariate normal distribution with vector nuisance parameters
@@ -548,7 +556,7 @@ Ideally, our measure should also have an upper bound, as larger divergences can 
 One divergence measure introduced in \citet{Nielsen2019} which satisfies these properties is the skew-geometric Jensen--Shannon divergence ($\JSGa{}$), a generalisation of the Jensen--Shannon ($\JS{}$) divergence \citep{Lin1991}. 
 \todo{Improve definition of P, Q, as measures? Or with detail as to their relation to CE?}
 The $\JSGa{}$ divergence between two distributions $P$ and $Q$ is given by
-\begin{equation}~\label{eq:js}
+\begin{equation}~\label{eq:jsga}
   % \JSGa{(P \mid\mid Q)} = \frac{1}{2} \left\{ KL(P \mid\mid G_{\alpha}(P, Q)) + KL(Q \mid\mid G_{\alpha}(P, Q)) \right\}.
   \JSGa{(P \mid\mid Q)} = \frac{1}{2} \left\{\KL{(P \mid\mid G_{\alpha}(P, Q))} + \KL{(Q \mid\mid G_{\alpha}(P, Q))} \right\},
 \end{equation}
@@ -566,12 +574,12 @@ In this context, $P$ and $Q$ represent the conditional multivariate Gaussian dis
 % Explain why it is a good dissimilarity metric to use
 For two multivariate Gaussian distributions, the $\KL{}$ divergence has a closed form, analytical solution \citep{Duchi2007}.
 The $\JSGa{}$ divergence exploits the property that the (weighted) product of two members of the same exponential family is itself a member of the same exponential family distribution. 
-It follows that $G_{\alpha}(P, Q)$ is multivariate Gaussian, and so the $\KL{}$ divergences in equation~\eqref{eq:js} are between multivariate Gaussian distributions and can be computed in closed form.
+It follows that $G_{\alpha}(P, Q)$ is multivariate Gaussian, and so the $\KL{}$ divergences in equation~\eqref{eq:jsga} are between multivariate Gaussian distributions and can be computed in closed form.
 Hence, $\JSGa{}$ itself has a closed form solution \citep{Nielsen2019}, and so is computationally efficient to compute.
 % Furthermore, it is clearly symmetric and non-negative, as the sum of two $KL$ divergences, which is also important for clustering.
 Furthermore, it is clearly symmetric and non-negative, as the average of two $\KL{}$ divergences.
 Finally, where $\alpha = 0.5$, $\JSGa{}$ is bounded above by
-\begin{equation}~\label{eq:js_bound}
+\begin{equation}~\label{eq:jsga_bound}
   \JSGa{(P \mid\mid Q)} \leq \frac{1}{4} \mathrm{J}(P \mid\mid Q),
 \end{equation}
 where the Jeffreys' divergence $J(P \mid\mid Q) = \KL{(P \mid\mid Q)} + \KL{(Q \mid\mid P)}$ is simply the sum of the forward and backward $\KL{}$ divergences \citep{Nielsen2025}.
@@ -641,7 +649,7 @@ An explicit form for the $\JSGa{}$ divergence for two multivariate Gaussian dist
 Since the conditional distributions $P$ and $Q$ depend on the value of the conditioning variable $Y_i$, the divergence between them also depends on $Y_i$. 
 To obtain a single measure of dissimilarity, we define the expected divergence
 \todo{Need to clean up expectation?}
-\begin{equation}~\label{eq:js_integral}
+\begin{equation}~\label{eq:jsga_integral}
 % \mathbb{E}\!\left[ JS^{G_{\alpha}}(P(y_i)\, \| \, Q(y_i)) \,\middle|\, Y_i > u_i \right] 
 % = \int_{u_i}^\infty JS^{G_{\alpha}}(P(y_i)\, \| \, Q(y_i)) \, f(y_i \mid Y_i > u_i)\, dy_i,
   \mathbb{E}\!\left[ \JSGa{(P(y_i)\, \| \, Q(y_i))} \,\middle|\, Y_i > u_i \right] = \int_{u_i}^\infty \JSGa{(P(y_i)\, \| \, Q(y_i))} \, f(y_i \mid Y_i > u_i)\, dy_i,
@@ -736,8 +744,9 @@ To tranform each $X_i$ to Laplace margins, we let
 
 % JSGa form
 % For two multivariate normals, \citet{Nielsen2019} shows that the $\JSGa{}$ divergence introduced in equation~\eqref{eq:js_norm} has the closed form solution
- For two multivariate Gaussian distributions $P \sim N(\mu_1, \Sigma_1)$ and $Q \sim N(\mu_2, \Sigma_2)$ in $\mathbb{R}^n$, \citet{Nielsen2019} shows that the $\JSGa{}$ divergence introduced in equation~\eqref{eq:js_norm} has the closed form solution
-\begin{align*}~\label{eq:js_norm_mvn}
+% \todo{eq:js_norm can't be found}
+For two multivariate Gaussian distributions $P \sim N(\mu_1, \Sigma_1)$ and $Q \sim N(\mu_2, \Sigma_2)$ in $\mathbb{R}^n$, \citet{Nielsen2019} shows that the $\JSGa{}$ divergence introduced in equation~\eqref{eq:jsga} has the closed form solution 
+\begin{align*}%~\label{eq:js_norm_mvn}
   JS^{G_{\alpha}}(P \mid\mid Q) &= \frac{1}{2} \left( (1 - \alpha) \mu_1^T \Sigma_1^{-1} \mu_1 + \alpha \mu_2^T \Sigma_2^{-1} \mu_2 - \mu_{\alpha}^T \Sigma_{\alpha}^{-1} \mu_{\alpha} + \log{\left( \frac{\abs{\Sigma_1}^{1-\alpha} \abs{\Sigma_2}^{\alpha}}{\abs{\Sigma_{\alpha}}} \right)} \right), \\
   \Sigma_{\alpha} &= \left( (1 - \alpha) \Sigma_1^{-1} + \alpha \Sigma_2^{-1} \right)^{-1}, \\
   \mu_{\alpha} &= \Sigma_{\alpha} \left( (1 - \alpha) \Sigma_1^{-1} \mu_1 + \alpha \Sigma_2^{-1} \mu_2 \right), \numberthis~\label{eq:js_norm_mvn1}
@@ -963,9 +972,9 @@ Finally, we recall that an important reason for spatial clustering is to reduce 
 To this end, we desired to ascertain whether the estimates of our dependence parameters were less uncertain after clustering.
 We can use the bootstrapping scheme described in \cite{Heffernan2004} to determine the uncertainty in our parameter estimates. \todo{Do I need to describe this scheme and how it preserves the dependence structure of the data?}
 As we are estimating two parameters, $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$, for which we do not know the true values, it may be that although our uncertainty is diminished post-clustering, the estimates may still be biased, with the parameters unidentifiable.
-There are also many possible combinations of $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$ that could give the same conditional estimates, and so the estimates may be biased in this sense as well.
+There are also many possible combinations of $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$ that could give the same conditional estimates, and so the estimates may be biased in this sengse as well.
 To avoid this, we adopt the approach of \cite{Richards2021-qm} in calculating the conditional expectation of one variable given the other at the $98\%$ marginal quantile $u_i$ for the conditioning variable, given by
-\todo{Need to match better to previous notation? I.e. Y instead of X?}}
+\todo{Need to match better to previous notation? I.e. Y instead of X?}
   \begin{equation}~\label{eq:boot}
     % \mathbb{E}[X_1 | X_2 = u] = \hat{\alpha}^{(\CE{})} u + u^{\hat{\beta}}^{(\CE{})} \hat{\mu},
     \mathbb{E}[Y_j \mid Y_i = u_i] = \hat{\alpha}_{j \mid i}^{(\CE{})} u_i + u_i^{\hat{\beta}_{j \mid i}^{(\CE{})}} \hat{\mu}_{j \mid i}^{(\CE{})},

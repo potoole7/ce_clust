@@ -1146,7 +1146,7 @@ This may also be due to our wind speeds coming from the ERA5 reanalysis dataset,
 \begin{figure}[H]
     \centering
     \includegraphics[width = 0.9\linewidth]{plots/cluster_dqu_sep.pdf}
-    \caption{\emph{ Clustering solutions for the conditional extremes model parameters estimated at the 88th dependence quantile across all 59 sites, using the $\JSGa{}$ dissimilarity matrix for rain conditional on wind speed (centre), wind speed conditional on rain (right), and the combined dissimilarity matrix (left). The clusters are shown in different colours.}}
+    \caption{\emph{Clustering solutions for the conditional extremes model parameters estimated at the 88th dependence quantile across all 59 sites, using the $\JSGa{}$ dissimilarity matrix for wind speed conditional on rain (centre), rain conditional on wind speed (right), and the combined dissimilarity matrix (left). The clusters are shown in different colours.}}
    ~\label{fig:clust_sol}
 \end{figure}
 
@@ -1166,9 +1166,9 @@ We can also visualise the dissimilarity matrix for the combined clustering solut
 This shows that the clusters are quite distinct, with the dissimilarity between clusters being much larger than within-cluster dissimilarity, which rarely exceeds 0.01.
 In particular, the difference between the eastern and western clusters is quite pronounced, with the central cluster being somewhat intermediate, acting as somewhat of a `buffer' between the two.
 % The western and central clusters exhibit many sites with small pairwise dissimilarities, indicating that their allocations are not always clear-cut. 
-% In particular, several central sites are nearly interchangeable with those in the western cluster, a pattern that is also reflected in the variable-specific clustering solutions in Figure~\ref{fig:dist_clust_sol} and in the dependence quantile sensitivity analysis in Figure~\ref{fig:clust_sens}. 
+% In particular, several central sites are nearly interchangeable with those in the western cluster, a pattern that is also reflected in the variable-specific clustering solutions in Figure~\ref{fig:clust_sol} and in the dependence quantile sensitivity analysis in Figure~\ref{fig:clust_sens}. 
 In constrast, the western and central clusters seem to be quite close, in that we observe many small inter-cluster pairwise dissimilarities between them. 
-This indicates that allocation between the two is not always clear-cut and for several sites is nearly interchangeable, as observed in  the variable-specific clustering solutions in Figure~\ref{fig:dist_clust_sol} and in the dependence quantile sensitivity analysis in Figure~\ref{fig:clust_sens}, where membership between the two often switches. \todo{Mention specific sites}
+This indicates that allocation between the two is not always clear-cut and for several sites is nearly interchangeable, as observed in  the variable-specific clustering solutions in Figure~\ref{fig:clust_sol} and in the dependence quantile sensitivity analysis in Figure~\ref{fig:clust_sens}, where membership between the two often switches. \todo{Mention specific sites}
 Also, if we only fit two clusters, we find that most of the central cluster members are assigned to the ``western'' cluster, reflecting this less obvious separation between the two compared to the more markedly different eastern cluster. 
 A noticeable outlier in the dissimilarity matrix is the site at Malahide Castle, which is located in Dublin, which even amongst its own cluster has a relatively high dissimilarity to the other sites.
 Furthermore, if we go to having four clusters, Malahide Castle becomes the only member of the new cluster, and so it is quite distinct from the other sites.

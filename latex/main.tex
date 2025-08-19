@@ -1159,12 +1159,16 @@ This may also be due to our wind speeds coming from the ERA5 reanalysis dataset,
 We can also visualise the dissimilarity matrix for the combined clustering solution, as shown in Figure \ref{fig:dist_heatmap}.
 This shows that the clusters are quite distinct, with the dissimilarity between clusters being much larger than within-cluster dissimilarity, which rarely exceeds 0.01.
 In particular, the difference between the eastern and western clusters is quite pronounced, with the central cluster being somewhat intermediate, acting as somewhat of a `buffer' between the two.
+% The western and central clusters exhibit many sites with small pairwise dissimilarities, indicating that their allocations are not always clear-cut. 
+% In particular, several central sites are nearly interchangeable with those in the western cluster, a pattern that is also reflected in the variable-specific clustering solutions in Figure~\ref{fig:dist_clust_sol} and in the dependence quantile sensitivity analysis in Figure~\ref{fig:clust_sens}. 
+In constrast, the western and central clusters seem to be quite close, in that we observe many small inter-cluster pairwise dissimilarities between them. 
+This indicates that allocation between the two is not always clear-cut and for several sites is nearly interchangeable, as observed in  the variable-specific clustering solutions in Figure~\ref{fig:dist_clust_sol} and in the dependence quantile sensitivity analysis in Figure~\ref{fig:clust_sens}, where membership between the two often switches. \todo{Mention specific sites}
+Also, if we only fit two clusters, we find that most of the central cluster members are assigned to the ``western'' cluster, reflecting this less obvious separation between the two compared to the more markedly different eastern cluster. 
 A noticeable outlier in the dissimilarity matrix is the site at Malahide Castle, which is located in Dublin, which even amongst its own cluster has a relatively high dissimilarity to the other sites.
 Furthermore, if we go to having four clusters, Malahide Castle becomes the only member of the new cluster, and so it is quite distinct from the other sites.
 % This site also has the distinction of having the lowest mean weekly precipitation, and the second lowest maximum wind speed, of all sites in our dataset, which may explain its outlying behaviour, even amongst the eastern cluster, which is generally characterised by lower $\alpha^{(\CE{})}$ estimates and $\chi$ values. 
 This site also has the distinction of having the lowest mean weekly precipitation, and the second lowest maximum wind speed, of all sites in our dataset, which may explain its outlying behaviour, even amongst the eastern cluster, so extremes in either variable are less likely to occur, and consequently concomitant extremes are even less likely, as shown by its low $\chi$ and $\alpha^{(\CE{})}$ estimates.
 We also see that Kilcar in county Donegal, which had a low $\chi$ value relative to other sites on the west coast as shown in Figure \ref{fig:chi}, is the member of the eastern cluster with the lowest dissimilarity to the members of the western cluster, reflecting its geographical location in the northwest of Ireland, despite its low $\chi$ value.
-Indeed, if we only fit two clusters, we find that most of the central cluster members are assigned to the western cluster, but even then Kilcar is still assigned to the eastern cluster.
 
 \begin{figure}[H]
     \centering

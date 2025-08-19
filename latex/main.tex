@@ -560,11 +560,15 @@ The $\JSGa{}$ divergence between two distributions $P$ and $Q$ is given by
   % \JSGa{(P \mid\mid Q)} = \frac{1}{2} \left\{ KL(P \mid\mid G_{\alpha}(P, Q)) + KL(Q \mid\mid G_{\alpha}(P, Q)) \right\}.
   \JSGa{(P \mid\mid Q)} = \frac{1}{2} \left\{\KL{(P \mid\mid G_{\alpha}(P, Q))} + \KL{(Q \mid\mid G_{\alpha}(P, Q))} \right\},
 \end{equation}
-where $G_{\alpha}(P, Q) = P^{\alpha} Q^{1 - \alpha}, \alpha \in [0, 1]$ is the weighted geometric mean of $P$ and $Q$, with $\alpha$ controlling the weighting between them, and $\KL{(P \mid\mid Q)}$ is the Kullback--Leibler divergence between $P$ and $Q$ \citep{Kullback1951}. 
-\todo{talk about alpha, remove altogether??}
-For our application, we set $\alpha = 0.5$, so that $G_{\alpha}(P, Q)$ is unweighted. 
+% where $G_{\alpha}(P, Q) = P^{\alpha} Q^{1 - \alpha}, \alpha \in [0, 1]$ is the weighted geometric mean of $P$ and $Q$, with $\alpha$ controlling the weighting between them, and $\KL{(P \mid\mid Q)}$ is the Kullback--Leibler divergence between $P$ and $Q$ \citep{Kullback1951}. 
+where $G_{\alpha}(P, Q) = P^{\alpha} Q^{1 - \alpha}, \alpha \in [0, 1]$ is the weighted geometric mean of $P$ and $Q$, and $\KL{(P \mid\mid Q)}$ is the Kullback--Leibler divergence between $P$ and $Q$ \citep{Kullback1951}. 
 % Here, $P$ and $Q$ represent the conditional multivariate Gaussian distributions induced by the CE model at two different sites.
 In this context, $P$ and $Q$ represent the conditional multivariate Gaussian distributions induced by the CE model at two different sites.
+The parameter $\alpha$ skews the geometric mean $G_{\alpha}(P,Q)\propto p^{\alpha}q^{1-\alpha}$ towards $P$ (when $\alpha$ is close to 1) or towards $Q$ (when $\alpha$ is close to 0). 
+% When one site has a more reliable CE fit, we set $\alpha$ to a reliability weight $w\in[0,1]$ (e.g.\ proportional to effective sample size), and apply the symmetrised divergence so that the final dissimilarity remains symmetric.
+One possible advantage for having a skew parameter such as $\alpha$ is that in our divergence measure we can favour sites with a more reliable CE fit, as determined by, for example, the effective sample size available for both.
+In this paper, we simply use $\alpha = 0.5$. %, as our simulations and application do not deal with such situations where data at different sites is unbalanced. 
+% For our application, we set $\alpha = 0.5$, so that $G_{\alpha}(P, Q)$ is unweighted, but note that $\alpha$ 
 % The Kullback--Leibler (KL) divergence, $KL(P \mid\mid Q)$, is defined as
 % \begin{equation}~\label{eq:kl}
 %   KL(P \mid\mid Q) = \int_{-\infty}^{\infty} p(y) \log\left(\frac{p(y)}{q(y)}\right) dy.
@@ -582,7 +586,7 @@ Finally, where $\alpha = 0.5$, $\JSGa{}$ is bounded above by
 \begin{equation}~\label{eq:jsga_bound}
   \JSGa{(P \mid\mid Q)} \leq \frac{1}{4} \mathrm{J}(P \mid\mid Q),
 \end{equation}
-where the Jeffreys' divergence $J(P \mid\mid Q) = \KL{(P \mid\mid Q)} + \KL{(Q \mid\mid P)}$ is simply the sum of the forward and backward $\KL{}$ divergences \citep{Nielsen2025}.
+where the Jeffreys' divergence $\mathrm{J}(P \mid\mid Q) = \KL{(P \mid\mid Q)} + \KL{(Q \mid\mid P)}$ is simply the sum of the forward and backward $\KL{}$ divergences \citep{Nielsen2025}.
 % Therefore, $\JSGa{}$ provides more well-defined clusters than the Jeffreys' divergence, motivating the higher conceptual complexity by comparison. 
 Therefore, the $\JSGa{}$ divergence is less susceptible to runaway distances and numerical instability than this simple sum, and also provides more tightly defined clusters.
 Hence, we identify the $\JSGa{}$ divergence as a suitable measure of dissimilarity for clustering based on the CE model.
@@ -658,7 +662,7 @@ where $f(y_i \mid Y_i > u_i)$ is the conditional density of $Y_i$ given exceedan
 This integral gives us our dissimilarity measure or ``distance'' between the two conditional distributions, averaged over the distribution of $Y_i$.
 % We can estimate this integral using Monte Carlo (MC) methods, noting that the distribution of $Y_i$ is given by the standard Laplace distribution. 
 We can estimate this integral using Monte Carlo (MC) methods, noting that $Y_i$ follows a standard Laplace distribution.
-In practice, very large values of $Y_i$ can lead to unstable estimates, and we also wish to avoid extrapolating beyond the range of observed $Y_i$ used to fit the CE model. 
+In practice, very large values of $Y_i$ can lead to unstable estimates, and we also want to avoid extrapolating beyond the range of observed $Y_i$ used to fit the CE model. 
 Hence, we truncate the expectation at the 99th percentile of the empirical distribution of $Y_i$ across all sites.
 
 % Summary
@@ -1172,8 +1176,7 @@ We also see that Kilcar in county Donegal, which had a low $\chi$ value relative
 
 \begin{figure}[H]
     \centering
-    % \includegraphics[width = 0.9\linewidth]{plots/ire_dist_heatmap.png}
-    \includegraphics[width = 0.9\linewidth]{plots/cluster_dqu_sep.png}
+    \includegraphics[width = 0.9\linewidth]{plots/cluster_dqu.png}
     % \caption{\emph{ Clustering solutions for the conditional extremes model parameters estimated at the 88th dependence quantile across all 59 sites, using the $\JSGa{}$ dissimilarity matrix for rain conditional on wind speed (centre), wind speed conditional on rain (right), and the combined dissimilarity matrix (left). The clusters are shown in different colours.}}
     \caption{\emph{Clustering solutions for the conditional extremes model parameters estimated at the 85th, 88th and 90th dependence quantiles across all 59 sites, using the combined $\JSGa{}$ dissimilarity matrix for rain conditional on wind speed and wind speed conditional on rain. The clusters are shown in different colours.}}
     ~\label{fig:clust_sens}

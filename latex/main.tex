@@ -91,10 +91,11 @@
 
 % Writing
 \todo{Same (present), tense throughout if possible}
+\todo{Change rain to precipitation throughout?}
 \todo{correct spelling mistakes}
 \todo{Whole paper needs improving, read more carefully!}
 % \todo{Use u as threshold, or variable specific??}
-\todo{Replace JSGa with GJS}
+% \todo{Replace JSGa with GJS}
 \todo{Add citations of uses of JSGa somewhere (introduction?)!}
 % \todo{Replace mu and sigma for CE parameters with mu CE and sigma CE, so it doesn't clash with JSGa formula}
 
@@ -579,7 +580,8 @@ In this paper, we simply use $\alpha = 0.5$. %, as our simulations and applicati
 For two multivariate Gaussian distributions, the $\KL{}$ divergence has a closed form, analytical solution \citep{Duchi2007}.
 The $\JSGa{}$ divergence exploits the property that the (weighted) product of two members of the same exponential family is itself a member of the same exponential family distribution. 
 It follows that $G_{\alpha}(P, Q)$ is multivariate Gaussian, and so the $\KL{}$ divergences in equation~\eqref{eq:jsga} are between multivariate Gaussian distributions and can be computed in closed form.
-Hence, $\JSGa{}$ itself has a closed form solution \citep{Nielsen2019}, and so is computationally efficient to compute.
+Hence, the principle advantage of the $\JSGa{}$ here follows, as it also has a closed form solution for two multivariate Gaussian distributions, and so is computationally efficient to compute \citep{Nielsen2019}.
+The $\JSGa{}$ divergence between two multivariate Gaussian distributions has been used in several applications, including clustering, deep learning, variational inference and remote sensing imagery  \citep{Nielsen2019, Deasy2020, Ni2023-cd, Thiagarajan2025}. \todo{Add more references?}
 % Furthermore, it is clearly symmetric and non-negative, as the sum of two $KL$ divergences, which is also important for clustering.
 Furthermore, it is clearly symmetric and non-negative, as the average of two $\KL{}$ divergences.
 Finally, where $\alpha = 0.5$, $\JSGa{}$ is bounded above by

@@ -425,7 +425,7 @@ One such model which provides a flexible framework for describing tail dependenc
 % Transformation
 The CE model, like many other models for multivariate extremes, requires a marginal transformation.
 Standardising to common margins is a widespread technique to ensure differences in variable scale do not affect estimation of the dependence structure. 
-A popular choice for CE is to transform to Laplace margins, as introduced in \citet{Keef2013}.
+A popular choice for CE models is to transform to Laplace margins, as introduced in \citet{Keef2013}.
 Each marginal random variable $X_i$ is transformed to Laplace margins, as outlined in equation~\eqref{eq:laplace} in Section \ref{subsec:estimation}, and thereafter denoted by $Y_i$.
 % To transform each marginal random variable $X_i$ to Laplace margins, denoted by $Y_i$, we let:
 %  \begin{equation}~\label{eq:laplace}
@@ -466,14 +466,17 @@ Each marginal random variable $X_i$ is transformed to Laplace margins, as outlin
 % We use $Y_{-i} = \bm{Y} \backslash Y_{i}, \bm{Y} \in \mathbb{R}^d, y \in (1, \ldots, d)$ to denote the vector of all variables in $\bm{Y}$ except $Y_i$, and assume all operations hereafter are performed component-wise.
 For $d \in \mathbb{N}$, we use $ \bm{Y} \in \mathbb{R}^d, d \in \mathbb{N}$ and for $i \in \{1,\ldots,d\}$ write $Y_{-i} = \bm{Y}\setminus\{Y_i\}$ to denote the $(d-1)$-dimensional random vector of all components except $Y_i$, and assume all operations below are component-wise. 
 % \item The CE model of \citet{Heffernan2004} assumes that there exists vector normalising parameters $\alpha_{\mid i} := \bm{a}_{\mid i}(y_i), \beta_{\mid i} := \bm{b}_{\mid i}(y_i) \in \mathbb{R} \rightarrow \mathbb{R}^{(d-1)}$ such that for fixed $\bm{z}_{\mid i} \in \mathbb{R}^{(d-1)}$,
-The CE model of \citet{Heffernan2004} assumes that there exist vector normalising parameter vectors $\bm{\alpha}_{\mid i}^{(\CE{})} := \left\{\alpha_{j \mid i}^{(\CE{})} : j\in\{1,\dots,d\}\setminus\{i\}\right\} \in [-1, 1]^{(d-1)}$ and $\bm{\beta}_{\mid i}^{(\CE{})} := \left\{\beta_{j \mid i}^{(\CE{})} : j\in\{1,\dots,d\}\setminus\{i\} \right\} \in [-\infty, 1]^{(d-1)}$ such that for fixed $\bm{z}_{\mid i} \in \mathbb{R}^{(d-1)}$, $y_i > 0$,
+% The CE model of \citet{Heffernan2004} assumes that there exist parameter vectors $\bm{\alpha}_{\mid i}^{(\CE{})} := \left\{\alpha_{j \mid i}^{(\CE{})} : j\in\{1,\dots,d\}\setminus\{i\}\right\} \in [-1, 1]^{(d-1)}$ and $\bm{\beta}_{\mid i}^{(\CE{})} := \left\{\beta_{j \mid i}^{(\CE{})} : j\in\{1,\dots,d\}\setminus\{i\} \right\} \in [-\infty, 1]^{(d-1)}$ such that for fixed $\bm{z}_{\mid i} \in \mathbb{R}^{(d-1)}$, $y_i > 0$,
+The CE model of \citet{Heffernan2004} assumes that there exist parameter vectors $\bm{\alpha}_{\mid i} := \left\{\alpha_{j \mid i} : j\in\{1,\dots,d\}\setminus\{i\}\right\} \in [-1, 1]^{(d-1)}$ and $\bm{\beta}_{\mid i} := \left\{\beta_{j \mid i} : j\in\{1,\dots,d\}\setminus\{i\} \right\} \in [-\infty, 1]^{(d-1)}$ such that for fixed $\bm{z}_{\mid i} \in \mathbb{R}^{(d-1)}$, $y_i > 0$,
 % \todo{Check if probably is for equal to yi or greater than yi}
 \todo{Should I use ui or uyi? Need to be consistent!}
 \begin{equation}~\label{eq:ce_limiting_dist}
   % \mathbb{P}\left(\frac{\bm{Y}_{-i} - \bm{\alpha}_{\mid i}^{(\CE{})} Y_{i}}{Y_{i}^{\bm{\beta}_{\mid i}^{(\CE{})}} \le \bm{z}_{\mid i}, Y_i - u_i > y_i \mid Y_i > u_i \right) \longrightarrow \bm{G}_{\mid i}(\bm{z}_{\mid i}) \exp(-y_i) \text{ as } u_i \rightarrow \infty,
   \mathbb{P}\!\left(
-  \frac{\bm{Y}_{-i} - \bm{\alpha}_{\mid i}^{(\mathrm{CE})} Y_{i}}
-       {Y_{i}^{\bm{\beta}_{\mid i}^{(\mathrm{CE})}}}
+  % \frac{\bm{Y}_{-i} - \bm{\alpha}_{\mid i}^{(\CE{})} Y_{i}}
+  % {Y_{i}^{\bm{\beta}_{\mid i}^{(\CE{})}}}
+  \frac{\bm{Y}_{-i} - \bm{\alpha}_{\mid i} Y_{i}}
+  {Y_{i}^{\bm{\beta}_{\mid i}}}
   \le \bm{z}_{\mid i},\; 
   Y_i - u_i > y_i \;\Big|\; Y_i > u_i
   \right)
@@ -495,20 +498,23 @@ The distribution $\bm{G}_{\mid i}$ is non-degenerate on $\mathbb{R}^{d-1}$ and, 
 %   \mathbb{P}(\bm{Z}_{\mid i} \le \bm{z}_{\mid i}, Y_i - u_i = y_i \mid Y_i > u_i) \rightarrow \bm{G}_{\mid i}(\bm{z}_{\mid i}) \exp(-y_i) \text{ as } u_i \rightarrow \infty,
 % \end{equation}
 % so that in the limit as $u_i \to \infty$, the extremal exceedances $Y_i - u_i$ and the standardised residuals $\bm{Z}_{\mid i} = \frac{\bm{Y}_{-i} - \bm{\alpha}_{\mid i} Y_{i}}{Y_{i}^{\bm{\beta}_{\mid i}}}, \bm{Z}_{\mid i} \sim \bm{G}_{\mid i}$ are independent.
-% Equation~\eqref{eq:ce_joint_limit} implies that, in the limit $u_i\to\infty$, the exceedances $Y_i-u_i$ and the standardised residuals $\bm{Z}_{\mid i} = \frac{\bm{Y}_{-i} - \bm{\alpha}_{\mid i} Y_{i}}{Y_{i}^{\bm{\beta}_{\mid i}}}, \bm{Z}_{\mid i} \sim \bm{G}_{\mid i}$ are asymptotically independent. \todo{Should G be bold?} \todo{not sure I like two statements about Z here}
-Equation~\eqref{eq:ce_limiting_dist} implies that, in the limit $u_i\to\infty$, the exceedances $Y_i-u_i$ and the standardised residuals $\bm{Z}_{\mid i} = \frac{\bm{Y}_{-i} - \bm{\alpha}_{\mid i}^{(\CE{})} Y_{i}}{Y_{i}^{\bm{\beta}_{\mid i}^{(\CE{})}}}$, where $\bm{Z}_{\mid i} \sim \bm{G}_{\mid i}$, are asymptotically independent.
+Equation~\eqref{eq:ce_limiting_dist} implies that, in the limit $u_i\to\infty$, the exceedances $Y_i-u_i$ and the standardised residuals $\bm{Z}_{\mid i} = \frac{\bm{Y}_{-i} - \bm{\alpha}_{\mid i} Y_{i}}{Y_{i}^{\bm{\beta}_{\mid i}}}, \bm{Z}_{\mid i} \sim \bm{G}_{\mid i}$ are asymptotically independent. \todo{Should G be bold?} \todo{not sure I like two statements about Z here}
+% Equation~\eqref{eq:ce_limiting_dist} implies that, in the limit $u_i\to\infty$, the exceedances $Y_i-u_i$ and the standardised residuals $\bm{Z}_{\mid i} = \frac{\bm{Y}_{-i} - \bm{\alpha}_{\mid i}^{(\CE{})} Y_{i}}{Y_{i}^{\bm{\beta}_{\mid i}^{(\CE{})}}}$, where $\bm{Z}_{\mid i} \sim \bm{G}_{\mid i}$, are asymptotically independent.
 
 % Heteroskedastic regression
 % The limiting distribution in equation~\eqref{eq:ce_limiting_dist} can be written as a heteroskedastic regression equation defined by
 The limiting distribution in equation~\eqref{eq:ce_limiting_dist} can be expressed as a heteroskedastic regression equation, defined by
 \todo{Should we be explicit that the equals here really should be an equality in distribution?}
 \begin{equation}~\label{eq:ce_model}
-  \bigl(\bm{Y}_{-i} \mid Y_i = y_i \bigr) = \bm{\alpha}_{\mid i}^{(\CE{})}\bm{y}_i + \bm{y}_i^{\bm{\beta}_{\mid i}^{(\CE{})}}\bm{Z}_{\mid i}, \text{ for } y_i > u_{_i},
+  % \bigl(\bm{Y}_{-i} \mid Y_i = y_i \bigr) = \bm{\alpha}_{\mid i}^{(\CE{})}\bm{y}_i + \bm{y}_i^{\bm{\beta}_{\mid i}^{(\CE{})}}\bm{Z}_{\mid i}, \text{ for } y_i > u_{_i},
+  \bigl(\bm{Y}_{-i} \mid Y_i = y_i \bigr) = \bm{\alpha}_{\mid i}\bm{y}_i + \bm{y}_i^{\bm{\beta}_{\mid i}}\bm{Z}_{\mid i}, \text{ for } y_i > u_{_i},
 \end{equation}
 with residual vector $\bm{Z}_{\mid i} \sim \bm{G}_{\mid i}$.
-The slope or linear regression coefficient $\bm{\alpha}_{\mid i}^{(\CE{})} \in [-1, 1]$ describes the strength of association between $Y_{-i}$ and large $Y_i$ above the threshold $u_i$.
+% The slope or linear regression coefficient $\bm{\alpha}_{\mid i}^{(\CE{})} \in [-1, 1]$ describes the strength of association between $Y_{-i}$ and large $Y_i$ above the threshold $u_i$.
+The slope or linear regression coefficient $\bm{\alpha}_{\mid i} \in [-1, 1]$ describes the strength of association between $Y_{-i}$ and large $Y_i$ above the threshold $u_i$.
 % \item $\bm{\beta}_{\mid i} \in [-\infty, 1]$ can be interpretated as a ``spread'' parameter, controlling the levels of heteroskedasticity in the model.
-The levels of heteroskedasticity in the model is controlled by $\bm{\beta}_{\mid i}^{(\CE{})} \in [-\infty, 1]$, and can be loosely interpreted as a ``spread'' parameter.
+% The levels of heteroskedasticity in the model is controlled by $\bm{\beta}_{\mid i}^{(\CE{})} \in [-\infty, 1]$, and can be loosely interpreted as a ``spread'' parameter.
+The levels of heteroskedasticity in the model is controlled by $\bm{\beta}_{\mid i} \in [-\infty, 1]$, and can be loosely interpreted as a ``spread'' parameter.
   % \item Several choices for $\bm{G}_{\mid i}$, the distribution of
 % $\bm{Z}_{\mid i}$, were proposed in \citet{Heffernan2004}, before ultimately
 % settling on a multivariate normal distribution with vector nuisance parameters
@@ -526,12 +532,19 @@ The levels of heteroskedasticity in the model is controlled by $\bm{\beta}_{\mid
 % \end{itemize}
 % The values $\bm{\alpha}_{j \mid i}$ and $\bm{\beta}_{j \mid i}$ for $j \ne i$ are the components of the vectors $\bm{\alpha}_{\mid i}$ and $\bm{\beta}_{\mid i}$ corresponding to the variable $Y_j$, $j \in \{1,\ldots,d\}\setminus\{i\}$. % Defined so next bit makes sense
   Some special componentwise special cases (for each $j\in\{1,\ldots,d\}\setminus\{i\}$) of the CE model are:
+% \begin{itemize}
+%   \item $\bm{\alpha}_{j \mid i}^{(\CE{})} = 0, \bm{\beta}_{j \mid i}^{(\CE{})} = 0$, for which we have perfect independence between $Y_j$ and large $Y_i$.
+%   \item $\bm{\alpha}_{j \mid i}^{(\CE{})} = 0, \bm{\beta}_{j \mid i}^{(\CE{})} = 0$, for which we have perfect independence,
+%   \item $\bm{\alpha}_{j \mid i}^{(\CE{})} = -1(+1), \bm{\beta}_{j \mid i}^{(\CE{})} = 0$, which corresponds to perfect positive/negative dependence,
+%   \item $-1 < \bm{\alpha}_{j \mid i}^{(\CE{})} < 1$, which suggests asymptotic independence between $Y_j$ and large $Y_i$, with dependence weakening as $Y_i \to \infty$. 
+% \end{itemize}
 \begin{itemize}
-  \item $\bm{\alpha}_{j \mid i}^{(\CE{})} = 0, \bm{\beta}_{j \mid i}^{(\CE{})} = 0$, for which we have perfect independence between $Y_j$ and large $Y_i$.
-  \item $\bm{\alpha}_{j \mid i}^{(\CE{})} = 0, \bm{\beta}_{j \mid i}^{(\CE{})} = 0$, for which we have perfect independence,
-  \item $\bm{\alpha}_{j \mid i}^{(\CE{})} = -1(+1), \bm{\beta}_{j \mid i}^{(\CE{})} = 0$, which corresponds to perfect positive/negative dependence,
-  \item $-1 < \bm{\alpha}_{j \mid i}^{(\CE{})} < 1$, which suggests asymptotic independence between $Y_j$ and large $Y_i$, with dependence weakening as $Y_i \to \infty$. 
+  \item $\bm{\alpha}_{j \mid i} = 0, \bm{\beta}_{j \mid i} = 0$, for which we have perfect independence between $Y_j$ and large $Y_i$.
+  \item $\bm{\alpha}_{j \mid i} = 0, \bm{\beta}_{j \mid i} = 0$, for which we have perfect independence,
+  \item $\bm{\alpha}_{j \mid i} = -1(+1), \bm{\beta}_{j \mid i} = 0$, which corresponds to perfect positive/negative dependence,
+  \item $-1 < \bm{\alpha}_{j \mid i} < 1$, which suggests asymptotic independence between $Y_j$ and large $Y_i$, with dependence weakening as $Y_i \to \infty$. 
 \end{itemize}
+
 
 \subsection{Divergence measure}~\label{subsec:div}
 
@@ -543,9 +556,9 @@ The levels of heteroskedasticity in the model is controlled by $\bm{\beta}_{\mid
 % The residual process $\bm{Z}_{\mid i}$ in equation~\eqref{eq:ce_model} is
 % assumed to follow a multivariate Gaussian distribution with vector nuisance
 % parameters $\bm{\mu}_{\mid i} \in \mathbb{R}^{(d-1)}$ and $\Sigma_{\mid i} \in \mathbb{R}^{(d-1)}$.
-% The residual vector $\bm{Z}_{\mid i}$ in equation~\eqref{eq:ce_model} is assumed to follow a multivariate Gaussian distribution with mean vector $\bm{\mu}_{\mid i}\in\mathbb{R}^{d-1}$ and covariance matrix $\Sigma_{\mid i}\in\mathbb{R}^{(d-1)\times(d-1)}$. 
+The residual vector $\bm{Z}_{\mid i}$ in equation~\eqref{eq:ce_model} is assumed to follow a multivariate Gaussian distribution with mean vector $\bm{\mu}_{\mid i}\in\mathbb{R}^{d-1}$ and covariance matrix $\Sigma_{\mid i}\in\mathbb{R}^{(d-1)\times(d-1)}$. 
 % \todo{Use (CE) superscript for mu and Sigma to distinguish from clustering}
-The residual vector $\bm{Z}_{\mid i}$ in equation~\eqref{eq:ce_model} is assumed to follow a multivariate Gaussian distribution with mean vector $\bm{\mu}_{\mid i}^{(\CE{})}\in\mathbb{R}^{d-1}$ and covariance matrix $\Sigma_{\mid i}^{(\CE{})} \in\mathbb{R}^{(d-1)\times(d-1)}$. 
+% The residual vector $\bm{Z}_{\mid i}$ in equation~\eqref{eq:ce_model} is assumed to follow a multivariate Gaussian distribution with mean vector $\bm{\mu}_{\mid i}^{(\CE{})}\in\mathbb{R}^{d-1}$ and covariance matrix $\Sigma_{\mid i}^{(\CE{})} \in\mathbb{R}^{(d-1)\times(d-1)}$. 
 \todo{Heff04 assumes diagonal sigma, should we say we use full covariance?}
 % This is a working assumption proposed in \citet{Heffernan2004} after testing several candidate distributions. %, and is still most commonly used in the literature \todo{citations?}
 % This is the key assumption of the CE model on which we derive our divergence measure, and was chosen in \citet{Heffernan2004} after testing several candidate distributions.
@@ -556,15 +569,16 @@ This Gaussian working assumption, proposed in \citet{Heffernan2004} after testin
 % An important consequence following from this assumption is that inference can be made about the extremal dependence of a random vector $\bm{Y}_{-i} = \bm{Y} \setminus \{Y_i\}$ on $Y_i$ by conditioning on the exceedance of a high threshold $u_i$ by $Y_i$, and assuming that this conditional distribution is a multivariate Gaussian distribution, i.e.\ 
 Consequently, inference can be made about the extremal dependence of a random vector $\bm{Y}_{-i} = \bm{Y} \setminus \{Y_i\}$ on $Y_i$ by conditioning on the exceedance of a high threshold $u_i$ by $Y_i$, and assuming that this conditional distribution is a multivariate Gaussian distribution, i.e.\
 \begin{equation}~\label{eq:ce_norm}
-  % \bigl( \bm{Y}_{-i} \mid Y_i  = y_i \bigr) \sim N\left(\bm{\alpha}_{\mid i} y_i + y_i^{\bm{\beta}_{\mid i}} \bm{\mu}_{\mid i}, y_i^{\bm{\beta}_{\mid i}} \bm{\Sigma_{\mid i}}\right), Y_i > u_i,
-  \bigl( \bm{Y}_{-i} \mid Y_i  = y_i \bigr) \sim N\left(\bm{\alpha}_{\mid i}^{(\CE{})} y_i + y_i^{\bm{\beta}_{\mid i}^{(\CE{})}} \bm{\mu}_{\mid i}^{(\CE{})}, y_i^{\bm{\beta}_{\mid i}^{(\CE{})}} \Sigma_{\mid i}^{(\CE{})}\right), Y_i > u_i,
+  \bigl( \bm{Y}_{-i} \mid Y_i  = y_i \bigr) \sim N\left(\bm{\alpha}_{\mid i} y_i + y_i^{\bm{\beta}_{\mid i}} \bm{\mu}_{\mid i}, y_i^{\bm{\beta}_{\mid i}} \bm{\Sigma_{\mid i}}\right), Y_i > u_i,
+  % \bigl( \bm{Y}_{-i} \mid Y_i  = y_i \bigr) \sim N\left(\bm{\alpha}_{\mid i}^{(\CE{})} y_i + y_i^{\bm{\beta}_{\mid i}^{(\CE{})}} \bm{\mu}_{\mid i}^{(\CE{})}, y_i^{\bm{\beta}_{\mid i}^{(\CE{})}} \Sigma_{\mid i}^{(\CE{})}\right), Y_i > u_i,
 \end{equation}
-% where $\bm{\alpha}_{\mid i}, \bm{\beta}_{\mid i}, \bm{\mu}_{\mid i}, \Sigma_{\mid i} \in \mathbb{R}^{(d-1)}$ are the parameters of the CE model.
-where $\bm{\alpha}_{\mid i}^{(\CE{})}, \bm{\beta}_{\mid i}^{(\CE{})}, \bm{\mu}_{\mid i}^{(\CE{})}, \Sigma_{\mid i}^{(\CE{})} \in \mathbb{R}^{(d-1)}$ are the parameters of the CE model. 
+where $\bm{\alpha}_{\mid i}, \bm{\beta}_{\mid i}, \bm{\mu}_{\mid i}, \Sigma_{\mid i} \in \mathbb{R}^{(d-1)}$ are the parameters of the CE model.
+% where $\bm{\alpha}_{\mid i}^{(\CE{})}, \bm{\beta}_{\mid i}^{(\CE{})}, \bm{\mu}_{\mid i}^{(\CE{})}, \Sigma_{\mid i}^{(\CE{})} \in \mathbb{R}^{(d-1)}$ are the parameters of the CE model. 
 % Therefore, when seeking to compare the extremal dependence structure of two locations, a sensible approach is to compare the conditional distributions given by equation~\ref{eq:ce_norm} for each variable at both sites. 
 % Therefore, under this model, when comparing the extremal dependence structure between variables at any given sites, we are effectively comparing the conditional distributions given by equation~\eqref{eq:ce_norm}.
 % Therefore, under this model, when comparing the multivariate tail dependence structure at different sites, we are effectively comparing the conditional distributions given by equation~\eqref{eq:ce_norm}.
-Therefore, to compare tail dependence at different sites, we can compare the conditional distributions in \eqref{eq:ce_norm}, i.e.\ the induced multivariate Gaussian distributions parameterised by $(\bm{\alpha}_{\mid i}^{(\CE{})},\bm{\beta}_{\mid i}^{(\CE{})},\bm{\mu}_{\mid i}^{(\CE{})},\Sigma_{\mid i}^{(\CE{})})$ (or a chosen subset thereof).
+% Therefore, to compare tail dependence at different sites, we can compare the conditional distributions in \eqref{eq:ce_norm}, i.e.\ the induced multivariate Gaussian distributions parameterised by $(\bm{\alpha}_{\mid i}^{(\CE{})},\bm{\beta}_{\mid i}^{(\CE{})},\bm{\mu}_{\mid i}^{(\CE{})},\Sigma_{\mid i}^{(\CE{})})$ (or a chosen subset thereof).
+Therefore, to compare tail dependence at different sites, we can compare the conditional distributions in \eqref{eq:ce_norm}, i.e.\ the induced multivariate Gaussian distributions parameterised by $(\bm{\alpha}_{\mid i},\bm{\beta}_{\mid i},\bm{\mu}_{\mid i},\Sigma_{\mid i})$ (or a chosen subset thereof).
 
 There are several qualities we desire from a divergence measure for clustering based on the conditional distribution in equation~\eqref{eq:ce_norm}.
 % We would like to exploit the fact that the CE model is a multivariate Gaussian distribution to provide some gains in computational efficiency, and for our divergence to more generally be cheap to compute.
@@ -855,11 +869,11 @@ We evaluate our clustering solution using the adjusted rand index (ARI), and in 
 % Single location
 Our Gaussian copula simulation design for a single ``location'', nomenclature chosen to match the spatial nature of our applications, is as follows:
 We generate multivariate data from a bivariate Gaussian copula, where we control the dependence structure through its correlation parameter, $\rho_{Gauss}$. 
-    % \cite{Keef2013} show that for a bivariate Gaussian copula, the asymptotic CE parameters are $\alpha = \text{sign}(\rho_{\text{Gauss}}) \rho_{\text{Gauss}}^2, \beta = 1/2$, indicating asymptotic independence.
-\cite{Keef2013} show that for a bivariate Gaussian copula, the asymptotic CE parameters are $\alpha^{(\CE{})} = \rho_{\text{Gauss}}^2$ and $\beta^{(\CE{})} = 1/2$, corresponding to asymptotic independence.
-  % \item We sample from this copula and transform to GPD margins with shape $\xi = -0.05$, scale $\sigma = 1$, to generate our data. \todo{mention why we chose these?}
-  % \item Each variable in this multivariate dataset may represent, for example, a meteorological or air pollution variable at a given location.
-  % \item We can then transform to Laplace margins and use the CE model to estimate the multivariate extremal dependence structure at this location.
+\citet{Keef2013} show that for a bivariate Gaussian copula, the asymptotic CE parameters are $\alpha = \text{sign}(\rho_{\text{Gauss}}) \rho_{\text{Gauss}}^2, \beta = 1/2$, indicating asymptotic independence.
+% \citet{Keef2013} show that for a bivariate Gaussian copula, the asymptotic CE parameters are $\alpha^{(\CE{})} = \rho_{\text{Gauss}}^2$ and $\beta^{(\CE{})} = 1/2$, corresponding to asymptotic independence.
+% \item We sample from this copula and transform to GPD margins with shape $\xi = -0.05$, scale $\sigma = 1$, to generate our data. \todo{mention why we chose these?}
+% \item Each variable in this multivariate dataset may represent, for example, a meteorological or air pollution variable at a given location.
+% \item We can then transform to Laplace margins and use the CE model to estimate the multivariate extremal dependence structure at this location.
 We sample from this copula and transform to Laplace margins and use the CE model to estimate the bivariate extremal dependence structure at this location.
 
 % Multiple locations
@@ -888,7 +902,8 @@ Post-clustering, the same patterns emerge, but the variability in the estimates 
     \centering
     % \includegraphics[width = 0.9\linewidth]{plots/sim_01_gauss_cop.png}
     \includegraphics[width = 0.9\linewidth]{plots/sim_01_gauss_cop_man.png}
-    \caption{Boxplots of \emph{$\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$ parameter estimates for the conditional extremes model pre- and post-clustering for a bivariate Gaussian copula simulation of 12 datasets, or ``locations'', each with 1000 observations of each variable, belonging equally to three known clusters. Simulations were repeated 500 times. The x-axis represents the conditional quantile used to fit the conditional extremes model, and the boxes are coloured by their Gaussian copula correlation parameter, $\rho_{\text{Gauss}}$. Dotted horizontal lines indicate the theoretical asymptotic values of $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$ for a bivariate Gaussian copula, coloured by the same $\rho_{\text{Gauss}}$ values for $\alpha^{(\CE{})}$ and black for $\beta^{(\CE{})}$ to indicate the same value across all clusters, at $1/2$.}}
+    % \caption{Boxplots of \emph{$\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$ parameter estimates for the conditional extremes model pre- and post-clustering for a bivariate Gaussian copula simulation of 12 datasets, or ``locations'', each with 1000 observations of each variable, belonging equally to three known clusters. Simulations were repeated 500 times. The x-axis represents the conditional quantile used to fit the conditional extremes model, and the boxes are coloured by their Gaussian copula correlation parameter, $\rho_{\text{Gauss}}$. Dotted horizontal lines indicate the theoretical asymptotic values of $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$ for a bivariate Gaussian copula, coloured by the same $\rho_{\text{Gauss}}$ values for $\alpha^{(\CE{})}$ and black for $\beta^{(\CE{})}$ to indicate the same value across all clusters, at $1/2$.}}
+    \caption{Boxplots of \emph{$\alpha$ and $\beta$ parameter estimates for the conditional extremes model pre- and post-clustering for a bivariate Gaussian copula simulation of 12 datasets, or ``locations'', each with 1000 observations of each variable, belonging equally to three known clusters. Simulations were repeated 500 times. The x-axis represents the conditional quantile used to fit the conditional extremes model, and the boxes are coloured by their Gaussian copula correlation parameter, $\rho_{\text{Gauss}}$. Dotted horizontal lines indicate the theoretical asymptotic values of $\alpha$ and $\beta$ for a bivariate Gaussian copula, coloured by the same $\rho_{\text{Gauss}}$ values for $\alpha$ and black for $\beta$ to indicate the same value across all clusters, at $1/2$.}}
    ~\label{fig:00_gauss_cop}
 \end{figure}
 
@@ -1002,16 +1017,20 @@ The variability in ARI across simulations is also quite low, indicating that the
 Finally, we recall that an important reason for spatial clustering is to reduce the uncertainty in parameter estimates while minimising the introduction of bias by grouping similar locations together.
 To this end, we desired to ascertain whether the estimates of our dependence parameters were less uncertain after clustering.
 We can use the bootstrapping scheme described in \cite{Heffernan2004} to determine the uncertainty in our parameter estimates. \todo{Do I need to describe this scheme and how it preserves the dependence structure of the data?}
-As we are estimating two parameters, $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$, for which we do not know the true values, it may be that although our uncertainty is diminished post-clustering, the estimates may still be biased, with the parameters unidentifiable.
-There are also many possible combinations of $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$ that could give the same conditional estimates, and so the estimates may be biased in this sengse as well.
+% As we are estimating two parameters, $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$, for which we do not know the true values, it may be that although our uncertainty is diminished post-clustering, the estimates may still be biased, with the parameters unidentifiable.
+As we are estimating two parameters, $\alpha$ and $\beta$, for which we do not know the true values, it may be that although our uncertainty is diminished post-clustering, the estimates may still be biased, with the parameters unidentifiable.
+% There are also many possible combinations of $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$ that could give the same conditional estimates, and so the estimates may be biased in this sengse as well.
+There are also many possible combinations of $\alpha$ and $\beta$ that could give the same conditional estimates, and so the estimates may be biased in this sengse as well.
 To avoid this, we adopt the approach of \cite{Richards2021-qm} in calculating the conditional expectation of one variable given the other at the $98\%$ marginal quantile $u_i$ for the conditioning variable, given by
 \todo{Need to match better to previous notation? I.e. Y instead of X?}
   \begin{equation}~\label{eq:boot}
     % \mathbb{E}[X_1 | X_2 = u] = \hat{\alpha}^{(\CE{})} u + u^{\hat{\beta}}^{(\CE{})} \hat{\mu},
-    \mathbb{E}[Y_j \mid Y_i = u_i] = \hat{\alpha}_{j \mid i}^{(\CE{})} u_i + u_i^{\hat{\beta}_{j \mid i}^{(\CE{})}} \hat{\mu}_{j \mid i}^{(\CE{})},
+    % \mathbb{E}[Y_j \mid Y_i = u_i] = \hat{\alpha}_{j \mid i}^{(\CE{})} u_i + u_i^{\hat{\beta}_{j \mid i}^{(\CE{})}} \hat{\mu}_{j \mid i}^{(\CE{})},
+    \mathbb{E}[Y_j \mid Y_i = u_i] = \hat{\alpha}_{j \mid i} u_i + u_i^{\hat{\beta}_{j \mid i}} \hat{\mu}_{j \mid i},
   \end{equation}
   % where ($\hat{\alpha}, \hat{\beta}, \hat{\mu}$) are the estimated CE model parameters.
-  where $(\hat{\alpha}_{j \mid i}^{(\CE{})}, \hat{\beta}_{j \mid i}^{(\CE{})}, \hat{\mu}_{j \mid i}^{(\CE{})})$ are the estimated CE model parameters for the $j$-th variable given the conditioning variable $Y_i$ at the $98\%$ marginal quantile $u_i$.
+  % where $(\hat{\alpha}_{j \mid i}^{(\CE{})}, \hat{\beta}_{j \mid i}^{(\CE{})}, \hat{\mu}_{j \mid i}^{(\CE{})})$ are the estimated CE model parameters for the $j$-th variable given the conditioning variable $Y_i$ at the $98\%$ marginal quantile $u_i$.
+  where $(\hat{\alpha}_{j \mid i}, \hat{\beta}_{j \mid i}, \hat{\mu}_{j \mid i})$ are the estimated CE model parameters for the $j$-th variable given the conditioning variable $Y_i$ at the $98\%$ marginal quantile $u_i$.
 We can bootstrap this conditional expectation to evaluate the reduction in uncertainty post-clustering. \todo{Tense consistency}
 
 % Results
@@ -1135,12 +1154,15 @@ It may be of interest to investigate if these outliers in $\chi$ and $\bar{\chi}
 \todo{Check this section again after results are changed!}
 In our analysis, we first transformed the data to Laplace margins, using the empirical cumulative distribution function (ECDF) to approximate density functions for rain and wind speed at each location. \todo{reference specific equation in methods}
   We then fit the CE model to this transformed data.
-  Using the bootstrapping scheme of \citet{Heffernan2004}, we estimated the CE model parameters $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$ at various dependence quantiles. \todo{Sufficient reference to bootstrapping scheme?}
+  % Using the bootstrapping scheme of \citet{Heffernan2004}, we estimated the CE model parameters $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$ at various dependence quantiles. \todo{Sufficient reference to bootstrapping scheme?}
+  Using the bootstrapping scheme of \citet{Heffernan2004}, we estimated the CE model parameters $\alpha$ and $\beta$ at various dependence quantiles. \todo{Sufficient reference to bootstrapping scheme?}
   This revealed that estimates in general were quite stable up to the 88th quantile.  \todo{Need to expand with more details, could include plots in Appendix?}
   Subsequent analysis was also performed at the 85th and 90th quantiles, and shown to provide similar MLEs for our CE parameters, and clustering solutions. \todo{Include in Appendix also?}
   The results of this CE analysis are shown in Figure \ref{fig:a_b_vals}.
-  Interpretation of these plots is difficult, but we can see some, albeit uneven, increases in the $\alpha^{(\CE{})}$ values for both variables as we move further West and particularly South. \todo{Should I estimate/show uncertainty in these estimates somehow? these estimates have been bootstrapped!}
-  Several $\beta^{(\CE{})}$ values are negative, which is unexpected, and perhaps suggests non-identifiability in the CE regression model. 
+  % Interpretation of these plots is difficult, but we can see some, albeit uneven, increases in the $\alpha^{(\CE{})}$ values for both variables as we move further West and particularly South. \todo{Should I estimate/show uncertainty in these estimates somehow? these estimates have been bootstrapped!}
+  Interpretation of these plots is difficult, but we can see some, albeit uneven, increases in the $\alpha$ values for both variables as we move further West and particularly South. \todo{Should I estimate/show uncertainty in these estimates somehow? these estimates have been bootstrapped!}
+  % Several $\beta^{(\CE{})}$ values are negative, which is unexpected, and perhaps suggests non-identifiability in the CE regression model. 
+  Several $\beta$ values are negative, which is unexpected, and perhaps suggests non-identifiability in the CE regression model. 
     % \item It appears that high uncertainty is making interpretation difficult, and so we will cluster the locations based on their CE parameters, to aid in interpretation.
   We will cluster the locations based on their CE parameters, to help improve the interpretation of CE results.
 
@@ -1148,7 +1170,8 @@ In our analysis, we first transformed the data to Laplace margins, using the emp
 \begin{figure}[H]
     \centering
     \includegraphics[width = 0.9\linewidth]{plots/ire_ce_new.png}
-    \caption{\emph{Map of conditional extremes model parameters $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$ for rain conditional on wind speed (left) and wind speed conditional on rain (right), estimated at the 88th dependence quantile. The $\alpha^{(\CE{})}$ parameter is shown in the top row, and $\beta^{(\CE{})}$ in the bottom row. The colour scale is the same for both variables, with darker red indicating larger positive values of $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$, and darker blue indicating larger negative values.}}
+    % \caption{\emph{Map of conditional extremes model parameters $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$ for rain conditional on wind speed (left) and wind speed conditional on rain (right), estimated at the 88th dependence quantile. The $\alpha^{(\CE{})}$ parameter is shown in the top row, and $\beta^{(\CE{})}$ in the bottom row. The colour scale is the same for both variables, with darker red indicating larger positive values of $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$, and darker blue indicating larger negative values.}}
+    \caption{\emph{Map of conditional extremes model parameters $\alpha$ and $\beta$ for rain conditional on wind speed (left) and wind speed conditional on rain (right), estimated at the 88th dependence quantile. The $\alpha$ parameter is shown in the top row, and $\beta$ in the bottom row. The colour scale is the same for both variables, with darker red indicating larger positive values of $\alpha$ and $\beta$, and darker blue indicating larger negative values.}}
    ~\label{fig:a_b_vals}
 \end{figure}
 
@@ -1199,7 +1222,8 @@ A noticeable outlier in the dissimilarity matrix is the site at Malahide Castle,
 Furthermore, if we go to having four clusters, Malahide Castle becomes the only member of the new cluster, and so it is quite distinct from the other sites.
 % This site also has the distinction of having the lowest mean weekly precipitation, and the second lowest maximum wind speed, of all sites in our dataset, which may explain its outlying behaviour, even amongst the eastern cluster, which is generally characterised by lower $\alpha^{(\CE{})}$ estimates and $\chi$ values. 
 \todo{Mention Ringsend is next driest area }
-Malahide Castle has the lowest mean weekly precipitation of any site, with the second lowest being in Ringsend, which is closest in terms of $\JSGa{}$ to Malahide, which may explain its outlying behaviour, even amongst the eastern cluster, in that rainfall extremes and consequently concomitant extremes are less likely to occur, as shown by its low $\chi$ and $\alpha^{(\CE{})}$ estimates.
+% Malahide Castle has the lowest mean weekly precipitation of any site, with the second lowest being in Ringsend, which is closest in terms of $\JSGa{}$ to Malahide, which may explain its outlying behaviour, even amongst the eastern cluster, in that rainfall extremes and consequently concomitant extremes are less likely to occur, as shown by its low $\chi$ and $\alpha^{(\CE{})}$ estimates.
+Malahide Castle has the lowest mean weekly precipitation of any site, with the second lowest being in Ringsend, which is closest in terms of $\JSGa{}$ to Malahide, which may explain its outlying behaviour, even amongst the eastern cluster, in that rainfall extremes and consequently concomitant extremes are less likely to occur, as shown by its low $\chi$ and $\alpha$ estimates.
 We also see that Kilcar in county Donegal, which had a low $\chi$ value relative to other sites on the west coast as shown in Figure \ref{fig:chi}, is the member of the eastern cluster with the lowest dissimilarity to the members of the western cluster, reflecting its geographical location in the northwest of Ireland, despite its low $\chi$ value.
 
 \begin{figure}[H]
@@ -1230,9 +1254,13 @@ Specifically, across each cluster, we take the weekly sum of precipitation and w
 We then refit the CE model to these cluster centroids, again at the 88th dependence quantile, although results for other quantile levels are similar. 
 Goodness-of-fit plots, exploring the assumption of independence between the residuals and variable conditioned on, were much improved post-clustering. \todo{Include? Appendix?}
 The estimated CE parameters for each cluster are shown in figure \ref{fig:ce_post_clust}.
-For rain conditional on wind speed, $\alpha^{(\CE{})}$ gets progressively larger as we move from the eastern to western clusters, indicating that the dependence structure is stronger in the west, as expected.
-Interestingly, the opposite is true for wind speed conditional on rain, whereby $\alpha^{(\CE{})}$ gets larger moving from west to east. \todo{Insert a good interpretation here!}
-For both models, $\beta^{(\CE{})}$ is much larger for the coastal clusters than the central cluster.
+% For rain conditional on wind speed, $\alpha^{(\CE{})}$ gets progressively larger as we move from the eastern to western clusters, indicating that the dependence structure is stronger in the west, as expected.
+% For rain conditional on wind speed, $\alpha^{(\CE{})}$ gets progressively larger as we move from the eastern to western clusters, indicating that the dependence structure is stronger in the west, as expected.
+For rain conditional on wind speed, $\alpha$ gets progressively larger as we move from the eastern to western clusters, indicating that the dependence structure is stronger in the west, as expected.
+% Interestingly, the opposite is true for wind speed conditional on rain, whereby $\alpha^{(\CE{})}$ gets larger moving from west to east. \todo{Insert a good interpretation here!}
+Interestingly, the opposite is true for wind speed conditional on rain, whereby $\alpha$ gets larger moving from west to east. \todo{Insert a good interpretation here!}
+% For both models, $\beta^{(\CE{})}$ is much larger for the coastal clusters than the central cluster.
+For both models, $\beta$ is much larger for the coastal clusters than the central cluster.
 This suggests that the ``spread'' of the conditional distribution is larger for the coastal clusters, and greater homoskedasticity is present in the central cluster.
 This is likely because weather patterns are more consistent inland than along the coasts, where the weather is more variable.
 Interpreting these results is much easier post-clustering. \todo{More detail here!}
@@ -1241,7 +1269,8 @@ Interpreting these results is much easier post-clustering. \todo{More detail her
 \begin{figure}[H]
     \centering
     \includegraphics[width = 0.9\linewidth]{plots/ab_map_post_clust.png}
-    \caption{\emph{Estimated conditional extremes model parameters $\alpha^{(\CE{})}$ and $\beta{(\CE{})}$ for rain conditional on wind speed (left) and wind speed conditional on rain (right), estimated at the 88th dependence quantile, post-clustering. The $\alpha^{(\CE{})}$ parameter is shown in the top row, and $\beta^{(\CE{})}$ in the bottom row. The colour scale is the same for both variables, with darker red indicating larger positive values of $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$, and darker blue indicating larger negative values.}}
+    % \caption{\emph{Estimated conditional extremes model parameters $\alpha^{(\CE{})}$ and $\beta{(\CE{})}$ for rain conditional on wind speed (left) and wind speed conditional on rain (right), estimated at the 88th dependence quantile, post-clustering. The $\alpha^{(\CE{})}$ parameter is shown in the top row, and $\beta^{(\CE{})}$ in the bottom row. The colour scale is the same for both variables, with darker red indicating larger positive values of $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$, and darker blue indicating larger negative values.}}
+    \caption{\emph{Estimated conditional extremes model parameters $\alpha$ and $\beta{(\CE{})}$ for rain conditional on wind speed (left) and wind speed conditional on rain (right), estimated at the 88th dependence quantile, post-clustering. The $\alpha$ parameter is shown in the top row, and $\beta$ in the bottom row. The colour scale is the same for both variables, with darker red indicating larger positive values of $\alpha$ and $\beta$, and darker blue indicating larger negative values.}}
    ~\label{fig:ce_post_clust}
 \end{figure}
 
@@ -1265,7 +1294,8 @@ Interpreting these results is much easier post-clustering. \todo{More detail her
 
 % Rewrite Intro: Methods
 In this paper, we introduced a novel method for clustering spatial locations based on their multivariate extremal dependence structure, as estimated by the conditional extremes model.
-The $\JSGa{}$ divergence measure of \citet{Nielsen2019} is proposed as a dissimilarity measure to compare locations based on their estimated CE parameters, $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$, which together describe the strength and ``stochasticity'' of each set of bivariate extremal relationships. 
+% The $\JSGa{}$ divergence measure of \citet{Nielsen2019} is proposed as a dissimilarity measure to compare locations based on their estimated CE parameters, $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$, which together describe the strength and ``stochasticity'' of each set of bivariate extremal relationships. 
+The $\JSGa{}$ divergence measure of \citet{Nielsen2019} is proposed as a dissimilarity measure to compare locations based on their estimated CE parameters, $\alpha$ and $\beta$, which together describe the strength and ``stochasticity'' of each set of bivariate extremal relationships. 
 This method exploits the fact that inference based on the CE model follows a multivariate Gaussian distribution, following from the Gaussian assumption for the residual process.
 This allows us to derive a closed form for the $\JSGa{}$ divergence, making it computationally efficient to use in clustering.
 K-medoids clustering is performed on the dissimilarity matrix derived from this measure.
@@ -1299,9 +1329,12 @@ Indeed, it may be preferable to use the standard $\JS{}$ divergence if choosing 
 
 % Limitations: Uncertainty
 The other important limitation of our method is in its treatment of uncertainty. 
-We use the MLE estimates of $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$ to compute our dissimilarity matrix, and so the uncertainty in these estimates is not accounted for in the clustering solution.
-This is less problematic in our simulation study where we often know the true values of $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$ and can perform extensive grid searches to ensure that the clustering solution is robust.
-However, in real applications, the uncertainty in these estimates can be quite large, and so vastly different clustering solutions may be obtained depending on the estimated values of $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$.
+% We use the MLE estimates of $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$ to compute our dissimilarity matrix, and so the uncertainty in these estimates is not accounted for in the clustering solution.
+We use the MLE estimates of $\alpha$ and $\beta$ to compute our dissimilarity matrix, and so the uncertainty in these estimates is not accounted for in the clustering solution.
+% This is less problematic in our simulation study where we often know the true values of $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$ and can perform extensive grid searches to ensure that the clustering solution is robust.
+This is less problematic in our simulation study where we often know the true values of $\alpha$ and $\beta$ and can perform extensive grid searches to ensure that the clustering solution is robust.
+% However, in real applications, the uncertainty in these estimates can be quite large, and so vastly different clustering solutions may be obtained depending on the estimated values of $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$.
+However, in real applications, the uncertainty in these estimates can be quite large, and so vastly different clustering solutions may be obtained depending on the estimated values of $\alpha$ and $\beta$.
 To account for this uncertainty, one possible approach would be to use the bootstrapping scheme described in \citet{Heffernan2004} to generate uncertainty in the CE model parameter estimates, and then use these bootstrapped estimates to compute the dissimilarity matrix.
 We could then produce a distribution of dissimilarity matrices, and use these to compute a distribution of clustering solutions.
 This would allow us to account for the uncertainty in the CE model parameter estimates, and provide a more robust clustering solution.

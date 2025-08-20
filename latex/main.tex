@@ -358,13 +358,13 @@ Finally, Section~\ref{sec:discuss} contains a discussion of our findings, includ
 \todo{Split this into different full sections, since we are doing methods paper?}
 % \subsection{Peaks-over-threshold}
 
-In this Section, we introduce our clustering framework for CE models.
+In this section, we introduce our clustering framework for CE models.
 We begin in Section~\ref{subsec:asym_dep} by defining the concepts of asymptotic dependence and independence, which are used to characterise extremal dependence.
 We then introduce the CE model in Section~\ref{subsec:ce_model}, which is used to model the joint tail behaviour of a random vector conditional on one of its components exceeding a suitably high threshold.
-We explain how inference with this model is equivalent to estimating a multivariate Gaussian distribution. 
-Section~\ref{subsec:div} describes our chosen dissimilarity measure, the $\JSGa{}$ divergence, which has analytical form when comparing Gaussian distributions, and is used to efficiently quantify the pairwise dissimilarity between CE models fit to different sites.
-Finally, Section~\ref{subsec:clustering} concerns how we perform k-medoids clustering on this dissimilarity measure, and how the number of clusters is selected, to identify sites with similar tail dependence structures.
-% Finally, in Section~\ref{subsec:estimation} we describe some of the computational details which are important for estimating the CE model and computing the $\JSGa{}$ divergence.
+% We explain how inference with this model is equivalent to estimating a multivariate Gaussian distribution. 
+Section~\ref{subsec:div} describes our chosen dissimilarity measure, the $\JSGa{}$ divergence, which has analytical form when comparing Gaussian distributions, and which allows us to efficiently quantify the pairwise dissimilarity between CE models fit to different sites.
+Finally, Section~\ref{subsec:clustering} outlines how we perform k-medoids clustering using this dissimilarity measure, to identify sites with similar tail dependence structures, and how the number of clusters is selected.
+Finally, in Section~\ref{subsec:estimation} we describe some of the computational details which are important for estimating the CE model and computing the $\JSGa{}$ divergence.
 
 \subsection{Asymptotic dependence}~\label{subsec:asym_dep}
 

@@ -145,13 +145,13 @@
 \todo{Centre on the page?}
 \begin{abstract}
   Conditional extreme value (CE) models have proven useful for analysing the joint tail behaviour of random vectors.
-  % However, their estimation often suffers from high uncertainty due to data scarcity. 
-  We propose a novel clustering framework for CE models, which can be used to identify groups with similar multivariate extremal dependence structures.
+  However, when applied across many locations or variables, it can be difficult to interpret or compare the resulting extremal dependence structures, particularly in high dimensions. 
+  % \todo{C: add 1-2 sentences before "We propose .." to clearly outline the scenario we are considering, and why it is useful}
+  To address this, we propose a novel clustering framework for CE models, which can be used to identify groups with similar multivariate extremal dependence structures.
   Our approach introduces a closed-form, computationally efficient dissimilarity measure for comparing CE models, based on a generalized version of the Jensen-Shannon divergence, applicable in any dimension.
-  % Standard clustering algorithms are then applied to the resulting pairwise distances. 
   Applying standard clustering algorithms to the resulting pairwise distances, we obtain interpretable groups with homogeneous tail dependence characteristics.
   Simulation studies demonstrate that our method outperforms existing approaches for bivariate cases and uniquely extends to multivariate settings. 
-  Applied to Irish meteorological data, our clustering successfully identifies spatially coherent regions with similar tail dependence between precipitation and wind speed. %, aligning with known climatological patterns.
+  Applied to Irish meteorological data, our clustering successfully identifies spatially coherent regions with similar tail dependence between precipitation and wind speed. 
 \end{abstract}
 
 \newpage

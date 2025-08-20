@@ -198,11 +198,21 @@ Examples include the analysis of heatwaves \citep{tanarhte2015heat, french2019qu
 % % To analyse such multivariate extremes, one first fits marginal extremal distributions for each component and then specifies a model for their tail \emph{dependence}.
 % % The compounded risk associated with concomitant extremal events means that when analysing such multivariate extremes, an important consideration is \citep{Zhang2024}
 % These risks can be underestimated unless care is given in modelling the tail \emph{dependence} as part of any multivariate extremes analysis \cite{Zhang2024}.
-Extreme Value Theory can naturally be extended to the multivariate setting, where the \emph{joint} tail behaviour of a random vector is of interest.  
-Multivariate extremes often arise in spatial applications, where each component may correspond to different variables at a single location, the same variable across multiple locations, or both.  
-While our methodology applies broadly across these settings, we focus on the latter case where each location is associated with a multivariate observation, and the aim is to understand how joint tail behaviour varies across space.
-In environmental settings, extremes rarely occur in isolation, and the compounded impact of simultaneous or ``concomitant'' events can lead to significantly more severe outcomes \citep{zscheischler2018future, bevacqua2021guidelines, Rohrbeck2021, Sando2022}.  
-These joint risks can be underestimated unless tail \emph{dependence} is explicitly modelled as part of any multivariate extremes analysis \citep{Zhang2024}.
+
+% Dependence modelling (revised)
+% EVT can naturally be extended to the multivariate setting, where the \emph{joint} tail behaviour of a random vector is of interest.  
+EVT extends naturally to the multivariate setting, where the \emph{joint} tail behaviour of a random vector is of interest. 
+% % Multivariate extremes often arise in spatial applications, where each component may correspond to different variables at a single location, the same variable across multiple locations, or both.  
+Multivariate extremes frequently arise in spatial applications, where one or more variables are observed at a number of fixed locations. 
+% Herein, each location is associated with a random vector, and the aim is to understand how the joint tail behaviour of the location-wise random vectors varies across space.
+In such settings, each location is associated with a random vector. 
+% % While our methodology applies broadly across these settings, we focus on the latter case where each location is associated with a multivariate observation, and the aim is to understand how joint tail behaviour varies across space.
+% \todo{Move this sentence, doesn't feel fully connected to the last sentence}
+% In environmental settings, extremes rarely occur in isolation, and the compounded impact of simultaneous or ``concomitant'' events can lead to significantly more severe outcomes \citep{zscheischler2018future, bevacqua2021guidelines, Rohrbeck2021, Sando2022}.  
+% These joint risks can be underestimated unless tail \emph{dependence} is explicitly modelled as part of any multivariate extremes analysis \citep{Zhang2024}.
+In environmental applications, extreme events rarely occur in isolation, and the compounded impact of simultaneous or ``concomitant'' extremes can produce substantially more severe outcomes \citep{zscheischler2018future, bevacqua2021guidelines, Rohrbeck2021, Sando2022}.
+Consequently, these joint risks are liable to be underestimated unless tail \emph{dependence} is explicitly modelled \citep{Zhang2024}. 
+Motivated by this, our aim is to characterise how the joint tail behaviour of the location-wise random vectors varies across space.
 
 % Conditional extremes
   % \item One such model is the CE model, which combines a univariate Generalised Pareto Distribution (GPD) and a semiparametric regression dependence model \cite{Heffernan2004}. \todo{Don't emphasise GPD, not used below}

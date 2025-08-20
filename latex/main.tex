@@ -545,8 +545,8 @@ The levels of heteroskedasticity in the model is controlled by $\bm{\beta}_{\mid
 \end{itemize}
 
 Recall that we want to fit the CE model at different spatial sites. 
-To allow for spatial variation, we may index the regression parameters by site $s \in \mathcal{S}$, and allow them to vary by site. 
-This leads to the simple, spatially indexed extension of Equation \eqref{eq:ce_model} given by
+To allow for spatial variation, we may index by site $s \in \mathcal{S}$, and allow regression parameters to vary by site. 
+This leads to the simple, spatially indexed extension of Equation \eqref{eq:ce_model}, where we have the site-specific random vector $\bm{Y}(s)$, given by
 \begin{equation} \label{eq:ce_model_spat}
   \bigl(\bm{Y}_{-i}(s) \mid Y_i(s) = y_i, \mathcal{S} = s \bigr) 
     = \bm{\alpha}_{\mid i}(s) \, y_i 
@@ -619,7 +619,7 @@ In this context, $P$ and $Q$ represent the conditional multivariate Gaussian dis
 The parameter $\alpha$ skews the geometric mean $G_{\alpha}(P,Q)\propto p^{\alpha}q^{1-\alpha}$ towards $P$ (when $\alpha$ is close to 1) or towards $Q$ (when $\alpha$ is close to 0). 
 % When one site has a more reliable CE fit, we set $\alpha$ to a reliability weight $w\in[0,1]$ (e.g.\ proportional to effective sample size), and apply the symmetrised divergence so that the final dissimilarity remains symmetric.
 One possible advantage for having a skew parameter such as $\alpha$ is that in our divergence measure we can favour sites with a more reliable CE fit, as determined by, for example, the effective sample size available for both.
-In this paper, we simply use $\alpha = 0.5$. %, as our simulations and application do not deal with such situations where data at different sites is unbalanced. 
+In this paper, we simply use $\alpha = 0.5$, because each site has a similar number of observations in our simulation and case studies. 
 % For our application, we set $\alpha = 0.5$, so that $G_{\alpha}(P, Q)$ is unweighted, but note that $\alpha$ 
 % The Kullback--Leibler (KL) divergence, $KL(P \mid\mid Q)$, is defined as
 % \begin{equation}~\label{eq:kl}
@@ -643,7 +643,7 @@ where the Jeffreys' divergence $\mathrm{J}(P \mid\mid Q) = \KL{(P \mid\mid Q)} +
 % Therefore, $\JSGa{}$ provides more well-defined clusters than the Jeffreys' divergence, motivating the higher conceptual complexity by comparison. 
 Therefore, the $\JSGa{}$ divergence is less susceptible to runaway distances and numerical instability than this simple sum, and also provides more tightly defined clusters.
 Hence, we identify the $\JSGa{}$ divergence as a suitable measure of dissimilarity for clustering based on the CE model.
-An explicit form for the $\JSGa{}$ divergence for two multivariate Gaussian distributions is given in Section \ref{subsec:estimation}, and more details on this choice of divergence measure is addressed further in Section~\ref{sec:discuss}.
+An explicit form for the $\JSGa{}$ divergence for two multivariate Gaussian distributions is given in Section \ref{subsec:estimation}, and more details on this choice of divergence measure are provided in Section~\ref{sec:discuss}.
 
 % % Introduce KL divergence 
 % One common measure of dissimilarity between two distributions $P$ and $Q$ is the Kullback-Leibler (KL) divergence, defined as
@@ -716,6 +716,7 @@ where $f(y_i \mid Y_i(s) > u_i(s))$ is the conditional density of $Y_i(s)$ given
 This integral gives us our dissimilarity measure or ``distance'' between the two conditional distributions, averaged over the distribution of $Y_i$.
 % We can estimate this integral using Monte Carlo (MC) methods, noting that the distribution of $Y_i$ is given by the standard Laplace distribution. 
 We can estimate this integral using Monte Carlo (MC) methods, noting that $Y_i(s)$ follows a standard Laplace distribution.
+We average across the individual scores for each individual realisation of $Y_i(s)$ to derive the divergence for a pair of sites, weighted by the distribution of $Y_i(s)$.
 In practice, very large values of $Y_i(s)$ can lead to unstable estimates, and we also want to avoid extrapolating beyond the range of observed $Y_i(s)$ used to fit the CE model. 
 Hence, we truncate the expectation at the 99th percentile of the empirical distribution of $Y_i(s)$ across all sites.
 
@@ -742,13 +743,13 @@ Now we have a distance measure over which to compute the dissimilarity matrix of
 The choice remains as to which algorithm to use to perform clustering. 
 As in \citet{Vignotto2021}, we use the Partitioning Around Medoids (PAM) algorithm, which is a variant of the popular k-medoids algorithm of \citet{Kaufman1987}.
 A brief description of the algorithm is as follows:
-    \todo{Have as algorithm block?}
-    \begin{itemize} 
-      \item The algorithm begins by randomly selecting $k$ medoids from the dataset as our cluster centroids. 
-      \item Each observation is then assigned to the cluster of the nearest medoid, using the dissimilarity measure defined in \ref{subsec:div}.
-      \item The centroids are updated by selecting the observation in each cluster which minimises the sum of dissimilarities to all other observations in that cluster.
-      \item This process is repeated until convergence, when no observations change clusters.
-    \end{itemize}
+% \todo{Have as algorithm block?}
+\begin{itemize} 
+  \item The algorithm begins by randomly selecting $k$ medoids from the dataset as our cluster centroids. 
+  \item Each observation is then assigned to the cluster of the nearest medoid, using the dissimilarity measure defined in \ref{subsec:div}.
+  \item The centroids are updated by selecting the observation in each cluster which minimises the sum of dissimilarities to all other observations in that cluster.
+  \item This process is repeated until convergence, when no observations change clusters.
+\end{itemize}
 We choose this algorithm over alternatives such as k-means for several reasons. 
 Firstly, since our clustering is designed to be performed in a spatial setting, it is preferable to have actual locations rather than summaries as cluster centres, for visualisation and also for refitting the CE model and reinterpreting results. 
 Secondly, as we are clustering over a dissimilarity matrix defined over a functional space, we cannot assume that the clusters are spherical or equally sized, as k-means does. \todo{cite}

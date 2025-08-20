@@ -469,7 +469,6 @@ For $d \in \mathbb{N}$, we use $ \bm{Y} \in \mathbb{R}^d, d \in \mathbb{N}$ and 
 % The CE model of \citet{Heffernan2004} assumes that there exist parameter vectors $\bm{\alpha}_{\mid i}^{(\CE{})} := \left\{\alpha_{j \mid i}^{(\CE{})} : j\in\{1,\dots,d\}\setminus\{i\}\right\} \in [-1, 1]^{(d-1)}$ and $\bm{\beta}_{\mid i}^{(\CE{})} := \left\{\beta_{j \mid i}^{(\CE{})} : j\in\{1,\dots,d\}\setminus\{i\} \right\} \in [-\infty, 1]^{(d-1)}$ such that for fixed $\bm{z}_{\mid i} \in \mathbb{R}^{(d-1)}$, $y_i > 0$,
 The CE model of \citet{Heffernan2004} assumes that there exist parameter vectors $\bm{\alpha}_{\mid i} := \left\{\alpha_{j \mid i} : j\in\{1,\dots,d\}\setminus\{i\}\right\} \in [-1, 1]^{(d-1)}$ and $\bm{\beta}_{\mid i} := \left\{\beta_{j \mid i} : j\in\{1,\dots,d\}\setminus\{i\} \right\} \in [-\infty, 1]^{(d-1)}$ such that for fixed $\bm{z}_{\mid i} \in \mathbb{R}^{(d-1)}$, $y_i > 0$,
 % \todo{Check if probably is for equal to yi or greater than yi}
-\todo{Should I use ui or uyi? Need to be consistent!}
 \begin{equation}~\label{eq:ce_limiting_dist}
   % \mathbb{P}\left(\frac{\bm{Y}_{-i} - \bm{\alpha}_{\mid i}^{(\CE{})} Y_{i}}{Y_{i}^{\bm{\beta}_{\mid i}^{(\CE{})}} \le \bm{z}_{\mid i}, Y_i - u_i > y_i \mid Y_i > u_i \right) \longrightarrow \bm{G}_{\mid i}(\bm{z}_{\mid i}) \exp(-y_i) \text{ as } u_i \rightarrow \infty,
   \mathbb{P}\!\left(
@@ -503,8 +502,8 @@ Equation~\eqref{eq:ce_limiting_dist} implies that, in the limit $u_i\to\infty$, 
 
 % Heteroskedastic regression
 % The limiting distribution in equation~\eqref{eq:ce_limiting_dist} can be written as a heteroskedastic regression equation defined by
-The limiting distribution in equation~\eqref{eq:ce_limiting_dist} can be expressed as a heteroskedastic regression equation, defined by
-\todo{Should we be explicit that the equals here really should be an equality in distribution?}
+The limiting distribution in Equation~\eqref{eq:ce_limiting_dist} can be expressed as a heteroskedastic regression equation, defined by
+% \todo{Should we be explicit that the equals here really should be an equality in distribution?}
 \begin{equation}~\label{eq:ce_model}
   % \bigl(\bm{Y}_{-i} \mid Y_i = y_i \bigr) = \bm{\alpha}_{\mid i}^{(\CE{})}\bm{y}_i + \bm{y}_i^{\bm{\beta}_{\mid i}^{(\CE{})}}\bm{Z}_{\mid i}, \text{ for } y_i > u_{_i},
   \bigl(\bm{Y}_{-i} \mid Y_i = y_i \bigr) = \bm{\alpha}_{\mid i}\bm{y}_i + \bm{y}_i^{\bm{\beta}_{\mid i}}\bm{Z}_{\mid i}, \text{ for } y_i > u_{_i},
@@ -540,11 +539,21 @@ The levels of heteroskedasticity in the model is controlled by $\bm{\beta}_{\mid
 % \end{itemize}
 \begin{itemize}
   \item $\bm{\alpha}_{j \mid i} = 0, \bm{\beta}_{j \mid i} = 0$, for which we have perfect independence between $Y_j$ and large $Y_i$.
-  \item $\bm{\alpha}_{j \mid i} = 0, \bm{\beta}_{j \mid i} = 0$, for which we have perfect independence,
+  % \item $\bm{\alpha}_{j \mid i} = 0, \bm{\beta}_{j \mid i} = 0$, for which we have perfect independence,
   \item $\bm{\alpha}_{j \mid i} = -1(+1), \bm{\beta}_{j \mid i} = 0$, which corresponds to perfect positive/negative dependence,
   \item $-1 < \bm{\alpha}_{j \mid i} < 1$, which suggests asymptotic independence between $Y_j$ and large $Y_i$, with dependence weakening as $Y_i \to \infty$. 
 \end{itemize}
 
+Recall that we want to fit the CE model at different spatial sites. 
+To allow for spatial variation, we may index the regression parameters by site $s \in \mathcal{S}$.
+This leads to a simple, spatially indexed extension of Equation \eqref{eq:ce_model}, given by
+\begin{equation} \label{eq:ce_model_spat}
+  \bigl(\bm{Y}_{-i}(s) \mid Y_i(s) = y_i, \mathcal{S} = s \bigr) 
+    = \bm{\alpha}_{\mid i}(s) \, y_i 
+      + y_i^{\bm{\beta}_{\mid i}(s)} \, \bm{Z}_{\mid i}(s), 
+      \quad y_i > u_i(s),
+\end{equation}
+with residuals $\bm{Z}_{\mid i}(s) \sim \bm{G}_{\mid i}(s)$. 
 
 \subsection{Divergence measure}~\label{subsec:div}
 
@@ -556,9 +565,9 @@ The levels of heteroskedasticity in the model is controlled by $\bm{\beta}_{\mid
 % The residual process $\bm{Z}_{\mid i}$ in equation~\eqref{eq:ce_model} is
 % assumed to follow a multivariate Gaussian distribution with vector nuisance
 % parameters $\bm{\mu}_{\mid i} \in \mathbb{R}^{(d-1)}$ and $\Sigma_{\mid i} \in \mathbb{R}^{(d-1)}$.
-The residual vector $\bm{Z}_{\mid i}$ in equation~\eqref{eq:ce_model} is assumed to follow a multivariate Gaussian distribution with mean vector $\bm{\mu}_{\mid i}\in\mathbb{R}^{d-1}$ and covariance matrix $\Sigma_{\mid i}\in\mathbb{R}^{(d-1)\times(d-1)}$. 
+The residual vector $\bm{Z}_{\mid i}$ in Equation~\eqref{eq:ce_model} is assumed to follow a multivariate Gaussian distribution with mean vector $\bm{\mu}_{\mid i}\in\mathbb{R}^{d-1}$ and covariance matrix $\Sigma_{\mid i}\in\mathbb{R}^{(d-1)\times(d-1)}$. 
 % \todo{Use (CE) superscript for mu and Sigma to distinguish from clustering}
-% The residual vector $\bm{Z}_{\mid i}$ in equation~\eqref{eq:ce_model} is assumed to follow a multivariate Gaussian distribution with mean vector $\bm{\mu}_{\mid i}^{(\CE{})}\in\mathbb{R}^{d-1}$ and covariance matrix $\Sigma_{\mid i}^{(\CE{})} \in\mathbb{R}^{(d-1)\times(d-1)}$. 
+% The residual vector $\bm{Z}_{\mid i}$ in Equation~\eqref{eq:ce_model} is assumed to follow a multivariate Gaussian distribution with mean vector $\bm{\mu}_{\mid i}^{(\CE{})}\in\mathbb{R}^{d-1}$ and covariance matrix $\Sigma_{\mid i}^{(\CE{})} \in\mathbb{R}^{(d-1)\times(d-1)}$. 
 \todo{Heff04 assumes diagonal sigma, should we say we use full covariance?}
 % This is a working assumption proposed in \citet{Heffernan2004} after testing several candidate distributions. %, and is still most commonly used in the literature \todo{citations?}
 % This is the key assumption of the CE model on which we derive our divergence measure, and was chosen in \citet{Heffernan2004} after testing several candidate distributions.
@@ -574,13 +583,13 @@ Consequently, inference can be made about the extremal dependence of a random ve
 \end{equation}
 where $\bm{\alpha}_{\mid i}, \bm{\beta}_{\mid i}, \bm{\mu}_{\mid i}, \Sigma_{\mid i} \in \mathbb{R}^{(d-1)}$ are the parameters of the CE model.
 % where $\bm{\alpha}_{\mid i}^{(\CE{})}, \bm{\beta}_{\mid i}^{(\CE{})}, \bm{\mu}_{\mid i}^{(\CE{})}, \Sigma_{\mid i}^{(\CE{})} \in \mathbb{R}^{(d-1)}$ are the parameters of the CE model. 
-% Therefore, when seeking to compare the extremal dependence structure of two locations, a sensible approach is to compare the conditional distributions given by equation~\ref{eq:ce_norm} for each variable at both sites. 
-% Therefore, under this model, when comparing the extremal dependence structure between variables at any given sites, we are effectively comparing the conditional distributions given by equation~\eqref{eq:ce_norm}.
-% Therefore, under this model, when comparing the multivariate tail dependence structure at different sites, we are effectively comparing the conditional distributions given by equation~\eqref{eq:ce_norm}.
+% Therefore, when seeking to compare the extremal dependence structure of two locations, a sensible approach is to compare the conditional distributions given by Equation~\ref{eq:ce_norm} for each variable at both sites. 
+% Therefore, under this model, when comparing the extremal dependence structure between variables at any given sites, we are effectively comparing the conditional distributions given by Equation~\eqref{eq:ce_norm}.
+% Therefore, under this model, when comparing the multivariate tail dependence structure at different sites, we are effectively comparing the conditional distributions given by Equation~\eqref{eq:ce_norm}.
 % Therefore, to compare tail dependence at different sites, we can compare the conditional distributions in \eqref{eq:ce_norm}, i.e.\ the induced multivariate Gaussian distributions parameterised by $(\bm{\alpha}_{\mid i}^{(\CE{})},\bm{\beta}_{\mid i}^{(\CE{})},\bm{\mu}_{\mid i}^{(\CE{})},\Sigma_{\mid i}^{(\CE{})})$ (or a chosen subset thereof).
 Therefore, to compare tail dependence at different sites, we can compare the conditional distributions in \eqref{eq:ce_norm}, i.e.\ the induced multivariate Gaussian distributions parameterised by $(\bm{\alpha}_{\mid i},\bm{\beta}_{\mid i},\bm{\mu}_{\mid i},\Sigma_{\mid i})$ (or a chosen subset thereof).
 
-There are several qualities we desire from a divergence measure for clustering based on the conditional distribution in equation~\eqref{eq:ce_norm}.
+There are several qualities we desire from a divergence measure for clustering based on the conditional distribution in Equation~\eqref{eq:ce_norm}.
 % We would like to exploit the fact that the CE model is a multivariate Gaussian distribution to provide some gains in computational efficiency, and for our divergence to more generally be cheap to compute.
 We particularly want to exploit the multivariate Gaussian nature of the CE model, to provide computational efficiency through a closed-form solution, and for our divergence to be generally cheap to compute.
 For clustering, the measure must be non-negative and symmetric, as the ``distance'' between two sites as defined by the divergence between their CE models should be the same regardless of the order in which they are compared.
@@ -616,7 +625,7 @@ In this paper, we simply use $\alpha = 0.5$. %, as our simulations and applicati
 % Explain why it is a good dissimilarity metric to use
 For two multivariate Gaussian distributions, the $\KL{}$ divergence has a closed form, analytical solution \citep{Duchi2007}.
 The $\JSGa{}$ divergence exploits the property that the (weighted) product of two members of the same exponential family is itself a member of the same exponential family distribution. 
-It follows that $G_{\alpha}(P, Q)$ is multivariate Gaussian, and so the $\KL{}$ divergences in equation~\eqref{eq:jsga} are between multivariate Gaussian distributions and can be computed in closed form.
+It follows that $G_{\alpha}(P, Q)$ is multivariate Gaussian, and so the $\KL{}$ divergences in Equation~\eqref{eq:jsga} are between multivariate Gaussian distributions and can be computed in closed form.
 Hence, the principle advantage of the $\JSGa{}$ here follows, as it also has a closed form solution for two multivariate Gaussian distributions, and so is computationally efficient to compute \citep{Nielsen2019}.
 The $\JSGa{}$ divergence between two multivariate Gaussian distributions has been used in several applications, including clustering, deep learning, variational inference and remote sensing imagery  \citep{Nielsen2019, Deasy2020, Ni2023-cd, Thiagarajan2025}. \todo{Add more references?}
 % Furthermore, it is clearly symmetric and non-negative, as the sum of two $KL$ divergences, which is also important for clustering.
@@ -681,8 +690,8 @@ An explicit form for the $\JSGa{}$ divergence for two multivariate Gaussian dist
 % \end{equation}
 % The parameter $\alpha$ is called a skew parameter, and controls the divergence skew between P and Q. 
 % For our purposes, we will set $\alpha = 0.5$, which corresponds to giving equal weight to both distributions. \todo{Need to explore this further!}
-% The exact form of this divergence for two multivariate normals is given in equation~\eqref{eq:js_norm_mvn1}, and the simplified form for the case of diagonal covariance matrices is given in equation~\eqref{eq:js_norm_mvn_diag}. 
-%   % \item Thus we have a closed form, computationally efficient and symmetric measure of dissimilarity between any two conditional distributions as given by equation~\ref{eq:ce_norm} for two sites, with which we can cluster locations based on their extremal dependence structure. 
+% The exact form of this divergence for two multivariate normals is given in Equation~\eqref{eq:js_norm_mvn1}, and the simplified form for the case of diagonal covariance matrices is given in Equation~\eqref{eq:js_norm_mvn_diag}. 
+%   % \item Thus we have a closed form, computationally efficient and symmetric measure of dissimilarity between any two conditional distributions as given by Equation~\ref{eq:ce_norm} for two sites, with which we can cluster locations based on their extremal dependence structure. 
 %   % \item Thus we have a closed form, computationally efficient and symmetric measure of dissimilarity between any conditional multivariate normal distributions as given by \eqref{eq:ce_norm}, representing the extremal dependence structure at each site. 
 
 % Expectation definition
@@ -786,9 +795,9 @@ To tranform each $X_i$ to Laplace margins, we let
  % \item Also, the tails of the Laplace distribution converge faster to a non-degenerate distribution as we increase the number of variables in the model, which makes it effective for modelling extremes \citep{Rohrbeck2024-jm}.
 
 % JSGa form
-% For two multivariate normals, \citet{Nielsen2019} shows that the $\JSGa{}$ divergence introduced in equation~\eqref{eq:js_norm} has the closed form solution
+% For two multivariate normals, \citet{Nielsen2019} shows that the $\JSGa{}$ divergence introduced in Equation~\eqref{eq:js_norm} has the closed form solution
 % \todo{eq:js_norm can't be found}
-For two multivariate Gaussian distributions $P \sim N(\mu_1, \Sigma_1)$ and $Q \sim N(\mu_2, \Sigma_2)$ in $\mathbb{R}^n$, \citet{Nielsen2019} shows that the $\JSGa{}$ divergence introduced in equation~\eqref{eq:jsga} has the closed form solution 
+For two multivariate Gaussian distributions $P \sim N(\mu_1, \Sigma_1)$ and $Q \sim N(\mu_2, \Sigma_2)$ in $\mathbb{R}^n$, \citet{Nielsen2019} shows that the $\JSGa{}$ divergence introduced in Equation~\eqref{eq:jsga} has the closed form solution 
 \begin{align*}%~\label{eq:js_norm_mvn}
   JS^{G_{\alpha}}(P \mid\mid Q) &= \frac{1}{2} \left( (1 - \alpha) \mu_1^T \Sigma_1^{-1} \mu_1 + \alpha \mu_2^T \Sigma_2^{-1} \mu_2 - \mu_{\alpha}^T \Sigma_{\alpha}^{-1} \mu_{\alpha} + \log{\left( \frac{\abs{\Sigma_1}^{1-\alpha} \abs{\Sigma_2}^{\alpha}}{\abs{\Sigma_{\alpha}}} \right)} \right), \\
   \Sigma_{\alpha} &= \left( (1 - \alpha) \Sigma_1^{-1} + \alpha \Sigma_2^{-1} \right)^{-1}, \\
@@ -822,7 +831,7 @@ where $\sigma_{\alpha, i}^2 = \frac{\sigma_{1, i}^2 \sigma_{2, i}^2}{\alpha\sigm
 
 % % Integral plan
 % \begin{itemize}
-%   \item Integral given in equation~\eqref{eq:js_integral} gives us the $\JSGa{}$ dissimilarity between CE models $P$ and $Q$ averaged over the marginal distribution of $Y_i \mid Y_i > u$.
+%   \item Integral given in Equation~\eqref{eq:js_integral} gives us the $\JSGa{}$ dissimilarity between CE models $P$ and $Q$ averaged over the marginal distribution of $Y_i \mid Y_i > u$.
 %   \item Since $Y_i$ follows a standard Laplace distribution, by memorylessness its tail values $Y_i \mid Y_i > u$ follow a standard exponential distribution. \todo{Express more mathematically?} 
 %   \item Therefore, we can use a simple MC method to estimate this integral as
 %     \todo{Switch to E hat?}
@@ -839,9 +848,9 @@ where $\sigma_{\alpha, i}^2 = \frac{\sigma_{1, i}^2 \sigma_{2, i}^2}{\alpha\sigm
 %   \item Our MC method follows the simple alternating scheme for $N$ samples of
 %     \begin{enumerate}
 %       \item Simulating $y_i \sim truncLaplace(0, 1; u, u + Q_{Exp(1)}(p))$, \todo{ugly}
-%       \item Calculating $\JSGa{P(y_i) \mid \mid Q(y_i)}$ using equation \eqref{eq:js_norm_mvn1}.
+%       \item Calculating $\JSGa{P(y_i) \mid \mid Q(y_i)}$ using Equation \eqref{eq:js_norm_mvn1}.
 %     \end{enumerate}
-%     before averaging over the $N$ samples to estimate the integral in equation~\eqref{eq:js_integral}.
+%     before averaging over the $N$ samples to estimate the integral in Equation~\eqref{eq:js_integral}.
 % \end{itemize}
 
 % Estimating the integral 
@@ -1035,7 +1044,7 @@ We can bootstrap this conditional expectation to evaluate the reduction in uncer
 
 % Results
 We take an example for which we know the clustering algorithm performs well, namely the same simulation design as in Section~\ref{subsubsec:sim_competing_methods}, with $\rho_{\text{Gauss}} = 0.5$, and $\rho_{t} = 0.1$ and $0.9$ for the two clusters.
-We estimate the CE model parameters pre- and post-clustering, and generate 500 bootstrap samples for  the conditional expectation of equation~\eqref{eq:boot}.
+We estimate the CE model parameters pre- and post-clustering, and generate 500 bootstrap samples for  the conditional expectation of Equation~\eqref{eq:boot}.
 The results are plotted in Figure \ref{fig:04_bootstrap}.
 We can see that the uncertainty in the bootstrapped estimates has markedly reduced post-clustering, as desired.
 The conditional expectation is higher for the higher t-copula correlation cluster, as expected. \todo{Anything else need to be said here? Be more specific with results?}

@@ -545,15 +545,16 @@ The levels of heteroskedasticity in the model is controlled by $\bm{\beta}_{\mid
 \end{itemize}
 
 Recall that we want to fit the CE model at different spatial sites. 
-To allow for spatial variation, we may index the regression parameters by site $s \in \mathcal{S}$.
-This leads to a simple, spatially indexed extension of Equation \eqref{eq:ce_model}, given by
+To allow for spatial variation, we may index the regression parameters by site $s \in \mathcal{S}$, and allow them to vary by site. 
+This leads to the simple, spatially indexed extension of Equation \eqref{eq:ce_model} given by
 \begin{equation} \label{eq:ce_model_spat}
   \bigl(\bm{Y}_{-i}(s) \mid Y_i(s) = y_i, \mathcal{S} = s \bigr) 
     = \bm{\alpha}_{\mid i}(s) \, y_i 
       + y_i^{\bm{\beta}_{\mid i}(s)} \, \bm{Z}_{\mid i}(s), 
       \quad y_i > u_i(s),
 \end{equation}
-with residuals $\bm{Z}_{\mid i}(s) \sim \bm{G}_{\mid i}(s)$. 
+% with location-specific residuals $\bm{Z}_{\mid i}(s) \sim \bm{G}_{\mid i}(s)$. \todo{Do I need to define alpha(s), beta(s), ui(s) again?}
+where $\bm{\alpha}_{\mid i}(s), \bm{\beta}_{\mid i}(s), \bm{Z}_{\mid i}(s) \sim \bm{G}_{\mid i}(s)$, are the site-specific counterparts of the regression parameters and residuals introduced above.  
 
 \subsection{Divergence measure}~\label{subsec:div}
 
@@ -565,29 +566,33 @@ with residuals $\bm{Z}_{\mid i}(s) \sim \bm{G}_{\mid i}(s)$.
 % The residual process $\bm{Z}_{\mid i}$ in equation~\eqref{eq:ce_model} is
 % assumed to follow a multivariate Gaussian distribution with vector nuisance
 % parameters $\bm{\mu}_{\mid i} \in \mathbb{R}^{(d-1)}$ and $\Sigma_{\mid i} \in \mathbb{R}^{(d-1)}$.
-The residual vector $\bm{Z}_{\mid i}$ in Equation~\eqref{eq:ce_model} is assumed to follow a multivariate Gaussian distribution with mean vector $\bm{\mu}_{\mid i}\in\mathbb{R}^{d-1}$ and covariance matrix $\Sigma_{\mid i}\in\mathbb{R}^{(d-1)\times(d-1)}$. 
+% The residual vector $\bm{Z}_{\mid i}$ in Equation~\eqref{eq:ce_model} is assumed to follow a multivariate Gaussian distribution with mean vector $\bm{\mu}_{\mid i}\in\mathbb{R}^{d-1}$ and covariance matrix $\Sigma_{\mid i}\in\mathbb{R}^{(d-1)\times(d-1)}$. 
+\todo{Use spatial index here, or first explain without and then add in at the end?}
+The residual vector $\bm{Z}_{\mid i}(s)$ in Equation~\eqref{eq:ce_model_spat} is assumed to follow a multivariate Gaussian distribution with mean vector $\bm{\mu}_{\mid i}(s)\in\mathbb{R}^{d-1}$ and covariance matrix $\Sigma_{\mid i}(s)\in\mathbb{R}^{(d-1)\times(d-1)}$. 
 % \todo{Use (CE) superscript for mu and Sigma to distinguish from clustering}
 % The residual vector $\bm{Z}_{\mid i}$ in Equation~\eqref{eq:ce_model} is assumed to follow a multivariate Gaussian distribution with mean vector $\bm{\mu}_{\mid i}^{(\CE{})}\in\mathbb{R}^{d-1}$ and covariance matrix $\Sigma_{\mid i}^{(\CE{})} \in\mathbb{R}^{(d-1)\times(d-1)}$. 
 \todo{Heff04 assumes diagonal sigma, should we say we use full covariance?}
 % This is a working assumption proposed in \citet{Heffernan2004} after testing several candidate distributions. %, and is still most commonly used in the literature \todo{citations?}
 % This is the key assumption of the CE model on which we derive our divergence measure, and was chosen in \citet{Heffernan2004} after testing several candidate distributions.
 % This is the key aspect of the CE model with which we derive our divergence measure, and is a working assumption chosen in \citet{Heffernan2004} after testing several candidate distributions.
-This Gaussian working assumption, proposed in \citet{Heffernan2004} after testing several candidate distributions, is the key property we wish to exploit when deriving a closed-form divergence for clustering.
+This Gaussian working assumption, proposed in \citet{Heffernan2004} after testing several candidate distributions, is the key property we exploit when deriving a closed-form divergence for clustering.
 
 % \citet{Heffernan2004} shows that inference can be made about the extremal dependence of a random vector $\bm{Y}_{-i} = \bm{Y} \backslash Y_i$ on $Y_i$ by conditioning on the exceedance of a high threshold $u$ by $Y_i$, and assuming that this conditional distribution is a diagonal multivariate Gaussian distribution: % with vector mean and standard deviation:
 % An important consequence following from this assumption is that inference can be made about the extremal dependence of a random vector $\bm{Y}_{-i} = \bm{Y} \setminus \{Y_i\}$ on $Y_i$ by conditioning on the exceedance of a high threshold $u_i$ by $Y_i$, and assuming that this conditional distribution is a multivariate Gaussian distribution, i.e.\ 
-Consequently, inference can be made about the extremal dependence of a random vector $\bm{Y}_{-i} = \bm{Y} \setminus \{Y_i\}$ on $Y_i$ by conditioning on the exceedance of a high threshold $u_i$ by $Y_i$, and assuming that this conditional distribution is a multivariate Gaussian distribution, i.e.\
+Consequently, inference can be made about the extremal dependence of a random vector $\bm{Y}_{-i}(s) = \bm{Y}(s) \setminus \{Y_i(s)\}$ on $Y_i(s)$ at site $s$ by conditioning on the exceedance of a high threshold $u_i(s)$ by $Y_i(s)$, and assuming that this conditional distribution is a multivariate Gaussian distribution, i.e.\
 \begin{equation}~\label{eq:ce_norm}
-  \bigl( \bm{Y}_{-i} \mid Y_i  = y_i \bigr) \sim N\left(\bm{\alpha}_{\mid i} y_i + y_i^{\bm{\beta}_{\mid i}} \bm{\mu}_{\mid i}, y_i^{\bm{\beta}_{\mid i}} \bm{\Sigma_{\mid i}}\right), Y_i > u_i,
   % \bigl( \bm{Y}_{-i} \mid Y_i  = y_i \bigr) \sim N\left(\bm{\alpha}_{\mid i}^{(\CE{})} y_i + y_i^{\bm{\beta}_{\mid i}^{(\CE{})}} \bm{\mu}_{\mid i}^{(\CE{})}, y_i^{\bm{\beta}_{\mid i}^{(\CE{})}} \Sigma_{\mid i}^{(\CE{})}\right), Y_i > u_i,
+  % \bigl( \bm{Y}_{-i} \mid Y_i  = y_i \bigr) \sim N\left(\bm{\alpha}_{\mid i} y_i + y_i^{\bm{\beta}_{\mid i}} \bm{\mu}_{\mid i}, y_i^{\bm{\beta}_{\mid i}} \bm{\Sigma_{\mid i}}\right), Y_i > u_i,
+  \bigl( \bm{Y}_{-i}(s) \mid Y_i(s)  = y_i, \mathcal{S} = s \bigr) \sim N\left(\bm{\alpha}_{\mid i}(s) y_i + y_i^{\bm{\beta}_{\mid i}(s)} \bm{\mu}_{\mid i}(s), y_i^{\bm{\beta}_{\mid i}(s)} \bm{\Sigma_{\mid i}(s)}\right), Y_i(s) > u_i(s),
 \end{equation}
-where $\bm{\alpha}_{\mid i}, \bm{\beta}_{\mid i}, \bm{\mu}_{\mid i}, \Sigma_{\mid i} \in \mathbb{R}^{(d-1)}$ are the parameters of the CE model.
+where $\bm{\alpha}_{\mid i}(s), \bm{\beta}_{\mid i}(s), \bm{\mu}_{\mid i}(s), \Sigma_{\mid i}(s) \in \mathbb{R}^{(d-1)}$ are the site-specific parameters of the CE model.
 % where $\bm{\alpha}_{\mid i}^{(\CE{})}, \bm{\beta}_{\mid i}^{(\CE{})}, \bm{\mu}_{\mid i}^{(\CE{})}, \Sigma_{\mid i}^{(\CE{})} \in \mathbb{R}^{(d-1)}$ are the parameters of the CE model. 
 % Therefore, when seeking to compare the extremal dependence structure of two locations, a sensible approach is to compare the conditional distributions given by Equation~\ref{eq:ce_norm} for each variable at both sites. 
 % Therefore, under this model, when comparing the extremal dependence structure between variables at any given sites, we are effectively comparing the conditional distributions given by Equation~\eqref{eq:ce_norm}.
 % Therefore, under this model, when comparing the multivariate tail dependence structure at different sites, we are effectively comparing the conditional distributions given by Equation~\eqref{eq:ce_norm}.
 % Therefore, to compare tail dependence at different sites, we can compare the conditional distributions in \eqref{eq:ce_norm}, i.e.\ the induced multivariate Gaussian distributions parameterised by $(\bm{\alpha}_{\mid i}^{(\CE{})},\bm{\beta}_{\mid i}^{(\CE{})},\bm{\mu}_{\mid i}^{(\CE{})},\Sigma_{\mid i}^{(\CE{})})$ (or a chosen subset thereof).
-Therefore, to compare tail dependence at different sites, we can compare the conditional distributions in \eqref{eq:ce_norm}, i.e.\ the induced multivariate Gaussian distributions parameterised by $(\bm{\alpha}_{\mid i},\bm{\beta}_{\mid i},\bm{\mu}_{\mid i},\Sigma_{\mid i})$ (or a chosen subset thereof).
+% Therefore, to compare tail dependence at different sites, we can compare the conditional distributions in \eqref{eq:ce_norm}, i.e.\ the induced multivariate Gaussian distributions parameterised by $(\bm{\alpha}_{\mid i},\bm{\beta}_{\mid i},\bm{\mu}_{\mid i},\Sigma_{\mid i})$ (or a chosen subset thereof).
+Therefore, to compare tail dependence at different sites, we can compare the conditional distributions in \eqref{eq:ce_norm}, i.e.\ the induced multivariate Gaussian distributions parameterised by $(\bm{\alpha}_{\mid i}(s),\bm{\beta}_{\mid i}(s),\bm{\mu}_{\mid i}(s),\Sigma_{\mid i}(s))$ (or a chosen subset thereof).
 
 There are several qualities we desire from a divergence measure for clustering based on the conditional distribution in Equation~\eqref{eq:ce_norm}.
 % We would like to exploit the fact that the CE model is a multivariate Gaussian distribution to provide some gains in computational efficiency, and for our divergence to more generally be cheap to compute.
@@ -698,20 +703,21 @@ An explicit form for the $\JSGa{}$ divergence for two multivariate Gaussian dist
 % \todo{Hard/confusing to describe using Yi, switch to another notation?}
 % Since the models $P$ and $Q$ depend on the value of $Y_i$, the conditioning variable, we define the expected value
 % Since the conditional distributions $P$ and $Q$ are functions of the conditioning variable $Y_i$, the divergence between them depends on the specific value of $Y_i$. 
-Since the conditional distributions $P$ and $Q$ depend on the value of the conditioning variable $Y_i$, the divergence between them also depends on $Y_i$. 
+Since the conditional distributions $P$ and $Q$ depend on the value of the conditioning variable $Y_i(s)$, the divergence between them also depends on $Y_i(s)$. 
 To obtain a single measure of dissimilarity, we define the expected divergence
 \todo{Need to clean up expectation?}
 \begin{equation}~\label{eq:jsga_integral}
 % \mathbb{E}\!\left[ JS^{G_{\alpha}}(P(y_i)\, \| \, Q(y_i)) \,\middle|\, Y_i > u_i \right] 
 % = \int_{u_i}^\infty JS^{G_{\alpha}}(P(y_i)\, \| \, Q(y_i)) \, f(y_i \mid Y_i > u_i)\, dy_i,
-  \mathbb{E}\!\left[ \JSGa{(P(y_i)\, \| \, Q(y_i))} \,\middle|\, Y_i > u_i \right] = \int_{u_i}^\infty \JSGa{(P(y_i)\, \| \, Q(y_i))} \, f(y_i \mid Y_i > u_i)\, dy_i,
+  % \mathbb{E}\!\left[ \JSGa{(P(y_i)\, \| \, Q(y_i))} \,\middle|\, Y_i > u_i \right] = \int_{u_i}^\infty \JSGa{(P(y_i)\, \| \, Q(y_i))} \, f(y_i \mid Y_i > u_i)\, dy_i,
+  \mathbb{E}\!\left[ \JSGa{(P(y_i)\, \| \, Q(y_i))} \,\middle|\, Y_i(s) > u_i \right] = \int_{u_i}^\infty \JSGa{(P(y_i)\, \| \, Q(y_i))} \, f(y_i \mid Y_i(s) > u_i(s))\, dy_i,
 \end{equation}
-where $f(y_i \mid Y_i > u_i)$ is the conditional density of $Y_i$ given exceedance of the threshold. 
+where $f(y_i \mid Y_i(s) > u_i(s))$ is the conditional density of $Y_i(s)$ given exceedance of the threshold. 
 This integral gives us our dissimilarity measure or ``distance'' between the two conditional distributions, averaged over the distribution of $Y_i$.
 % We can estimate this integral using Monte Carlo (MC) methods, noting that the distribution of $Y_i$ is given by the standard Laplace distribution. 
-We can estimate this integral using Monte Carlo (MC) methods, noting that $Y_i$ follows a standard Laplace distribution.
-In practice, very large values of $Y_i$ can lead to unstable estimates, and we also want to avoid extrapolating beyond the range of observed $Y_i$ used to fit the CE model. 
-Hence, we truncate the expectation at the 99th percentile of the empirical distribution of $Y_i$ across all sites.
+We can estimate this integral using Monte Carlo (MC) methods, noting that $Y_i(s)$ follows a standard Laplace distribution.
+In practice, very large values of $Y_i(s)$ can lead to unstable estimates, and we also want to avoid extrapolating beyond the range of observed $Y_i(s)$ used to fit the CE model. 
+Hence, we truncate the expectation at the 99th percentile of the empirical distribution of $Y_i(s)$ across all sites.
 
 % Summary
 % In summary, we define a dissimilarity measure between any two CE models based on the $\JSGa{}$ divergence, which is symmetric, non-negative, and computationally efficient. 

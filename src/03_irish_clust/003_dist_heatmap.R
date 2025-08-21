@@ -228,6 +228,7 @@ p <- off_diag_df |>
     panel.background = element_blank(),
     panel.grid.major = element_blank(),
     panel.border = element_blank(),
+    axis.text.y = element_text(size = 12),
     legend.title = element_text(size = 15, face = "bold"),
     legend.text = element_text(size = 14)
   ) +

@@ -1216,7 +1216,7 @@ This may also be due to our wind speeds coming from the ERA5 reanalysis dataset,
 \todo{Change from pdf to png, would look better!}
 \begin{figure}[H]
     \centering
-    \includegraphics[width = 0.9\linewidth]{plots/cluster_dqu_sep.pdf}
+    \includegraphics[width = 0.9\linewidth]{plots/cluster_dqu_sep_new_crop.png}
     \caption{\emph{Clustering solutions for the conditional extremes model parameters estimated at the 88th dependence quantile across all 59 sites, using the $\JSGa{}$ dissimilarity matrix for wind speed conditional on precipitation (centre), precipitation conditional on wind speed (right), and the combined dissimilarity matrix (left). The clusters are shown in different colours.}}
    ~\label{fig:clust_sol}
 \end{figure}
@@ -1251,7 +1251,7 @@ We also see that Kilcar in county Donegal, which had a low $\chi$ value relative
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width = 0.9\linewidth]{plots/cluster_dqu.png}
+    \includegraphics[width = 0.9\linewidth]{plots/cluster_dqu_crop.png}
     % \caption{\emph{ Clustering solutions for the conditional extremes model parameters estimated at the 88th dependence quantile across all 59 sites, using the $\JSGa{}$ dissimilarity matrix for precipitation conditional on wind speed (centre), wind speed conditional on precipitation (right), and the combined dissimilarity matrix (left). The clusters are shown in different colours.}}
     \caption{\emph{Clustering solutions for the conditional extremes model parameters estimated at the 85th, 88th and 90th dependence quantiles across all 59 sites, using the combined $\JSGa{}$ dissimilarity matrix for precipitation conditional on wind speed and wind speed conditional on precipitation. The clusters are shown in different colours.}}
     ~\label{fig:clust_sens}
@@ -1291,7 +1291,8 @@ Interpreting these results is much easier post-clustering. \todo{More detail her
 \todo{Switch to using hat for estimates?}
 \begin{figure}[H]
     \centering
-    \includegraphics[width = 0.9\linewidth]{plots/ab_map_post_clust.png}
+    % \includegraphics[width = 0.9\linewidth]{plots/ab_map_post_clust.png}
+    \includegraphics[width = 0.9\linewidth]{plots/ab_map_post_clust_new.png}
     % \caption{\emph{Estimated conditional extremes model parameters $\alpha^{(\CE{})}$ and $\beta{(\CE{})}$ for precipitation conditional on wind speed (left) and wind speed conditional on precipitation (right), estimated at the 88th dependence quantile, post-clustering. The $\alpha^{(\CE{})}$ parameter is shown in the top row, and $\beta^{(\CE{})}$ in the bottom row. The colour scale is the same for both variables, with darker red indicating larger positive values of $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$, and darker blue indicating larger negative values.}}
     \caption{\emph{Estimated conditional extremes model parameters $\alpha$ and $\beta{(\CE{})}$ for precipitation conditional on wind speed (left) and wind speed conditional on precipitation (right), estimated at the 88th dependence quantile, post-clustering. The $\alpha$ parameter is shown in the top row, and $\beta$ in the bottom row. The colour scale is the same for both variables, with darker red indicating larger positive values of $\alpha$ and $\beta$, and darker blue indicating larger negative values.}}
    ~\label{fig:ce_post_clust}

@@ -92,7 +92,7 @@
 
 % Writing
 \todo{Same (present), tense throughout if possible}
-\todo{Change rain to precipitation throughout}
+% \todo{Change rain to precipitation throughout}
 % \todo{Fix rho gauss, bit wonky in places}
 \todo{correct spelling mistakes}
 \todo{Whole paper needs improving, read more carefully!}
@@ -102,6 +102,7 @@
 % \todo{Replace mu and sigma for CE parameters with mu CE and sigma CE, so it doesn't clash with JSGa formula}
 
 % Plotting
+\todo{Change rain to precipitation throughout}
 \todo{Crop (map) plots that have too much whitespace}
 \todo{Ireland maps should be simmilarly sized, centred and coloured}
 \todo{Plots need some tidying up!}
@@ -1110,7 +1111,7 @@ Preprocessing follows the procedure of \citet{Vignotto2021}, which thinned the d
 % This weekly temporal scale was chosen because in the case of storms, precipitation and wind are believed to experience a slight lag \citep{Bengtsson2009}.
 This weekly temporal scale was chosen because in the case of storms, there is often a slight lag between extreme precipitation and wind speed events \citep{Bengtsson2009}.
 This thinning may also remove some temporal dependence in the data, which is not accounted for in our model.
-Weeks with no rain are also ignored, leaving us with 5,022 weeks of data for the 59 sites.
+Weeks with no precipitation are also ignored, leaving us with 5,022 weeks of data for the 59 sites.
 
 % Summaries of dataset
 % \todo{Why have this? To highlight extremes/spatial heterogeneity?}
@@ -1134,7 +1135,7 @@ Weeks with no rain are also ignored, leaving us with 5,022 weeks of data for the
     \includegraphics[width = 0.9\linewidth]{plots/043_chi_elevation_man.png}
     % \caption{\emph{$\chi$ and $\bar{\chi} $ statistics for each of the 59 locations in our Irish meteorological dataset, estimated at the 95th quantile. The $\bar{chi}$ statistic is shown on the left, and $\chi$ on the right. For both maps, darker colours indicate stronger asymptotic dependence.}}
     \caption{\emph{Left: elevation profile of Ireland, with elevation in metres above sea level binned into 100m intervals with the highest bin for elevations above 500m.
-    Right: $\chi$ statistics between rain and wind speed at all 59 locations, estimated at the 95th quantile. Darker colours and larger points indicate stronger asymptotic dependence.}}
+    Right: $\chi$ statistics between precipitation and wind speed at all 59 locations, estimated at the 95th quantile. Darker colours and larger points indicate stronger asymptotic dependence.}}
    ~\label{fig:chi}
 \end{figure}
 
@@ -1149,7 +1150,7 @@ Specifically, as shown in Figure \ref{fig:chi}, we estimated $\chi(0.95)$ at all
 % These values are shown in Figure \ref{fig:chi}.
 % These values, along with an elevation profile of Ireland, are shown in Figure \ref{fig:chi}.
 An elevation profile of Ireland is also shown in Figure \ref{fig:chi}, which may help further explain some of this spatial dependence.
-We can see that $\chi$ is positive for almost all sites, indicating positive asymptotic dependence of varying degree between rain and wind speed. 
+We can see that $\chi$ is positive for almost all sites, indicating positive asymptotic dependence of varying degree between precipitation and wind speed. 
 This means that when, for example, wind speed is high, precipitation is also likely to be high, and vice versa, to a greater or lesser extent depending on the site.
 A clear spatial pattern emerges, whereby asymptotic dependence gets progressively stronger for locations further south and west, being highest along the west coast of Ireland, in counties such as Kerry, Galway, Mayo and Donegal. 
 \todo{Comment on Wicklow mountains whave higher!}
@@ -1170,7 +1171,7 @@ It may be of interest to investigate if these outliers in $\chi$ and $\bar{\chi}
 
 % Procedure and results pre-clustering (choice of dependence quantile)
 \todo{Check this section again after results are changed!}
-In our analysis, we first transformed the data to Laplace margins, using the empirical cumulative distribution function (ECDF) to approximate density functions for rain and wind speed at each location. \todo{reference specific equation in methods}
+In our analysis, we first transformed the data to Laplace margins, using the empirical cumulative distribution function (ECDF) to approximate density functions for precipitation and wind speed at each location. \todo{reference specific equation in methods}
   We then fit the CE model to this transformed data.
   % Using the bootstrapping scheme of \citet{Heffernan2004}, we estimated the CE model parameters $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$ at various dependence quantiles. \todo{Sufficient reference to bootstrapping scheme?}
   Using the bootstrapping scheme of \citet{Heffernan2004}, we estimated the CE model parameters $\alpha$ and $\beta$ at various dependence quantiles. \todo{Sufficient reference to bootstrapping scheme?}
@@ -1188,15 +1189,15 @@ In our analysis, we first transformed the data to Laplace margins, using the emp
 \begin{figure}[H]
     \centering
     \includegraphics[width = 0.9\linewidth]{plots/ire_ce_new.png}
-    % \caption{\emph{Map of conditional extremes model parameters $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$ for rain conditional on wind speed (left) and wind speed conditional on rain (right), estimated at the 88th dependence quantile. The $\alpha^{(\CE{})}$ parameter is shown in the top row, and $\beta^{(\CE{})}$ in the bottom row. The colour scale is the same for both variables, with darker red indicating larger positive values of $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$, and darker blue indicating larger negative values.}}
-    \caption{\emph{Map of conditional extremes model parameters $\alpha$ and $\beta$ for rain conditional on wind speed (left) and wind speed conditional on rain (right), estimated at the 88th dependence quantile. The $\alpha$ parameter is shown in the top row, and $\beta$ in the bottom row. The colour scale is the same for both variables, with darker red indicating larger positive values of $\alpha$ and $\beta$, and darker blue indicating larger negative values.}}
+    % \caption{\emph{Map of conditional extremes model parameters $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$ for precipitation conditional on wind speed (left) and wind speed conditional on precipitation (right), estimated at the 88th dependence quantile. The $\alpha^{(\CE{})}$ parameter is shown in the top row, and $\beta^{(\CE{})}$ in the bottom row. The colour scale is the same for both variables, with darker red indicating larger positive values of $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$, and darker blue indicating larger negative values.}}
+    \caption{\emph{Map of conditional extremes model parameters $\alpha$ and $\beta$ for precipitation conditional on wind speed (left) and wind speed conditional on precipitation (right), estimated at the 88th dependence quantile. The $\alpha$ parameter is shown in the top row, and $\beta$ in the bottom row. The colour scale is the same for both variables, with darker red indicating larger positive values of $\alpha$ and $\beta$, and darker blue indicating larger negative values.}}
    ~\label{fig:a_b_vals}
 \end{figure}
 
 \subsection{Clustering}~\label{subsec:app_clust}
 
 % Clustering (including choice of k for each measure)
-We clustered the locations using the $\JSGa{}$ dissimilarity matrix for their CE parameters, as described in Section~\ref{subsec:div}, for the CE models fit to rain conditional on extreme wind speed and vice versa, separately. 
+We clustered the locations using the $\JSGa{}$ dissimilarity matrix for their CE parameters, as described in Section~\ref{subsec:div}, for the CE models fit to precipitation conditional on extreme wind speed and vice versa, separately. 
 We also combine information from both models to cluster by summing their dissimilarity matrices.
 The number of clusters $k$ was chosen via the method described in Section~\ref{subsubsec:choose_k}, using the elbow plot of the TWGSS. 
 For all three clustering solutions, clear elbows were observed at $k = 3$, so this was the number of clusters chosen \todo{Include plots? Appendix?}.
@@ -1204,7 +1205,7 @@ The clustering solutions for the 88th dependence quantile for each of our three 
 Clustering appears to be quite similar across dissimilarity matrices, and the three clusters appear to be quite spatially distinct. 
 This is interesting given no spatial information was used in the clustering, and suggests that the CE model parameters are indeed capturing some spatial structure in the data.
 Interpreting the clusters, there appears to be a clear difference in between the east and west coasts, bordering the Atlantic Ocean and Irish Sea respectively, which are meaningfully separated by a central cluster. \todo{Could be written a lot better!}
-The clustering for wind speed conditional on rain is somewhat less distinct and stable, with the central and eastern clusters having more members in Mayo and Donegal along the west coast.
+The clustering for wind speed conditional on precipitation is somewhat less distinct and stable, with the central and eastern clusters having more members in Mayo and Donegal along the west coast.
 The behaviour of wind speed extremes may be more complex than that of rainfall extremes. \todo{Can definitely do a better job here! See Vignotto for a better write up!}
 This may also be due to our wind speeds coming from the ERA5 reanalysis dataset, which performs smoothing over a grid and so may underestimate wind speed extremes, and fail to capture more granular local variability.
 
@@ -1212,7 +1213,7 @@ This may also be due to our wind speeds coming from the ERA5 reanalysis dataset,
 \begin{figure}[H]
     \centering
     \includegraphics[width = 0.9\linewidth]{plots/cluster_dqu_sep.pdf}
-    \caption{\emph{Clustering solutions for the conditional extremes model parameters estimated at the 88th dependence quantile across all 59 sites, using the $\JSGa{}$ dissimilarity matrix for wind speed conditional on rain (centre), rain conditional on wind speed (right), and the combined dissimilarity matrix (left). The clusters are shown in different colours.}}
+    \caption{\emph{Clustering solutions for the conditional extremes model parameters estimated at the 88th dependence quantile across all 59 sites, using the $\JSGa{}$ dissimilarity matrix for wind speed conditional on precipitation (centre), precipitation conditional on wind speed (right), and the combined dissimilarity matrix (left). The clusters are shown in different colours.}}
    ~\label{fig:clust_sol}
 \end{figure}
 
@@ -1247,8 +1248,8 @@ We also see that Kilcar in county Donegal, which had a low $\chi$ value relative
 \begin{figure}[H]
     \centering
     \includegraphics[width = 0.9\linewidth]{plots/cluster_dqu.png}
-    % \caption{\emph{ Clustering solutions for the conditional extremes model parameters estimated at the 88th dependence quantile across all 59 sites, using the $\JSGa{}$ dissimilarity matrix for rain conditional on wind speed (centre), wind speed conditional on rain (right), and the combined dissimilarity matrix (left). The clusters are shown in different colours.}}
-    \caption{\emph{Clustering solutions for the conditional extremes model parameters estimated at the 85th, 88th and 90th dependence quantiles across all 59 sites, using the combined $\JSGa{}$ dissimilarity matrix for rain conditional on wind speed and wind speed conditional on rain. The clusters are shown in different colours.}}
+    % \caption{\emph{ Clustering solutions for the conditional extremes model parameters estimated at the 88th dependence quantile across all 59 sites, using the $\JSGa{}$ dissimilarity matrix for precipitation conditional on wind speed (centre), wind speed conditional on precipitation (right), and the combined dissimilarity matrix (left). The clusters are shown in different colours.}}
+    \caption{\emph{Clustering solutions for the conditional extremes model parameters estimated at the 85th, 88th and 90th dependence quantiles across all 59 sites, using the combined $\JSGa{}$ dissimilarity matrix for precipitation conditional on wind speed and wind speed conditional on precipitation. The clusters are shown in different colours.}}
     ~\label{fig:clust_sens}
 \end{figure}
 
@@ -1272,11 +1273,11 @@ Specifically, across each cluster, we take the weekly sum of precipitation and w
 We then refit the CE model to these cluster centroids, again at the 88th dependence quantile, although results for other quantile levels are similar. 
 Goodness-of-fit plots, exploring the assumption of independence between the residuals and variable conditioned on, were much improved post-clustering. \todo{Include? Appendix?}
 The estimated CE parameters for each cluster are shown in figure \ref{fig:ce_post_clust}.
-% For rain conditional on wind speed, $\alpha^{(\CE{})}$ gets progressively larger as we move from the eastern to western clusters, indicating that the dependence structure is stronger in the west, as expected.
-% For rain conditional on wind speed, $\alpha^{(\CE{})}$ gets progressively larger as we move from the eastern to western clusters, indicating that the dependence structure is stronger in the west, as expected.
-For rain conditional on wind speed, $\alpha$ gets progressively larger as we move from the eastern to western clusters, indicating that the dependence structure is stronger in the west, as expected.
-% Interestingly, the opposite is true for wind speed conditional on rain, whereby $\alpha^{(\CE{})}$ gets larger moving from west to east. \todo{Insert a good interpretation here!}
-Interestingly, the opposite is true for wind speed conditional on rain, whereby $\alpha$ gets larger moving from west to east. \todo{Insert a good interpretation here!}
+% For precipitation conditional on wind speed, $\alpha^{(\CE{})}$ gets progressively larger as we move from the eastern to western clusters, indicating that the dependence structure is stronger in the west, as expected.
+% For precipitation conditional on wind speed, $\alpha^{(\CE{})}$ gets progressively larger as we move from the eastern to western clusters, indicating that the dependence structure is stronger in the west, as expected.
+For precipitation conditional on wind speed, $\alpha$ gets progressively larger as we move from the eastern to western clusters, indicating that the dependence structure is stronger in the west, as expected.
+% Interestingly, the opposite is true for wind speed conditional on precipitation, whereby $\alpha^{(\CE{})}$ gets larger moving from west to east. \todo{Insert a good interpretation here!}
+Interestingly, the opposite is true for wind speed conditional on precipitation, whereby $\alpha$ gets larger moving from west to east. \todo{Insert a good interpretation here!}
 % For both models, $\beta^{(\CE{})}$ is much larger for the coastal clusters than the central cluster.
 For both models, $\beta$ is much larger for the coastal clusters than the central cluster.
 This suggests that the ``spread'' of the conditional distribution is larger for the coastal clusters, and greater homoskedasticity is present in the central cluster.
@@ -1287,8 +1288,8 @@ Interpreting these results is much easier post-clustering. \todo{More detail her
 \begin{figure}[H]
     \centering
     \includegraphics[width = 0.9\linewidth]{plots/ab_map_post_clust.png}
-    % \caption{\emph{Estimated conditional extremes model parameters $\alpha^{(\CE{})}$ and $\beta{(\CE{})}$ for rain conditional on wind speed (left) and wind speed conditional on rain (right), estimated at the 88th dependence quantile, post-clustering. The $\alpha^{(\CE{})}$ parameter is shown in the top row, and $\beta^{(\CE{})}$ in the bottom row. The colour scale is the same for both variables, with darker red indicating larger positive values of $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$, and darker blue indicating larger negative values.}}
-    \caption{\emph{Estimated conditional extremes model parameters $\alpha$ and $\beta{(\CE{})}$ for rain conditional on wind speed (left) and wind speed conditional on rain (right), estimated at the 88th dependence quantile, post-clustering. The $\alpha$ parameter is shown in the top row, and $\beta$ in the bottom row. The colour scale is the same for both variables, with darker red indicating larger positive values of $\alpha$ and $\beta$, and darker blue indicating larger negative values.}}
+    % \caption{\emph{Estimated conditional extremes model parameters $\alpha^{(\CE{})}$ and $\beta{(\CE{})}$ for precipitation conditional on wind speed (left) and wind speed conditional on precipitation (right), estimated at the 88th dependence quantile, post-clustering. The $\alpha^{(\CE{})}$ parameter is shown in the top row, and $\beta^{(\CE{})}$ in the bottom row. The colour scale is the same for both variables, with darker red indicating larger positive values of $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$, and darker blue indicating larger negative values.}}
+    \caption{\emph{Estimated conditional extremes model parameters $\alpha$ and $\beta{(\CE{})}$ for precipitation conditional on wind speed (left) and wind speed conditional on precipitation (right), estimated at the 88th dependence quantile, post-clustering. The $\alpha$ parameter is shown in the top row, and $\beta$ in the bottom row. The colour scale is the same for both variables, with darker red indicating larger positive values of $\alpha$ and $\beta$, and darker blue indicating larger negative values.}}
    ~\label{fig:ce_post_clust}
 \end{figure}
 
@@ -1374,7 +1375,7 @@ We wanted to show that our clustering could produce sensible results using just 
 We believe we were successful in this, showing that with no spatial information our clustering solution did indeed indicate some spatial structure in the extremal dependence in our data.
 As future work, a more sophisticated marginal model could be considered, using the information we have gained from our exploratory clustering. 
 \todo{Also talk about not exploring other dependence quantiles to ascert robustness!}
-\todo{Could also mention that we could weight results more towards model cond. on rain since wind speed data is weird!}
+\todo{Could also mention that we could weight results more towards model cond. on precipitation since wind speed data is weird!}
 
 % Future Work: (Application, potential other uses)
 There is scope for further work in this area, particularly in the application of our method to other datasets.

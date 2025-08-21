@@ -8,6 +8,8 @@
 # - Bootstrapped starting values for alpha, beta ()
 # Also (i) clustering and (ii) refitting to see if bootstrap CIs improve!
 
+# TODO Split this file into multiple files/scripts, too much going on here!
+
 # TODO Could use bootstrapped estimates as start values?
 # TODO Can we also produce profile likelihood plots??
 
@@ -60,9 +62,11 @@ theme <- ggplot2::theme_bw() +
 
 #### Metadata ####
 
-# number of MC samples to take
-n_mc <- 1000
-# n_mc <- 200
+# parameters for MC estimation of JSGa
+n_mc <- 1000 # number of MC samples
+mc_method <- "laplace_trunc2" # truncate Laplace using empirical dist quant
+laplace_cap <- 0.99 # Take 99th quantile (for choice, see `002_emp_laplace_trunc.R)``
+
 
 #### Misc Functions ####
 
@@ -512,6 +516,7 @@ diag_plot <- \(resid_plots, quantile_plots, names_df = NULL) {
   })
 }
 
+# function for plotting alpha, beta estimates
 map_plot <- \(ab_df, data, n_breaks = 8, range = c(1, 6), elev_df = NULL) {
   ab_sf <- ab_df |>
     left_join(distinct(data, name, lon, lat)) |>
@@ -524,40 +529,52 @@ map_plot <- \(ab_df, data, n_breaks = 8, range = c(1, 6), elev_df = NULL) {
   # plot parameter values for each parameter and variable
   names <- c("a", "b")
   p_lst <- lapply(seq_along(names), \(i) {
+    # browser()
     p <- ggplot()
     # add elevation raster
     if (!is.null(elev_df)) {
       # plot bins if available, if not plot directly (less distinct colours)
       if ("elev_bin" %in% names(elev_df)) {
-        p + geom_tile(
-          data = elev_df,
-          aes(x = x, y = y, fill = elev_bin),
-          width = diff(range(elev_df$x)) / length(unique(elev_df$x)),
-          height = diff(range(elev_df$y)) / length(unique(elev_df$y))
-        ) +
-          scale_fill_viridis_d(
+        p <- p +
+          geom_tile(
+            data = elev_df,
+            aes(x = x, y = y, fill = elev_bin),
+            width = diff(range(elev_df$x)) / length(unique(elev_df$x)),
+            height = diff(range(elev_df$y)) / length(unique(elev_df$y)),
+            show.legend = FALSE
+          ) +
+          labs(x = "", y = "") +
+          # scale_fill_viridis_d(
+          #   name = "Elevation",
+          #   option = "D",
+          #   direction = 1
+          # )
+          scico::scale_fill_scico_d(
+            palette = "bilbao",
             name = "Elevation",
-            option = "D",
-            direction = 1
+            direction = -1
           )
       } else {
         p <- p +
           geom_tile(
             data = elev_df,
-            aes(x = x, y = y, fill = elevation)
+            aes(x = x, y = y, fill = elevation),
+            show.legend = FALSE
           ) +
+          labs(x = "", y = "") +
           scale_fill_viridis(
             name = "Elevation\n(m)",
             option = "D",
             limits = c(0, 1500)
           )
       }
-      p <- p + geom_sf(data = areas, fill = NA, colour = "white")
+      p <- p + geom_sf(data = areas, fill = NA, colour = "black")
     } else {
       p <- p + geom_sf(data = areas, fill = NA, colour = "black")
     }
     p +
       # geom_sf(data = areas, fill = NA, colour = "white") +
+      coord_sf(expand = FALSE) + # remove padding around plot
       ggnewscale::new_scale_fill() +
       geom_sf(
         data = ab_sf %>%
@@ -586,10 +603,16 @@ map_plot <- \(ab_df, data, n_breaks = 8, range = c(1, 6), elev_df = NULL) {
         ~vars,
         ncol = 2,
         labeller = as_labeller(c(
-          "a - rain"       = "alpha ~ ' - ' ~ 'Rain | Wind Speed'",
-          "a - wind_speed" = "alpha ~ ' - ' ~ 'Wind Speed | Rain'",
-          "b - rain"       = "beta ~ ' - ' ~ 'Rain | Wind Speed'",
-          "b - wind_speed" = "beta ~ ' - ' ~ 'Wind Speed | Rain'"
+          # "a - rain"       = "alpha ~ ' - ' ~ 'Rain | Wind Speed'",
+          # "a - wind_speed" = "alpha ~ ' - ' ~ 'Wind Speed | Rain'",
+          # "a - wind_speed" = "alpha ~ ' - ' ~ 'Wind Speed | Rain'",
+          # "b - rain"       = "beta ~ ' - ' ~ 'Rain | Wind Speed'",
+          # "b - wind_speed" = "beta ~ ' - ' ~ 'Wind Speed | Rain'"
+          "a - rain"       = "alpha ~ ' - ' ~ 'Precipitation | Wind Speed'",
+          "a - wind_speed" = "alpha ~ ' - ' ~ 'Wind Speed | Precipitation'",
+          "a - wind_speed" = "alpha ~ ' - ' ~ 'Wind Speed | Precipitation'",
+          "b - rain"       = "beta ~ ' - ' ~ 'Precipitation | Wind Speed'",
+          "b - wind_speed" = "beta ~ ' - ' ~ 'Wind Speed | Precipitation'"
         ), default = label_parsed)
       ) +
       theme
@@ -972,10 +995,10 @@ areas <- sf::read_sf("data/met_eireann/final/irl_shapefile.geojson")
 # elev_df <- get_elev_rast(
 #   areas,
 #   z = 9,
-#   bins = c(seq(0, 500, by = 100), Inf),
+#   bins = c(seq(0, 600, by = 100), Inf),
 #   labels = c(
 #     "0–100 m", "100–200 m",
-#     "200–300 m", "300–400 m", "400–500 m", "> 500 m"
+#     "200–300 m", "300–400 m", "400–500 m", "500-600 m", "> 600 m"
 #   )
 # )
 # readr::write_csv(
@@ -993,7 +1016,7 @@ if (!is.factor(elev_df$elev_bin)) {
     elev_df$elev_bin,
     levels = c(
       "0–100 m", "100–200 m",
-      "200–300 m", "300–400 m", "400–500 m", "> 500 m"
+      "200–300 m", "300–400 m", "400–500 m", "500-600 m", "> 600 m"
     )
   )
 }
@@ -1081,7 +1104,7 @@ data_plot <- data_week %>%
   st_to_sf()
 
 # elevation plot (can superimpose others on top)
-# TODO Place legend on plot in bottom right corner!!
+# TODO What to do with longitude/latitude?
 p_terrain <- ggplot() +
   geom_tile(
     data = elev_df,
@@ -1111,7 +1134,13 @@ p_terrain <- ggplot() +
   # ) +
   ggnewscale::new_scale_fill() +
   geom_sf(data = areas, colour = "black", fill = NA) +
+  # remove padding around plot
+  coord_sf(expand = FALSE) +
+  scale_x_continuous(expand = c(0, 0)) +
+  scale_y_continuous(expand = c(0, 0)) +
   NULL
+
+ggsave(filename = "test.png", p_terrain)
 
 # plot the location of each site
 p1 <- p_terrain +
@@ -1141,6 +1170,7 @@ p1 <- p_terrain +
   # scale_size_manual(values = c(4.5, 4.5)) +
   scale_size_manual(values = c(5, 5)) +
   labs(colour = "", size = "") +
+  coord_sf(expand = FALSE) + # remove padding around plot
   # theme +
   evc_theme(legend.position = NULL, nejm_pal = FALSE) +
   # remove axis text
@@ -1272,7 +1302,7 @@ chi_spec <- data_week %>%
     title = paste0("Tail Dependence, ", loc),
     theme = theme
   ))
-saveRDS(chi_plot_spec, file = "temp.RDS")
+# saveRDS(chi_plot_spec, file = "temp.RDS")
 ggsave("latex/plots/chi_plot_spec.png", chi_plot_spec, width = 6, height = 6, units = "in")
 
 # for each location, pull out 95th quantile for chibar
@@ -1316,7 +1346,8 @@ chi_map_plot <- \(
   chi_95_sf,
   var = c("chi", "chibar"),
   scales = seq(-0.1, 0.6, by = 0.1),
-  point_ranges = c(2, 6)
+  point_ranges = c(2, 6),
+  rm_axis = TRUE
 ) {
   # lab <- ifelse(var == "chi", expression(chi(u)), expression(bar(chi)(u)))
   lab <- ifelse(var == "chi", expression(chi(0.95)), expression(bar(chi)(0.95)))
@@ -1357,25 +1388,30 @@ chi_map_plot <- \(
     labs(fill = lab, size = lab) +
     guides(fill = guide_legend(), size = guide_legend(), pattern = "none") +
     theme +
-    theme(
-      legend.position = "right",
-      axis.text       = element_blank(),
-      axis.ticks      = element_blank(),
-      legend.key      = element_blank()
-    )
+    theme(legend.position = "right", legend.key = element_blank())
+
+  # remove axis text and ticks if required
+  if (rm_axis == TRUE) {
+    p <- p +
+      theme(
+        axis.text  = element_blank(),
+        axis.ticks = element_blank()
+      )
+  }
 
   return(p)
 }
 
 # plot chibar and chi
-chibar_p <- chi_map_plot(chi_95_sf, "chibar") +
+chibar_p <- chi_map_plot(chi_95_sf, "chibar", rm_axis = FALSE) +
   scale_fill_gradientn(
     colours = rev(heat.colors(7)),
     breaks = scales,
     labels = as.character(scales),
     guide = "legend"
   )
-chi_p <- chi_map_plot(chi_95_sf, "chi") +
+# chi_p <- chi_map_plot(chi_95_sf, "chi") +
+chi_p <- chi_map_plot(chi_95_sf, "chi", rm_axis = FALSE) +
   scale_fill_gradientn(
     colours = RColorBrewer::brewer.pal(name = "Blues", n = 7),
     breaks = scales,
@@ -1393,8 +1429,9 @@ ggsave("latex/plots/chi_map_ire.png", chi_p, width = 6, height = 6, units = "in"
 # Also combine chi plot with elevation plot
 # p_terrain_chi <- p_terrain + (chi_p + theme(legend.position = "bottom"))
 p_terrain_chi <- (p_terrain + theme(legend.position = "right")) + chi_p
-p_terrain_chi
+# p_terrain_chi
 
+ggsave("latex/plots/043_chi_elevation.png", p_terrain_chi, width = 8, height = 6)
 
 
 #### ECDF -> Laplace Transformation ####
@@ -1485,6 +1522,7 @@ ce_fit <- lapply(Y_lst, \(x) {
   )
 })
 saveRDS(ce_fit, "data/ce_fit.RDS")
+ce_fit <- readRDS(ce_fit, file = "data/ce_fit.RDS")
 
 # pull dependence parameters and residuals out separately
 dep_fit <- lapply(c("resid", "params"), \(x) {
@@ -1496,7 +1534,8 @@ names(dep_fit) <- c("residual", "dependence")
 dep_fit$transformed <- Y_lst
 dep_fit$original <- data_week
 dep_fit$arg_vals <- list("cond_prob" = dqu)
-saveRDS(dep_fit, "data/dep_fit.RDS")
+saveRDS(dep_fit, file = "data/dep_fit.RDS")
+dep_fit <- readRDS("data/dep_fit.RDS")
 
 # pull dependence paramaters into df
 ab_df <- dep_to_df(dep_fit$dependence)
@@ -1534,16 +1573,20 @@ dev.off()
 map_plots <- map_plot(
   ab_df,
   data_week,
-  n_breaks = 8 # ,
-  # elev_df = elev_df
+  n_breaks = 8,
+  elev_df = elev_df
 )
 
 # ggsave(filename = "test.png", map_plots[[1]] / map_plots[[2]], width = 12, height = 12)
+gc()
 saveRDS(map_plots, "latex/plots/map_plots.RDS")
-map_plots[[1]] / map_plots[[2]]
+map_plot_save <- map_plots[[1]] / map_plots[[2]]
+# saveRDS(map_plot_save, "test.RDS")
+# map_plot_save
+
 ggsave(
   filename = "latex/plots/ire_ce_new.png",
-  map_plots[[1]] / map_plots[[2]],
+  map_plot_save,
   width = 12, height = 12
 )
 
@@ -1762,9 +1805,12 @@ boot_df |>
 set.seed(123)
 clust_obj <- js_clust(
   dep_fit_final$dependence,
+  trans = dep_fit_final$transformed,
   scree_k = 1:max_k,
   n = n_mc,
-  mc_method = "uniform"
+  mc_method = mc_method,
+  laplace_cap = laplace_cap
+  # mc_method = "uniform"
 )
 dist_mat <- clust_obj$dist_mat
 
@@ -1950,16 +1996,23 @@ k <- 3
 pam_fit <- js_clust(dist_mat = dist_mat, k = k, n = n_mc)
 # plot on map
 # ggsave(filename = "test.png", plt_clust_map(pts, areas, pam_fit))
-# TODO Make dots in plot legend larger!! (or remove altogether?)
-plt_clust_map(pts, areas, pam_fit, plot_medoids = FALSE, elev_df = elev_df, rm_elev_leg = FALSE)
+# TODO
+plt_clust_map(
+  pts, areas, pam_fit,
+  plot_medoids = FALSE,
+  elev_df = elev_df,
+  rm_elev_leg = FALSE
+)
 
 # also look at k = 2, k = 4
+# most sites in Western cluster, but Kilcar is noticably an outlier
 plt_clust_map(pts, areas, js_clust(dist_mat = dist_mat, k = 2, n = n_mc))
+# Only Malahide in 4th cluster, interestingly!
 plt_clust_map(pts, areas, js_clust(dist_mat = dist_mat, k = 4, n = n_mc))
 plt_clust_map(pts, areas, js_clust(dist_mat = dist_mat, k = 5, n = n_mc))
 
 
-#### Fit and cluster for different DQU ####
+#### Sensitivity analysis to choice of DQU ####
 
 # sensible quantiles
 # quantiles <- c(0.85, 0.88, 0.9, 0.92, 0.95)
@@ -1989,7 +2042,16 @@ quant_fit <- \(q, ...) {
 
   # cluster for k = 3
   # pam_fit_spec <- js_clust(dep_fit_spec$dependence, k = 3, mqu = mqu, ...)
-  pam_fit_spec <- js_clust(dep_fit_spec$dependence, k = 3, n = n_mc, ...)
+  # pam_fit_spec <- js_clust(dep_fit_spec$dependence, k = 3, n = n_mc, ...)
+  pam_fit_spec <- js_clust(
+    dep_fit_spec$dependence,
+    trans = Y_lst,
+    k = 3,
+    n = n_mc,
+    mc_method = mc_method,
+    laplace_cap = laplace_cap,
+    ...
+  )
 
   # plot
   map_plot_spec <- plt_clust_map(
@@ -1998,7 +2060,8 @@ quant_fit <- \(q, ...) {
     # plot_medoids = TRUE,
     elev_df = elev_df
   ) +
-    ggtitle(paste0("DQU = ", q * 100, "%")) +
+    # ggtitle(paste0("DQU = ", q * 100, "%")) +
+    ggtitle(paste0(q * 100, "%")) +
     guides(colour = "none", fill = "none")
 
   return(list(
@@ -2010,16 +2073,34 @@ quant_fit <- \(q, ...) {
 }
 
 fit_quant <- lapply(quantiles, quant_fit)
-saveRDS(fit_quant, "fit_quant.RDS")
+saveRDS(fit_quant, file = "fit_quant.RDS")
 fit_quant <- readRDS("fit_quant.RDS")
 
-wrap_plots(lapply(fit_quant, `[[`, "map_plot")[1:3])
+# TODO Add elevation to these plots!!
+# p_sens <- wrap_plots(lapply(fit_quant, `[[`, "map_plot")[1:3])
+p_sens <- wrap_plots(lapply(seq_along(fit_quant), \(i) {
+  p_ret <- fit_quant[[i]]$map_plot
+  # remove latitude for all but first plot
+  if (i > 1) {
+    p_ret <- p_ret +
+      theme(axis.text.y = element_blank(), axis.ticks.y = element_blank())
+  }
+  return(p_ret)
+}))
+
 # seems to be pretty stable for 85-90!
 
 # save plot
 pdf("plots/tests/cluster_dqu.pdf", width = 8, height = 8)
 lapply(fit_quant, `[[`, "map_plot")
 dev.off()
+
+# save
+ggsave(
+  plot = p_sens,
+  filename = "latex/plots/cluster_dqu.png",
+  width = 12, height = 8
+)
 
 # also add medoids
 add_medoid <- \(fit_quant) {
@@ -2052,8 +2133,8 @@ fit_quant_sep <- lapply(vars, \(x) {
   print(paste0("Fitting for ", x))
   lapply(quantiles, quant_fit, spec_vars = x)
 })
-saveRDS(fit_quant_sep, "fit_quant_sep.RDS")
-plt_quant_sep <- readRDS("fit_quant_sep.RDS")
+saveRDS(fit_quant_sep, file = "fit_quant_sep.RDS")
+fit_quant_sep <- readRDS("fit_quant_sep.RDS")
 
 # combined for rain and wind speed seperately
 (p_rain <- wrap_plots(lapply(fit_quant_sep[[1]], `[[`, "map_plot")[1:3]) +
@@ -2071,10 +2152,12 @@ print_quant_plt <- \(fit_quant, fit_quant_sep, quantiles) {
       fit_quant[[x]]$map_plot +
         ggtitle("Both"),
       fit_quant_sep[[1]][[x]]$map_plot +
-        ggtitle("Rain | Wind Speed") +
+        # ggtitle("Rain | Wind Speed") +
+        ggtitle("Precipitation | Wind Speed") +
         theme(axis.text.y = element_blank(), axis.ticks.y = element_blank()),
       fit_quant_sep[[2]][[x]]$map_plot +
-        ggtitle("Wind Speed | Rain") +
+        # ggtitle("Wind Speed | Rain") +
+        ggtitle("Wind Speed | Precipitation") +
         theme(axis.text.y = element_blank(), axis.ticks.y = element_blank())
     )) +
       patchwork::plot_annotation(
@@ -2100,25 +2183,27 @@ print_quant_plt(
 dev.off()
 
 # combine all three for DQU = 0.85, our chosen DQU
-# x <- which(quantiles == dqu)
-x <- which(quantiles == 0.85)
+x <- which(quantiles == dqu)
 p <- wrap_plots(list(
   fit_quant[[x]]$map_plot +
     ggtitle("Both"),
   fit_quant_sep[[1]][[x]]$map_plot +
-    ggtitle("Rain | Wind Speed") +
+    # ggtitle("Wind Speed | Rain") +
+    ggtitle("Wind Speed | Precipitation") +
     theme(axis.text.y = element_blank(), axis.ticks.y = element_blank()),
   fit_quant_sep[[2]][[x]]$map_plot +
-    ggtitle("Wind Speed | Rain") +
+    # ggtitle("Rain | Wind Speed") +
+    ggtitle("Precipitation | Wind Speed") +
     theme(axis.text.y = element_blank(), axis.ticks.y = element_blank())
 )) +
   # patchwork::plot_annotation("DQU = 85%", theme = evc::evc_theme()) +
   NULL
 
+# TODO Improve plot!
 ggsave(
   # filename = "latex/plots/cluster_dqu_sep.png",
-  filename = "plots/tests/cluster_dqu_sep_new.png",
-  # filename = "latex/plots/cluster_dqu_sep_new.png",
+  # filename = "plots/tests/cluster_dqu_sep_new.png",
+  filename = "latex/plots/cluster_dqu_sep_new.png",
   p,
   width = 12,
   height = 8
@@ -2176,7 +2261,7 @@ plt_clust_map(pts, areas, js_clust(dist_mat = dist_mat_adj, k = 2, n = n_mc))
 plt_clust_map(pts, areas, js_clust(dist_mat = dist_mat_adj, k = 4, n = n_mc))
 
 
-#### Refit and bootstrap uncertainty ####
+#### Refit CE, plot and bootstrap uncertainty ####
 
 # TODO Decide how best to "combine" information across cluster;
 # should days be added together (i.e. sum of rain & max wind), or
@@ -2289,12 +2374,16 @@ ab_df_clust <- dep_to_df(dep_fit_clust$dependence)
 map_plots_clust <- map_plot(
   ab_df_clust,
   data_week_clust,
-  n_breaks = 4,
-  range = c(5, 10)
+  n_breaks = 6,
+  # range = c(5, 10),
+  range = c(4, 10),
+  elev_df = elev_df
 )
 
 ggsave(
-  map_plots_clust[[1]] / map_plots_clust[[2]],
+  # map_plots_clust[[1]] / map_plots_clust[[2]],
+  (map_plots_clust[[1]] + guides(fill = "none", size = "none")) /
+    map_plots_clust[[2]],
   filename = "latex/plots/ab_map_post_clust_new.png",
   width = 12, height = 12
 )
@@ -2471,7 +2560,7 @@ boot_comp_plots <- plot_df |>
         linetype = "dashed"
       ) +
       facet_wrap(~clust) +
-      coord_flip(clip = "off", expand = TRUE) +
+      coord_flip(clip = "off", expand = TRUE) + # TODO Do I want to expand??
       theme +
       theme(
         axis.title.x = element_blank(),

@@ -340,6 +340,7 @@ p2 <- results_grid_join %>%
   )
 common_plot_items(p2)
 
+# TODO Save manually to avoid clipping
 ggsave(
   plot = common_plot_items(p2),
   # paste0("plots/01c_sensitivity_dqu_", kl_prob, ".png"),

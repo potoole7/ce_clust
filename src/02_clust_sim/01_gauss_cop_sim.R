@@ -627,7 +627,7 @@ results_grid <- mclapply(seq_len(nrow(grid)), \(i) {
 
 # save
 file <- "data/sim_gauss_cop_grid.RDS"
-saveRDS(results_grid, file)
+# saveRDS(results_grid, file)
 
 # load previous results
 results_grid <- readRDS(file)
@@ -662,7 +662,7 @@ head(sort(table(clust_assign$clust), decreasing = TRUE))
   count(across(contains("cor_gauss")), fixed_b, n_clust) |>
   arrange(n_clust, fixed_b))
 
-# proportion of perfect clusterings
+# proportion of perfect clusterings (~0.804)
 clust_assign |>
   filter(clust %in% c(
     "1-1-1-1-1-1-2-2-2-2-2-2",
@@ -857,10 +857,6 @@ results_clust_boxplt <- lab_grid(results_clust) |>
   # group_split(fixed_b, n_clust, cond_prob)
   group_split(fixed_b, n_clust, grid)
 
-# TODO Latex font doesn't match elsewhere, so annoying!
-# Add vertical lines for true values, rather than x's (done)
-# TODO Functionalise!
-# TODO Add fill legend for Gauss correlation
 p_box_full <- lapply(seq_along(results_orig_boxplt), \(i) {
   results_orig_boxplt[[i]] |>
     mutate(ind = "Pre-clustering") |>
@@ -975,9 +971,11 @@ dev.off()
 # just save the one with most spaced out correlations (no fixed beta) for paper
 custom_breaks <- \(x) {
   if (min(x, na.rm = TRUE) < -1) {
-    seq(-2, 1, by = 1)
+    # seq(-2, 1, by = 1)
+    seq(-2, 1, by = 0.5)
   } else {
-    seq(-1, 1, by = 1)
+    # seq(-1, 1, by = 1)
+    seq(-1, 1, by = 0.5)
   }
 }
 custom_lims <- \(x) {
@@ -988,6 +986,7 @@ custom_lims <- \(x) {
   }
 }
 
+# TODO Save manually to avoid clipping!
 ggsave(
   "latex/plots/sim_01_gauss_cop.png",
   p_box_full[[8]] +

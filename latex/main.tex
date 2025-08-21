@@ -977,6 +977,7 @@ The method is shown to actually perform better in three dimensions than in two.
   % \item This comes with the caveat that in these simulations, the variables all have the same GPD margins, and so including three variables naturally increases the amount of data available to estimate the same dependence structure as in the bivariate case, and does not introduce additional noise which might be present in real multivariate applications.
 This comes with the caveat that in these simulations, the variables all have the same margins, and so including three variables naturally increases the amount of data available to estimate the same dependence structure as in the bivariate case, and does not introduce additional noise which might be present in real multivariate applications.
 
+\todo{Make slightly taller, y-axis labels are too squished}
 \begin{figure}[H]
     \centering
     % \includegraphics[width = 0.9\linewidth]{plots/sim_01c_js_sens_3_var_dqu_0.9.png}
@@ -986,7 +987,8 @@ This comes with the caveat that in these simulations, the variables all have the
 \end{figure}
 
 % Expand to up to 5 dimensions!
-To further illustrate how our method can be extended to higher dimensions and why this is useful, let us consider a specific example from our grid search, where we have $\rhou{t_1} = 0.4, \rhou{t_2} = 0.5$.
+To further illustrate how our method can be extended to higher dimensions and why this is useful, let us consider a specific example from our grid search, where we have $\rho_{\text{t}_1}, \rho_{\text{t}_2} = 0.5$.
+% $\rhou{t_1} = 0.4, \rhou{t_2} = 0.5$.
 This is a relatively difficult clustering scenario in both the bivariate and three-dimensional cases, as the difference in the t-copula correlation parameters between the two clusters is small.
 In Figure~\ref{fig:02b_5d}, we show the results of our clustering algorithm when the dimensions of the mixture of copula is progressively increased from two to five, for 500 simulations at each $\rhou{Gauss}$ value. 
 We clearly see that the ARI increases as the number of dimensions increases, with the clustering solution improving as we include more variables.
@@ -994,7 +996,7 @@ At 5 dimensions, the ARI is close to 1 for all $\rhou{Gauss}$ values.
 Again, we must be cautious in interpreting these results, as in this example we merely increase the amount of data in our simulation and keep the dependence structure the same across each pair of variables, 
 However, we can still conclude that these results show that our method performs well for extremal clustering in higher dimensions, and motivates such a use. 
 
-\todo{Look into this, is this correct?? Shouldn't the clustering performance be much worse for 0.4 and 0.5?}
+% \todo{Look into this, is this correct?? Shouldn't the clustering performance be much worse for 0.4 and 0.5?}
 \begin{figure}[H]
     \centering
     % \includegraphics[width = 0.9\linewidth]{plots/sim_01c_js_sens_3_var_dqu_0.9.png}
@@ -1126,15 +1128,15 @@ Weeks with no precipitation are also ignored, leaving us with 5,022 weeks of dat
 
 \subsection{Exploratory analysis}~\label{subsec:app_explore}
 
-\todo{Remove/add in longitude/latitude?}
+% \todo{Remove/add in longitude/latitude?}
 \todo{Make plot larger before saving, blurry when cropped}
 \todo{move legends to bottom?}
-\todo{Change binning? heights above 610m are mountains, not 500m!}
-\todo{Bounding box for two maps different, set coordsf(expand = FALSE))}
+% \todo{Change binning? heights above 610m are mountains, not 500m!}
+% \todo{Bounding box for two maps different, set coordsf(expand = FALSE))}
 \begin{figure}[H]
     \centering
     % \includegraphics[width = 0.9\linewidth]{plots/041_chi_plots_man.png}
-    \includegraphics[width = 0.9\linewidth]{plots/043_chi_elevation_man.png}
+    \includegraphics[width = 0.9\linewidth]{plots/043_chi_elevation_man_crop.png}
     % \caption{\emph{$\chi$ and $\bar{\chi} $ statistics for each of the 59 locations in our Irish meteorological dataset, estimated at the 95th quantile. The $\bar{chi}$ statistic is shown on the left, and $\chi$ on the right. For both maps, darker colours indicate stronger asymptotic dependence.}}
     \caption{\emph{Left: elevation profile of Ireland, with elevation in metres above sea level binned into 100m intervals with the highest bin for elevations above 500m.
     Right: $\chi$ statistics between precipitation and wind speed at all 59 locations, estimated at the 95th quantile. Darker colours and larger points indicate stronger asymptotic dependence.}}

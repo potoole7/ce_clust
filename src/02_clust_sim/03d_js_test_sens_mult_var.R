@@ -334,6 +334,7 @@ p1 <- results_grid_plt |>
   NULL
 (p1 <- common_plot_items(p1))
 
+# TODO Save manually to avoid clipping
 ggsave(
   plot = p1,
   # paste0("plots/01e_js_sens_3_var_dqu_", cond_prob, ".png"),
@@ -443,6 +444,7 @@ grid_mult <- tidyr::crossing(
 n_times <- 200
 results_vec <- lri_vec <- lri_mean_vec <- vector(length = n_times)
 set.seed(seed_number)
+
 # i <- 11
 results_grid_mult <- bind_rows(mclapply(seq_len(nrow(grid_mult)), \(i) {
   print(paste0("Progress: ", round(i / nrow(grid_mult), 3) * 100, "%"))

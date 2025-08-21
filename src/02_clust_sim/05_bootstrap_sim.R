@@ -247,6 +247,7 @@ clust <- js_clust(
   n = n_mc, mc_method = mc_method, laplace_cap = laplace_cap,
   return_dist = TRUE
 )
+
 # check clustering perfect
 clust$adj_rand == 1
 
@@ -312,7 +313,8 @@ p_box <- p_dat |>
   labs(x = parse(text = "rho[t]"), y = "Conditional Expectation", fill = "") +
   evc::evc_theme() +
   ggsci::scale_fill_nejm() +
-  scale_x_discrete(expand = c(0.25, 0.25))
+  scale_x_discrete(expand = c(0.25, 0.25)) +
+  scale_y_continuous(expand = c(0, 0), breaks = seq(0, 3.5, by = 0.5), limits = c(0, 3.5))
 p_box
 
 saveRDS(p_box, "plots/sim_01e_bootstrap_box.rds")

@@ -342,8 +342,8 @@ While closely aligned with our application, this approach is limited to the biva
 Our main contribution to the literature is to perform clustering on the CE model, which has not previously been explored. 
 This enables parametric exploration of tail dependence structures in arbitrary dimensions, in contrast to the existing non-parametric approach of \citet{Vignotto2021} which is restricted to the bivariate case. 
 % The Gaussian working assumption in the CE model allows for a simple, closed form divergence measure upon which to base our clustering framework.
-Using the working assumption by \citet{Heffernan2004} for estimating the CE model, we define a simple, closed-form divergence measure upon which to based our clustering framework
-This parametric approach delivers a unified and statistically principled tool for exploratory analysis of multivariate extremes, facilitating the identification of spatial locations with homogeneous tail dependence characteristics.  
+Using the working assumption by \citet{Heffernan2004} for estimating the CE model, we define a simple, closed-form divergence measure upon which to base our clustering framework.
+Our parametric approach delivers a unified and statistically principled tool for exploratory analysis of multivariate extremes, facilitating the identification of spatial locations with homogeneous tail dependence characteristics.  
 
 % Structure of paper
 The remainder of this paper is structured as follows.
@@ -400,9 +400,12 @@ If $\chi = 0$, then $X_1$ and $X_2$ are said to be asymptotically independent wh
 % Under asymptotic independence, $\bar{\chi} = 0$, with $\bar{\chi}$ increasing in magnitude as the variables become more positively (for $\bar{\chi} > 0$) or negatively (for $\bar{\chi} < 0$) dependent in their extremes \citep{Vignotto2021}.
 
 % Together, $(\chi, \bar{\chi})$ provide a useful summary of extremal dependence for any pair of random variables.
-$\chi$ provides a useful summary of extremal dependence for any pair of random variables. 
-% However, they do not fully describe the dependence structure of a multivariate distribution, or allow for further inference.
-However, it does not fully describe the dependence structure of a multivariate distribution, or allow for further inference.
+
+% $\chi$ provides a useful summary of extremal dependence for any pair of random variables. 
+% % However, they do not fully describe the dependence structure of a multivariate distribution, or allow for further inference.
+% However, it does not fully describe the dependence structure of a multivariate distribution, or allow for further inference.
+While $\chi$ provides a useful summary of extremal dependence for any pair of random variables, it does not fully describe the dependence structure of a multivariate distribution, or allow for further inference.
+
 % For example, probabilities of jointly extreme events for two or more variables cannot be calculated from these coefficients.
 For example, $\chi$ cannot be used to calculate the joint exceedance probability of two or more variables.
 For this, we require a model for extremal dependence.
@@ -543,7 +546,7 @@ The levels of heteroskedasticity in the model is controlled by $\bm{\beta}_{\mid
 \begin{itemize}
   \item $\bm{\alpha}_{j \mid i} = 0, \bm{\beta}_{j \mid i} = 0$, for which we have perfect independence between $Y_j$ and large $Y_i$.
   % \item $\bm{\alpha}_{j \mid i} = 0, \bm{\beta}_{j \mid i} = 0$, for which we have perfect independence,
-  \item $\bm{\alpha}_{j \mid i} = -1(+1), \bm{\beta}_{j \mid i} = 0$, which corresponds to perfect positive/negative dependence,
+  \item $\bm{\alpha}_{j \mid i} = -1(+1), \bm{\beta}_{j \mid i} = 0$, which corresponds to perfect negative (positive) dependence,
   \item $-1 < \bm{\alpha}_{j \mid i} < 1$, which suggests asymptotic independence between $Y_j$ and large $Y_i$, with dependence weakening as $Y_i \to \infty$. 
 \end{itemize}
 

@@ -1133,14 +1133,17 @@ These findings confirm that clustering reduces parameter uncertainty while prese
 
 \section{Application to Irish meteorological data}~\label{sec:application}
 
-\todo{Add image of distance matrices coloured by cluster}
-\todo{Add something on robustness to choice of DQU? Have plots for this!}
+% \todo{Add image of distance matrices coloured by cluster}
+% \todo{Add something on robustness to choice of DQU? Have plots for this!}
 
 % Section Intro
 \todo{Where to put first plot? And which plot to have as first?}
-This section introduces and explores a real-world application for our clustering method, using meteorological data from the Republic of Ireland.
-In Section~\ref{subsec:app_data}, we describe the data we have collected, and in Section~\ref{subsec:app_explore} we perform some exploratory analysis of the data, using the $\chi$ statistic to assess the asymptotic dependence between precipitation and wind speed across the country. 
-In Sections \ref{subsec:app_ce} and \ref{subsec:app_clust}, we fit the CE model to the data, and apply our clustering method to the estimated parameters, respectively, to determine the spatial dependence structure of the data.
+We now demonstrate our clustering method on a real-world dataset of meteorological observations from the Republic of Ireland. 
+% In Section~\ref{subsec:app_data}, we describe the data we have collected, and in Section~\ref{subsec:app_explore} we perform some exploratory analysis of the data, using the $\chi$ statistic to assess the asymptotic dependence between precipitation and wind speed across the country. 
+In Section~\ref{subsec:app_data}, we describe the dataset of precipitation and wind speed measurements collected across the country. 
+Section~\ref{subsec:app_explore} presents exploratory analysis, using the $\chi$ statistic to assess the asymptotic dependence between the two variables. 
+% In Sections \ref{subsec:app_ce} and \ref{subsec:app_clust}, we fit the CE model to the data, and apply our clustering method to the estimated parameters, respectively, to determine the spatial dependence structure of the data.
+In Section~\ref{subsec:app_ce}, we fit the CE model to the data, and in Section~\ref{subsec:app_clust}, we apply our clustering approach to the estimated parameters to identify the spatial dependence structure. 
 
 \subsection{Ireland meteorological data}~\label{subsec:app_data}
 

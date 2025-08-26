@@ -892,37 +892,56 @@ We evaluate clustering accuracy using the adjusted Rand index (ARI), and in Sect
 \subsection{Gaussian copula}~\label{subsec:sim_gauss}
 
 % Single location
-Our Gaussian copula simulation design for a single ``location'', nomenclature chosen to match the spatial nature of our applications, is as follows:
-We generate multivariate data from a bivariate Gaussian copula, where we control the dependence structure through its correlation parameter, $\rhou{Gauss}$. 
-\citet{Keef2013} show that for a bivariate Gaussian copula, the asymptotic CE parameters are $\alpha = \text{sign}(\rhou{Gauss}) \rhou{Gauss}^2, \beta = 1/2$, indicating asymptotic independence.
+We first consider a simple simulation design based on the Gaussian copula.  
+% Our Gaussian copula simulation design for a single ``location'', nomenclature chosen to match the spatial nature of our applications, is as follows:
+% We generate multivariate data from a bivariate Gaussian copula, where we control the dependence structure through its correlation parameter, $\rhou{Gauss}$. 
+For a single ``location'', terminology chosen to reflect our spatial application, we generate bivariate data from a Gaussian copula with correlation parameter $\rho^{\text{Gauss}}$, which controls the dependence structure.  
+\citet{Keef2013} show that for a bivariate Gaussian copula, the asymptotic CE parameters are $\alpha = \text{sign}(\rho^{\text{Gauss}}) (\rho^{\text{Gauss}})^2$ and $\beta = 1/2$, implying asymptotic independence.  
 % \citet{Keef2013} show that for a bivariate Gaussian copula, the asymptotic CE parameters are $\alpha^{(\CE{})} = \rhou{Gauss}^2$ and $\beta^{(\CE{})} = 1/2$, corresponding to asymptotic independence.
 % \item We sample from this copula and transform to GPD margins with shape $\xi = -0.05$, scale $\sigma = 1$, to generate our data. \todo{mention why we chose these?}
 % \item Each variable in this multivariate dataset may represent, for example, a meteorological or air pollution variable at a given location.
 % \item We can then transform to Laplace margins and use the CE model to estimate the multivariate extremal dependence structure at this location.
-We sample from this copula and transform to Laplace margins and use the CE model to estimate the bivariate extremal dependence structure at this location.
+% We sample from this copula and transform to Laplace margins and use the CE model to estimate the bivariate extremal dependence structure at this location.
+We sample from this copula, transform to Laplace margins, and then fit the CE model to estimate the extremal dependence structure at the location.
 
 % Multiple locations
-We can easily extend this design by generating multiple locations with different $\rhou{Gauss}$ values.
-The knowledge of these parameters provides our ``known'' clustering solution.
-For example, we could generate data for four locations, the first cluster being two locations with $\rhou{Gauss} = 0.1$, and the second having $\rhou{Gauss} = 0.9$ for its two locations.
-We can use the CE model to estimate the bivariate extremal dependence structure at each location, and then apply the $\JSGa{}$ divergence to cluster these locations based on the similarity of the estimated CE parameters.
-These simulations can be repeated many times and we can evaluate the clustering solution using the ARI, and observe the bias and variance of our simulation estimates around their theoretical values.
+% We can easily extend this design by generating multiple locations with different $\rhou{Gauss}$ values.
+This design extends naturally to multiple locations by varying $\rho^{\text{Gauss}}$ across sites.  
+% The knowledge of these parameters provides our ``known'' clustering solution.
+The collection of correlation values defines the ``true'' clustering structure.  
+% For example, we could generate data for four locations, the first cluster being two locations with $\rhou{Gauss} = 0.1$, and the second having $\rhou{Gauss} = 0.9$ for its two locations.
+For example, we may generate data for four locations: two with $\rho^{\text{Gauss}} = 0.1$ and two with $\rho^{\text{Gauss}} = 0.9$, corresponding to two clusters.  
+% We can use the CE model to estimate the bivariate extremal dependence structure at each location, and then apply the $\JSGa{}$ divergence to cluster these locations based on the similarity of the estimated CE parameters.
+We then estimate the CE parameters at each site and apply the $\JSGa{}$ divergence to cluster locations based on the similarity of their extremal dependence structures.  
+% These simulations can be repeated many times and we can evaluate the clustering solution using the ARI, and observe the bias and variance of our simulation estimates around their theoretical values.
+Repeating this procedure many times allows us to assess clustering performance using the ARI and quantify the bias and variance of the finite-sample CE parameter estimates relative to their theoretical asymptotic values.
 
-% results
-To this end, we generated data for 12 locations each with 1000 observations of two variables using the above design.
-Three known clusters were designated by having $\rhou{Gauss}$ values of 0.1, 0.5, and 0.9 respectively for four locations each.
+% Results
+% To this end, we generated data for 12 locations each with 1000 observations of two variables using the above design.
+To this end, we generated data for 12 locations, each with 1000 observations of two variables, using the design described above.  
+% Three known clusters of four locations each were designated as having $\rhou{Gauss}$ values of 0.1, 0.5, and 0.9, respectively.
+Three known clusters of four locations each were assigned correlation values $\rho^{\text{Gauss}} = 0.1, 0.5,$ and $0.9$, respectively.  
 Conditional dependence quantiles of 0.9 and 0.99 were used to estimate the CE model parameters before and after clustering. 
-The number of clusters $k$ was ascertained using the method described in Section~\ref{subsubsec:choose_k}, and was found to be $k = 3$.
-Simulations were repeated 500 times, and the results are shown in Figure \ref{fig:00_gauss_cop}.
-The estimation of $k$ and the ARI for this simple, well-defined example were perfect across all simulations. \todo{double check this assertion!}
-Several interesting points can be made from the results.
-Pre-clustering, the CE model estimates have greater uncertainty, especially for $\beta$, where the bias is also larger.
-This is especially the case for the higher dependence quantile, where data is scarcer, although this also corresponds to less bias, with the true values often lying within the first and third quantiles of each boxplot, as we take our data from further into the tail, where convergence to the asymptotic values is better.
-Bias and variance are lower for higher $\rhou{Gauss}$, which appears to also be associated with better convergence to the theoretical asymptotic values.
-Post-clustering, the same patterns emerge, but the variability in the estimates is reduced, especially in the problematic cases of estimating $\beta$ and for the higher conditional quantile level, as desired. \todo{Quote any specific values? Or are plots self-evident?}
+% The number of clusters $k$ was ascertained using the method described in Section~\ref{subsubsec:choose_k}, and was found to be $k = 3$.
+The number of clusters $k$ was selected using the method in Section~\ref{subsubsec:choose_k}, yielding $k = 3$.  
+Simulations were repeated 500 times, and the results are shown in Figure~\ref{fig:00_gauss_cop}.  
 
-\todo{Stop alpha and beta facet labels from clipping}
-\todo{Talk about misclassification rate/ARI for these? (80.4\% correct)}
+% The estimation of $k$ through the elbow method and the ARI for this simple, well-defined example were perfect across all simulations.
+The elbow method consistently recovered the correct number of clusters, and the ARI was perfect across all simulations.  
+% Several interesting points can be made from the results.
+% Pre-clustering, the CE model estimates have greater uncertainty, especially for $\beta$, where the bias is also larger.
+Pre-clustering, CE parameter estimates exhibit considerable uncertainty, particularly for $\beta$, where bias is also more pronounced. \todo{beta hat?}
+% This is especially the case for the higher dependence quantile, where data is scarcer, although this also corresponds to less bias, with the true values lying within the first and third quantiles of each boxplot for almost all scenarios, as we take our data from further into the tail, where convergence to the asymptotic values is better.
+This effect is strongest at the higher conditional quantile (0.99), where data are scarcer.  
+However, estimates at this level display less bias overall, with true values typically lying between the first and third quartiles of the boxplots, reflecting improved convergence to the asymptotic parameters further into the tail.  
+% Bias and variance are lower for higher $\rhou{Gauss}$, which appears to also be associated with better convergence to these theoretical asymptotic values.
+Bias and variance both decrease with increasing $\rhou{Gauss}$, suggesting faster convergence under stronger dependence.  
+
+% % Post-clustering, the same patterns emerge, but the variability in the estimates is reduced, especially in the problematic cases of estimating $\beta$ and for the higher conditional quantile level, as desired. \todo{Quote any specific values? Or are plots self-evident?}
+% After pooling data within clusters, the variability in the estimates is reduced, especially in the problematic cases of estimating $\beta$ and for the higher conditional quantile level, as desired. \todo{Quote any specific values? Or are plots self-evident?}
+After pooling data within clusters, variability in the estimates is substantially reduced, most notably for $\beta$ and for the 0.99 quantile level.  
+The same qualitative patterns remain, but with improved precision, as desired.  
+
 \begin{figure}[H]
     \centering
     % \includegraphics[width = 0.9\linewidth]{plots/sim_01_gauss_cop.png}

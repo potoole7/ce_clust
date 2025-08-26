@@ -1006,18 +1006,17 @@ Similarly, both performed better when the Gaussian and t-copula correlations wer
 
 \subsubsection{Extension to $>2$ dimensions}~\label{subsubsec:sim_extension}
 
-% \begin{itemize}
-%     \item Also shown to work well for three dimensions ...
-% \end{itemize}
+While the method of \citet{Vignotto2021} is restricted to two dimensions, our approach can be extended to three dimensions and beyond. 
+% To illustrate this, we can repeat the simulation study and grid search of Section~\ref{subsubsec:sim_competing_methods}, but now for three variables, the results of which are shown in Figure \ref{fig:02_3d}.
+To illustrate this, we repeated the simulation study and grid search of Section~\ref{subsubsec:sim_competing_methods} for three variables, with results shown in Figure~\ref{fig:02_3d}. 
+% The proposed method is shown to work well for three dimensions, and the same patterns in the ARI emerge as in the bivariate case.
+The proposed method performs well in three dimensions, and the same patterns in ARI emerge as in the bivariate case. 
+% The method is shown to actually perform better in three dimensions than in two.
+In fact, performance is even stronger in three dimensions than in two. 
+% This comes with the caveat that in these simulations, the variables all have the same margins, and so including three variables naturally increases the amount of data available to estimate the same dependence structure as in the bivariate case, and does not introduce additional noise which might be present in real multivariate applications.
+This improvement comes with the caveat that, in these simulations, all variables have the same margins. 
+Thus, including three variables naturally increases the amount of data available to estimate the same dependence structure as in the bivariate case, without introducing the additional noise that might arise in real multivariate applications. 
 
-While the method in \cite{Vignotto2021} is restricted to two dimensions, our method can be extended to three dimensions and beyond.
-To illustrate this, we can repeat the simulation study and grid search of Section~\ref{subsubsec:sim_competing_methods}, but now for three variables, the results of which are shown in Figure \ref{fig:02_3d}.
-The proposed method is shown to work well for three dimensions, and the same patterns in the ARI emerge as in the bivariate case.
-The method is shown to actually perform better in three dimensions than in two.
-  % \item This comes with the caveat that in these simulations, the variables all have the same GPD margins, and so including three variables naturally increases the amount of data available to estimate the same dependence structure as in the bivariate case, and does not introduce additional noise which might be present in real multivariate applications.
-This comes with the caveat that in these simulations, the variables all have the same margins, and so including three variables naturally increases the amount of data available to estimate the same dependence structure as in the bivariate case, and does not introduce additional noise which might be present in real multivariate applications.
-
-\todo{Make slightly taller, y-axis labels are too squished}
 \begin{figure}[H]
     \centering
     % \includegraphics[width = 0.9\linewidth]{plots/sim_01c_js_sens_3_var_dqu_0.9.png}
@@ -1027,14 +1026,19 @@ This comes with the caveat that in these simulations, the variables all have the
 \end{figure}
 
 % Expand to up to 5 dimensions!
-To further illustrate how our method can be extended to higher dimensions and why this is useful, let us consider a specific example from our grid search, where we have $\rho_{\text{t}_1}, \rho_{\text{t}_2} = 0.5$.
-% $\rhou{t_1} = 0.4, \rhou{t_2} = 0.5$.
-This is a relatively difficult clustering scenario in both the bivariate and three-dimensional cases, as the difference in the t-copula correlation parameters between the two clusters is small.
-In Figure~\ref{fig:02b_5d}, we show the results of our clustering algorithm when the dimensions of the mixture of copula is progressively increased from two to five, for 500 simulations at each $\rhou{Gauss}$ value. 
-We clearly see that the ARI increases as the number of dimensions increases, with the clustering solution improving as we include more variables.
-At 5 dimensions, the ARI is close to 1 for all $\rhou{Gauss}$ values. 
-Again, we must be cautious in interpreting these results, as in this example we merely increase the amount of data in our simulation and keep the dependence structure the same across each pair of variables, 
-However, we can still conclude that these results show that our method performs well for extremal clustering in higher dimensions, and motivates such a use. 
+% To further illustrate how our method can be extended to higher dimensions and why this is useful, let us consider a specific example from our grid search, where we have $\rho_{\text{t}_1}, \rho_{\text{t}_2} = 0.5$.
+To further illustrate the extension of our method to higher dimensions, we consider a specific case from the grid search where $\rho_{\text{t}_1} = 0.4, \rho_{\text{t}_2} = 0.5$. 
+% This is a relatively difficult clustering scenario in both the bivariate and three-dimensional cases, as the difference in the t-copula correlation parameters between the two clusters is small.
+This setting presents a challenging clustering scenario in both two and three dimensions, as the difference in the t-copula correlation parameters between clusters is small. 
+% In Figure~\ref{fig:02b_5d}, we show the results of our clustering algorithm when the dimensions of the mixture of copula is progressively increased from two to five, for 500 simulations at each $\rhou{Gauss}$ value. 
+Figure~\ref{fig:02b_5d} displays the results when the dimensionality of the copula mixture is increased from two to five, based on 500 simulations at each $\rhou{Gauss}$ value. 
+% We clearly see that the ARI increases as the number of dimensions increases, with the clustering solution improving as we include more variables.
+% At 5 dimensions, the ARI is close to 1 for all $\rhou{Gauss}$ values. 
+Clustering accuracy, measured by the ARI, improves steadily with dimension, reaching values close to 1 across all $\rhou{Gauss}$ settings at five dimensions. 
+% Again, we must be cautious in interpreting these results, as in this example we merely increase the amount of data in our simulation and keep the dependence structure the same across each pair of variables, 
+These gains should be interpreted cautiously, since the simulations increase the amount of data without altering the dependence structure across variable pairs. 
+% However, we can still conclude that these results show that our method performs well for extremal clustering in higher dimensions, and motivates such a use. 
+Nevertheless, the results demonstrate that the proposed method scales effectively to higher dimensions and performs well for extremal clustering in multivariate settings. 
 
 % \todo{Look into this, is this correct?? Shouldn't the clustering performance be much worse for 0.4 and 0.5?}
 \begin{figure}[H]
@@ -1049,16 +1053,24 @@ However, we can still conclude that these results show that our method performs 
 \subsubsection{More realistic example}~\label{subsubsec:sim_realistic}
 
 % We also design a more realistic example to somewhat mimic the structure of the Irish dataset introduced in Section~\ref{sec:ire}.
-We also design a more realistic example to somewhat mimic the structure of the Irish dataset in our application in Section~\ref{sec:application}.
-We generated data from 60 locations, each with 1000 observations of two variables, using a mixture of Gaussian and t-copulas with Laplace margins.
-The 60 locations had three known clusters, with 10, 20, and 30 locations in each cluster, respectively.
-A constant $\rhou{Gauss}$ of 0.5 was used for all locations and simulations, to reduce the dimensionality of the grid search.
-A slight perturbation via a uniform sample between $-0.05$ and $0.05$ was added to the correlation parameters of the t-copula for each location, to make the clustering solution more challenging.
-Again, clustering was done on the CE model parameters using the $\JSGa{}$ divergence, and the ARI for a grid search over different $\rhou{t}$ values is shown in Figure~\ref{fig:03_realistic}.
-The algorithm is again shown to perform well, particularly where the difference in the t-copula correlation parameters between the clusters is largest, as expected.
-The variability in ARI across simulations is also quite low, indicating that the clustering solution is robust.
+% We also design a more realistic example to somewhat mimic the structure of the Irish dataset in our application in Section~\ref{sec:application}.
+To mimic the structure of the Irish dataset introduced in Section~\ref{sec:application}, we designed a more realistic simulation study. 
+% We generated data from 60 locations, each with 1000 observations of two variables, using a mixture of Gaussian and t-copulas with Laplace margins.
+Data were generated from 60 locations, each with 1000 observations of two variables, using a mixture of Gaussian and t-copulas with Laplace margins. 
+% The 60 locations had three known clusters, with 10, 20, and 30 locations in each cluster, respectively.
+The 60 locations were partitioned into three unequally sized clusters of 10, 20, and 30 sites, respectively.
+% A constant $\rhou{Gauss}$ of 0.5 was used for all locations and simulations, to reduce the dimensionality of the grid search.
+To reduce the dimensionality of the grid search, a constant $\rhou{Gauss} = 0.5$ was used for all locations and simulations. 
+% A slight perturbation via a uniform sample between $-0.05$ and $0.05$ was added to the correlation parameters of the t-copula for each location, to make the clustering solution more challenging.
+For additional realism, the t-copula correlation parameters were perturbed for each location by a uniform random value between $-0.05$ and $0.05$, making the clustering task more challenging. 
+% Again, clustering was done on the CE model parameters using the $\JSGa{}$ divergence, and the ARI for a grid search over different $\rhou{t}$ values is shown in Figure~\ref{fig:03_realistic}.
+Clustering was performed on the CE model parameters using the $\JSGa{}$ divergence, and the ARI for a grid search over $\rhou{t}$ values is shown in Figure~\ref{fig:03_realistic}. 
+% The algorithm is again shown to perform well, particularly where the difference in the t-copula correlation parameters between the clusters is largest, as expected.
+The method performs well, particularly when the differences in t-copula correlation parameters between clusters are larger. 
+% The variability in ARI across simulations is also quite low, indicating that the clustering solution is robust.
+Moreover, variability in ARI across simulations is low, indicating that the clustering solution is robust. 
 
-\todo{Check facet and x-axis labels}
+% \todo{Have x-axis ticks match unique values in grid search}
 \begin{figure}[H]
     \centering
     % \includegraphics[width = 0.9\linewidth]{plots/sim_01d_js_sens_3_var_dqu_0.9.png}
@@ -1070,21 +1082,15 @@ The variability in ARI across simulations is also quite low, indicating that the
 
 \subsubsection{Parameter estimation pre- and post-clustering}~\label{subsubsec:boot}
 
-% \begin{itemize}
-%     \item Desire to ascertain whether dependence parameters are less uncertain after clustering. 
-%     \item Can bootstrap using scheme in \cite{Heffernan2004} to determine uncertainty in parameter estimates. 
-%     \item Post clustering, can see that uncertainty is vastly reduced for both $\alpha$ and $\beta$ parameters in this simulation study. 
-% \end{itemize}
-
 % Describe bootstrapping
 Finally, we recall that an important reason for spatial clustering is to reduce the uncertainty in parameter estimates while minimising the introduction of bias by grouping similar locations together.
 To this end, we desired to ascertain whether the estimates of our dependence parameters were less uncertain after clustering.
-We can use the bootstrapping scheme described in \cite{Heffernan2004} to determine the uncertainty in our parameter estimates. \todo{Do I need to describe this scheme and how it preserves the dependence structure of the data?}
+We can use the bootstrapping scheme described in \citet{Heffernan2004} to determine the uncertainty in our parameter estimates. \todo{Do I need to describe this scheme and how it preserves the dependence structure of the data?}
 % As we are estimating two parameters, $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$, for which we do not know the true values, it may be that although our uncertainty is diminished post-clustering, the estimates may still be biased, with the parameters unidentifiable.
 As we are estimating two parameters, $\alpha$ and $\beta$, for which we do not know the true values, it may be that although our uncertainty is diminished post-clustering, the estimates may still be biased, with the parameters unidentifiable.
 % There are also many possible combinations of $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$ that could give the same conditional estimates, and so the estimates may be biased in this sengse as well.
 There are also many possible combinations of $\alpha$ and $\beta$ that could give the same conditional estimates, and so the estimates may be biased in this sengse as well.
-To avoid this, we adopt the approach of \cite{Richards2021-qm} in calculating the conditional expectation of one variable given the other at the $98\%$ marginal quantile $u_i$ for the conditioning variable, given by
+To avoid this, we adopt the approach of \citet{Richards2021-qm} in calculating the conditional expectation of one variable given the other at the $98\%$ marginal quantile $u_i$ for the conditioning variable, given by
 \todo{Need to match better to previous notation? I.e. Y instead of X?}
   \begin{equation}~\label{eq:boot}
     % \mathbb{E}[X_1 | X_2 = u] = \hat{\alpha}^{(\CE{})} u + u^{\hat{\beta}}^{(\CE{})} \hat{\mu},

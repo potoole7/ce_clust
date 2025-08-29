@@ -176,14 +176,14 @@ Extreme Value Theory (EVT) provides asymptotically justified models for estimati
 % This situation can arise in a variety of contexts, and is particularly popular in environmental applications.
 % EVT modelling can be used to assess the risk of extreme events, such as floods, droughts, heatwaves and storms, which can have significant impacts on society and the environment.
 % Environmental applications are one area where EVT methods are used frequently, because interest lies in estimating the severity of future extreme events. % , such as heatwaves or storms. 
-Environmental applications are one area where EVT methods are used frequently, because interest lies in estimating the severity of future extreme events, for risk management strategies and to assess the impacts of climate change. \todo{Keep reference to climate change?}
+Environmental applications are one area where EVT methods are used frequently, because interest lies in estimating the severity of future extreme events, to develop risk management strategies and to assess the impacts of climate change. \todo{Keep reference to climate change?}
 % For instance, heatwaves can lead to droughts and wild fires \citep{tanarhte2015heat, french2019quantifying, koh2023gradient}.
 % % Extreme rainfall contributes to storms and flooding, which can cause major damage and trigger large insurance claims \citep{Rohrbeck_flooding, osei2021estimation}.
 % Extreme rainfall and high wind speeds can cause major damage and large insurance claims, and thus it is important to understand their likelihood \citep{Rohrbeck_flooding, osei2021estimation, soukissian2015effect, steinkohl2013extreme}. 
 % % High wind speeds can lead to significantly damaging events such as tropical cyclones, and have also seen much focus in the field of EVT \citep{soukissian2015effect, steinkohl2013extreme}.
-Examples include the analysis of heatwaves \citep{tanarhte2015heat, french2019quantifying}, extreme rainfall \citep{osei2021estimation} and wind speed \citep{soukissian2015effect, steinkohl2013extreme}, as well as the modelling of wildfire risks \citep{Koh2024} and the impact of environmental extremes \citep{Rohrbeck_flooding, Miralles2024}. \todo{Move environmental extremes bit?}
+Examples include the analysis of heatwaves \citep{tanarhte2015heat, french2019quantifying}, extreme rainfall \citep{osei2021estimation} and wind speed \citep{soukissian2015effect, steinkohl2013extreme}, as well as the modelling of wildfire risks \citep{Koh2024} and the impact of environmental extremes on insurance claims \citep{Rohrbeck_flooding, Miralles2024}. 
 
-% Dependence modelling
+% Dependence modelling 
 % \todo{C: Shorten this paragraph}
 % \todo{C: de-emphasise environmental examples as focus is methods}
 % \todo{Remove reference to climate change (no temporal element)}
@@ -219,6 +219,9 @@ In environmental applications, extreme events rarely occur in isolation, and the
 Consequently, these joint risks are liable to be underestimated unless tail \emph{dependence} is explicitly modelled \citep{Zhang2024}. 
 Motivated by this, we develop a framework to characterise how the joint tail behaviour of the location-wise random vectors varies across space.
 
+\todo{Combine this with discussion of AD and AI}
+% Dependence modelling (+ AD/AI)
+
 % Conditional extremes
   % \item One such model is the CE model, which combines a univariate Generalised Pareto Distribution (GPD) and a semiparametric regression dependence model \cite{Heffernan2004}. \todo{Don't emphasise GPD, not used below}
 % One such dependence model is the Conditional Extremes model of \citep{Heffernan2004}.
@@ -233,7 +236,7 @@ It achieves this via a semiparametric heteroscedastic regression model condition
 % It is highly flexible in the type of extremal dependence it can model, and is considered to be conceptually simple relative to other models.
 % It reduces a difficult multivariate estimation problem to a univariate problem, by individually modelling each element of the random vector, which can then be combined to form a joint model, and so is computationally efficient.
 % Its conceptual simplicity, flexibility in capturing a wide range of tail dependence structures, and computational efficiency, reducing a multivariate problem to a series of univariate ones, have made it a popular choice.
-Its conceptual simplicity, flexibility in capturing a wide range of tail dependence structures, and computational efficiency have made it a popular choice. \todo{For what?}
+Its conceptual simplicity, flexibility in capturing a wide range of tail dependence structures, and computational efficiency have made it a popular choice for modelling multivariate extremes.
 % It involves a robust Gaussian working assumption which facilitates efficient inference, and allows for a closed form expression for the KL divergence, between two sites, allowing for a rather simple clustering framework to be derived, as we will see in Section~\ref{subsec:div} \citep{Kullback1951}.
 % However, as with many models for extremes, which suffer from the natural
 % rarity of extreme data, the CE model is susceptible to high uncertainty in its
@@ -244,6 +247,7 @@ Its conceptual simplicity, flexibility in capturing a wide range of tail depende
 However, like many other models for multivariate extremes, the CE model can be difficult to use for identifying patterns in tail dependence due to the sparsity of joint extreme observations, particularly in high dimensions.
 
 % Clustering: introduction + motivation
+\todo{Combine with next paragraph}
 \todo{Should I say something here or above about being interested in the spatial domain?}
 % \todo{C: Focus on learning spatial structure in tail dependence, reduction of unceratinty is only mentioned as potential benefit}
 % One method for improved parameter estimation is through clustering.
@@ -289,7 +293,7 @@ Another common strategy is to define a pairwise dissimilarity measure between si
 % In environmental extremes, \citet{Bernard2013} describes a clustering algorithm of weekly precipitation maxima across France.
 % Focusing on the spatial tail dependence structure of the data, this method uses the F-madogram, an extremal analogue of the classical variogram, as a distance measure.
 % Applications include finance, where clustering has been based on indices of extremal frequency and magnitude \citep{deCarvalho2023}, and environmental extremes, where the F-madogram has been used to group precipitation sites across France \citep{Bernard2013}. 
-Applications include finance, with clustering based on indices of extremal frequency and magnitude \citep{deCarvalho2023}, and environment, where the F-madogram was used to group precipitation sites across France \citep{Bernard2013}, and where generalised Pareto distributions (see, e.g. \citet{Coles2001}) fitted to extreme temperatures were compared using the Kolmogorov-Smirnov and $L_1-$Wasserstein distances to cluster autonomous regions in Spain \citep{Alonso2014-rr}. \todo{Need reference for F-madogram?}
+Applications include finance, with clustering based on indices of extremal frequency and magnitude \citep{deCarvalho2023}, and environment, where the F-madogram \citep{Cooley2006variograms} was used to group precipitation sites across France \citep{Bernard2013}, and where generalised Pareto distributions (see, e.g.\,~\citet{Coles2001}) fitted to extreme temperatures were compared using the Kolmogorov-Smirnov and $L_1-$Wasserstein distances to cluster autonomous regions in Spain \citep{Alonso2014-rr}. 
 % % \citet{Vignotto2021} proposes a k-mediods algorithm for clustering locations in Great Britain and Ireland for precipitation and wind speed data.
 % % \citet{Vignotto2021} proposes a k-medoids algorithm for clustering locations in Great Britain and Ireland based on the joint tail behaviour of gridded precipitation and wind speed data from ERA5 \citep{Hersbach2020}.
 % % Individually at each location, bivariate data are transformed to Pareto margins.

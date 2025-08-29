@@ -235,33 +235,43 @@ Tail dependence is commonly summarised by the coefficient of asymptotic dependen
 \]
 Hence, \(\chi>0\) indicate asymptotic dependence (AD) and \(\chi=0\) asymptotic independence (AI). 
 Although \(\chi\) is a useful pairwise summary, it does not fully characterise multivariate tail structure or support inference on joint exceedance probabilities, for which a full probabilistic model is required. 
+\todo{Make reference to Gaussian/max-stable process models?}
 Many classical models and clustering frameworks assume AD \citep{Vignotto2021,Boulin2025}, but a growing literature argues that environmental data often exhibit AI and that AD models can be inappropriate in such contexts \citep{Opitz2016,Dawkins2018,Huser2024}. 
 
-% Conditional extremes
-% \item One such model is the CE model, which combines a univariate Generalised Pareto Distribution (GPD) and a semiparametric regression dependence model \cite{Heffernan2004}. \todo{Don't emphasise GPD, not used below}
-% One such dependence model is the Conditional Extremes model of \citep{Heffernan2004}.
-% Herein, we employ the conditional extremes model by \citep{Heffernan2004} to analyse tail dependence. 
-% To model tail dependence, we employ the conditional extremes (CE) framework of \citet{Heffernan2004}.
-% Conditional extremes modelling \citep{Heffernan2004} provides a flexible framework that accommodates both AD and AI regimes, and therefore offers a natural basis for comparing tail behaviour across sites. 
-The conditional extremes model of \citet{Heffernan2004} provides a flexible framework that accommodates both AD and AI regimes, and therefore offers a natural basis for comparing tail behaviour across sites. 
-% The CE model has seen widespread use for analysing spatial extremes in environmental applications \citep{Keef2012_flooding, Winter2016, Tawn2018, Towe2019}.
-The CE model has seen widespread use for analysing spatial extremes in environmental applications, see e.g.\ \citet{Keef2012_flooding, Winter2016, Tawn2018, Towe2019}.
-% The CE model describes the tail behaviour of a random vector \emph{conditional} on a separate random variable exceeding a suitably high threshold.
-The CE model describes the tail behaviour of a random vector \emph{conditional} on one of its components exceeding a suitably high threshold.
-It achieves this via a semiparametric heteroscedastic regression model conditioned on threshold exceedances, which can be used to ascertain the joint tail dependence structure of the random vector.
-% The CE model provides many advantages over other competing methods. 
-% It is highly flexible in the type of extremal dependence it can model, and is considered to be conceptually simple relative to other models.
-% It reduces a difficult multivariate estimation problem to a univariate problem, by individually modelling each element of the random vector, which can then be combined to form a joint model, and so is computationally efficient.
-% Its conceptual simplicity, flexibility in capturing a wide range of tail dependence structures, and computational efficiency, reducing a multivariate problem to a series of univariate ones, have made it a popular choice.
-Its conceptual simplicity, flexibility in capturing a wide range of tail dependence structures, and computational efficiency have made it a popular choice for modelling multivariate extremes.
-% It involves a robust Gaussian working assumption which facilitates efficient inference, and allows for a closed form expression for the KL divergence, between two sites, allowing for a rather simple clustering framework to be derived, as we will see in Section~\ref{subsec:div} \citep{Kullback1951}.
-% However, as with many models for extremes, which suffer from the natural
-% rarity of extreme data, the CE model is susceptible to high uncertainty in its
-% parameter estimates. \todo{de-emphasise parameter estimation}
-% However, as with many models for extremes, which suffer from the natural rarity of extreme data, the CE model is susceptible to high uncertainty in its parameter estimates, often making interpretation of the structure of tail dependence difficult.
-% However, as with many models for extremes, which suffer from the natural rarity of extreme data, the CE model is susceptible to high uncertainty in its parameter estimates, often making it difficult to interpret and identify patterns in the tail dependence structure.
-\todo{Give examples of other models}
-However, like many other models for multivariate extremes, the CE model can be difficult to use for identifying patterns in tail dependence due to the sparsity of joint extreme observations, particularly in high dimensions.
+% % Conditional extremes
+% % \item One such model is the CE model, which combines a univariate Generalised Pareto Distribution (GPD) and a semiparametric regression dependence model \cite{Heffernan2004}. \todo{Don't emphasise GPD, not used below}
+% % One such dependence model is the Conditional Extremes model of \citep{Heffernan2004}.
+% % Herein, we employ the conditional extremes model by \citep{Heffernan2004} to analyse tail dependence. 
+% % To model tail dependence, we employ the conditional extremes (CE) framework of \citet{Heffernan2004}.
+% % Conditional extremes modelling \citep{Heffernan2004} provides a flexible framework that accommodates both AD and AI regimes, and therefore offers a natural basis for comparing tail behaviour across sites. 
+% The conditional extremes model of \citet{Heffernan2004} provides a flexible framework that accommodates both AD and AI regimes, and therefore offers a natural basis for comparing tail behaviour across sites. 
+% % It is highly flexible in the type of extremal dependence it can model, and is considered to be conceptually simple relative to other models.
+% % It reduces a difficult multivariate estimation problem to a univariate problem, by individually modelling each element of the random vector, which can then be combined to form a joint model, and so is computationally efficient.
+% % Its conceptual simplicity, flexibility in capturing a wide range of tail dependence structures, and computational efficiency, reducing a multivariate problem to a series of univariate ones, have made it a popular choice.
+% This flexibility, along with its conceptual simplicity and computational efficiency have made it a popular choice for modelling multivariate extremes.
+% % The CE model has seen widespread use for analysing spatial extremes in environmental applications \citep{Keef2012_flooding, Winter2016, Tawn2018, Towe2019}.
+% The CE model has seen widespread use for analysing spatial extremes in environmental applications \citet{Keef2012_flooding, Winter2016, Tawn2018, Towe2019}.
+% % The CE model describes the tail behaviour of a random vector \emph{conditional} on a separate random variable exceeding a suitably high threshold.
+% The CE model describes the tail behaviour of a random vector \emph{conditional} on one of its components exceeding a suitably high threshold.
+% It achieves this via a semiparametric heteroscedastic regression model conditioned on threshold exceedances, which can be used to ascertain the joint tail dependence structure of the random vector.
+% % The CE model provides many advantages over other competing methods. 
+% % It involves a robust Gaussian working assumption which facilitates efficient inference, and allows for a closed form expression for the KL divergence, between two sites, allowing for a rather simple clustering framework to be derived, as we will see in Section~\ref{subsec:div} \citep{Kullback1951}.
+% % However, as with many models for extremes, which suffer from the natural
+% % rarity of extreme data, the CE model is susceptible to high uncertainty in its
+% % parameter estimates. \todo{de-emphasise parameter estimation}
+% % However, as with many models for extremes, which suffer from the natural rarity of extreme data, the CE model is susceptible to high uncertainty in its parameter estimates, often making interpretation of the structure of tail dependence difficult.
+% % However, as with many models for extremes, which suffer from the natural rarity of extreme data, the CE model is susceptible to high uncertainty in its parameter estimates, often making it difficult to interpret and identify patterns in the tail dependence structure.
+% \todo{Give examples of other models}
+% However, like many other models for multivariate extremes, the CE model can be difficult to use for identifying patterns in tail dependence due to the sparsity of joint extreme observations, particularly in high dimensions.
+
+% Conditional Extremes
+\todo{Check if references are relevant and correct}
+The CE model of \citet{Heffernan2004} describes the tail behaviour of a random vector \emph{conditional} on one of its components exceeding a suitably high threshold.
+It provides a flexible framework which can capture complex AD and AI patterns. 
+This flexibility, along with its conceptual simplicity and computational efficiency have made it a popular choice for modelling multivariate extremes. 
+Spatio-temporal extensions and single-site conditioning methods have been developed to handle high-dimensional and non-stationary settings \citep{Simpson2021,Wadsworth2022}, and adaptations that incorporate covariates, hierarchical structure, and mixture or random-scale constructions further increase the model's flexibility \citep{Tawn2018,Tendijck2023}. 
+As a result, CE models have been applied across a broad range of environmental problems, where AI as well as AD may be prevalent including river flow and flood risk \citep{Gilleland2013,Jane2020,Winter2018}, rainfall extremes \citep{Richards2022}, sea-surface temperature and related spatial extremes \citep{Simpson2023,Kakampakou2024}, metocean extremes \citep{Tawn2018,Tendijck2023}, concurrent climate extremes \citep{Huang2021}, and heatwaves \citep{Winter2016}.
+Despite these strengths, sparsity of joint extremes, particularly in high dimensions, can make pattern discovery and interpretation difficult.
 
 % Clustering: introduction + motivation
 \todo{Combine with next paragraph}

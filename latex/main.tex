@@ -219,8 +219,20 @@ In environmental applications, extreme events rarely occur in isolation, and the
 Consequently, these joint risks are liable to be underestimated unless tail \emph{dependence} is explicitly modelled \citep{Zhang2024}. 
 Motivated by this, we develop a framework to characterise how the joint tail behaviour of the location-wise random vectors varies across space.
 
-\todo{Combine this with discussion of AD and AI}
 % Dependence modelling (+ AD/AI)
+In the multivariate setting, sampling the \emph{joint} tail behaviour of a random vector is of interest. 
+Multivariate extremes frequently arise in spatial applications, where one or more variables are observed at a number of fixed locations, such that each location is associated with a random vector. 
+In environmental applications, extreme events rarely occur in isolation, and the compounded impact of simultaneous or ``concomitant'' extremes can produce substantially more severe outcomes \citep{zscheischler2018future, bevacqua2021guidelines, Rohrbeck2021, Sando2022}.
+Consequently, these joint risks are liable to be underestimated unless tail \emph{dependence} is explicitly modelled \citep{Zhang2024}. 
+Tail dependence can be described using the coefficient of asymptotic dependence \(\chi\in[0,1]\) (see e.g.\ \citet{Coles1999}), which for two random variables \(X_1,X_2\) with corresponding marginal distribution functions \(F_1,F_2\) is defined as 
+\[
+\chi \;=\; \lim_{u\to1}\Pr\big(F_1(X_1)>u \mid F_2(X_2)>u\big).
+\]
+Hence \(\chi>0\) denotes asymptotic dependence (AD) while \(\chi=0\) denotes asymptotic independence (AI). 
+While $\chi$ provides a useful summary of extremal dependence for any pair of random variables, it does not fully describe the dependence structure of a multivariate distribution, or allow for further inference, for which we require a full probabilistic model for tail dependence.
+Many classical models and clustering frameworks for multivariate extremes are designed under the assumption of AD \citet{Vignotto2021,Boulin2025}, yet a growing body of work argues that for environmental applications we should not be using strictly AD models \citet{Opitz2016, Dawkins2018,Huser2024}. 
+Conditional extremes modelling \citep{Heffernan2004} provides a flexible framework that accommodates both AD and AI regimes, and therefore offers a natural basis for comparing tail behaviour across sites. 
+In this paper we exploit the conditional extremes model to define a dissimilarity between site-wise tail models and develop a clustering procedure that does not pre-suppose AD, allowing us to discover groups that differ both in AD and in more subtle AI structure.
 
 % Conditional extremes
   % \item One such model is the CE model, which combines a univariate Generalised Pareto Distribution (GPD) and a semiparametric regression dependence model \cite{Heffernan2004}. \todo{Don't emphasise GPD, not used below}
@@ -389,7 +401,7 @@ Finally, in Section~\ref{subsec:estimation} we describe some of the computationa
 
 To characterise tail dependence, we first introduce the concepts of asymptotic dependence and independence, as described in \citet{Coles1999}.
 % The coefficient of asymptotic dependence, $\chi \in [0, 1]$, measures the degree of asymptotic dependence between two random variables $X_1$ and $X_2$ with corresponding CDFs $F_1$ and $F_2$, under the class of asymptotically dependent distributions.
-The coefficient of asymptotic dependence, $\chi \in [0, 1]$, measures the degree of extremal dependence between two random variables $X_1$ and $X_2$ with corresponding distribution functions $F_1$ and $F_2$, and is given by % , under the class of asymptotically dependent distributions, and is given by 
+The coefficient of asymptotic dependence, $\chi \in [0, 1]$, measures the strength of extremal dependence between two random variables $X_1$ and $X_2$ with corresponding distribution functions $F_1$ and $F_2$, and is given by % , under the class of asymptotically dependent distributions, and is given by 
 % It is defined as $\chi = \lim_{u \rightarrow 1}{\chi(u)}$, where
 % \[
 % \chi(u) = 2 - \frac{\log\left(\mathbb{P}(F_1(X_1) < u, F_2(X_2) < u)\right)}{\log \left(\mathbb{P}(F_1(X_1) < u)\right)}.
@@ -418,7 +430,6 @@ If $\chi = 0$, then $X_1$ and $X_2$ are said to be asymptotically independent wh
 % % However, they do not fully describe the dependence structure of a multivariate distribution, or allow for further inference.
 % However, it does not fully describe the dependence structure of a multivariate distribution, or allow for further inference.
 While $\chi$ provides a useful summary of extremal dependence for any pair of random variables, it does not fully describe the dependence structure of a multivariate distribution, or allow for further inference.
-
 % For example, probabilities of jointly extreme events for two or more variables cannot be calculated from these coefficients.
 For example, $\chi$ cannot be used to calculate the joint exceedance probability of two or more variables.
 For this, we require a model for extremal dependence.

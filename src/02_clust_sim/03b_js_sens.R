@@ -283,7 +283,8 @@ results_grid_vig <- readr::read_csv("data/vignotto_grid_search_res.csv")
 
 results_grid_join <- bind_rows(
   results_grid %>%
-    mutate(ind = "CE") %>%
+    # mutate(ind = "CE") %>%
+    mutate(ind = "Cond. Extremes") |>
     relocate(ind) |>
     # distinct() %>%
     identity(),

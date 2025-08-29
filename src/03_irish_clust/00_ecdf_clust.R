@@ -1096,6 +1096,10 @@ highest_lowest_rain <- data_week %>%
   slice(c(1, n())) %>%
   pull(name)
 
+# highest_lowest_rain <- c("Malahide Castle", "Dublin (Ringsend)")
+highest_lowest_rain <- c("Dublin (Ringsend)", "Kilcar (Cronasillagh)")
+
+
 # plot sites on left and locations with highest and lowest rainfall on right
 data_plot <- data_week %>%
   # mutate(indicator = ifelse(name %in% highest_lowest_rain, name, NA)) %>%
@@ -1185,7 +1189,8 @@ p1 <- p_terrain +
 cols <- ggsci::pal_nejm()(4)
 cols[2] <- "black"
 p21 <- data_plot %>%
-  filter(name == highest_lowest_rain[2], rain > 0) %>%
+  # filter(name == highest_lowest_rain[2], rain > 0) %>%
+  filter(name %in% highest_lowest_rain, rain > 0) |>
   group_by(name) %>%
   mutate(across(c(rain, wind_speed), ~ quantile(.x, 0.95, na.rm = TRUE), .names = "quant_{.col}")) %>%
   ungroup() %>%
@@ -1210,13 +1215,15 @@ p21 <- data_plot %>%
     colour = ""
   ) +
   guides(colour = "none") +
-  theme +
+  facet_wrap(~name, scales = "fixed") +
+  # theme +
   # remove facet labels, colour will do
-  theme(
-    strip.background = element_blank(),
-    strip.text.x = element_blank(),
-    legend.key = element_blank()
-  )
+  # theme(
+  #   strip.background = element_blank(),
+  #   strip.text.x = element_blank(),
+  #   legend.key = element_blank()
+  # ) +
+  NULL
 
 # Second, plot wind speeds against rain for sites with the highest and lowest rainfall
 # TODO: Add 95% quantile lines for both (?)
@@ -1512,6 +1519,7 @@ ce_fit <- lapply(Y_lst, \(x) {
     Y = x,
     # dqu = 0.7,
     dqu = dqu,
+    # dqu = 0.95,
     cond_var = c("rain", "wind_speed"),
     control = list(maxit = 1e6),
     # constrain = FALSE,

@@ -632,16 +632,20 @@ Some special cases (for $j\in\{1,\ldots,d\}\setminus i$) of the CE model are:
 \end{itemize}
 
 Recall that we want to fit the CE model at different spatial sites. 
-To allow for spatial variation, we may index by site $s \in \mathcal{S}$, and allow regression parameters to vary by site. 
-This leads to the simple, spatially indexed extension of Equation \eqref{eq:ce_model}, where we have the site-specific random vector $\bm{Y}(s)$, given by
+% To allow for spatial variation, we may index by site $s \in \mathcal{S}$, and allow regression parameters to vary by site. 
+To allow for spatial variation, we may index the random vectors by spatial location $\mathcal{S} \in \(S_1, \ldots, S_D\)$, where $S_i \in \mathbb{R}^2, i = 1, \ldots, D$, and $D$ is the number of spatial locations. 
+This leads to the simple, spatially indexed extension of Equation \eqref{eq:ce_model}, where we have the site-specific random vector $\bm{Y}(s) \in \mathbb{R}^d$ for $\mathcal{S} \in (S_1, \ldots, S_d)$, and
 \begin{equation} \label{eq:ce_model_spat}
-  \bigl(\bm{Y}_{-i}(s) \mid Y_i(s) = y_i, \mathcal{S} = s \bigr) 
+  \bigl(\bm{Y}_{-i}(s) \mid Y_i(s) = y_i\bigr) 
     = \bm{\alpha}_{\mid i}(s) \, y_i 
       + y_i^{\bm{\beta}_{\mid i}(s)} \, \bm{Z}_{\mid i}(s), 
       \quad y_i > u_i(s),
 \end{equation}
 % with location-specific residuals $\bm{Z}_{\mid i}(s) \sim \bm{G}_{\mid i}(s)$. \todo{Do I need to define alpha(s), beta(s), ui(s) again?}
-where $\bm{\alpha}_{\mid i}(s), \bm{\beta}_{\mid i}(s), \bm{Z}_{\mid i}(s) \sim \bm{G}_{\mid i}(s)$, are the site-specific counterparts of the regression parameters and residuals introduced above.  
+where $\bm{\alpha}_{\mid i}(s), \bm{\beta}_{\mid i}(s)$ and $\bm{Z}_{\mid i}(s) \sim \bm{G}_{\mid i}(s)$, are the site-specific counterparts of the regression parameters and residuals introduced above.  
+Note that we make no assumptions about spatial smoothness in the regression model. 
+
+
 
 \subsection{Divergence measure}~\label{subsec:div}
 

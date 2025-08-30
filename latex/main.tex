@@ -510,7 +510,7 @@ A popular choice for CE models is Laplace margins, as introduced in \citet{Keef2
 \todo{Check X is defined correctly/nicely}
 % Each marginal random variable $X_i, i = 1, \ldots, d, (X_1, \ldots, X_d) \in \mathbb{R}^d$ is transformed to Laplace margins, as outlined in equation~\eqref{eq:laplace} in Section \ref{subsec:estimation}, and thereafter denoted by $Y_i, \(Y_1, \ldots Y_d\) \in \mathbb{R}^d$. 
 % To transform each marginal random variable $X_i$ to Laplace margins, denoted by $Y_i$, we let:
-Each marginal random variable $X_i, i = 1, \ldots, d, (X_1, \ldots, X_d) \in \mathbb{R}^d$ is transformed to Laplace margins, thereafter denoted as $Y_i$, $i = 1, \ldots, d, (Y_1, \ldots, Y_d) \in \mathbb{R}^d$, using the probability integral transform:
+Each marginal random variable $X_i, i = 1, \ldots, d, (X_1, \ldots, X_d) \in \mathbb{R}^d$ is transformed to Laplace margins, thereafter denoted as $Y_i$, using the probability integral transform:
  \begin{equation}~\label{eq:laplace}
    Y_i = \begin{cases}
      \log\left\{2F_{X_i}(X_i)\right\} &\text{ for } X_i < F_{X_i}^{-1}(0.5), \\
@@ -547,10 +547,12 @@ where $F_{X_i}$ is the cumulative distribution function (CDF) of $X_i$.
 
 % say Y in d dimensions
 % We use $Y_{-i} = \bm{Y} \backslash Y_{i}, \bm{Y} \in \mathbb{R}^d, y \in (1, \ldots, d)$ to denote the vector of all variables in $\bm{Y}$ except $Y_i$, and assume all operations hereafter are performed component-wise.
-For $d \in \mathbb{N}$, we use $ \bm{Y} \in \mathbb{R}^d, d \in \mathbb{N}$ and for $i \in \{1,\ldots,d\}$ write $Y_{-i} = \bm{Y}\setminus\{Y_i\}$ to denote the $(d-1)$-dimensional random vector of all components except $Y_i$, and assume all operations below are component-wise. 
+% For $d \in \mathbb{N}$, we use $ \bm{Y} \in \mathbb{R}^d, d \in \mathbb{N}$ and for $i \in \{1,\ldots,d\}$ write $Y_{-i} = \bm{Y}\setminus\{Y_i\}$ to denote the $(d-1)$-dimensional random vector of all components except $Y_i$, and assume all operations below are component-wise. 
+For $d \in \mathbb{N}$, we use $\bm{Y} = \(Y_1, \ldots, Y_d) \in \mathbb{R}^d$ and for $i \in \{1, ldots, d\}$ write $Y_{-i} = \bm{Y} \setminus Y_i$ to denote the $(d-1)$-dimensional random vector of $\bm{Y}$ with its its $i^{\textbm{th}}$ component removed. 
+Assume all operations below are component-wise. 
 % \item The CE model of \citet{Heffernan2004} assumes that there exists vector normalising parameters $\alpha_{\mid i} := \bm{a}_{\mid i}(y_i), \beta_{\mid i} := \bm{b}_{\mid i}(y_i) \in \mathbb{R} \rightarrow \mathbb{R}^{(d-1)}$ such that for fixed $\bm{z}_{\mid i} \in \mathbb{R}^{(d-1)}$,
 % The CE model of \citet{Heffernan2004} assumes that there exist parameter vectors $\bm{\alpha}_{\mid i}^{(\CE{})} := \left\{\alpha_{j \mid i}^{(\CE{})} : j\in\{1,\dots,d\}\setminus\{i\}\right\} \in [-1, 1]^{(d-1)}$ and $\bm{\beta}_{\mid i}^{(\CE{})} := \left\{\beta_{j \mid i}^{(\CE{})} : j\in\{1,\dots,d\}\setminus\{i\} \right\} \in [-\infty, 1]^{(d-1)}$ such that for fixed $\bm{z}_{\mid i} \in \mathbb{R}^{(d-1)}$, $y_i > 0$,
-The CE model of \citet{Heffernan2004} assumes that there exist parameter vectors $\bm{\alpha}_{\mid i} := \left\{\alpha_{j \mid i} : j\in\{1,\dots,d\}\setminus\{i\}\right\} \in [-1, 1]^{(d-1)}$ and $\bm{\beta}_{\mid i} := \left\{\beta_{j \mid i} : j\in\{1,\dots,d\}\setminus\{i\} \right\} \in [-\infty, 1]^{(d-1)}$ such that for fixed $\bm{z}_{\mid i} \in \mathbb{R}^{(d-1)}$, $y_i > 0$,
+The CE model of \citet{Heffernan2004} assumes that for each $i = 1, \ldots, d$ there exist parameter vectors $\bm{\alpha}_{\mid i} := \left\{\alpha_{j \mid i} : j\in\{1,\dots,d\}\setminus i \right\} \in [-1, 1]^{d-1}$ and $\bm{\beta}_{\mid i} := \left\{\beta_{j \mid i} : j\in\{1,\dots,d\}\setminus i \right\} \in [-\infty, 1]^{d-1}$ such that for fixed $\bm{z}_{\mid i} \in \mathbb{R}^{d-1}$ and $y_i > 0$,
 % \todo{Check if probably is for equal to yi or greater than yi}
 \begin{equation}~\label{eq:ce_limiting_dist}
   % \mathbb{P}\left(\frac{\bm{Y}_{-i} - \bm{\alpha}_{\mid i}^{(\CE{})} Y_{i}}{Y_{i}^{\bm{\beta}_{\mid i}^{(\CE{})}} \le \bm{z}_{\mid i}, Y_i - u_i > y_i \mid Y_i > u_i \right) \longrightarrow \bm{G}_{\mid i}(\bm{z}_{\mid i}) \exp(-y_i) \text{ as } u_i \rightarrow \infty,
@@ -563,7 +565,8 @@ The CE model of \citet{Heffernan2004} assumes that there exist parameter vectors
   Y_i - u_i > y_i \;\Big|\; Y_i > u_i
   \right)
   \longrightarrow
-  \bm{G}_{\mid i}(\bm{z}_{\mid i})\,e^{-y_i}
+  % \bm{G}_{\mid i}(\bm{z}_{\mid i})\,e^{-y_i}
+  \bm{G}_{\mid i}(\bm{z}_{\mid i})\,\exp{-y_i}
   \quad\text{as } u_i \to \infty,
 \end{equation}
 % where $u_i$ is a suitably high threshold for $Y_i$, and $\bm{G}_{j \mid i}$ is non-degenerate for all $j \ne i$. 
@@ -573,14 +576,14 @@ The CE model of \citet{Heffernan2004} assumes that there exist parameter vectors
 %   \lim_{z \rightarrow \infty}{\bm{G}_{j \mid i}(\bm{z})} = 1, \forall j \ne i,
 % \]
 % ensuring that there is no mass at $+\infty$ for any margin, but allowing for some mass to be at $-\infty$, in order to ensure uniqueness of the solution \citep{Keef2013}.
-where $u_i$ is a suitably high threshold for $Y_i$.
-The distribution $\bm{G}_{\mid i}$ is non-degenerate on $\mathbb{R}^{d-1}$ and, for each margin $j\neq i$, $\lim\limits_{z\to\infty}\bm{G}_{j\mid i}(z)=1$, so that there is no mass at $+\infty$, while mass at $-\infty$ is permitted to ensure uniqueness \citep{Keef2013}. 
+where $u_i$ is a suitably high threshold. 
+The distribution function $\bm{G}_{\mid i}$ is non-degenerate on $\mathbb{R}^{d-1}$ and, for each margin $j\neq i$, $\lim\limits_{z\to\infty}\bm{G}_{j\mid i}(z)=1$, so that there is no mass at $+\infty$, while mass at $-\infty$ is permitted to ensure uniqueness \citep{Keef2013}. 
 % An important consequence of this formulation is the weak assumption that
 % \begin{equation}~\label{eq:limit_independence}
 %   \mathbb{P}(\bm{Z}_{\mid i} \le \bm{z}_{\mid i}, Y_i - u_i = y_i \mid Y_i > u_i) \rightarrow \bm{G}_{\mid i}(\bm{z}_{\mid i}) \exp(-y_i) \text{ as } u_i \rightarrow \infty,
 % \end{equation}
 % so that in the limit as $u_i \to \infty$, the extremal exceedances $Y_i - u_i$ and the standardised residuals $\bm{Z}_{\mid i} = \frac{\bm{Y}_{-i} - \bm{\alpha}_{\mid i} Y_{i}}{Y_{i}^{\bm{\beta}_{\mid i}}}, \bm{Z}_{\mid i} \sim \bm{G}_{\mid i}$ are independent.
-Equation~\eqref{eq:ce_limiting_dist} implies that, in the limit $u_i\to\infty$, the exceedances $Y_i-u_i$ and the standardised residuals $\bm{Z}_{\mid i} = \frac{\bm{Y}_{-i} - \bm{\alpha}_{\mid i} Y_{i}}{Y_{i}^{\bm{\beta}_{\mid i}}}, \bm{Z}_{\mid i} \sim \bm{G}_{\mid i}$ are asymptotically independent. \todo{Should G be bold?} \todo{not sure I like two statements about Z here}
+Equation~\eqref{eq:ce_limiting_dist} implies that, in the limit $u_i\to\infty$, the excesses $Y_i-u_i$ and the standardised residuals $\bm{Z}_{\mid i} = \frac{\bm{Y}_{-i} - \bm{\alpha}_{\mid i} Y_{i}}{Y_{i}^{\bm{\beta}_{\mid i}}} \sim \bm{G}_{\mid i}$ are asymptotically independent. 
 % Equation~\eqref{eq:ce_limiting_dist} implies that, in the limit $u_i\to\infty$, the exceedances $Y_i-u_i$ and the standardised residuals $\bm{Z}_{\mid i} = \frac{\bm{Y}_{-i} - \bm{\alpha}_{\mid i}^{(\CE{})} Y_{i}}{Y_{i}^{\bm{\beta}_{\mid i}^{(\CE{})}}}$, where $\bm{Z}_{\mid i} \sim \bm{G}_{\mid i}$, are asymptotically independent.
 
 % heteroscedastic regression

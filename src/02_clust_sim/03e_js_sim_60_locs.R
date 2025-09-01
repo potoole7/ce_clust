@@ -303,16 +303,22 @@ smooth_plt <- \(data, col) {
 
 # doesn't work any more as cor_gauss is fixed!
 # p1_smooth <- smooth_plt(results_grid_plt, cor_gauss)
-p2_smooth <- (smooth_plt(results_grid_plt, cor_t1) +
-  scale_x_continuous(breaks = unique(results_grid_plt$cor_t1))) |>
+# p2_smooth <- (smooth_plt(results_grid_plt, cor_t1) +
+#   scale_x_continuous(breaks = unique(results_grid_plt$cor_t1))) |>
+p2_smooth <- (smooth_plt(results_grid_plt, cor_t1)) |>
   common_plot_items(
     xlab = expression(rho[t[1]]),
     x_sec_lab = expression(rho[t[3]]),
     y_sec_lab = expression(rho[t[2]]),
     facet_form = (cor_t2 ~ cor_t3)
   ) +
+  scale_x_continuous(
+    breaks = unique(results_grid_plt$cor_t1),
+    limits = c(0, 0.9),
+    # expand = c(0.01, 0.0.01)
+  ) +
   NULL
-
+p2_smooth
 
 ggsave(
   plot = p2_smooth,

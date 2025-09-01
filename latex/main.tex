@@ -164,25 +164,26 @@
 \newpage
 
 \section{Introduction}\label{sec:intro}
-\todo{Will have to mention that other paper that does bivariate clustering as well in background, right?}
+% \todo{Will have to mention that other paper that does bivariate clustering as well in background, right?}
 \todo{For methods paper, good to have more emphasis on setting (spatial random vector of random vectors)?}
 
 % Introduction to EVT
 \todo{Rewrite, kinda crap (look at Jordan's book chapter)}
 % Extreme Value Theory (EVT) provides an asymptotically justified framework for projecting beyond the magnitude of observed data into the extreme tails of distributions \citep{Coles2001}.
-Extreme Value Theory (EVT) provides asymptotically justified models for predicting the probability of events outside the range of observed values \citep{Coles2001}.
+Extreme Value Theory (EVT) provides asymptotically justified models for estimating the probability of events outside the range of observed values \citep{Coles2001}.
 % EVT implicitly assumes that there is an underlying stochastic process generating the data, which is sufficiently smooth to allow extrapolation to unseen levels \citep{Coles2001}.
 % EVT is useful anywhere we are interested more in the ``extreme'' tails of the distributions of a phenomenon, rather than the mean or ``bulk'' behaviour.
 % This situation can arise in a variety of contexts, and is particularly popular in environmental applications.
 % EVT modelling can be used to assess the risk of extreme events, such as floods, droughts, heatwaves and storms, which can have significant impacts on society and the environment.
-Environmental applications are one area where EVT methods are used frequently, because interest lies in estimating the severity of future extreme events. % , such as heatwaves or storms. 
+% Environmental applications are one area where EVT methods are used frequently, because interest lies in estimating the severity of future extreme events. % , such as heatwaves or storms. 
+Environmental applications are one area where EVT methods are used frequently, because interest lies in estimating the severity of future extreme events, to develop risk management strategies and to assess the impacts of climate change. \todo{Keep reference to climate change?}
 % For instance, heatwaves can lead to droughts and wild fires \citep{tanarhte2015heat, french2019quantifying, koh2023gradient}.
 % % Extreme rainfall contributes to storms and flooding, which can cause major damage and trigger large insurance claims \citep{Rohrbeck_flooding, osei2021estimation}.
 % Extreme rainfall and high wind speeds can cause major damage and large insurance claims, and thus it is important to understand their likelihood \citep{Rohrbeck_flooding, osei2021estimation, soukissian2015effect, steinkohl2013extreme}. 
 % % High wind speeds can lead to significantly damaging events such as tropical cyclones, and have also seen much focus in the field of EVT \citep{soukissian2015effect, steinkohl2013extreme}.
-Examples include the analysis of heatwaves \citep{tanarhte2015heat, french2019quantifying}, extreme rainfall \citep{osei2021estimation} and wind speed \citep{soukissian2015effect, steinkohl2013extreme}, as well as the modelling of wildfire risks \citep{Koh2024} and the impact of environmental extremes \citep{Rohrbeck_flooding, Miralles2024}.
+Examples include the analysis of heatwaves \citep{tanarhte2015heat, french2019quantifying}, extreme rainfall \citep{osei2021estimation} and wind speed \citep{soukissian2015effect, steinkohl2013extreme}, as well as the modelling of wildfire risks \citep{Koh2024} and the impact of environmental extremes on insurance claims \citep{Rohrbeck_flooding, Miralles2024}. 
 
-% Dependence modelling
+% Dependence modelling 
 % \todo{C: Shorten this paragraph}
 % \todo{C: de-emphasise environmental examples as focus is methods}
 % \todo{Remove reference to climate change (no temporal element)}
@@ -202,114 +203,186 @@ Examples include the analysis of heatwaves \citep{tanarhte2015heat, french2019qu
 % % The compounded risk associated with concomitant extremal events means that when analysing such multivariate extremes, an important consideration is \citep{Zhang2024}
 % These risks can be underestimated unless care is given in modelling the tail \emph{dependence} as part of any multivariate extremes analysis \cite{Zhang2024}.
 
-% Dependence modelling (revised)
-% EVT can naturally be extended to the multivariate setting, where the \emph{joint} tail behaviour of a random vector is of interest.  
-EVT extends naturally to the multivariate setting, where the \emph{joint} tail behaviour of a random vector is of interest. 
-% % Multivariate extremes often arise in spatial applications, where each component may correspond to different variables at a single location, the same variable across multiple locations, or both.  
-Multivariate extremes frequently arise in spatial applications, where one or more variables are observed at a number of fixed locations. 
-% Herein, each location is associated with a random vector, and the aim is to understand how the joint tail behaviour of the location-wise random vectors varies across space.
-In such settings, each location is associated with a random vector. 
-% % While our methodology applies broadly across these settings, we focus on the latter case where each location is associated with a multivariate observation, and the aim is to understand how joint tail behaviour varies across space.
-% \todo{Move this sentence, doesn't feel fully connected to the last sentence}
-% In environmental settings, extremes rarely occur in isolation, and the compounded impact of simultaneous or ``concomitant'' events can lead to significantly more severe outcomes \citep{zscheischler2018future, bevacqua2021guidelines, Rohrbeck2021, Sando2022}.  
-% These joint risks can be underestimated unless tail \emph{dependence} is explicitly modelled as part of any multivariate extremes analysis \citep{Zhang2024}.
-In environmental applications, extreme events rarely occur in isolation, and the compounded impact of simultaneous or ``concomitant'' extremes can produce substantially more severe outcomes \citep{zscheischler2018future, bevacqua2021guidelines, Rohrbeck2021, Sando2022}.
-Consequently, these joint risks are liable to be underestimated unless tail \emph{dependence} is explicitly modelled \citep{Zhang2024}. 
-Motivated by this, our aim is to characterise how the joint tail behaviour of the location-wise random vectors varies across space.
+% % Dependence modelling (revised)
+% % EVT can naturally be extended to the multivariate setting, where the \emph{joint} tail behaviour of a random vector is of interest.  
+% % EVT extends naturally to the multivariate setting, where the \emph{joint} tail behaviour of a random vector is of interest. 
+% In the multivariate setting, sampling the \emph{joint} tail behaviour of a random vector is of interest. 
+% % % Multivariate extremes often arise in spatial applications, where each component may correspond to different variables at a single location, the same variable across multiple locations, or both.  
+% % Herein, each location is associated with a random vector, and the aim is to understand how the joint tail behaviour of the location-wise random vectors varies across space.
+% % In such settings, each location is associated with a random vector. 
+% Multivariate extremes frequently arise in spatial applications, where one or more variables are observed at a number of fixed locations, such that each location is associated with a random vector. 
+% % % While our methodology applies broadly across these settings, we focus on the latter case where each location is associated with a multivariate observation, and the aim is to understand how joint tail behaviour varies across space.
+% % \todo{Move this sentence, doesn't feel fully connected to the last sentence}
+% % In environmental settings, extremes rarely occur in isolation, and the compounded impact of simultaneous or ``concomitant'' events can lead to significantly more severe outcomes \citep{zscheischler2018future, bevacqua2021guidelines, Rohrbeck2021, Sando2022}.  
+% % These joint risks can be underestimated unless tail \emph{dependence} is explicitly modelled as part of any multivariate extremes analysis \citep{Zhang2024}.
+% In environmental applications, extreme events rarely occur in isolation, and the compounded impact of simultaneous or ``concomitant'' extremes can produce substantially more severe outcomes \citep{zscheischler2018future, bevacqua2021guidelines, Rohrbeck2021, Sando2022}.
+% Consequently, these joint risks are liable to be underestimated unless tail \emph{dependence} is explicitly modelled \citep{Zhang2024}. 
+% Motivated by this, we develop a framework to characterise how the joint tail behaviour of the location-wise random vectors varies across space.
 
-% Conditional extremes
-  % \item One such model is the CE model, which combines a univariate Generalised Pareto Distribution (GPD) and a semiparametric regression dependence model \cite{Heffernan2004}. \todo{Don't emphasise GPD, not used below}
-% One such dependence model is the Conditional Extremes model of \citep{Heffernan2004}.
-% Herein, we employ the conditional extremes model by \citep{Heffernan2004} to analyse tail dependence. 
-To model tail dependence, we employ the conditional extremes (CE) model of \citet{Heffernan2004}.
-The CE model has seen widespread use for analysing spatial extremes in environmental applications \citep{Keef2012_flooding, Winter2016, Tawn2018, Towe2019}.
-% The CE model describes the tail behaviour of a random vector \emph{conditional} on a separate random variable exceeding a suitably high threshold.
-The CE model describes the tail behaviour of a random vector \emph{conditional} on one of its components exceeding a suitably high threshold.
-It does this via a semiparametric heteroskedastic regression model conditioned on threshold exceedances, which can be used to ascertain the joint tail dependence structure of the random vector.
-% The CE model provides many advantages over other competing methods. 
-% It is highly flexible in the type of extremal dependence it can model, and is considered to be conceptually simple relative to other models.
-% It reduces a difficult multivariate estimation problem to a univariate problem, by individually modelling each element of the random vector, which can then be combined to form a joint model, and so is computationally efficient.
-Its conceptual simplicity, flexibility in capturing a wide range of extremal/tail dependence structures, and computational efficiency, reducing a multivariate problem to a series of univariate ones, have made it a popular choice.
-% It involves a robust Gaussian working assumption which facilitates efficient inference, and allows for a closed form expression for the KL divergence, between two sites, allowing for a rather simple clustering framework to be derived, as we will see in Section~\ref{subsec:div} \citep{Kullback1951}.
-% However, as with many models for extremes, which suffer from the natural
-% rarity of extreme data, the CE model is susceptible to high uncertainty in its
-% parameter estimates. \todo{de-emphasise parameter estimation}
-% However, as with many models for extremes, which suffer from the natural rarity of extreme data, the CE model is susceptible to high uncertainty in its parameter estimates, often making interpretation of the structure of tail dependence difficult.
-% However, as with many models for extremes, which suffer from the natural rarity of extreme data, the CE model is susceptible to high uncertainty in its parameter estimates, often making it difficult to interpret and identify patterns in the tail dependence structure.
-However, like many models for extremes, the CE model can be difficult to use for identifying patterns in tail dependence due to the sparsity of joint extreme observations, particularly in high dimensions.
+% Dependence modelling (+ AD/AI)
+% In the multivariate setting, sampling the \emph{joint} tail behaviour of a random vector is of interest. 
+EVT extends naturally to the multivariate setting, where one is interested in the \emph{joint} tail behaviour of random vectors observed at fixed locations. 
+% Multivariate extremes frequently arise in spatial applications, where one or more variables are observed at a number of fixed locations, such that each location is associated with a random vector. 
+Multivariate extremes frequently arise in spatial applications, where one or more variables are recorded at each site. 
+% In environmental applications, extreme events rarely occur in isolation, and the compounded impact of simultaneous or ``concomitant'' extremes can produce substantially more severe outcomes \citep{zscheischler2018future, bevacqua2021guidelines, Rohrbeck2021, Sando2022}.
+``Concomitant'' extremes, where multiple variables or locations simultaneously exhibit extreme behaviour, can produce substantially more severe outcomes than single-variable extremes \citep{zscheischler2018future, bevacqua2021guidelines, Rohrbeck2021, Sando2022}.
+% Consequently, these joint risks are liable to be underestimated unless tail \emph{dependence} is explicitly modelled \citep{Zhang2024}. 
+Consequently, joint risks may be underestimated unless tail \emph{dependence} is explicitly modelled \citep{Zhang2024}. 
+% Tail dependence can be described using the coefficient of asymptotic dependence \(\chi\in[0,1]\) (see e.g.\ \citet{Coles1999}), which for two random variables \(X_1,X_2\) with corresponding marginal distribution functions \(F_1,F_2\) is defined as 
+Tail dependence is commonly summarised by the coefficient of asymptotic dependence \(\chi\in[0,1]\) (see e.g.\ \citealt{Coles1999}), defined for two random variables \(X_1,X_2\) with marginal distribution functions \(F_1,F_2\) as
+\[
+\chi \;=\; \lim_{u\to 1^-}\Pr\big(F_1(X_1)>u \mid F_2(X_2)>u\big).
+\]
+Hence, \(\chi>0\) indicate asymptotic dependence (AD) and \(\chi=0\) asymptotic independence (AI). 
+Although \(\chi\) is a useful pairwise summary, it does not fully characterise multivariate tail structure or support inference on joint exceedance probabilities, for which a full probabilistic model is required. 
+\todo{Make reference to Gaussian/max-stable process models?}
+Many classical models and clustering frameworks assume AD \citep{Vignotto2021,Boulin2025}, but a growing literature argues that environmental data often exhibit AI and that AD models can be inappropriate in such contexts \citep{Opitz2016,Dawkins2018,Huser2024}. 
 
+% % Conditional extremes
+% % \item One such model is the CE model, which combines a univariate Generalised Pareto Distribution (GPD) and a semiparametric regression dependence model \cite{Heffernan2004}. \todo{Don't emphasise GPD, not used below}
+% % One such dependence model is the Conditional Extremes model of \citep{Heffernan2004}.
+% % Herein, we employ the conditional extremes model by \citep{Heffernan2004} to analyse tail dependence. 
+% % To model tail dependence, we employ the conditional extremes (CE) framework of \citet{Heffernan2004}.
+% % Conditional extremes modelling \citep{Heffernan2004} provides a flexible framework that accommodates both AD and AI regimes, and therefore offers a natural basis for comparing tail behaviour across sites. 
+% The conditional extremes model of \citet{Heffernan2004} provides a flexible framework that accommodates both AD and AI regimes, and therefore offers a natural basis for comparing tail behaviour across sites. 
+% % It is highly flexible in the type of extremal dependence it can model, and is considered to be conceptually simple relative to other models.
+% % It reduces a difficult multivariate estimation problem to a univariate problem, by individually modelling each element of the random vector, which can then be combined to form a joint model, and so is computationally efficient.
+% % Its conceptual simplicity, flexibility in capturing a wide range of tail dependence structures, and computational efficiency, reducing a multivariate problem to a series of univariate ones, have made it a popular choice.
+% This flexibility, along with its conceptual simplicity and computational efficiency have made it a popular choice for modelling multivariate extremes.
+% % The CE model has seen widespread use for analysing spatial extremes in environmental applications \citep{Keef2012_flooding, Winter2016, Tawn2018, Towe2019}.
+% The CE model has seen widespread use for analysing spatial extremes in environmental applications \citet{Keef2012_flooding, Winter2016, Tawn2018, Towe2019}.
+% % The CE model describes the tail behaviour of a random vector \emph{conditional} on a separate random variable exceeding a suitably high threshold.
+% The CE model describes the tail behaviour of a random vector \emph{conditional} on one of its components exceeding a suitably high threshold.
+% It achieves this via a semiparametric heteroscedastic regression model conditioned on threshold exceedances, which can be used to ascertain the joint tail dependence structure of the random vector.
+% % The CE model provides many advantages over other competing methods. 
+% % It involves a robust Gaussian working assumption which facilitates efficient inference, and allows for a closed form expression for the KL divergence, between two sites, allowing for a rather simple clustering framework to be derived, as we will see in Section~\ref{subsec:div} \citep{Kullback1951}.
+% % However, as with many models for extremes, which suffer from the natural
+% % rarity of extreme data, the CE model is susceptible to high uncertainty in its
+% % parameter estimates. \todo{de-emphasise parameter estimation}
+% % However, as with many models for extremes, which suffer from the natural rarity of extreme data, the CE model is susceptible to high uncertainty in its parameter estimates, often making interpretation of the structure of tail dependence difficult.
+% % However, as with many models for extremes, which suffer from the natural rarity of extreme data, the CE model is susceptible to high uncertainty in its parameter estimates, often making it difficult to interpret and identify patterns in the tail dependence structure.
+% \todo{Give examples of other models}
+% However, like many other models for multivariate extremes, the CE model can be difficult to use for identifying patterns in tail dependence due to the sparsity of joint extreme observations, particularly in high dimensions.
+
+% Conditional Extremes
+\todo{Check if references are relevant and correct}
+The CE model of \citet{Heffernan2004} describes the tail behaviour of a random vector \emph{conditional} on one of its components exceeding a suitably high threshold.
+It provides a flexible framework which can capture complex AD and AI patterns. 
+This flexibility, along with its conceptual simplicity and computational efficiency have made it a popular choice for modelling multivariate extremes. 
+Spatio-temporal extensions and single-site conditioning methods have been developed to handle high-dimensional and non-stationary settings \citep{Simpson2021,Wadsworth2022}, and adaptations that incorporate covariates, hierarchical structure, and mixture or random-scale constructions further increase the model's flexibility \citep{Tawn2018,Tendijck2023}. 
+As a result, CE models have been applied across a broad range of environmental problems, where AI as well as AD may be prevalent, including modelling river flow and flood risk \citep{Gilleland2013,Jane2020,Winter2018}, rainfall extremes \citep{Richards2022}, sea-surface temperature extremes \citep{Simpson2023,Kakampakou2024}, metocean extremes \citep{Tawn2018,Tendijck2023}, concurrent climate extremes \citep{Huang2021}, and heatwaves \citep{Winter2016}. \todo{Need for all?}
+% Despite these strengths, sparsity of joint extremes, particularly in high dimensions, can make pattern discovery and interpretation difficult.
+However, the sparsity of joint extreme observations, particularly in high dimensions, can make pattern discovery and interpretation using the CE model difficult.
+
+% % Clustering: introduction + motivation
+% \todo{Combine with next paragraph}
+% \todo{Should I say something here or above about being interested in the spatial domain?}
+% % \todo{C: Focus on learning spatial structure in tail dependence, reduction of unceratinty is only mentioned as potential benefit}
+% % One method for improved parameter estimation is through clustering.
+% % Clustering is an unsupervised learning technique which seeks to group similar data together, such that the data within each group is more similar to each other than to data in other groups \citep{Hastie2009}.
+% % Clustering is a powerful tool for exploratory analysis, allowing us to identify patterns in the data and improve interpretability of the extremal dependence structure.
+% % Clustering allows us to pool information from multiple sites or variables.
+% % This pooling can lead to more robust parameter estimates, as it reduces the uncertainty associated with estimating parameters from a single site or variable.
+% % Clustering is a popular method in extremes, where data is naturally scarce, often leading to high uncertainty and difficulty in intrepretation \citep{Ferreira2023-mz, Zheng2023-jf}.
+% %   % \item Extremal clustering is chiefly concerned with the problems of exploratory analysis and improved interpretability of extremal dependence structures, and also in reducing parameter uncertainty.
+% % new
+% % A useful and popular approach to improve interpretability for extremal dependence modelling is clustering, which has a seen widespread use in the analysis of multivariate extremes \citep{Ferreira2023-mz, Zheng2023-jf}.
+% A useful and popular approach to improve interpretability for extremal dependence modelling is clustering \citep{Ferreira2023-mz, Zheng2023-jf}. \todo{discuss these references if provided}
+% % Clustering is an unsupervised learning technique that groups observations by similarity without prior labels \citep{Hastie2009}, serving as a powerful exploratory tool for uncovering spatial structure in tail dependence.  
+% % Clustering is an unsupervised learning technique which seeks to group similar data together, such that the data within each group is more similar to each other than to data in other groups \citep{Hastie2009}.
+% Clustering is an unsupervised learning technique which seeks to group similar data \citep{Hastie2009}.
+% % By partitioning sites into clusters with homogeneous joint‐tail behaviour, we can gain clearer insight into spatial heterogeneity and complex dependence patterns.  
+% % In a spatial setting, we can partition sites into clusters with homogeneous joint‐tail behaviour, to gain clearer insight into spatial heterogeneity and complex dependence patterns.  
+% In a spatial context with multivariate observations at each location, we can partition sites into clusters exhibiting similar joint tail behaviour, thereby revealing spatial patterns in complex dependence structures.
+% 
+% % Clustering: past work (interpretability)
+% % Exploratory clustering for improved interpretability, in extremes and
+% % elsewhere, generally focuses on deriving some similarity matrix for a given
+% % distance, and then using performing some generic clustering algorithm such as k-means or k-mediods on this matrix \citep{Lloyd1957, Kaufman1987}.
+% % \todo{C: Be clearer on the aspects considered in clustering}
+% % \todo{Cut down on detail? Longest section!}
+% \todo{Quite long!}
+% Several clustering methods have been proposed for extremes. % \citep{Carreau2017, Dupuis2023, Rohrbeck2021}
+% % ~\citet{Rohrbeck2021} proposes a spatial extremal clustering algorithm for hydrological variables, which involves Bayesian hierarchical modelling consisting of an dependence component using the $\chi$ statistic dependence, and a marginal component consisting of a generalised Pareto distribution (GPD) fitted to each cluster.
+% % This method uses the Reversible Jump MCMC (RJMCMC) clustering algorithm of \citet{Bottolo2003}, which avoids the need to fix the number of clusters a priori.
+% % Alternatively, frequentist approaches have used the Expectation–-Maximisation (EM) algorithm to identify group structure and fit group-specific models for the tails, with the number of clusters typically selected via out-of-sample cross-validation \citep{Carreau2017, Dupuis2023}.
+% Bayesian approaches, by \citet{Bottolo2003} and \citet{Rohrbeck2021}, use hierarchical models with Reversible-Jump Monte Carlo Markov Chain (RJMCMC) to jointly capture marginal behaviour and extremal dependence, avoiding the need to fix the number of clusters in advance. 
+% Frequentist alternatives employ the Expectation-Maximisation (EM) algorithm to fit group-specific tail models, with the number of clusters selected via cross-validation \citep{Carreau2017, Dupuis2023}. 
+% % One common approach for extremal clustering is to define a distance measure quantifying the pairwise similarity in the tail of random variables/vectors, and then apply a generic clustering algorithm such as k-means or k-medoids \citep{Lloyd1957, Kaufman1987}.
+% Another common strategy is to define a pairwise dissimilarity measure between sites and then apply a generic clustering algorithm such as $k$-means or $k$-medoids \citep{Lloyd1957, Kaufman1987}. 
+% % There is a large body of literature concerning such clustering methods for extremes. 
+% % % In \citet{Bernard2013}, a clustering algorithm is derived for weekly
+% % % precipitation maxima for sites across France, which uses the F-madogram as a
+% % % distance measure. \todo{C: be more clear about the tail characteristics used for clustering}
+% % % In financial applications, \citet{deCarvalho2023} proposes a clustering algorithm for stock prices, which uses the extremal index and heteroscedastic function, loosely interpretable as the magnitude and frequency of extreme events, to define a bivariate centroid with which to cluster stocks on the London Stock Exchange. 
+% \todo{Bit of a non sequitur given emphasis on envoronmental extremes elsewhere?}
+% \todo{Or should I be less focused on purely spatial applications elsewhere?}
+% % In financial applications, \citet{deCarvalho2023} proposes a clustering algorithm for grouping stocks on the London Stock Exchange based on their tail behaviour. %, using the extremal index and heteroscedastic function, which can be loosely interpreted as the magnitude and frequency of extreme events.
+% % In environmental extremes, \citet{Bernard2013} describes a clustering algorithm of weekly precipitation maxima across France.
+% % Focusing on the spatial tail dependence structure of the data, this method uses the F-madogram, an extremal analogue of the classical variogram, as a distance measure.
+% % Applications include finance, where clustering has been based on indices of extremal frequency and magnitude \citep{deCarvalho2023}, and environmental extremes, where the F-madogram has been used to group precipitation sites across France \citep{Bernard2013}. 
+% Applications include finance, with clustering based on indices of extremal frequency and magnitude \citep{deCarvalho2023}, and environment, where the F-madogram \citep{Cooley2006variograms} was used to group precipitation sites across France \citep{Bernard2013}, and where generalised Pareto distributions (see, e.g.\,~\citet{Coles2001}) fitted to extreme temperatures were compared using the Kolmogorov-Smirnov and $L_1-$Wasserstein distances to cluster autonomous regions in Spain \citep{Alonso2014-rr}. 
+% % % \citet{Vignotto2021} proposes a k-mediods algorithm for clustering locations in Great Britain and Ireland for precipitation and wind speed data.
+% % % \citet{Vignotto2021} proposes a k-medoids algorithm for clustering locations in Great Britain and Ireland based on the joint tail behaviour of gridded precipitation and wind speed data from ERA5 \citep{Hersbach2020}.
+% % % Individually at each location, bivariate data are transformed to Pareto margins.
+% % % The maximum across both transformed margins is used to define extreme observations.
+% % % This bivariate space is then partitioned into three disjoint sets, corresponding to extremal observations for both precipitation and wind speed, only precipitation, or only wind speed.
+% % % An empirical estimate of the Kullback-Leibler divergence for each pairwise comparison of locations is computed based on these sets, which is used to define a dissimilarity matrix \citep{Kullback1951}.
+% % % This method is our main competitor, similarly focusing on improving interpretation of tail behaviour in a closely related application to our own, but it must be noted that it is limited to the bivariate case. 
+% % % \citet{Vignotto} proposes a clustering algorithm for clustering and Ireland based on bivariate extreme dependence, based on an empirical estimate for the Kullback-Leibler divergence \citep{Kullback1951}.
+% % % \citet{Vignotto2021} introduces a non-parametric clustering method which groups locations in Great Britain and Ireland based on the joint tail behaviour of gridded precipitation and wind speed data from ERA5 \citep{Hersbach2020}.
+% % % % The bivariate random vectors at each location are transformed to Pareto margins, and the maximum across both transformed margins is used to define extreme observations.
+% % % An empirical estimate of the Kullback-Leibler $\left(\KL\right)$ divergence is computed for each pairwise comparison of locations, which is used to define a dissimilarity matrix \citep{Kullback1951}. \todo{no need to define KL below)
+% % % % This method is our main competitor, and has a similar focus on interpretation tail dependence interpretation of tail behaviour in a closely related application to our own. 
+% % % This method is our main competitor, and has both a similar focus on improving the interpretability of tail dependence structures, and a closely related application to our own, as detailed in Section~\ref{sec:ire}. \todo{Probably still need to highlight why it is our competitor (treats sites separately, ignores space)}
+% % % However, we believe it has several notable limitations. 
+% % % Firstly, it is limited to the bivariate case, which may be limiting in many applications. 
+% % % Secondly, it's non-parametric introduces several possible drawbacks.
+% % % While avoiding misspecification, it does not provide a model to perform further inference on the tail dependence structure, such as estimating the probability of jointly extreme events.
+% % % Also, covariates such as spatial information cannot be incorporated, which may be useful in many applications. \todo{Should I mention this if we don't do it ourselves?}
+% % % Furthermore, reliance on the empirical frequencies of bivariate and univariate extremes, which are inherently rare, may lead to poor clustering performance unless sufficiently large datasets are available.
+% % % \citet{Vignotto2021} introduces a non-parametric clustering method that groups locations in Great Britain and Ireland based on the joint tail behaviour of gridded precipitation and wind speed data.
+% % Tail dependence at each location is described non-parametrically using empirical counts of extreme events in transformed bivariate observations, ignoring any spatial dependence.
+% % These counts are used to estimate the Kullback--Leibler ($\KL{}$) divergence between each pair of locations \citep{Kullback1951}, and $k$-medoids clustering is then applied to group sites with similar bivariate tail structures.
+% % This method is our main competitor, as the setting closely resembles the multivariate spatial framework we consider. 
+% Most relevant to our work, \citet{Vignotto2021} develop a non-parametric method for clustering bivariate extremes at locations in Great Britain and Ireland by estimating pairwise Kullback-Leibler ($\KL{}$) divergences and applying the $k$-medoids algorithm. 
+% % % However, this approach has several limitations, in that it is limited to the bivariate case, and, being non-parametric, lacks a generative model for tail dependence inference, and may perform poorly on small datasets due to reliance on rare empirical extremes.  
+% % However, this approach has several limitations, in that it is limited to the bivariate case, and, being non-parametric, lacks a generative model for tail dependence inference, and may perform poorly without large datasets due to reliance on sufficient empirical occurrences of joint and marginal extremes to characterize tail dependence.
+% While closely aligned with our application, this approach is limited to the bivariate case and, being non-parametric, lacks a generative model for inference, and may perform poorly without a large sample size.
+
+\todo{Remove these two paragraphs, and combine into below}
 % Clustering: introduction + motivation
-\todo{Should I say something here or above about being interested in the spatial domain?}
-% \todo{C: Focus on learning spatial structure in tail dependence, reduction of unceratinty is only mentioned as potential benefit}
-% One method for improved parameter estimation is through clustering.
-% Clustering is an unsupervised learning technique which seeks to group similar data together, such that the data within each group is more similar to each other than to data in other groups \citep{Hastie2009}.
-% Clustering is a powerful tool for exploratory analysis, allowing us to identify patterns in the data and improve interpretability of the extremal dependence structure.
-% Clustering allows us to pool information from multiple sites or variables.
-% This pooling can lead to more robust parameter estimates, as it reduces the uncertainty associated with estimating parameters from a single site or variable.
-% Clustering is a popular method in extremes, where data is naturally scarce, often leading to high uncertainty and difficulty in intrepretation \citep{Ferreira2023-mz, Zheng2023-jf}.
-%   % \item Extremal clustering is chiefly concerned with the problems of exploratory analysis and improved interpretability of extremal dependence structures, and also in reducing parameter uncertainty.
-% new
-One useful and popular approach to improve interpretability for extremal dependence modelling is through the use of clustering, which has a seen widespread use in the analysis of multivariate extremes \citep{Ferreira2023-mz, Zheng2023-jf}.
-% Clustering is an unsupervised learning technique that groups observations by similarity without prior labels \citep{Hastie2009}, serving as a powerful exploratory tool for uncovering spatial structure in tail dependence.  
-Clustering is an unsupervised learning technique which seeks to group similar data together, such that the data within each group is more similar to each other than to data in other groups \citep{Hastie2009}.
-% By partitioning sites into clusters with homogeneous joint‐tail behaviour, we can gain clearer insight into spatial heterogeneity and complex dependence patterns.  
-% In a spatial setting, we can partition sites into clusters with homogeneous joint‐tail behaviour, to gain clearer insight into spatial heterogeneity and complex dependence patterns.  
+A useful and popular approach to improve interpretability for extremal dependence modelling is clustering \citep{Ferreira2023-mz, Zheng2023-jf}. \todo{discuss these references if provided}
+Clustering is an unsupervised learning technique which seeks to group similar data \citep{Hastie2009}.
 In a spatial context with multivariate observations at each location, we can partition sites into clusters exhibiting similar joint tail behaviour, thereby revealing spatial patterns in complex dependence structures.
 
 % Clustering: past work (interpretability)
-% Exploratory clustering for improved interpretability, in extremes and
-% elsewhere, generally focuses on deriving some similarity matrix for a given
-% distance, and then using performing some generic clustering algorithm such as k-means or k-mediods on this matrix \citep{Lloyd1957, Kaufman1987}.
-% \todo{C: Be clearer on the aspects considered in clustering}
-% \todo{Cut down on detail? Longest section!}
-\todo{Quite long!}
-Several clustering methods have been proposed in EVT. % \citep{Carreau2017, Dupuis2023, Rohrbeck2021}
-% ~\citet{Rohrbeck2021} proposes a spatial extremal clustering algorithm for hydrological variables, which involves Bayesian hierarchical modelling consisting of an dependence component using the $\chi$ statistic dependence, and a marginal component consisting of a generalised Pareto distribution (GPD) fitted to each cluster.
-% This method uses the Reversible Jump MCMC (RJMCMC) clustering algorithm of \citet{Bottolo2003}, which avoids the need to fix the number of clusters a priori.
-% Alternatively, frequentist approaches have used the Expectation–-Maximisation (EM) algorithm to identify group structure and fit group-specific models for the tails, with the number of clusters typically selected via out-of-sample cross-validation \citep{Carreau2017, Dupuis2023}.
-Bayesian approaches, such as \citet{Bottolo2003} and \citet{Rohrbeck2021}, use hierarchical models with Reversible-Jump MCMC to jointly capture marginal behaviour and extremal dependence, avoiding the need to fix the number of clusters in advance. 
+Several clustering methods have been proposed for extremes. % \citep{Carreau2017, Dupuis2023, Rohrbeck2021}
+Bayesian approaches, by \citet{Bottolo2003} and \citet{Rohrbeck2021}, use hierarchical models with Reversible-Jump Monte Carlo Markov Chain (RJMCMC) to jointly capture marginal behaviour and extremal dependence, avoiding the need to fix the number of clusters in advance. 
 Frequentist alternatives employ the Expectation-Maximisation (EM) algorithm to fit group-specific tail models, with the number of clusters selected via cross-validation \citep{Carreau2017, Dupuis2023}. 
-% One common approach for extremal clustering is to define a distance measure quantifying the pairwise similarity in the tail of random variables/vectors, and then apply a generic clustering algorithm such as k-means or k-medoids \citep{Lloyd1957, Kaufman1987}.
 Another common strategy is to define a pairwise dissimilarity measure between sites and then apply a generic clustering algorithm such as $k$-means or $k$-medoids \citep{Lloyd1957, Kaufman1987}. 
-% There is a large body of literature concerning such clustering methods for extremes. 
-% % In \citet{Bernard2013}, a clustering algorithm is derived for weekly
-% % precipitation maxima for sites across France, which uses the F-madogram as a
-% % distance measure. \todo{C: be more clear about the tail characteristics used for clustering}
-% % In financial applications, \citet{deCarvalho2023} proposes a clustering algorithm for stock prices, which uses the extremal index and heteroskedastic function, loosely interpretable as the magnitude and frequency of extreme events, to define a bivariate centroid with which to cluster stocks on the London Stock Exchange. 
-\todo{Bit of a non sequitur given emphasis on envoronmental extremes elsewhere?}
-\todo{Or should I be less focused on purely spatial applications elsewhere?}
-% In financial applications, \citet{deCarvalho2023} proposes a clustering algorithm for grouping stocks on the London Stock Exchange based on their tail behaviour. %, using the extremal index and heteroskedastic function, which can be loosely interpreted as the magnitude and frequency of extreme events.
-% In environmental extremes, \citet{Bernard2013} describes a clustering algorithm of weekly precipitation maxima across France.
-% Focusing on the spatial tail dependence structure of the data, this method uses the F-madogram, an extremal analogue of the classical variogram, as a distance measure.
-% Applications include finance, where clustering has been based on indices of extremal frequency and magnitude \citep{deCarvalho2023}, and environmental extremes, where the F-madogram has been used to group precipitation sites across France \citep{Bernard2013}. 
-Applications include finance, where clustering has been based on indices of extremal frequency and magnitude \citep{deCarvalho2023}, and environmental extremes, where the F-madogram has been used to group precipitation sites across France \citep{Bernard2013}, and where Generalised Pareto distributions fit to extreme temperatures were compared using the Kolmogorov-Smirnov and $L_1-$Wasserstein distances to cluster autonomous regions in Spain \citep{Alonso2014-rr}.
-% % \citet{Vignotto2021} proposes a k-mediods algorithm for clustering locations in Great Britain and Ireland for precipitation and wind speed data.
-% % \citet{Vignotto2021} proposes a k-medoids algorithm for clustering locations in Great Britain and Ireland based on the joint tail behaviour of gridded precipitation and wind speed data from ERA5 \citep{Hersbach2020}.
-% % Individually at each location, bivariate data are transformed to Pareto margins.
-% % The maximum across both transformed margins is used to define extreme observations.
-% % This bivariate space is then partitioned into three disjoint sets, corresponding to extremal observations for both precipitation and wind speed, only precipitation, or only wind speed.
-% % An empirical estimate of the Kullback-Leibler divergence for each pairwise comparison of locations is computed based on these sets, which is used to define a dissimilarity matrix \citep{Kullback1951}.
-% % This method is our main competitor, similarly focusing on improving interpretation of tail behaviour in a closely related application to our own, but it must be noted that it is limited to the bivariate case. 
-% % \citet{Vignotto} proposes a clustering algorithm for clustering and Ireland based on bivariate extreme dependence, based on an empirical estimate for the Kullback-Leibler divergence \citep{Kullback1951}.
-% % \citet{Vignotto2021} introduces a non-parametric clustering method which groups locations in Great Britain and Ireland based on the joint tail behaviour of gridded precipitation and wind speed data from ERA5 \citep{Hersbach2020}.
-% % % The bivariate random vectors at each location are transformed to Pareto margins, and the maximum across both transformed margins is used to define extreme observations.
-% % An empirical estimate of the Kullback-Leibler $\left(\KL\right)$ divergence is computed for each pairwise comparison of locations, which is used to define a dissimilarity matrix \citep{Kullback1951}. \todo{no need to define KL below)
-% % % This method is our main competitor, and has a similar focus on interpretation tail dependence interpretation of tail behaviour in a closely related application to our own. 
-% % This method is our main competitor, and has both a similar focus on improving the interpretability of tail dependence structures, and a closely related application to our own, as detailed in Section~\ref{sec:ire}. \todo{Probably still need to highlight why it is our competitor (treats sites separately, ignores space)}
-% % However, we believe it has several notable limitations. 
-% % Firstly, it is limited to the bivariate case, which may be limiting in many applications. 
-% % Secondly, it's non-parametric introduces several possible drawbacks.
-% % While avoiding misspecification, it does not provide a model to perform further inference on the tail dependence structure, such as estimating the probability of jointly extreme events.
-% % Also, covariates such as spatial information cannot be incorporated, which may be useful in many applications. \todo{Should I mention this if we don't do it ourselves?}
-% % Furthermore, reliance on the empirical frequencies of bivariate and univariate extremes, which are inherently rare, may lead to poor clustering performance unless sufficiently large datasets are available.
-% % \citet{Vignotto2021} introduces a non-parametric clustering method that groups locations in Great Britain and Ireland based on the joint tail behaviour of gridded precipitation and wind speed data.
-% Tail dependence at each location is described non-parametrically using empirical counts of extreme events in transformed bivariate observations, ignoring any spatial dependence.
-% These counts are used to estimate the Kullback--Leibler ($\KL{}$) divergence between each pair of locations \citep{Kullback1951}, and $k$-medoids clustering is then applied to group sites with similar bivariate tail structures.
-% This method is our main competitor, as the setting closely resembles the multivariate spatial framework we consider. 
-Most relevant to our work, \citet{Vignotto2021} develop a non-parametric method for clustering locations in Great Britain and Ireland by estimating pairwise Kullback–Leibler ($\KL{}$) divergences from empirical bivariate extremes and applying $k$-medoids. 
-% % However, this approach has several limitations, in that it is limited to the bivariate case, and, being non-parametric, lacks a generative model for tail dependence inference, and may perform poorly on small datasets due to reliance on rare empirical extremes.  
-% However, this approach has several limitations, in that it is limited to the bivariate case, and, being non-parametric, lacks a generative model for tail dependence inference, and may perform poorly without large datasets due to reliance on sufficient empirical occurrences of joint and marginal extremes to characterize tail dependence.
-While closely aligned with our application, this approach is limited to the bivariate case, and, being non-parametric, lacks a generative model for inference, and may perform poorly without large datasets.
+Applications include finance, with clustering based on indices of extremal frequency and magnitude \citep{deCarvalho2023}, and environment, where the F-madogram \citep{Cooley2006variograms} was used to group precipitation sites across France \citep{Bernard2013}, and where generalised Pareto distributions (see, e.g.\,~\citet{Coles2001}) fitted to extreme temperatures were compared using the Kolmogorov-Smirnov and $L_1-$Wasserstein distances to cluster autonomous regions in Spain \citep{Alonso2014-rr}. 
+Most relevant to our work, \citet{Vignotto2021} develop a non-parametric method for clustering bivariate extremes at locations in Great Britain and Ireland by estimating pairwise Kullback-Leibler ($\KL{}$) divergences and applying the $k$-medoids algorithm. 
+While closely aligned with our application, this approach is limited to the bivariate case and, being non-parametric, lacks a generative model for inference, and may perform poorly without a large sample size.
+
+% Clustering
+\todo{Check references!}
+Clustering approaches for extremes can be organised into three complementary strands that differ in what is being clustered and how:  
+First, methods that cluster by marginal extreme behaviour represent each site by univariate tail summaries (e.g.\ GPD/POT parameter estimates, return levels or empirical tail indices) and then apply feature- or distance-based clustering (such as $k$-means, hierarchical methods or $k$-medoids) to those summaries; examples include applications that cluster by extreme temperature summaries \citep{Alonso2014-rr} or by marginal extreme indicators in other environmental contexts.  
+Second, multivariate, site-wise clustering methods compare the joint-tail structure or fitted multivariate tail models at each site, deriving pairwise dissimilarities from estimated tail-dependence summaries, copula parameters, conditional-extreme fits, or empirical divergences (for instance, \citealt{Vignotto2021,deCarvalho2023} construct pairwise Kullback–Leibler- or empirical-divergence-based dissimilarities from bivariate tail information and then apply standard clustering such as $k$-medoids).  
+Third, spatial-process or field-clustering approaches treat whole spatial fields, trajectories or realizations as the objects to be grouped, often using distances/divergences between fields and incorporating spatial contiguity or regularisation (recent work develops divergence-based, data-driven spatial clustering for compound precipitation–wind extremes; see \citealt{Boulin2025}).  
+Methodologically, the literature spans feature-based clustering, distance/dissimilarity matrices (KL, JS-type divergences, F-madogram and other extremal variograms; e.g.\ \citealt{Cooley2006variograms,Bernard2013}), and model-based clustering using mixture or hierarchical models often fitted via EM or Bayesian RJMCMC \citep{Carreau2017, Dupuis2023,Bottolo2003,Rohrbeck2021}; each approach trades off interpretability, statistical efficiency and scalability in different ways.  
+Univariate-summary clustering is straightforward and interpretable but ignores multivariate tail structure; multivariate site-wise methods directly target joint-tail behaviour at each site but can depend heavily on the chosen summary or divergence and on sample size; spatial-field clustering captures large-scale spatial patterns but does not directly yield site-wise tail models for inference.  
+Several environmental applications illustrate these choices: the F-madogram has been used to cluster precipitation sites in France \citep{Bernard2013}, Kolmogorov–Smirnov and $L_1$-Wasserstein distances have been used to group regions by extreme temperature behaviour in Spain \citep{Alonso2014-rr}, and finance-focused clustering has used indices of extremal frequency and magnitude \citep{deCarvalho2023}.  
+The nonparametric KL-based method of \citet{Vignotto2021} is closely related to our setting—it estimates pairwise divergences from empirical bivariate extremes and applies $k$-medoids—but it is limited to the bivariate case, relies on empirical frequencies of rare co-exceedances (which can be noisy at small sample sizes), and, being nonparametric, does not provide a generative model for inference on joint exceedance probabilities.  
+By contrast, model-based approaches (mixture or hierarchical) provide coherent probabilistic models but can be computationally intensive and require careful specification; Bayesian RJMCMC methods (e.g.\ \citealt{Bottolo2003,Rohrbeck2021}) avoid fixing $k$ but add algorithmic complexity, while EM-based frequentist mixtures offer a faster alternative at the cost of model selection complexity \citep{Carreau2017,Dupuis2023}.  
+Our method sits firmly in the multivariate, site-wise strand: we fit a (bivariate) conditional extremes (CE) model at each site, which flexibly accommodates both asymptotic dependence and asymptotic independence, and then compute a closed-form, model-based dissimilarity between the fitted conditional-tail distributions using the skew-geometric Jensen–Shannon divergence (\(\JSGa{}\)), enabling computationally efficient, symmetric pairwise comparisons.  
+This design combines some of the advantages of parametric inference (a generative CE model enabling direct tail-inference and pooling across sites) with the ease and interpretability of distance-based clustering, while avoiding the sample-size fragility of purely empirical divergences; unlike Vignotto et al., it extends naturally to multivariate CE fits and yields closed-form pairwise computations.  
+Because we cluster site-wise multivariate tail behaviour (not raw spatial fields) the method is directly comparable to other site-pair dissimilarity approaches, and the emergence of spatially coherent groups despite using no explicit spatial covariates supports the conclusion that CE parameters capture meaningful spatial structure; if desired, spatial covariates or spatial regularisation can be incorporated to produce spatially-constrained clusters.
+
+
+
+
 
 % % Clustering: past work (improved parameter estimation)
 % % \todo{Add line about that new paper which does have multivariate clustering, but not CE (which one?)}
@@ -340,10 +413,11 @@ While closely aligned with our application, this approach is limited to the biva
 % % Clustering has evidently been widely utilised in EVT. 
 % Clustering has evidently seen widespread use in the analysis of multivariate extremes. 
 % Our main contributions to this literature are to adapt some of these existing approaches to the Conditional Extremes (CE) model, which has not previously been explored in clustering. 
-Our main contribution to the literature is to perform clustering on the CE model, which has not previously been explored. 
-This enables parametric exploration of tail dependence structures in arbitrary dimensions, in contrast to the existing non-parametric approach of \citet{Vignotto2021} which is restricted to the bivariate case. 
+% Our main contribution to the literature is to perform clustering on the CE model, which has not previously been explored. 
+We perform clustering of multivariate extremes using the CE model.
+This enables parametric exploration of tail dependence structures in arbitrary dimensions, in contrast to the existing non-parametric approach of \citet{Vignotto2021}.
 % The Gaussian working assumption in the CE model allows for a simple, closed form divergence measure upon which to base our clustering framework.
-Using the working assumption by \citet{Heffernan2004} for estimating the CE model, we define a simple, closed-form divergence measure upon which to base our clustering framework.
+Using the working conditional Gaussianity assumption of \citet{Heffernan2004} for estimating the CE model, we define a simple, closed-form divergence measure for multivariate extremes which permits clustering.
 Our parametric approach delivers a unified and statistically principled tool for exploratory analysis of multivariate extremes, facilitating the identification of spatial locations with homogeneous tail dependence characteristics.  
 
 % Structure of paper
@@ -353,72 +427,72 @@ The remainder of this paper is structured as follows.
 % which includes a novel dissimilarity measure based on the Jensen--Shannon (JS) divergence, and a method for selecting the number of clusters.
 Section~\ref{sec:method} introduces our clustering framework for CE models, which includes a novel dissimilarity measure based on the 
 % skew-geometric Jensen--Shannon divergence $\left(\text{JS}^{\textrm{G}_{\alpha}}\right)$, and a method for selecting the number of clusters.
-skew-geometric Jensen--Shannon divergence $\left(\JSGa{}\right)$, and a method for selecting the number of clusters.
+skew-geometric Jensen--Shannon divergence $\left(\JSGa{}\right)$ of \citet{Nielsen2019}, and a method for selecting the number of clusters.
 A simulation study is described and performed in Section~\ref{sec:sim}, to compare our method to the leading competitor in the bivariate case, and show that it outperforms this method across a range of extremal dependence structures.
-In Section~\ref{sec:application}, we apply our clustering framework to Irish meteorological data, and show how it can be used to identify sites with similar tail dependence structures between precipitation and wind speed.
-Finally, Section~\ref{sec:discuss} contains a discussion of our findings, including the limitations of our method and potential future work.
+In Section~\ref{sec:application}, we apply our clustering framework to Irish meteorological data, and show how it can be used to identify sites with similar tail dependence between precipitation and wind speed.
+Section~\ref{sec:discuss} concludes with a discussion of our findings, the limitations of our method, and potential future work.
 
 \section{Methodology}~\label{sec:method}
 \todo{Split this into different full sections, since we are doing methods paper?}
 % \subsection{Peaks-over-threshold}
 
 In this section, we introduce our clustering framework for CE models.
-We begin in Section~\ref{subsec:asym_dep} by defining the concepts of asymptotic dependence and independence, which are used to characterise extremal dependence.
-We then introduce the CE model in Section~\ref{subsec:ce_model}, which is used to model the joint tail behaviour of a random vector conditional on one of its components exceeding a suitably high threshold.
+% We begin in Section~\ref{subsec:asym_dep} by defining the concepts of asymptotic dependence and independence, which are used to characterise extremal dependence.
+% We introduce the CE model in Section~\ref{subsec:ce_model}, which is used to model the joint tail behaviour of a random vector conditional on one of its components exceeding a suitably high threshold.
+We begin in Section~\ref{subsec:ce_model} by introducing the CE model of \citet{Heffernan2004}, which is used to model the joint tail behaviour of a random vector conditional on one of its components exceeding a suitably high threshold.
 % We explain how inference with this model is equivalent to estimating a multivariate Gaussian distribution. 
 Section~\ref{subsec:div} describes our chosen dissimilarity measure, the $\JSGa{}$ divergence, which has analytical form when comparing Gaussian distributions, and which allows us to efficiently quantify the pairwise dissimilarity between CE models fit to different sites.
 Finally, Section~\ref{subsec:clustering} outlines how we perform k-medoids clustering using this dissimilarity measure, to identify sites with similar tail dependence structures, and how the number of clusters is selected.
 Finally, in Section~\ref{subsec:estimation} we describe some of the computational details which are important for estimating the CE model and computing the $\JSGa{}$ divergence.
 
-\subsection{Asymptotic dependence}~\label{subsec:asym_dep}
-
-\todo{Need to distinguish between asymptotic and extremal/tail dependence}
-\todo{Use extremal and tail dependence interchangeably? Or just extremal dependence?}
-
-To characterise tail dependence, we first introduce the concepts of asymptotic dependence and independence, as described in \citet{Coles1999}.
-% The coefficient of asymptotic dependence, $\chi \in [0, 1]$, measures the degree of asymptotic dependence between two random variables $X_1$ and $X_2$ with corresponding CDFs $F_1$ and $F_2$, under the class of asymptotically dependent distributions.
-The coefficient of asymptotic dependence, $\chi \in [0, 1]$, measures the degree of extremal dependence between two random variables $X_1$ and $X_2$ with corresponding distribution functions $F_1$ and $F_2$, and is given by % , under the class of asymptotically dependent distributions, and is given by 
-% It is defined as $\chi = \lim_{u \rightarrow 1}{\chi(u)}$, where
+% \subsection{Asymptotic dependence}~\label{subsec:asym_dep}
+% 
+% \todo{Need to distinguish between asymptotic and extremal/tail dependence}
+% \todo{Use extremal and tail dependence interchangeably? Or just extremal dependence?}
+% 
+% To characterise tail dependence, we first introduce the concepts of asymptotic dependence and independence, as described in \citet{Coles1999}.
+% % The coefficient of asymptotic dependence, $\chi \in [0, 1]$, measures the degree of asymptotic dependence between two random variables $X_1$ and $X_2$ with corresponding CDFs $F_1$ and $F_2$, under the class of asymptotically dependent distributions.
+% The coefficient of asymptotic dependence, $\chi \in [0, 1]$, measures the strength of extremal dependence between two random variables $X_1$ and $X_2$ with corresponding distribution functions $F_1$ and $F_2$, and is given by % , under the class of asymptotically dependent distributions, and is given by 
+% % It is defined as $\chi = \lim_{u \rightarrow 1}{\chi(u)}$, where
+% % \[
+% % \chi(u) = 2 - \frac{\log\left(\mathbb{P}(F_1(X_1) < u, F_2(X_2) < u)\right)}{\log \left(\mathbb{P}(F_1(X_1) < u)\right)}.
+% % \]
 % \[
-% \chi(u) = 2 - \frac{\log\left(\mathbb{P}(F_1(X_1) < u, F_2(X_2) < u)\right)}{\log \left(\mathbb{P}(F_1(X_1) < u)\right)}.
+%   \chi = \lim_{u\to1}\mathbb{P}\bigl[F_1(X_1)>u\mid F_2(X_2)>u\bigr].
 % \]
-\[
-  \chi = \lim_{u\to1}\mathbb{P}\bigl[F_1(X_1)>u\mid F_2(X_2)>u\bigr].
-\]
-If $\chi = 0$, then $X_1$ and $X_2$ are said to be asymptotically independent while, for $\chi > 0$, they are termed asymptotically dependent, with greater strength as $\chi$ increases.
-% Thus, $\chi$ gives the limiting probability of $X_1$ being extreme given that $X_2$ is also extreme, and we expect the joint probability of observing extremal events in both variables to be greater when $\chi$ is higher \citep{Rohrbeck2021}.
-% Furthermore, $\chi$ is symmetric in $X_1$ and $X_2$.
-% % Note, two variables can be asymptotically dependent even if they are not dependent in the classical sense.
-% Note, two variables $X_1$ and $X_2$ can exhibit asymptotic dependence even when they are not dependent in the classical sense, i.e.\ they do not exhibit strong correlation in the bulk of their distributions.
-% % Another coefficient, $\bar{\chi} \in [-1, 1]$, is used to measure the strength of dependence in the case of asymptotically independent distributions, where $\chi = 0$.
-% Another coefficient, $\bar{\chi} \in [-1, 1]$, measures the tail dependence between two variables where $\chi = 0$, the case of asymptotically independent variables.
-% This coefficient is defined as $\bar{\chi} = \lim_{u \rightarrow 1}{\bar{\chi}(u)}$, where
-% \todo{Is there a better definition than this, given I've changed chi?}
-% \[
-%   \bar{\chi}(u) = \lim_{u \rightarrow 1} \frac{2\log\mathbb{P}(F_1(X_1) > u)}{ \log{\mathbb{P}(F_1(X_1) > u, F_2(X_2) > u)}} - 1.
-% \]
-% For asymptotic dependence, $\bar{\chi} = 1$.
-% Under asymptotic independence, $\bar{\chi} = 0$, with $\bar{\chi}$ increasing in magnitude as the variables become more positively (for $\bar{\chi} > 0$) or negatively (for $\bar{\chi} < 0$) dependent in their extremes \citep{Vignotto2021}.
+% If $\chi = 0$, then $X_1$ and $X_2$ are said to be asymptotically independent while, for $\chi > 0$, they are termed asymptotically dependent, with greater strength as $\chi$ increases.
+% % Thus, $\chi$ gives the limiting probability of $X_1$ being extreme given that $X_2$ is also extreme, and we expect the joint probability of observing extremal events in both variables to be greater when $\chi$ is higher \citep{Rohrbeck2021}.
+% % Furthermore, $\chi$ is symmetric in $X_1$ and $X_2$.
+% % % Note, two variables can be asymptotically dependent even if they are not dependent in the classical sense.
+% % Note, two variables $X_1$ and $X_2$ can exhibit asymptotic dependence even when they are not dependent in the classical sense, i.e.\ they do not exhibit strong correlation in the bulk of their distributions.
+% % % Another coefficient, $\bar{\chi} \in [-1, 1]$, is used to measure the strength of dependence in the case of asymptotically independent distributions, where $\chi = 0$.
+% % Another coefficient, $\bar{\chi} \in [-1, 1]$, measures the tail dependence between two variables where $\chi = 0$, the case of asymptotically independent variables.
+% % This coefficient is defined as $\bar{\chi} = \lim_{u \rightarrow 1}{\bar{\chi}(u)}$, where
+% % \todo{Is there a better definition than this, given I've changed chi?}
+% % \[
+% %   \bar{\chi}(u) = \lim_{u \rightarrow 1} \frac{2\log\mathbb{P}(F_1(X_1) > u)}{ \log{\mathbb{P}(F_1(X_1) > u, F_2(X_2) > u)}} - 1.
+% % \]
+% % For asymptotic dependence, $\bar{\chi} = 1$.
+% % Under asymptotic independence, $\bar{\chi} = 0$, with $\bar{\chi}$ increasing in magnitude as the variables become more positively (for $\bar{\chi} > 0$) or negatively (for $\bar{\chi} < 0$) dependent in their extremes \citep{Vignotto2021}.
+% 
+% % Together, $(\chi, \bar{\chi})$ provide a useful summary of extremal dependence for any pair of random variables.
+% 
+% % $\chi$ provides a useful summary of extremal dependence for any pair of random variables. 
+% % % However, they do not fully describe the dependence structure of a multivariate distribution, or allow for further inference.
+% % However, it does not fully describe the dependence structure of a multivariate distribution, or allow for further inference.
+% While $\chi$ provides a useful summary of extremal dependence for any pair of random variables, it does not fully describe the dependence structure of a multivariate distribution, or allow for further inference.
+% % For example, probabilities of jointly extreme events for two or more variables cannot be calculated from these coefficients.
+% For example, $\chi$ cannot be used to calculate the joint exceedance probability of two or more variables.
+% For this, we require a model for extremal dependence.
+% % Various approaches to this problem have been proposed, including max-stable processes, Pareto processes, Gaussian processes and copulas.
+% % However, these models are limited in their ability to model dependence and their computational feasibility, and are often conceptually difficult. 
+% % % For example, max-stable processes can only model $\mathbb{P}(\bm{X} \in \bm{C})$ under asymptotic dependence between each pair of variables in $\bm{X}$, while in contrast Gaussian processes can only model asymptotic independence \citep{Tawn2018, Huser2024}.
+% % % Max-stable processes are also quite computationally expensive and conceptually difficult to derive, and so are often not feasible for large datasets.
+% % A framework which provides a more flexible approach to modelling extremal dependence is the CE model of \citet{Heffernan2004}.
+% % A framework which provides a flexible approach to modelling extremal dependence is the CE model of \citet{Heffernan2004}. 
+% One such model which provides a flexible framework for describing tail dependence is the CE model of \citet{Heffernan2004}.
 
-% Together, $(\chi, \bar{\chi})$ provide a useful summary of extremal dependence for any pair of random variables.
-
-% $\chi$ provides a useful summary of extremal dependence for any pair of random variables. 
-% % However, they do not fully describe the dependence structure of a multivariate distribution, or allow for further inference.
-% However, it does not fully describe the dependence structure of a multivariate distribution, or allow for further inference.
-While $\chi$ provides a useful summary of extremal dependence for any pair of random variables, it does not fully describe the dependence structure of a multivariate distribution, or allow for further inference.
-
-% For example, probabilities of jointly extreme events for two or more variables cannot be calculated from these coefficients.
-For example, $\chi$ cannot be used to calculate the joint exceedance probability of two or more variables.
-For this, we require a model for extremal dependence.
-% Various approaches to this problem have been proposed, including max-stable processes, Pareto processes, Gaussian processes and copulas.
-% However, these models are limited in their ability to model dependence and their computational feasibility, and are often conceptually difficult. 
-% % For example, max-stable processes can only model $\mathbb{P}(\bm{X} \in \bm{C})$ under asymptotic dependence between each pair of variables in $\bm{X}$, while in contrast Gaussian processes can only model asymptotic independence \citep{Tawn2018, Huser2024}.
-% % Max-stable processes are also quite computationally expensive and conceptually difficult to derive, and so are often not feasible for large datasets.
-% A framework which provides a more flexible approach to modelling extremal dependence is the CE model of \citet{Heffernan2004}.
-% A framework which provides a flexible approach to modelling extremal dependence is the CE model of \citet{Heffernan2004}. 
-One such model which provides a flexible framework for describing tail dependence is the CE model of \citet{Heffernan2004}.
-
-\subsection{Conditional extremes}~\label{subsec:ce_model}
+\subsection{Multivariate conditional extremes}~\label{subsec:ce_model}
 
 % See Jordan's paper for quick summary (TFR a bit long winded) (and Keef)
 % Need to talk about marginals, transformations and then model itself
@@ -432,17 +506,19 @@ One such model which provides a flexible framework for describing tail dependenc
 % Transformation
 The CE model, like many other models for multivariate extremes, requires a marginal transformation.
 Standardising to common margins is a widespread technique to ensure differences in variable scale do not affect estimation of the dependence structure. 
-A popular choice for CE models is to transform to Laplace margins, as introduced in \citet{Keef2013}.
-Each marginal random variable $X_i$ is transformed to Laplace margins, as outlined in equation~\eqref{eq:laplace} in Section \ref{subsec:estimation}, and thereafter denoted by $Y_i$.
+A popular choice for CE models is Laplace margins, as introduced in \citet{Keef2013}.
+\todo{Check X is defined correctly/nicely}
+% Each marginal random variable $X_i, i = 1, \ldots, d, (X_1, \ldots, X_d) \in \mathbb{R}^d$ is transformed to Laplace margins, as outlined in equation~\eqref{eq:laplace} in Section \ref{subsec:estimation}, and thereafter denoted by $Y_i, \(Y_1, \ldots Y_d\) \in \mathbb{R}^d$. 
 % To transform each marginal random variable $X_i$ to Laplace margins, denoted by $Y_i$, we let:
-%  \begin{equation}~\label{eq:laplace}
-%    Y_i = \begin{cases}
-%      \log\left\{2F_{X_i}(X_i)\right\} &\text{ for } X_i < F_{X_i}^{-1}(0.5), \\
-%      -\log\left\{2(1 - F_{X_i}(X_i))\right\} &\text{ for } X_i \ge F_{X_i}^{-1}(0.5), \\
-%    \end{cases}
-%  \end{equation}
-%  \todo{trying to be brief, but would like to have quick line about why we use Laplace!}
-%  where $F_{X_i}$ is the cumulative distribution function (CDF) of $X_i$. 
+Each marginal random variable $X_i, i = 1, \ldots, d, (X_1, \ldots, X_d) \in \mathbb{R}^d$ is transformed to Laplace margins, thereafter denoted as $Y_i$, using the probability integral transform:
+ \begin{equation}~\label{eq:laplace}
+   Y_i = \begin{cases}
+     \log\left\{2F_{X_i}(X_i)\right\} &\text{ for } X_i < F_{X_i}^{-1}(0.5), \\
+     -\log\left\{2(1 - F_{X_i}(X_i))\right\} &\text{ for } X_i \ge F_{X_i}^{-1}(0.5), \\
+   \end{cases}
+ \end{equation}
+\todo{trying to be brief, but would like to have quick line about why we use Laplace!}
+where $F_{X_i}$ is the cumulative distribution function (CDF) of $X_i$. 
 
 % Rigorous Conditional Extremes definition
 % \begin{itemize}
@@ -471,10 +547,12 @@ Each marginal random variable $X_i$ is transformed to Laplace margins, as outlin
 
 % say Y in d dimensions
 % We use $Y_{-i} = \bm{Y} \backslash Y_{i}, \bm{Y} \in \mathbb{R}^d, y \in (1, \ldots, d)$ to denote the vector of all variables in $\bm{Y}$ except $Y_i$, and assume all operations hereafter are performed component-wise.
-For $d \in \mathbb{N}$, we use $ \bm{Y} \in \mathbb{R}^d, d \in \mathbb{N}$ and for $i \in \{1,\ldots,d\}$ write $Y_{-i} = \bm{Y}\setminus\{Y_i\}$ to denote the $(d-1)$-dimensional random vector of all components except $Y_i$, and assume all operations below are component-wise. 
+% For $d \in \mathbb{N}$, we use $ \bm{Y} \in \mathbb{R}^d, d \in \mathbb{N}$ and for $i \in \{1,\ldots,d\}$ write $Y_{-i} = \bm{Y}\setminus\{Y_i\}$ to denote the $(d-1)$-dimensional random vector of all components except $Y_i$, and assume all operations below are component-wise. 
+For $d \in \mathbb{N}$, we use $\bm{Y} = \(Y_1, \ldots, Y_d) \in \mathbb{R}^d$ and for $i \in \{1, ldots, d\}$ write $\bm{Y}_{-i} = \bm{Y} \setminus Y_i$ to denote the $(d-1)$-dimensional random vector of $\bm{Y}$ with its its $i^{\text{th}}$ component removed. 
+Assume all operations below are component-wise. 
 % \item The CE model of \citet{Heffernan2004} assumes that there exists vector normalising parameters $\alpha_{\mid i} := \bm{a}_{\mid i}(y_i), \beta_{\mid i} := \bm{b}_{\mid i}(y_i) \in \mathbb{R} \rightarrow \mathbb{R}^{(d-1)}$ such that for fixed $\bm{z}_{\mid i} \in \mathbb{R}^{(d-1)}$,
 % The CE model of \citet{Heffernan2004} assumes that there exist parameter vectors $\bm{\alpha}_{\mid i}^{(\CE{})} := \left\{\alpha_{j \mid i}^{(\CE{})} : j\in\{1,\dots,d\}\setminus\{i\}\right\} \in [-1, 1]^{(d-1)}$ and $\bm{\beta}_{\mid i}^{(\CE{})} := \left\{\beta_{j \mid i}^{(\CE{})} : j\in\{1,\dots,d\}\setminus\{i\} \right\} \in [-\infty, 1]^{(d-1)}$ such that for fixed $\bm{z}_{\mid i} \in \mathbb{R}^{(d-1)}$, $y_i > 0$,
-The CE model of \citet{Heffernan2004} assumes that there exist parameter vectors $\bm{\alpha}_{\mid i} := \left\{\alpha_{j \mid i} : j\in\{1,\dots,d\}\setminus\{i\}\right\} \in [-1, 1]^{(d-1)}$ and $\bm{\beta}_{\mid i} := \left\{\beta_{j \mid i} : j\in\{1,\dots,d\}\setminus\{i\} \right\} \in [-\infty, 1]^{(d-1)}$ such that for fixed $\bm{z}_{\mid i} \in \mathbb{R}^{(d-1)}$, $y_i > 0$,
+The CE model of \citet{Heffernan2004} assumes that for each $i = 1, \ldots, d$ there exist parameter vectors $\bm{\alpha}_{\mid i} := \left\{\alpha_{j \mid i} : j\in\{1,\dots,d\}\setminus i \right\} \in [-1, 1]^{d-1}$ and $\bm{\beta}_{\mid i} := \left\{\beta_{j \mid i} : j\in\{1,\dots,d\}\setminus i \right\} \in [-\infty, 1]^{d-1}$ such that for fixed $\bm{z}_{\mid i} \in \mathbb{R}^{d-1}$ and $y_i > 0$,
 % \todo{Check if probably is for equal to yi or greater than yi}
 \begin{equation}~\label{eq:ce_limiting_dist}
   % \mathbb{P}\left(\frac{\bm{Y}_{-i} - \bm{\alpha}_{\mid i}^{(\CE{})} Y_{i}}{Y_{i}^{\bm{\beta}_{\mid i}^{(\CE{})}} \le \bm{z}_{\mid i}, Y_i - u_i > y_i \mid Y_i > u_i \right) \longrightarrow \bm{G}_{\mid i}(\bm{z}_{\mid i}) \exp(-y_i) \text{ as } u_i \rightarrow \infty,
@@ -487,7 +565,8 @@ The CE model of \citet{Heffernan2004} assumes that there exist parameter vectors
   Y_i - u_i > y_i \;\Big|\; Y_i > u_i
   \right)
   \longrightarrow
-  \bm{G}_{\mid i}(\bm{z}_{\mid i})\,e^{-y_i}
+  % \bm{G}_{\mid i}(\bm{z}_{\mid i})\,e^{-y_i}
+  \bm{G}_{\mid i}(\bm{z}_{\mid i})\,\exp{-y_i}
   \quad\text{as } u_i \to \infty,
 \end{equation}
 % where $u_i$ is a suitably high threshold for $Y_i$, and $\bm{G}_{j \mid i}$ is non-degenerate for all $j \ne i$. 
@@ -497,19 +576,19 @@ The CE model of \citet{Heffernan2004} assumes that there exist parameter vectors
 %   \lim_{z \rightarrow \infty}{\bm{G}_{j \mid i}(\bm{z})} = 1, \forall j \ne i,
 % \]
 % ensuring that there is no mass at $+\infty$ for any margin, but allowing for some mass to be at $-\infty$, in order to ensure uniqueness of the solution \citep{Keef2013}.
-where $u_i$ is a suitably high threshold for $Y_i$.
-The distribution $\bm{G}_{\mid i}$ is non-degenerate on $\mathbb{R}^{d-1}$ and, for each margin $j\neq i$, $\lim\limits_{z\to\infty}\bm{G}_{j\mid i}(z)=1$, so that there is no mass at $+\infty$, while mass at $-\infty$ is permitted to ensure uniqueness \citep{Keef2013}. 
+where $u_i$ is a suitably high threshold. 
+The distribution function $\bm{G}_{\mid i}$ is non-degenerate on $\mathbb{R}^{d-1}$ and, for each margin $j\neq i$, $\lim\limits_{z\to\infty}\bm{G}_{j\mid i}(z)=1$, so that there is no mass at $+\infty$, while mass at $-\infty$ is permitted to ensure uniqueness \citep{Keef2013}. 
 % An important consequence of this formulation is the weak assumption that
 % \begin{equation}~\label{eq:limit_independence}
 %   \mathbb{P}(\bm{Z}_{\mid i} \le \bm{z}_{\mid i}, Y_i - u_i = y_i \mid Y_i > u_i) \rightarrow \bm{G}_{\mid i}(\bm{z}_{\mid i}) \exp(-y_i) \text{ as } u_i \rightarrow \infty,
 % \end{equation}
 % so that in the limit as $u_i \to \infty$, the extremal exceedances $Y_i - u_i$ and the standardised residuals $\bm{Z}_{\mid i} = \frac{\bm{Y}_{-i} - \bm{\alpha}_{\mid i} Y_{i}}{Y_{i}^{\bm{\beta}_{\mid i}}}, \bm{Z}_{\mid i} \sim \bm{G}_{\mid i}$ are independent.
-Equation~\eqref{eq:ce_limiting_dist} implies that, in the limit $u_i\to\infty$, the exceedances $Y_i-u_i$ and the standardised residuals $\bm{Z}_{\mid i} = \frac{\bm{Y}_{-i} - \bm{\alpha}_{\mid i} Y_{i}}{Y_{i}^{\bm{\beta}_{\mid i}}}, \bm{Z}_{\mid i} \sim \bm{G}_{\mid i}$ are asymptotically independent. \todo{Should G be bold?} \todo{not sure I like two statements about Z here}
+Equation~\eqref{eq:ce_limiting_dist} implies that, in the limit $u_i\to\infty$, the excesses $Y_i-u_i$ and the standardised residuals $\bm{Z}_{\mid i} = \frac{\bm{Y}_{-i} - \bm{\alpha}_{\mid i} Y_{i}}{Y_{i}^{\bm{\beta}_{\mid i}}} \sim \bm{G}_{\mid i}$ are asymptotically independent. 
 % Equation~\eqref{eq:ce_limiting_dist} implies that, in the limit $u_i\to\infty$, the exceedances $Y_i-u_i$ and the standardised residuals $\bm{Z}_{\mid i} = \frac{\bm{Y}_{-i} - \bm{\alpha}_{\mid i}^{(\CE{})} Y_{i}}{Y_{i}^{\bm{\beta}_{\mid i}^{(\CE{})}}}$, where $\bm{Z}_{\mid i} \sim \bm{G}_{\mid i}$, are asymptotically independent.
 
-% Heteroskedastic regression
-% The limiting distribution in equation~\eqref{eq:ce_limiting_dist} can be written as a heteroskedastic regression equation defined by
-The limiting distribution in Equation~\eqref{eq:ce_limiting_dist} can be expressed as a heteroskedastic regression equation, defined by
+% heteroscedastic regression
+% The limiting distribution in equation~\eqref{eq:ce_limiting_dist} can be written as a heteroscedastic regression equation defined by
+Assuming that the limiting distribution in Equation~\eqref{eq:ce_limiting_dist} holds eactly for large $u_i$ gives the heteroscedastic regression model
 % \todo{Should we be explicit that the equals here really should be an equality in distribution?}
 \begin{equation}~\label{eq:ce_model}
   % \bigl(\bm{Y}_{-i} \mid Y_i = y_i \bigr) = \bm{\alpha}_{\mid i}^{(\CE{})}\bm{y}_i + \bm{y}_i^{\bm{\beta}_{\mid i}^{(\CE{})}}\bm{Z}_{\mid i}, \text{ for } y_i > u_{_i},
@@ -517,10 +596,10 @@ The limiting distribution in Equation~\eqref{eq:ce_limiting_dist} can be express
 \end{equation}
 with residual vector $\bm{Z}_{\mid i} \sim \bm{G}_{\mid i}$.
 % The slope or linear regression coefficient $\bm{\alpha}_{\mid i}^{(\CE{})} \in [-1, 1]$ describes the strength of association between $Y_{-i}$ and large $Y_i$ above the threshold $u_i$.
-The slope or linear regression coefficient $\bm{\alpha}_{\mid i} \in [-1, 1]$ describes the strength of association between $Y_{-i}$ and large $Y_i$ above the threshold $u_i$.
-% \item $\bm{\beta}_{\mid i} \in [-\infty, 1]$ can be interpretated as a ``spread'' parameter, controlling the levels of heteroskedasticity in the model.
-% The levels of heteroskedasticity in the model is controlled by $\bm{\beta}_{\mid i}^{(\CE{})} \in [-\infty, 1]$, and can be loosely interpreted as a ``spread'' parameter.
-The levels of heteroskedasticity in the model is controlled by $\bm{\beta}_{\mid i} \in [-\infty, 1]$, and can be loosely interpreted as a ``spread'' parameter.
+The slope coefficient vectors $\bm{\alpha}_{\mid i} \in [-1, 1]^{d-1}$ describe the strength of extremal association between components of $\bm{Y}_{-i}$ and $Y_i$. 
+% \item $\bm{\beta}_{\mid i} \in [-\infty, 1]$ can be interpretated as a ``spread'' parameter, controlling the levels of heteroscedasticity in the model.
+% The levels of heteroscedasticity in the model is controlled by $\bm{\beta}_{\mid i}^{(\CE{})} \in [-\infty, 1]$, and can be loosely interpreted as a ``spread'' parameter.
+The degree of heteroscedasticity in the model is controlled by entries to $\bm{\beta}_{\mid i} \in [-\infty, 1]^{d - 1}$, and can be loosely interpreted as a ``spread'' parameter.
   % \item Several choices for $\bm{G}_{\mid i}$, the distribution of
 % $\bm{Z}_{\mid i}$, were proposed in \citet{Heffernan2004}, before ultimately
 % settling on a multivariate normal distribution with vector nuisance parameters
@@ -537,31 +616,36 @@ The levels of heteroskedasticity in the model is controlled by $\bm{\beta}_{\mid
 %   \item $-1 < \bm{\alpha}_{\mid i} < 1$, which suggests asymptotic independence between $Y_{-i}$ and large $Y_{i}$.
 % \end{itemize}
 % The values $\bm{\alpha}_{j \mid i}$ and $\bm{\beta}_{j \mid i}$ for $j \ne i$ are the components of the vectors $\bm{\alpha}_{\mid i}$ and $\bm{\beta}_{\mid i}$ corresponding to the variable $Y_j$, $j \in \{1,\ldots,d\}\setminus\{i\}$. % Defined so next bit makes sense
-  Some special componentwise special cases (for each $j\in\{1,\ldots,d\}\setminus\{i\}$) of the CE model are:
+Some special cases (for $j\in\{1,\ldots,d\}\setminus i$) of the CE model are:
 % \begin{itemize}
 %   \item $\bm{\alpha}_{j \mid i}^{(\CE{})} = 0, \bm{\beta}_{j \mid i}^{(\CE{})} = 0$, for which we have perfect independence between $Y_j$ and large $Y_i$.
 %   \item $\bm{\alpha}_{j \mid i}^{(\CE{})} = 0, \bm{\beta}_{j \mid i}^{(\CE{})} = 0$, for which we have perfect independence,
 %   \item $\bm{\alpha}_{j \mid i}^{(\CE{})} = -1(+1), \bm{\beta}_{j \mid i}^{(\CE{})} = 0$, which corresponds to perfect positive/negative dependence,
 %   \item $-1 < \bm{\alpha}_{j \mid i}^{(\CE{})} < 1$, which suggests asymptotic independence between $Y_j$ and large $Y_i$, with dependence weakening as $Y_i \to \infty$. 
 % \end{itemize}
+\todo{Write inline (what is meant by that?}
 \begin{itemize}
-  \item $\bm{\alpha}_{j \mid i} = 0, \bm{\beta}_{j \mid i} = 0$, for which we have perfect independence between $Y_j$ and large $Y_i$.
+  \item $\bm{\alpha}_{j \mid i} = 0$ and  $\bm{\beta}_{j \mid i} = 0$, for which we have perfect independence, between the $j^{\text{th}}$ component of $\bm{Y}_{-i}$ and large $Y_i$, corresponding to $\chi\(Y_j, Y_i\) = 0, j = 1, \ldots, d, j \ne i$,
   % \item $\bm{\alpha}_{j \mid i} = 0, \bm{\beta}_{j \mid i} = 0$, for which we have perfect independence,
-  \item $\bm{\alpha}_{j \mid i} = -1(+1), \bm{\beta}_{j \mid i} = 0$, which corresponds to perfect negative (positive) dependence,
-  \item $-1 < \bm{\alpha}_{j \mid i} < 1$, which suggests asymptotic independence between $Y_j$ and large $Y_i$, with dependence weakening as $Y_i \to \infty$. 
+  \item $\bm{\alpha}_{j \mid i} = -1(+1)$ and $\bm{\beta}_{j \mid i} = 0$, which corresponds to perfect negative (positive) extremal dependence, equivalent to having $\chi(Y_j, Y_i) = -1 (1)$, and 
+  \item $-1 < \bm{\alpha}_{j \mid i} < 1$, which suggests asymptotic independence between $Y_j$ and $Y_i$, with dependence weakening as $Y_i \to \infty$, equivalent to $-1 < \chi(Y_j, Y_i) < 1$. 
 \end{itemize}
 
 Recall that we want to fit the CE model at different spatial sites. 
-To allow for spatial variation, we may index by site $s \in \mathcal{S}$, and allow regression parameters to vary by site. 
-This leads to the simple, spatially indexed extension of Equation \eqref{eq:ce_model}, where we have the site-specific random vector $\bm{Y}(s)$, given by
+% To allow for spatial variation, we may index by site $s \in \mathcal{S}$, and allow regression parameters to vary by site. 
+To allow for spatial variation, we may index the random vectors by spatial location $\mathcal{S} \in \(S_1, \ldots, S_D\)$, where $S_i \in \mathbb{R}^2, i = 1, \ldots, D$, and $D$ is the number of spatial locations. 
+This leads to the simple, spatially indexed extension of Equation \eqref{eq:ce_model}, where we have the site-specific random vector $\bm{Y}(s) \in \mathbb{R}^d$ for $\mathcal{S} \in (S_1, \ldots, S_d)$, and
 \begin{equation} \label{eq:ce_model_spat}
-  \bigl(\bm{Y}_{-i}(s) \mid Y_i(s) = y_i, \mathcal{S} = s \bigr) 
+  \bigl(\bm{Y}_{-i}(s) \mid Y_i(s) = y_i\bigr) 
     = \bm{\alpha}_{\mid i}(s) \, y_i 
       + y_i^{\bm{\beta}_{\mid i}(s)} \, \bm{Z}_{\mid i}(s), 
       \quad y_i > u_i(s),
 \end{equation}
 % with location-specific residuals $\bm{Z}_{\mid i}(s) \sim \bm{G}_{\mid i}(s)$. \todo{Do I need to define alpha(s), beta(s), ui(s) again?}
-where $\bm{\alpha}_{\mid i}(s), \bm{\beta}_{\mid i}(s), \bm{Z}_{\mid i}(s) \sim \bm{G}_{\mid i}(s)$, are the site-specific counterparts of the regression parameters and residuals introduced above.  
+where $\bm{\alpha}_{\mid i}(s), \bm{\beta}_{\mid i}(s)$ and $\bm{Z}_{\mid i}(s) \sim \bm{G}_{\mid i}(s)$ are the site-specific counterparts of the regression parameters and residuals introduced above.  
+Note that we make no assumptions about spatial smoothness in the regression model. 
+
+
 
 \subsection{Divergence measure}~\label{subsec:div}
 
@@ -582,24 +666,24 @@ The residual vector $\bm{Z}_{\mid i}(s)$ in Equation~\eqref{eq:ce_model_spat} is
 % This is a working assumption proposed in \citet{Heffernan2004} after testing several candidate distributions. %, and is still most commonly used in the literature \todo{citations?}
 % This is the key assumption of the CE model on which we derive our divergence measure, and was chosen in \citet{Heffernan2004} after testing several candidate distributions.
 % This is the key aspect of the CE model with which we derive our divergence measure, and is a working assumption chosen in \citet{Heffernan2004} after testing several candidate distributions.
-This Gaussian working assumption, proposed in \citet{Heffernan2004} after testing several candidate distributions, is the key property we exploit when deriving a closed-form divergence for clustering.
+This Gaussian working assumption, proposed in \citet{Heffernan2004} after testing several candidate distributions, is the key property we exploit when deriving a closed-form divergence measure for computationally efficient clustering.
 
 % \citet{Heffernan2004} shows that inference can be made about the extremal dependence of a random vector $\bm{Y}_{-i} = \bm{Y} \backslash Y_i$ on $Y_i$ by conditioning on the exceedance of a high threshold $u$ by $Y_i$, and assuming that this conditional distribution is a diagonal multivariate Gaussian distribution: % with vector mean and standard deviation:
 % An important consequence following from this assumption is that inference can be made about the extremal dependence of a random vector $\bm{Y}_{-i} = \bm{Y} \setminus \{Y_i\}$ on $Y_i$ by conditioning on the exceedance of a high threshold $u_i$ by $Y_i$, and assuming that this conditional distribution is a multivariate Gaussian distribution, i.e.\ 
-Consequently, inference can be made about the extremal dependence of a random vector $\bm{Y}_{-i}(s) = \bm{Y}(s) \setminus \{Y_i(s)\}$ on $Y_i(s)$ at site $s$ by conditioning on the exceedance of a high threshold $u_i(s)$ by $Y_i(s)$, and assuming that this conditional distribution is a multivariate Gaussian distribution, i.e.\
+Consequently, inference can be made about the extremal dependence of a random vector $\bm{Y}_{-i}(s) = \bm{Y}(s) \setminus \{Y_i(s)\}$ on $Y_i(s)$ at site $s$ by conditioning on the exceedance of a high threshold $u_i(s)$ by $Y_i(s)$, and assuming that this conditional distribution is multivariate Gaussian, i.e.\
 \begin{equation}~\label{eq:ce_norm}
   % \bigl( \bm{Y}_{-i} \mid Y_i  = y_i \bigr) \sim N\left(\bm{\alpha}_{\mid i}^{(\CE{})} y_i + y_i^{\bm{\beta}_{\mid i}^{(\CE{})}} \bm{\mu}_{\mid i}^{(\CE{})}, y_i^{\bm{\beta}_{\mid i}^{(\CE{})}} \Sigma_{\mid i}^{(\CE{})}\right), Y_i > u_i,
   % \bigl( \bm{Y}_{-i} \mid Y_i  = y_i \bigr) \sim N\left(\bm{\alpha}_{\mid i} y_i + y_i^{\bm{\beta}_{\mid i}} \bm{\mu}_{\mid i}, y_i^{\bm{\beta}_{\mid i}} \bm{\Sigma_{\mid i}}\right), Y_i > u_i,
-  \bigl( \bm{Y}_{-i}(s) \mid Y_i(s)  = y_i, \mathcal{S} = s \bigr) \sim N\left(\bm{\alpha}_{\mid i}(s) y_i + y_i^{\bm{\beta}_{\mid i}(s)} \bm{\mu}_{\mid i}(s), y_i^{\bm{\beta}_{\mid i}(s)} \bm{\Sigma_{\mid i}(s)}\right), Y_i(s) > u_i(s),
+  \bigl( \bm{Y}_{-i}(s) \mid Y_i(s)  = y_i) \sim MVN_{d-1}\left(\bm{\alpha}_{\mid i}(s) y_i + y_i^{\bm{\beta}_{\mid i}(s)} \bm{\mu}_{\mid i}(s), y_i^{\bm{\beta}_{\mid i}(s)} \Sigma_{\mid i}(s)\right), y_i > u_i(s),
 \end{equation}
-where $\bm{\alpha}_{\mid i}(s), \bm{\beta}_{\mid i}(s), \bm{\mu}_{\mid i}(s), \Sigma_{\mid i}(s) \in \mathbb{R}^{(d-1)}$ are the site-specific parameters of the CE model.
+where $\bm{\alpha}_{\mid i}(s), \bm{\beta}_{\mid i}(s), \bm{\mu}_{\mid i}(s), \Sigma_{\mid i}(s)$ are the site-specific parameters of the CE model.
 % where $\bm{\alpha}_{\mid i}^{(\CE{})}, \bm{\beta}_{\mid i}^{(\CE{})}, \bm{\mu}_{\mid i}^{(\CE{})}, \Sigma_{\mid i}^{(\CE{})} \in \mathbb{R}^{(d-1)}$ are the parameters of the CE model. 
 % Therefore, when seeking to compare the extremal dependence structure of two locations, a sensible approach is to compare the conditional distributions given by Equation~\ref{eq:ce_norm} for each variable at both sites. 
 % Therefore, under this model, when comparing the extremal dependence structure between variables at any given sites, we are effectively comparing the conditional distributions given by Equation~\eqref{eq:ce_norm}.
 % Therefore, under this model, when comparing the multivariate tail dependence structure at different sites, we are effectively comparing the conditional distributions given by Equation~\eqref{eq:ce_norm}.
 % Therefore, to compare tail dependence at different sites, we can compare the conditional distributions in \eqref{eq:ce_norm}, i.e.\ the induced multivariate Gaussian distributions parameterised by $(\bm{\alpha}_{\mid i}^{(\CE{})},\bm{\beta}_{\mid i}^{(\CE{})},\bm{\mu}_{\mid i}^{(\CE{})},\Sigma_{\mid i}^{(\CE{})})$ (or a chosen subset thereof).
 % Therefore, to compare tail dependence at different sites, we can compare the conditional distributions in \eqref{eq:ce_norm}, i.e.\ the induced multivariate Gaussian distributions parameterised by $(\bm{\alpha}_{\mid i},\bm{\beta}_{\mid i},\bm{\mu}_{\mid i},\Sigma_{\mid i})$ (or a chosen subset thereof).
-Therefore, to compare tail dependence at different sites, we can compare the conditional distributions in \eqref{eq:ce_norm}, i.e.\ the induced multivariate Gaussian distributions parameterised by $(\bm{\alpha}_{\mid i}(s),\bm{\beta}_{\mid i}(s),\bm{\mu}_{\mid i}(s),\Sigma_{\mid i}(s))$ (or a chosen subset thereof).
+Therefore, to compare tail dependence at different sites, we can compare the conditional distributions in \eqref{eq:ce_norm}, i.e.\ the assumed multivariate Gaussian distributions parameterised by $(\bm{\alpha}_{\mid i}(s),\bm{\beta}_{\mid i}(s),\bm{\mu}_{\mid i}(s),\Sigma_{\mid i}(s))$ (or a chosen subset thereof).
 
 There are several qualities we desire from a divergence measure for clustering based on the conditional distribution in Equation~\eqref{eq:ce_norm}.
 % We would like to exploit the fact that the CE model is a multivariate Gaussian distribution to provide some gains in computational efficiency, and for our divergence to more generally be cheap to compute.
@@ -614,16 +698,22 @@ Ideally, our measure should also have an upper bound, as larger divergences can 
 % Introduce JSGa
 One divergence measure introduced in \citet{Nielsen2019} which satisfies these properties is the skew-geometric Jensen--Shannon divergence ($\JSGa{}$), a generalisation of the Jensen--Shannon ($\JS{}$) divergence \citep{Lin1991}. 
 \todo{Improve definition of P, Q, as measures? Or with detail as to their relation to CE?}
-The $\JSGa{}$ divergence between two distributions $P$ and $Q$ is given by
+% The $\JSGa{}$ divergence between two distribution functions $P$ and $Q$ is given by
+The $\JSGa{}$ divergence between two continuous distribution functions $F_1$ and $F_2$ is given by
 \begin{equation}~\label{eq:jsga}
-  % \JSGa{(P \mid\mid Q)} = \frac{1}{2} \left\{ KL(P \mid\mid G_{\alpha}(P, Q)) + KL(Q \mid\mid G_{\alpha}(P, Q)) \right\}.
-  \JSGa{(P \mid\mid Q)} = \frac{1}{2} \left\{\KL{(P \mid\mid G_{\alpha}(P, Q))} + \KL{(Q \mid\mid G_{\alpha}(P, Q))} \right\},
+  % \JSGa{(P \mid\mid Q)} = \frac{1}{2} \left\{\KL{(P \mid\mid G_{\alpha}(P, Q))} + \KL{(Q \mid\mid G_{\alpha}(P, Q))} \right\},
+  \JSGa{(F_1 \mid\mid F_2)} = \frac{1}{2} \left\{\KL{(F_1 \mid\mid G_{\alpha}(F_1, F_2))} + \KL{(F_2 \mid\mid G_{\alpha}(F_1, F_2))} \right\},
 \end{equation}
 % where $G_{\alpha}(P, Q) = P^{\alpha} Q^{1 - \alpha}, \alpha \in [0, 1]$ is the weighted geometric mean of $P$ and $Q$, with $\alpha$ controlling the weighting between them, and $\KL{(P \mid\mid Q)}$ is the Kullback--Leibler divergence between $P$ and $Q$ \citep{Kullback1951}. 
-where $G_{\alpha}(P, Q) = P^{\alpha} Q^{1 - \alpha}, \alpha \in [0, 1]$ is the weighted geometric mean of $P$ and $Q$, and $\KL{(P \mid\mid Q)}$ is the Kullback--Leibler divergence between $P$ and $Q$ \citep{Kullback1951}. 
+\todo{Use different symbol to alpha!}
+where $G_{\alpha}(F_1, F_2) = P^{\alpha} Q^{1 - \alpha}, \alpha \in [0, 1]$ is the weighted geometric mean of $F_1$ and $F_2$, and $\KL{(F_1 midmid F_2)}$ is the Kullback--Leibler divergence between $P$ and $Q$, \citep{Kullback1951}, given by 
+\begin{equation}~\label{eq:kl}
+  KL(F_1 midmid F_2) = \int_{-\infty}^{\infty} f_1(y) \log\left(\frac{f_1(y)}{f_2(y)}\right) dy,
+\end{equation}
+where $f_1$ and $f_2$ are the continuous density functions of $F_1$ and $F_2$, respectively. 
 % Here, $P$ and $Q$ represent the conditional multivariate Gaussian distributions induced by the CE model at two different sites.
 In this context, $P$ and $Q$ represent the conditional multivariate Gaussian distributions induced by the CE model at two different sites.
-The parameter $\alpha$ skews the geometric mean $G_{\alpha}(P,Q)\propto p^{\alpha}q^{1-\alpha}$ towards $P$ (when $\alpha$ is close to 1) or towards $Q$ (when $\alpha$ is close to 0). 
+The parameter $\alpha$ skews the geometric mean $G_{\alpha}(P,Q)\propto P^{\alpha}Q^{1-\alpha}$ towards $P$ (when $\alpha$ is close to 1) or towards $Q$ (when $\alpha$ is close to 0). 
 % When one site has a more reliable CE fit, we set $\alpha$ to a reliability weight $w\in[0,1]$ (e.g.\ proportional to effective sample size), and apply the symmetrised divergence so that the final dissimilarity remains symmetric.
 One possible advantage for having a skew parameter such as $\alpha$ is that in our divergence measure we can favour sites with a more reliable CE fit, as determined by, for example, the effective sample size available for both.
 In this paper, we simply use $\alpha = 0.5$, because each site has a similar number of observations in our simulation and case studies. 
@@ -637,25 +727,59 @@ In this paper, we simply use $\alpha = 0.5$, because each site has a similar num
 % Explain why it is a good dissimilarity metric to use
 For two multivariate Gaussian distributions, the $\KL{}$ divergence has a closed form, analytical solution \citep{Duchi2007}.
 The $\JSGa{}$ divergence exploits the property that the (weighted) product of two members of the same exponential family is itself a member of the same exponential family distribution. 
-It follows that $G_{\alpha}(P, Q)$ is multivariate Gaussian, and so the $\KL{}$ divergences in Equation~\eqref{eq:jsga} are between multivariate Gaussian distributions and can be computed in closed form.
+It follows that $G_{\alpha}(F_1, F_2)$ is multivariate Gaussian, and so the $\KL{}$ divergences in Equation~\eqref{eq:jsga} are between multivariate Gaussian distributions and can be computed in closed form.
 Hence, the principle advantage of the $\JSGa{}$ here follows, as it also has a closed form solution for two multivariate Gaussian distributions, and so is computationally efficient to compute \citep{Nielsen2019}.
 The $\JSGa{}$ divergence between two multivariate Gaussian distributions has been used in several applications, including clustering, deep learning, variational inference and remote sensing imagery  \citep{Nielsen2019, Deasy2020, Ni2023-cd, Thiagarajan2025}. \todo{Add more references?}
 % Furthermore, it is clearly symmetric and non-negative, as the sum of two $KL$ divergences, which is also important for clustering.
 Furthermore, it is clearly symmetric and non-negative, as the average of two $\KL{}$ divergences.
 Finally, where $\alpha = 0.5$, $\JSGa{}$ is bounded above by
 \begin{equation}~\label{eq:jsga_bound}
-  \JSGa{(P \mid\mid Q)} \leq \frac{1}{4} \mathrm{J}(P \mid\mid Q),
+  \JSGa{(F_1 midmid F_2)} \leq \frac{1}{4} \mathrm{J}(F_1 midmid F_2),
 \end{equation}
-where the Jeffreys' divergence $\mathrm{J}(P \mid\mid Q) = \KL{(P \mid\mid Q)} + \KL{(Q \mid\mid P)}$ is simply the sum of the forward and backward $\KL{}$ divergences \citep{Nielsen2025}.
+where the Jeffreys' divergence $\mathrm{J}(F_1 midmid F_2) = \KL{(F_1 midmid F_2)} + \KL{(Q \mid\mid P)}$ is simply the sum of the forward and backward $\KL{}$ divergences \citep{Nielsen2025}.
 % Therefore, $\JSGa{}$ provides more well-defined clusters than the Jeffreys' divergence, motivating the higher conceptual complexity by comparison. 
 Therefore, the $\JSGa{}$ divergence is less susceptible to runaway distances and numerical instability than this simple sum, and also provides more tightly defined clusters.
 Hence, we identify the $\JSGa{}$ divergence as a suitable measure of dissimilarity for clustering based on the CE model.
-An explicit form for the $\JSGa{}$ divergence for two multivariate Gaussian distributions is given in Section \ref{subsec:estimation}, and more details on this choice of divergence measure are provided in Section~\ref{sec:discuss}.
+
+% JSGa form
+% For two multivariate normals, \citet{Nielsen2019} shows that the $\JSGa{}$ divergence introduced in Equation~\eqref{eq:js_norm} has the closed form solution
+% \todo{eq:js_norm can't be found}
+For two multivariate Gaussian distributions $P \sim N(\mu_1, \Sigma_1)$ and $Q \sim N(\mu_2, \Sigma_2)$ in $\mathbb{R}^n$, \citet{Nielsen2019} shows that the $\JSGa{}$ divergence introduced in Equation~\eqref{eq:jsga} has the closed form solution 
+\begin{align*}%~\label{eq:js_norm_mvn}
+  JS^{G_{\alpha}}(F_1 midmid F_2) &= \frac{1}{2} \left( (1 - \alpha) \mu_1^T \Sigma_1^{-1} \mu_1 + \alpha \mu_2^T \Sigma_2^{-1} \mu_2 - \mu_{\alpha}^T \Sigma_{\alpha}^{-1} \mu_{\alpha} + \log{\left( \frac{\abs{\Sigma_1}^{1-\alpha} \abs{\Sigma_2}^{\alpha}}{\abs{\Sigma_{\alpha}}} \right)} \right), \\
+  \Sigma_{\alpha} &= \left( (1 - \alpha) \Sigma_1^{-1} + \alpha \Sigma_2^{-1} \right)^{-1}, \\
+  \mu_{\alpha} &= \Sigma_{\alpha} \left( (1 - \alpha) \Sigma_1^{-1} \mu_1 + \alpha \Sigma_2^{-1} \mu_2 \right), \numberthis~\label{eq:js_norm_mvn1}
+\end{align*} 
+where:
+\begin{itemize}
+  \item $\mu_1 = (\mu_{1,1}, \mu_{1,2}, \ldots, \mu_{1,d})^\top$ and $\mu_2 = (\mu_{2,1}, \mu_{2,2}, \ldots, \mu_{2,d})^\top$ are the mean vectors,
+  \item $\Sigma_1 = \text{diag}(\sigma_{1,1}^2, \sigma_{1,2}^2, \ldots, \sigma_{1,d}^2)$ and $\Sigma_2 = \text{diag}(\sigma_{2,1}^2, \sigma_{2,2}^2, \ldots, \sigma_{2,d}^2)$ are diagonal covariance matrices, \todo{Are they diagonal??}
+  \item $\sigma_{1,i}^2$ and $\sigma_{2,i}^2$ denote the $i$-th diagonal element of $\Sigma_1$ and $\Sigma_2$, respectively.
+\end{itemize}
+
+% We may also assume that our covariance matrices are diagonal, as is often the case in practice.
+A common simplifying assumption is to assume that the covariance matrices $\Sigma_1$ and $\Sigma_2$ are diagonal.
+In this case, \citet{Thiagarajan2025} shows that the $\JSGa{}$ divergence simplifies to
+\todo{Double check this formula is correct (R should give same output as above non-diagonal method)}
+\todo{Standardise use of brackets, varies a lot}
+% \begin{align*}
+%   JS-G(P \mid \mid Q) = \frac{1}{2} \sum^n_{i=1} \left[ \frac{\alpha \sigma_{1, i}^2 + (1-\alpha)\sigma_{2, i}^2}{\sigma_{\alpha, i}^2} + \log{\left( \frac{\sigma_{\alpha, i}^2}{\sigma_{1, i}^{(2\alpha)}\sigma_{2, i}^{2(1 - \alpha)}} \right)} + \alpha \frac{(\mu_{\alpha, i} - \mu_{1, i})^2}{\sigma_{\alpha, i}^2} + (1 - \alpha) \frac{(\mu_{\alpha, i} - \mu_{2, i})^2}{\sigma_{\alpha, i}^2} -1 \right],
+% \end{align*}
+% \todo{Should I use a different notation here, since I also use mu, sigma for the CE model?}
+\begin{align}~\label{eq:js_norm_mvn_diag}
+JS^{G_{\alpha}}(F_1 midmid F_2) = \frac{1}{2} \sum_{i=1}^d \Bigg[
+    & \frac{\alpha \sigma_{1,i}^2 + (1 - \alpha) \sigma_{2,i}^2}{\sigma_{\alpha,i}^2} 
+    + \log\left( \frac{\sigma_{\alpha,i}^2}{\sigma_{1,i}^{2\alpha} \sigma_{2,i}^{2(1 - \alpha)}} \right) \nonumber \\
+    & + \alpha \frac{(\mu_{\alpha,i} - \mu_{1,i})^2}{\sigma_{\alpha,i}^2} 
+    + (1 - \alpha) \frac{(\mu_{\alpha,i} - \mu_{2,i})^2}{\sigma_{\alpha,i}^2}
+    - 1 \Bigg],
+\end{align}
+where $\sigma_{\alpha, i}^2 = \frac{\sigma_{1, i}^2 \sigma_{2, i}^2}{\alpha\sigma_{1, i}^2 + (1 - \alpha)\sigma_{2, i}^2}$, and $\mu_{\alpha, i} = \sigma_{\alpha, i}^2 \left( \frac{\alpha\mu_{1, i}}{\sigma_{1, i}^2} + \frac{(1 - \alpha) \mu_{2, i}}{\sigma_{2, i}^2} \right)$, respectively.
 
 % % Introduce KL divergence 
 % One common measure of dissimilarity between two distributions $P$ and $Q$ is the Kullback-Leibler (KL) divergence, defined as
 % \begin{equation}~\label{eq:kl}
-%   KL(P \mid\mid Q) = \int_{-\infty}^{\infty} p(y) \log\left(\frac{p(y)}{q(y)}\right) dy.
+%   KL(F_1 midmid F_2) = \int_{-\infty}^{\infty} p(y) \log\left(\frac{p(y)}{q(y)}\right) dy.
 % \end{equation}
 % \todo{define mid mid!?}
 % where $p(y)$ and $q(y)$ are the densities of $P$ and $Q$, respectively \citep{Kullback1951}.
@@ -664,11 +788,11 @@ An explicit form for the $\JSGa{}$ divergence for two multivariate Gaussian dist
 % % \Sigma_1)$, Q \sim N(\mu_2, \Sigma_2)$ in $\mathbb{R}^n$ has closed form
 % % solution.
 % The KL divergence is always non-negative and zero if and only if $P = Q$.
-% % For two multivariate normal distributions $P \sim N(\mu_1, \Sigma_1), Q \sim N(\mu_2, \Sigma_2) \in \mathbb{R}^n$ with diagonal covariance matrices, $KL(P \mid\mid Q)$ has closed form.
+% % For two multivariate normal distributions $P \sim N(\mu_1, \Sigma_1), Q \sim N(\mu_2, \Sigma_2) \in \mathbb{R}^n$ with diagonal covariance matrices, $KL(F_1 midmid F_2)$ has closed form.
 % A well known result is that the KL divergence between two multivariate normal distributions $P \sim N(\mu_1, \Sigma_1)$ and $Q \sim N(\mu_2, \Sigma_2)$ in $\mathbb{R}^n$ has a closed form solution.
 %   % \item In the case where both covariance matrices are diagonal, this simplifies to
 %     % \begin{equation}~\label{eq:kl_mvn_diag}
-%     %   KL(P \mid\mid Q) = \frac{1}{2} \sum_{i=1}^{n} \left( \frac{\sigma_{1,i}^2}{\sigma_{2,i}^2} + \frac{(\mu_{1,i} - \mu_{2,i})^2}{\sigma_{2,i}^2} - 1 - \log\left(\frac{\sigma_{1,i}^2}{\sigma_{2,i}^2}\right) \right),
+%     %   KL(F_1 midmid F_2) = \frac{1}{2} \sum_{i=1}^{n} \left( \frac{\sigma_{1,i}^2}{\sigma_{2,i}^2} + \frac{(\mu_{1,i} - \mu_{2,i})^2}{\sigma_{2,i}^2} - 1 - \log\left(\frac{\sigma_{1,i}^2}{\sigma_{2,i}^2}\right) \right),
 %     % \end{equation}
 %     % where: \todo{Should I use a different notation here, since I also use mu, sigma for the CE model?}
 %     % \begin{itemize}
@@ -681,14 +805,14 @@ An explicit form for the $\JSGa{}$ divergence for two multivariate Gaussian dist
 % \todo{Do we need to use the backward Geometric mean, as described in Deasy and Thiagarajan? Fine if using alpha = 0.5?}
 % The JS divergence is a simple extension of the KL divergence, defined as
 % \begin{equation}~\label{eq:js}
-%   % JS(P \mid\mid Q) = \frac{1}{2} KL(P \mid\mid M) + \frac{1}{2} KL(Q \mid\mid M),
-%   JS(P \mid\mid Q) = \frac{1}{2} \left\{ KL(P \mid\mid M) + KL(Q \mid\mid M) \right\},
+%   % JS(F_1 midmid F_2) = \frac{1}{2} KL(P \mid\mid M) + \frac{1}{2} KL(Q \mid\mid M),
+%   JS(F_1 midmid F_2) = \frac{1}{2} \left\{ KL(P \mid\mid M) + KL(Q \mid\mid M) \right\},
 % \end{equation}
 % % where $M = \frac{1}{2}(P + Q)$ is a mixture distribution \citep{Lin1991}.
 % where $M$ is the two-component mixture of $P$ and $Q$. 
 % The JS divergence provides a symmetric measure of dissimilarity between two distributions.
-%   % \item The JS divergence is a true metric bounded by $[0, \log{(2)}]$, unlike the simple sum of the forward and backward KL divergences $KL(P \mid\mid Q) + KL(Q \mid\mid P)$.
-% The JS divergence is a true metric unlike the simple sum of the forward and backward KL divergences $KL(P \mid\mid Q) + KL(Q \mid\mid P)$. % don't reference bounds, as JS-G doesn't have any
+%   % \item The JS divergence is a true metric bounded by $[0, \log{(2)}]$, unlike the simple sum of the forward and backward KL divergences $KL(F_1 midmid F_2) + KL(Q \mid\mid P)$.
+% The JS divergence is a true metric unlike the simple sum of the forward and backward KL divergences $KL(F_1 midmid F_2) + KL(Q \mid\mid P)$. % don't reference bounds, as JS-G doesn't have any
 %   % \item A problem arises from the fact that the mixture distribution $M$ of two normals is not itself normal.
 %   % \item In fact, $M$ becomes increasingly bimodal as $P$ and $Q$ become more dissimilar, and so the JS divergence does not have a closed form solution for multivariate normals.
 % A problem arises from the fact that the mixture distribution $M$ of two normals is not itself normal, and so the KL divergence does not have a closed form solution for multivariate normals.
@@ -697,8 +821,8 @@ An explicit form for the $\JSGa{}$ divergence for two multivariate Gaussian dist
 % \todo{Need to use backward version instead?}
 % From this, we define the skew-geometric JS divergence as
 % \begin{equation}~\label{eq:js_norm}
-%   % JS^{G_{\alpha}}(P \mid\mid Q) = \frac{1}{2} KL(P \mid\mid G_{\alpha}(P, Q)) + \frac{1}{2} KL(Q \mid\mid G_{\alpha}(P, Q)).
-%   JS^{G_{\alpha}}(P \mid\mid Q) = \frac{1}{2} \left\{ KL(P \mid\mid G_{\alpha}(P, Q)) + KL(Q \mid\mid G_{\alpha}(P, Q)) \right\}.
+%   % JS^{G_{\alpha}}(F_1 midmid F_2) = \frac{1}{2} KL(P \mid\mid G_{\alpha}(P, Q)) + \frac{1}{2} KL(Q \mid\mid G_{\alpha}(P, Q)).
+%   JS^{G_{\alpha}}(F_1 midmid F_2) = \frac{1}{2} \left\{ KL(P \mid\mid G_{\alpha}(P, Q)) + KL(Q \mid\mid G_{\alpha}(P, Q)) \right\}.
 % \end{equation}
 % The parameter $\alpha$ is called a skew parameter, and controls the divergence skew between P and Q. 
 % For our purposes, we will set $\alpha = 0.5$, which corresponds to giving equal weight to both distributions. \todo{Need to explore this further!}
@@ -739,14 +863,16 @@ This procedure allows us to construct a matrix of pairwise dissimilarities, or d
 % However, $JS^{G_{\alpha}}$ is also unbounded. The generalized JS divergence from \citet{Thiagarajan2025} is bounded, but must be estimated using MC, as it has no closed form solution. Should I use/try it out?
 % \end{itemize}
 
-\subsection{Clustering}~\label{subsec:clustering}
+\subsection{Clustering of multivariate extremes}~\label{subsec:clustering}
 
 % Describe clustering process via JS divergence and k-medoids/PAM algorithm (give?
 % See Vignotto)
 
+Using equation~\eqref{eq:jsga_integral}, we can now contruct a dissimilarity measure to compare two conditional distributions, representing our pairwise ``distances`` between sites. 
+We can also aggregate these distances across multiple conditioning variables to pool information across multiple comparisons. 
 % PAM (K-means not suitable as clusters cannot be assumed to be spherical) (see
 % Vignotto)
-Now we have a distance measure over which to compute the dissimilarity matrix of pairwise ``distances'' between sites.
+% Now we have a distance measure over which to compute the dissimilarity matrix of pairwise ``distances'' between sites.
 The choice remains as to which algorithm to use to perform clustering. 
 As in \citet{Vignotto2021}, we use the Partitioning Around Medoids (PAM) algorithm, which is a variant of the popular k-medoids algorithm of \citet{Kaufman1987}.
 A brief description of the algorithm is as follows:
@@ -776,105 +902,10 @@ This method has been found to perform well in both our simulation study in Secti
 Specifically, the TWGSS is defined as
     \begin{equation}~\label{eq:twgss}
       % \mathrm{TWGSS}(k) = \sum_{i=1}^{k} \sum_{j=1}^{n_i} d_{ij}^2,
-      \mathrm{TWGSS}(k) = \sum_{i=1}^{k} \sum_{j=1}^{n_i} d_{ij}^2,
+      \mathrm{TWGSS}(k) = \sum_{i=1}^{k} \sum_{j=1}^{n_i} \delta_{ij}^2,
     \end{equation}
-    where $d_{ij}$ is the dissimilarity between site $j$ and the centroid of cluster $i$, which we measure using the $\JSGa{}$ divergence defined in section \ref{subsec:div}, and $n_i$ is the number of observations in cluster $i$.
+    where $\delta_{ij}$ is the dissimilarity between site $j$ and the centroid of cluster $i$, which we measure using the $\JSGa{}$ divergence defined in section \ref{subsec:div}, and $n_i$ is the number of observations in cluster $i$.
 We then plot $\mathrm{TWGSS}(k)$ vs.\ $k$, and choose $k^*$, the optimal number of clusters, as the value of $k$ at which the TWGSS reduction sharply slows, or equivalently, the point at which the curve has an ``elbow''.
-
-\subsection{Estimation}~\label{subsec:estimation}
-
-\todo{What to put in this section? Anything that hurts our narrative flow?}
-\todo{How complicated do I need things?}
-\todo{Rewrite these sections, just copied in here}
-
-In this section, we describe some of the technical details for estimating the CE model and the $\JSGa{}$ divergence measure.
-
-% Laplace transformation
-% Each marginal random variable $X_i$ is transformed to Laplace margins, whereby it is denoted by $Y_i$, using the following transformation:
-% Each marginal random variable $X_i$ is transformed to standard Laplace margins, whereby it is denoted by $Y_i$, using the following transformation: \todo{see Keef, Heff for more succint description}
-As mentioned in Section~\ref{subsec:ce_model}, we transform each original marginal random variable $X_i$ to standard Laplace margins, whereby it is denoted by $Y_i$.
-% To transform the original marginal random variable $X_i$ to Laplace margins, we let 
-To tranform each $X_i$ to Laplace margins, we let
- \begin{equation}~\label{eq:laplace}
-   Y_i = \begin{cases}
-     \log\left\{2F_{X_i}(X_i)\right\} &\text{ for } X_i < F_{X_i}^{-1}(0.5), \\
-     -\log\left\{2(1 - F_{X_i}(X_i))\right\} &\text{ for } X_i \ge F_{X_i}^{-1}(0.5), \\
-   \end{cases}
- \end{equation}
- where $F_{X_i}$ is the cumulative distribution function (CDF) of $X_i$. \todo{any further details necessary?}
-As in Equation~\eqref{eq:ce_model_spat}, we add a spatial index $s$ to each variable, so that we have $Y_i(s)$ for each site $s$.
- % \item The Laplace distribution specifically is chosen for its doubly exponential tails, each with mean 1. \todo{More formal?}
- % \item The Laplace distribution specifically is chosen as both its tails are exponential.
- % \item More formally, for any $u > 0$, the distributions of $Y_i - u \mid Y_i > u$ and $(-Y_i + u) \mid Y_i \le -u$ are exponential with mean 1. 
- % \item This ensures that the model for the upper and lower tails, corresponding to positive and negative dependence, is of the same, simple form, namely that of a heteroskedastic regression model.
- % \item Also, the tails of the Laplace distribution converge faster to a non-degenerate distribution as we increase the number of variables in the model, which makes it effective for modelling extremes \citep{Rohrbeck2024-jm}.
-
-% JSGa form
-% For two multivariate normals, \citet{Nielsen2019} shows that the $\JSGa{}$ divergence introduced in Equation~\eqref{eq:js_norm} has the closed form solution
-% \todo{eq:js_norm can't be found}
-For two multivariate Gaussian distributions $P \sim N(\mu_1, \Sigma_1)$ and $Q \sim N(\mu_2, \Sigma_2)$ in $\mathbb{R}^n$, \citet{Nielsen2019} shows that the $\JSGa{}$ divergence introduced in Equation~\eqref{eq:jsga} has the closed form solution 
-\begin{align*}%~\label{eq:js_norm_mvn}
-  JS^{G_{\alpha}}(P \mid\mid Q) &= \frac{1}{2} \left( (1 - \alpha) \mu_1^T \Sigma_1^{-1} \mu_1 + \alpha \mu_2^T \Sigma_2^{-1} \mu_2 - \mu_{\alpha}^T \Sigma_{\alpha}^{-1} \mu_{\alpha} + \log{\left( \frac{\abs{\Sigma_1}^{1-\alpha} \abs{\Sigma_2}^{\alpha}}{\abs{\Sigma_{\alpha}}} \right)} \right), \\
-  \Sigma_{\alpha} &= \left( (1 - \alpha) \Sigma_1^{-1} + \alpha \Sigma_2^{-1} \right)^{-1}, \\
-  \mu_{\alpha} &= \Sigma_{\alpha} \left( (1 - \alpha) \Sigma_1^{-1} \mu_1 + \alpha \Sigma_2^{-1} \mu_2 \right), \numberthis~\label{eq:js_norm_mvn1}
-\end{align*} 
-where:
-\begin{itemize}
-  \item $\mu_1 = (\mu_{1,1}, \mu_{1,2}, \ldots, \mu_{1,n})^\top$ and $\mu_2 = (\mu_{2,1}, \mu_{2,2}, \ldots, \mu_{2,n})^\top$ are the mean vectors,
-  \item $\Sigma_1 = \text{diag}(\sigma_{1,1}^2, \sigma_{1,2}^2, \ldots, \sigma_{1,n}^2)$ and $\Sigma_2 = \text{diag}(\sigma_{2,1}^2, \sigma_{2,2}^2, \ldots, \sigma_{2,n}^2)$ are diagonal covariance matrices, \todo{Are they diagonal??}
-  \item $\sigma_{1,i}^2$ and $\sigma_{2,i}^2$ denote the $i$-th diagonal element of $\Sigma_1$ and $\Sigma_2$, respectively.
-\end{itemize}
-
-\todo{Need to keep?}
-% We may also assume that our covariance matrices are diagonal, as is often the case in practice.
-A common simplifying assumption is to assume that the covariance matrices $\Sigma_1$ and $\Sigma_2$ are diagonal.
-In this case, \citet{Thiagarajan2025} shows that the $\JSGa{}$ divergence simplifies to
-\todo{Double check this formula is correct (R should give same output as above non-diagonal method)}
-\todo{Standardise use of brackets, varies a lot}
-% \begin{align*}
-%   JS-G(P \mid \mid Q) = \frac{1}{2} \sum^n_{i=1} \left[ \frac{\alpha \sigma_{1, i}^2 + (1-\alpha)\sigma_{2, i}^2}{\sigma_{\alpha, i}^2} + \log{\left( \frac{\sigma_{\alpha, i}^2}{\sigma_{1, i}^{(2\alpha)}\sigma_{2, i}^{2(1 - \alpha)}} \right)} + \alpha \frac{(\mu_{\alpha, i} - \mu_{1, i})^2}{\sigma_{\alpha, i}^2} + (1 - \alpha) \frac{(\mu_{\alpha, i} - \mu_{2, i})^2}{\sigma_{\alpha, i}^2} -1 \right],
-% \end{align*}
-% \todo{Should I use a different notation here, since I also use mu, sigma for the CE model?}
-\begin{align}~\label{eq:js_norm_mvn_diag}
-JS^{G_{\alpha}}(P \mid\mid Q) = \frac{1}{2} \sum_{i=1}^n \Bigg[
-    & \frac{\alpha \sigma_{1,i}^2 + (1 - \alpha) \sigma_{2,i}^2}{\sigma_{\alpha,i}^2} 
-    + \log\left( \frac{\sigma_{\alpha,i}^2}{\sigma_{1,i}^{2\alpha} \sigma_{2,i}^{2(1 - \alpha)}} \right) \nonumber \\
-    & + \alpha \frac{(\mu_{\alpha,i} - \mu_{1,i})^2}{\sigma_{\alpha,i}^2} 
-    + (1 - \alpha) \frac{(\mu_{\alpha,i} - \mu_{2,i})^2}{\sigma_{\alpha,i}^2}
-    - 1 \Bigg],
-\end{align}
-where $\sigma_{\alpha, i}^2 = \frac{\sigma_{1, i}^2 \sigma_{2, i}^2}{\alpha\sigma_{1, i}^2 + (1 - \alpha)\sigma_{2, i}^2}$, and $\mu_{\alpha, i} = \sigma_{\alpha, i}^2 \left( \frac{\alpha\mu_{1, i}}{\sigma_{1, i}^2} + \frac{(1 - \alpha) \mu_{2, i}}{\sigma_{2, i}^2} \right)$, respectively.
-
-% % Integral plan
-% \begin{itemize}
-%   \item Integral given in Equation~\eqref{eq:js_integral} gives us the $\JSGa{}$ dissimilarity between CE models $P$ and $Q$ averaged over the marginal distribution of $Y_i \mid Y_i > u$.
-%   \item Since $Y_i$ follows a standard Laplace distribution, by memorylessness its tail values $Y_i \mid Y_i > u$ follow a standard exponential distribution. \todo{Express more mathematically?} 
-%   \item Therefore, we can use a simple MC method to estimate this integral as
-%     \todo{Switch to E hat?}
-%     \begin{align}
-%       \int_{u}^\infty JS^{G_{\alpha}}(P(y_i) \mid\mid Q(y_i)) f(y_i) \mathrm{d}y_i &\approx \frac{1}{N} \sum_{j=1}^{N} JS^{G_{\alpha}}(P(y_i) \mid\mid Q(y_i)),
-%     \end{align}
-%   for $N$ samples. 
-%   \item However, in estimation, we want to be careful about sampling points too far into the tail. 
-%   \item Such values may introduce numerical instability into our divergence calculations.
-%   \item Furthermore, we also want to be careful about performing significant extrapolation from the data with which our CE models were fitted. 
-%     \todo{May want to switch to parameterising using Laplace quantiles, not exponential!}
-%   % \item Therefore, we sample our values of $y_i$ from the truncated Laplace distribution, with the truncation quantile $q_{Laplace}$. \todo{truncation point (currently) comes from exponential distribution, may have to rewrite}
-%   \item Therefore, we sample our values of $y_i$ from the truncated Laplace distribution, truncated above by the $p$-th quantile of the standard exponential distribution, $Q_{Exp(1)}(p)$. \todo{Change to Laplace quantile to match u! Also set quantile to some variable}
-%   \item Our MC method follows the simple alternating scheme for $N$ samples of
-%     \begin{enumerate}
-%       \item Simulating $y_i \sim truncLaplace(0, 1; u, u + Q_{Exp(1)}(p))$, \todo{ugly}
-%       \item Calculating $\JSGa{P(y_i) \mid \mid Q(y_i)}$ using Equation \eqref{eq:js_norm_mvn1}.
-%     \end{enumerate}
-%     before averaging over the $N$ samples to estimate the integral in Equation~\eqref{eq:js_integral}.
-% \end{itemize}
-
-% Estimating the integral 
-% To estimate the integral in Section~\ref{subsec:div}, we use a Monte Carlo method, where we sample $N$ values from the distribution of $Y_i \mid Y_i > u_i}$, and estimate the integral as
-% \begin{equation}~\label{eq:mc_integral}
-%   \int_{u}^\infty JS^{G_{\alpha}}(P(y_i) \mid\mid Q(y_i)) f(y_i) \mathrm{d}y_i \approx \frac{1}{N} \sum_{j=1}^{N} JS^{G_{\alpha}}(P(y_j) \mid\mid Q(y_j)),
-% \end{equation}
-
 
 \section{Simulation study}~\label{sec:sim}
 % Introduce section

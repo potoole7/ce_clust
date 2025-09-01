@@ -1,0 +1,21 @@
+\begin{thebibliography}{xx}
+
+\harvarditem[Bishop et~al.]{Bishop, Fienberg \harvardand\
+  Holland}{1975}{bish:fien:1975}
+Bishop, Y. M.~M., Fienberg, S.~E. \harvardand\ Holland, P.~W.  \harvardyearleft
+  1975\harvardyearright , {\em Discrete Multivariate Analyses: Theory and
+  Practice}, MIT Press.
+
+\harvarditem{Broman \harvardand\ Woo}{2018}{brom:woo:2018}
+Broman, K.~W. \harvardand\ Woo, K.~H.  \harvardyearleft 2018\harvardyearright ,
+  `{Data Organization in Spreadsheets}', {\em The American Statistician} {\bf
+  72}(1),~2--10.
+\newline\harvardurl{https://doi.org/10.1080/00031305.2017.1375989}
+
+\harvarditem{Gelman \harvardand\ Vehtari}{2021}{gelm:veht:2021}
+Gelman, A. \harvardand\ Vehtari, A.  \harvardyearleft 2021\harvardyearright ,
+  `{What are the Most Important Statistical Ideas of the Past 50 Years?}', {\em
+  Journal of the American Statistical Association} {\bf 116}(536),~2087--2097.
+\newline\harvardurl{https://doi.org/10.1080/01621459.2021.1938081}
+
+\end{thebibliography}

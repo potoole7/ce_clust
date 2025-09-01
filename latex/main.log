@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999994 (TeX Live 2022/Debian) (preloaded format=xelatex 2025.2.5)  1 SEP 2025 12:27
+This is XeTeX, Version 3.141592653-2.6-0.999994 (TeX Live 2022/Debian) (preloaded format=xelatex 2025.2.5)  1 SEP 2025 12:30
 entering extended mode
  \write18 enabled.
  %&-line parsing enabled.
@@ -979,11 +979,7 @@ LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(3)/m/n' will be
 (Font)              scaled to size 8.3991pt on input line 269.
 LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(3)/m/n' will be
 (Font)              scaled to size 5.99936pt on input line 269.
-[2] [3] [4] [5] (./main.bbl [6]) [7] (./main.aux)
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
- ) 
+[2] [3] [4] [5] (./main.bbl [6]) [7] (./main.aux) ) 
 Here is how much of TeX's memory you used:
  20896 strings out of 478743
  386132 string characters out of 5849521

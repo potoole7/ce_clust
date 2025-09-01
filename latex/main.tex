@@ -168,6 +168,9 @@
 %Set the key \texttt{anon} to ``1'' to produce the manuscript with author details and
 % acknowledgments. 
 
+%%%% Non-template packages %%%%
+\usepackage{tikz}
+
 \begin{document}
 
 
@@ -180,13 +183,18 @@
 
 \if1\anon
 {
-  \title{\bf Title}
-  \author{Author 1\thanks{
+  % \title{\bf Title}
+  \title{\bf Clustering of multivariate tail dependence using conditional methods}
+  \author{Patrick O'Toole\thanks{
     The authors gratefully acknowledge \textit{please remember to list all relevant funding sources in the version that gives all author information}}\hspace{.2cm}\\
-    Department of YYY, University of XXX\\
+    Department of Mathematical Sciences, University of Bath \\
     and \\
-    Author 2 \\
-    Department of ZZZ, University of WWW}
+    Christian Rohrbeck \\
+    Department of Mathematical Sciences, University of Bath \\
+    and \\
+    Jordan Richards \\
+    School of Mathematics, University of Edinburgh
+  }
   \maketitle
 } \fi
 
@@ -203,11 +211,18 @@
 
 \bigskip
 \begin{abstract}
-The text of your abstract. 200 or fewer words.
+Conditional extreme value (CE) models have proven useful for analysing the joint tail behaviour of random vectors.
+  However, when applied across many locations or variables, it can be difficult to interpret or compare the resulting extremal dependence structures, particularly in high dimensions. 
+  % \todo{C: add 1-2 sentences before "We propose .." to clearly outline the scenario we are considering, and why it is useful}
+  To address this, we propose a novel clustering framework for CE models, which can be used to identify groups with similar multivariate extremal dependence structures.
+  Our approach introduces a closed-form, computationally efficient dissimilarity measure for comparing CE models, based on a generalized version of the Jensen-Shannon divergence, applicable in any dimension.
+  Applying standard clustering algorithms to the resulting pairwise distances, we obtain interpretable groups with homogeneous tail dependence characteristics.
+  Simulation studies demonstrate that our method outperforms existing approaches for bivariate cases and uniquely extends to multivariate settings. 
+  Applied to Irish meteorological data, our clustering successfully identifies spatially coherent regions with similar tail dependence between precipitation and wind speed. 
 \end{abstract}
 
 \noindent%
-{\it Keywords:} 3 to 6 keywords, that do not appear in the title
+{\it Keywords:} Extremes, multivariate extremes, spatial clustering
 \vfill
 
 \newpage

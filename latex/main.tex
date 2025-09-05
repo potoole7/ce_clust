@@ -1130,6 +1130,25 @@ For a single ``location'', terminology chosen to reflect our spatial application
 % We sample from this copula and transform to Laplace margins and use the CE model to estimate the bivariate extremal dependence structure at this location.
 We sample from this copula, transform to Laplace margins, and then fit the CE model to estimate the extremal dependence structure at the location.
 
+For a single ``location'', terminology chosen to reflect our spatial application, we generate bivariate data from a Gaussian copula with correlation parameter $\rho_{\text{Gauss}}$, which controls the dependence structure.  
+Let
+\[
+\Sigma(\rho_{\text{Gauss}})=
+\begin{pmatrix}
+1 & \rho_{\text{Gauss}}\\[4pt]
+\rho_{\text{Gauss}} & 1
+\end{pmatrix}.
+\]
+We sample
+\[
+  (X_1,X_2)^\top \sim \mbox{MVN}\big(0,\Sigma(\rho_{\text{Gauss}})\big),
+\qquad
+U_i=\Phi(X_i),\ i=1,2
+\]
+where $\Phi$ is the standard normal CDF. 
+\citet{Keef2013} show that the asymptotic CE parameters for the bivariate Gaussian copula are $\alpha=\operatorname{sign}(\rho_{\text{Gauss}})\,(\rho_{\text{Gauss}})^2$ and $\beta=1/2$, which imply asymptotic independence.  
+We sample from this copula, transform to Laplace margins as in \eqref{eq:laplace_transform}, and then fit the CE model to estimate the extremal dependence structure at the location.
+
 % Multiple locations
 % We can easily extend this design by generating multiple locations with different $\rhou{Gauss}$ values.
 This design extends naturally to multiple locations by varying $\rho^{\text{Gauss}}$ across sites.  

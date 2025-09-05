@@ -639,7 +639,7 @@ Each marginal random variable $X_i, i = 1, \ldots, d$ is transformed to Laplace 
    Y_i \coloneqq \begin{cases}
      \log\left\{2F_{X_i}(X_i)\right\}, &\text{ for } X_i < F_{X_i}^{-1}(0.5), \\
      % -\log\left\{2(1 - F_{X_i}(X_i))\right\} &\text{ for } X_i \ge F_{X_i}^{-1}(0.5), \\
-     -\log\left[2(1 - F_{X_i}(X_i))\right], &\text{ for } X_i \ge F_{X_i}^{-1}(0.5), \\
+     -\log\left[2\left\{ 1 - F_{X_i}(X_i)\right\} \right], &\text{ for } X_i \ge F_{X_i}^{-1}(0.5), \\
    \end{cases}
  \end{equation}
 \todo{trying to be brief, but would like to have quick line about why we use Laplace!}
@@ -790,25 +790,27 @@ Note that we make no assumptions about spatial smoothness in the regression mode
 % assumed to follow a multivariate Gaussian distribution with vector nuisance
 % parameters $\symbf{\mu}_{\mid i} \in \mathbb{R}^{(d-1)}$ and $\Sigma_{\mid i} \in \mathbb{R}^{(d-1)}$.
 % The residual vector $\symbf{Z}_{\mid i}$ in Equation~\eqref{eq:ce_model} is assumed to follow a multivariate Gaussian distribution with mean vector $\symbf{\mu}_{\mid i}\in\mathbb{R}^{d-1}$ and covariance matrix $\Sigma_{\mid i}\in\mathbb{R}^{(d-1)\times(d-1)}$. 
-\todo{Use spatial index here, or first explain without and then add in at the end?}
-The residual vector $\symbf{Z}_{\mid i}(s)$ in Equation~\eqref{eq:ce_model_spat} is assumed to follow a multivariate Gaussian distribution with mean vector $\symbf{\mu}_{\mid i}(s)\in\mathbb{R}^{d-1}$ and covariance matrix $\Sigma_{\mid i}(s)\in\mathbb{R}^{(d-1)\times(d-1)}$. 
+% \todo{Use spatial index here, or first explain without and then add in at the end?}
+% The residual vector $\symbf{Z}_{\mid i}(s)$ in Equation~\eqref{eq:ce_model_spat} is assumed to follow a multivariate Gaussian distribution with mean vector $\symbf{\mu}_{\mid i}(s)\in\mathbb{R}^{d-1}$ and covariance matrix $\Sigma_{\mid i}(s)\in\mathbb{R}^{(d-1)\times(d-1)}$. 
+As a working assumption that permits inference on $\symbf{\alpha}_{\mid i}(s)$ and $\symbf{\beta}_{\mid i}(s)$, the residual vector $\symbf{Z}_{\mid i}(s)$ in Equation~\eqref{eq:ce_model_spat} is assumed to be multivariate Gaussian distribution with mean vector $\symbf{\mu}_{\mid i}(s)\in\mathbb{R}^{d-1}$ and covariance matrix $\Sigma_{\mid i}(s)\in\mathbb{R}^{(d-1)\times(d-1)}$.
 % \todo{Use (CE) superscript for mu and Sigma to distinguish from clustering}
 % The residual vector $\symbf{Z}_{\mid i}$ in Equation~\eqref{eq:ce_model} is assumed to follow a multivariate Gaussian distribution with mean vector $\symbf{\mu}_{\mid i}^{(\CE{})}\in\mathbb{R}^{d-1}$ and covariance matrix $\Sigma_{\mid i}^{(\CE{})} \in\mathbb{R}^{(d-1)\times(d-1)}$. 
-\todo{Heff04 assumes diagonal sigma, should we say we use full covariance?}
+% \todo{Heff04 assumes diagonal sigma, should we say we use full covariance?}
 % This is a working assumption proposed in \citet{Heffernan2004} after testing several candidate distributions. %, and is still most commonly used in the literature \todo{citations?}
 % This is the key assumption of the CE model on which we derive our divergence measure, and was chosen in \citet{Heffernan2004} after testing several candidate distributions.
 % This is the key aspect of the CE model with which we derive our divergence measure, and is a working assumption chosen in \citet{Heffernan2004} after testing several candidate distributions.
-This Gaussian working assumption, proposed in \citet{Heffernan2004} after testing several candidate distributions, is the key property we exploit when deriving a closed-form divergence measure for computationally efficient clustering.
+% This Gaussian working assumption, proposed in \citet{Heffernan2004} after testing several candidate distributions, is the key property we exploit when deriving a closed-form divergence measure for computationally efficient clustering.
+This Gaussian working assumption, proposed in \citet{Heffernan2004}, is the key property we exploit when deriving a closed-form divergence measure for computationally efficient clustering; see Section~\ref{subsec:ce_model}.
 
 % \citet{Heffernan2004} shows that inference can be made about the extremal dependence of a random vector $\symbf{Y}_{-i} = \symbf{Y} \backslash Y_i$ on $Y_i$ by conditioning on the exceedance of a high threshold $u$ by $Y_i$, and assuming that this conditional distribution is a diagonal multivariate Gaussian distribution: % with vector mean and standard deviation:
 % An important consequence following from this assumption is that inference can be made about the extremal dependence of a random vector $\symbf{Y}_{-i} = \symbf{Y} \setminus \{Y_i\}$ on $Y_i$ by conditioning on the exceedance of a high threshold $u_i$ by $Y_i$, and assuming that this conditional distribution is a multivariate Gaussian distribution, i.e.\ 
-Consequently, inference can be made about the extremal dependence of a random vector $\symbf{Y}_{-i}(s) = \symbf{Y}(s) \setminus \{Y_i(s)\}$ on $Y_i(s)$ at site $s$ by conditioning on the exceedance of a high threshold $u_i(s)$ by $Y_i(s)$, and assuming that this conditional distribution is multivariate Gaussian, i.e.\
+Consequently, inference can be made about the extremal dependence of a random vector $\symbf{Y}_{-i}(s)$ on $Y_i(s)$ at site $s$ by conditioning on the exceedance of a high threshold $u_i(s)$ by $Y_i(s)$, and assuming that this conditional distribution is multivariate Gaussian, i.e.\
 \begin{equation}~\label{eq:ce_norm}
   % \bigl( \symbf{Y}_{-i} \mid Y_i  = y_i \bigr) \sim N\left(\symbf{\alpha}_{\mid i}^{(\CE{})} y_i + y_i^{\symbf{\beta}_{\mid i}^{(\CE{})}} \symbf{\mu}_{\mid i}^{(\CE{})}, y_i^{\symbf{\beta}_{\mid i}^{(\CE{})}} \Sigma_{\mid i}^{(\CE{})}\right), Y_i > u_i,
   % \bigl( \symbf{Y}_{-i} \mid Y_i  = y_i \bigr) \sim N\left(\symbf{\alpha}_{\mid i} y_i + y_i^{\symbf{\beta}_{\mid i}} \symbf{\mu}_{\mid i}, y_i^{\symbf{\beta}_{\mid i}} \symbf{\Sigma_{\mid i}}\right), Y_i > u_i,
-  \bigl( \symbf{Y}_{-i}(s) \mid Y_i(s)  = y_i) \sim MVN_{d-1}\left(\symbf{\alpha}_{\mid i}(s) y_i + y_i^{\symbf{\beta}_{\mid i}(s)} \symbf{\mu}_{\mid i}(s), y_i^{\symbf{\beta}_{\mid i}(s)} \Sigma_{\mid i}(s)\right), y_i > u_i(s),
+  \bigl( \symbf{Y}_{-i}(s) \mid Y_i(s)  = y) \sim \mbox{MVN}_{d-1}\left(\symbf{\alpha}_{\mid i}(s) y + y^{\symbf{\beta}_{\mid i}(s)} \symbf{\mu}_{\mid i}(s), y^{\symbf{\beta}_{\mid i}(s)} \Sigma_{\mid i}(s)\right), y > u_i(s),
 \end{equation}
-where $\symbf{\alpha}_{\mid i}(s), \symbf{\beta}_{\mid i}(s), \symbf{\mu}_{\mid i}(s), \Sigma_{\mid i}(s)$ are the site-specific parameters of the CE model.
+where $\symbf{\alpha}_{\mid i}(s), \symbf{\beta}_{\mid i}(s), \symbf{\mu}_{\mid i}(s), \Sigma_{\mid i}(s)$ are the site-specific parameters of the CE model for the $i^{\text{th}}$ conditioning variable, $i = 1, \ldots, d$.
 % where $\symbf{\alpha}_{\mid i}^{(\CE{})}, \symbf{\beta}_{\mid i}^{(\CE{})}, \symbf{\mu}_{\mid i}^{(\CE{})}, \Sigma_{\mid i}^{(\CE{})} \in \mathbb{R}^{(d-1)}$ are the parameters of the CE model. 
 % Therefore, when seeking to compare the extremal dependence structure of two locations, a sensible approach is to compare the conditional distributions given by Equation~\ref{eq:ce_norm} for each variable at both sites. 
 % Therefore, under this model, when comparing the extremal dependence structure between variables at any given sites, we are effectively comparing the conditional distributions given by Equation~\eqref{eq:ce_norm}.
@@ -816,6 +818,12 @@ where $\symbf{\alpha}_{\mid i}(s), \symbf{\beta}_{\mid i}(s), \symbf{\mu}_{\mid 
 % Therefore, to compare tail dependence at different sites, we can compare the conditional distributions in \eqref{eq:ce_norm}, i.e.\ the induced multivariate Gaussian distributions parameterised by $(\symbf{\alpha}_{\mid i}^{(\CE{})},\symbf{\beta}_{\mid i}^{(\CE{})},\symbf{\mu}_{\mid i}^{(\CE{})},\Sigma_{\mid i}^{(\CE{})})$ (or a chosen subset thereof).
 % Therefore, to compare tail dependence at different sites, we can compare the conditional distributions in \eqref{eq:ce_norm}, i.e.\ the induced multivariate Gaussian distributions parameterised by $(\symbf{\alpha}_{\mid i},\symbf{\beta}_{\mid i},\symbf{\mu}_{\mid i},\Sigma_{\mid i})$ (or a chosen subset thereof).
 Therefore, to compare tail dependence at different sites, we can compare the conditional distributions in \eqref{eq:ce_norm}, i.e.\ the assumed multivariate Gaussian distributions parameterised by $(\symbf{\alpha}_{\mid i}(s),\symbf{\beta}_{\mid i}(s),\symbf{\mu}_{\mid i}(s),\Sigma_{\mid i}(s))$ (or a chosen subset thereof).
+
+% Estimation
+The model parameters $\symbf{\alpha}_{\mid i}(s), \symbf{\beta}_{\mid i}(s), \symbf{\mu}_{\mid i}(s), \Sigma_{\mid i}(s)$ in Equation~\eqref{eq:ce_norm} are estimated at each site $s$ using maximum likelihood estimation.
+In practice, we set the threshold $u_i(s) = F^{-1}(q)$ to the $q^{\text{th}}$ Laplace quantile.  
+We choose $q$ such that there are sufficient exceedances above $u_i(s)$ to fit the CE model, while keeping $q$ high enough so that the limiting assumption in Equation~\eqref{eq:ce_limiting_dist} is reasonable.
+The bootstrapping procedure of \citet{Heffernan2004} is used to obtain standard errors for the parameter estimates, and we choose the highest value of $q$ such that the parameter estimates are stable, and the bootstrap standard errors are reasonably small.
 
 There are several qualities we desire from a divergence measure for clustering based on the conditional distribution in Equation~\eqref{eq:ce_norm}.
 % We would like to exploit the fact that the CE model is a multivariate Gaussian distribution to provide some gains in computational efficiency, and for our divergence to more generally be cheap to compute.
@@ -838,14 +846,15 @@ The $\JSGa{}$ divergence between two continuous distribution functions $F_1$ and
 \end{equation}
 % where $G_{\alpha}(P, Q) = P^{\alpha} Q^{1 - \alpha}, \alpha \in [0, 1]$ is the weighted geometric mean of $P$ and $Q$, with $\alpha$ controlling the weighting between them, and $\KL{(P \mid\mid Q)}$ is the Kullback--Leibler divergence between $P$ and $Q$ \citep{Kullback1951}. 
 \todo{Use different symbol to alpha!}
-where $G_{\alpha}(F_1, F_2) = P^{\alpha} Q^{1 - \alpha}, \alpha \in [0, 1]$ is the weighted geometric mean of $F_1$ and $F_2$, and $\KL{(F_1 \mid\mid F_2)}$ is the Kullback--Leibler divergence between $P$ and $Q$, \citep{Kullback1951}, given by 
+where $G_{\alpha}(F_1, F_2) = F_{1}^{\alpha} F_{2}^{1 - \alpha}, \alpha \in [0, 1]$ is the weighted geometric mean of $F_1$ and $F_2$, and $\KL{(F_1 \mid\mid F_2)}$ is the Kullback--Leibler divergence between $F_1$ and $F_2$, \citep{Kullback1951}, given by 
 \begin{equation}~\label{eq:kl}
-  KL(F_1 \mid\mid F_2) = \int_{-\infty}^{\infty} f_1(y) \log\left(\frac{f_1(y)}{f_2(y)}\right) dy,
+  % KL(F_1 \mid\mid F_2) = \int_{-\infty}^{\infty} f_1(y) \log\left(\frac{f_1(y)}{f_2(y)}\right) dy,
+  \KL{(F_1 \mid\mid F_2)} = \int_{\mathbb{R}^d} f_1(\symbf{y}) \log\left(\frac{f_1(\symbf{y})}{f_2(\symbf{y})}\right) d\symbf{y},
 \end{equation}
 where $f_1$ and $f_2$ are the continuous density functions of $F_1$ and $F_2$, respectively. 
 % Here, $P$ and $Q$ represent the conditional multivariate Gaussian distributions induced by the CE model at two different sites.
-In this context, $P$ and $Q$ represent the conditional multivariate Gaussian distributions induced by the CE model at two different sites.
-The parameter $\alpha$ skews the geometric mean $G_{\alpha}(P,Q)\propto P^{\alpha}Q^{1-\alpha}$ towards $P$ (when $\alpha$ is close to 1) or towards $Q$ (when $\alpha$ is close to 0). 
+In this context, $F_1$ and $F_2$ represent the conditional multivariate Gaussian distributions induced by the CE model at two different sites, say $s_1$ and $s_2$.
+The parameter $\alpha$ skews the geometric mean $G_{\alpha}(F_1,F_2)\propto F_1^{\alpha}F_{2}^{1-\alpha}$ towards $F_1$ (when $\alpha$ is close to 1) or towards $F_2$ (when $\alpha$ is close to 0). 
 % When one site has a more reliable CE fit, we set $\alpha$ to a reliability weight $w\in[0,1]$ (e.g.\ proportional to effective sample size), and apply the symmetrised divergence so that the final dissimilarity remains symmetric.
 One possible advantage for having a skew parameter such as $\alpha$ is that in our divergence measure we can favour sites with a more reliable CE fit, as determined by, for example, the effective sample size available for both.
 In this paper, we simply use $\alpha = 0.5$, because each site has a similar number of observations in our simulation and case studies. 
@@ -876,11 +885,15 @@ Hence, we identify the $\JSGa{}$ divergence as a suitable measure of dissimilari
 % JSGa form
 % For two multivariate normals, \citet{Nielsen2019} shows that the $\JSGa{}$ divergence introduced in Equation~\eqref{eq:js_norm} has the closed form solution
 % \todo{eq:js_norm can't be found}
-For two multivariate Gaussian distributions $P \sim N(\mu_1, \Sigma_1)$ and $Q \sim N(\mu_2, \Sigma_2)$ in $\mathbb{R}^n$, \citet{Nielsen2019} shows that the $\JSGa{}$ divergence introduced in Equation~\eqref{eq:jsga} has the closed form solution 
+\todo{Double check!}
+For two multivariate Gaussian distributions $F_1 \sim \mbox{MVN}(\symbf{\mu_1}, \Sigma_1)$ and $F_2 \sim \mbox{MVN}(\symbf{\mu_2}, \Sigma_2)$ in $\mathbb{R}^d$, \citet{Nielsen2019} shows that the $\JSGa{}$ divergence introduced in Equation~\eqref{eq:jsga} has the closed form solution 
 \begin{align*}%~\label{eq:js_norm_mvn}
-  JS^{G_{\alpha}}(F_1 \mid\mid F_2) &= \frac{1}{2} \left( (1 - \alpha) \mu_1^T \Sigma_1^{-1} \mu_1 + \alpha \mu_2^T \Sigma_2^{-1} \mu_2 - \mu_{\alpha}^T \Sigma_{\alpha}^{-1} \mu_{\alpha} + \log{\left( \frac{\abs{\Sigma_1}^{1-\alpha} \abs{\Sigma_2}^{\alpha}}{\abs{\Sigma_{\alpha}}} \right)} \right), \\
-  \Sigma_{\alpha} &= \left( (1 - \alpha) \Sigma_1^{-1} + \alpha \Sigma_2^{-1} \right)^{-1}, \\
-  \mu_{\alpha} &= \Sigma_{\alpha} \left( (1 - \alpha) \Sigma_1^{-1} \mu_1 + \alpha \Sigma_2^{-1} \mu_2 \right), \numberthis~\label{eq:js_norm_mvn1}
+  % JS^{G_{\alpha}}(F_1 \mid\mid F_2) &= \frac{1}{2} \left( (1 - \alpha) \mu_1^T \Sigma_1^{-1} \mu_1 + \alpha \mu_2^T \Sigma_2^{-1} \mu_2 - \mu_{\alpha}^T \Sigma_{\alpha}^{-1} \mu_{\alpha} + \log{\left( \frac{\abs{\Sigma_1}^{1-\alpha} \abs{\Sigma_2}^{\alpha}}{\abs{\Sigma_{\alpha}}} \right)} \right), \\
+  JS^{G_{\alpha}}(F_1 \mid\mid F_2) &= \frac{1}{2} \left( \alpha \mu_1^T \Sigma_1^{-1} \mu_1 + (1 - \alpha) \mu_2^T \Sigma_2^{-1} \mu_2 - \mu_{\alpha}^T \Sigma_{\alpha}^{-1} \mu_{\alpha} + \log{\left( \frac{\abs{\Sigma_1}^{\alpha} \abs{\Sigma_2}^{1-\alpha}}{\abs{\Sigma_{\alpha}}} \right)} \right), \\
+  % \Sigma_{\alpha} &= \left( (1 - \alpha) \Sigma_1^{-1} + \alpha \Sigma_2^{-1} \right)^{-1}, \\
+  \Sigma_{\alpha} &= \left( \alpha \Sigma_1^{-1} + (1 - \alpha) \Sigma_2^{-1} \right)^{-1}, \\
+  % \mu_{\alpha} &= \Sigma_{\alpha} \left( (1 - \alpha) \Sigma_1^{-1} \mu_1 + \alpha \Sigma_2^{-1} \mu_2 \right), \numberthis~\label{eq:js_norm_mvn1}
+  \mu_{\alpha} &= \Sigma_{\alpha} \left( \alpha \Sigma_1^{-1} \mu_1 + (1 - \alpha) \Sigma_2^{-1} \mu_2 \right), \numberthis~\label{eq:js_norm_mvn1}
 \end{align*} 
 where:
 \begin{itemize}
@@ -890,23 +903,23 @@ where:
 \end{itemize}
 
 % We may also assume that our covariance matrices are diagonal, as is often the case in practice.
-A common simplifying assumption is to assume that the covariance matrices $\Sigma_1$ and $\Sigma_2$ are diagonal.
-In this case, \citet{Thiagarajan2025} shows that the $\JSGa{}$ divergence simplifies to
-\todo{Double check this formula is correct (R should give same output as above non-diagonal method)}
-\todo{Standardise use of brackets, varies a lot}
-% \begin{align*}
-%   JS-G(P \mid \mid Q) = \frac{1}{2} \sum^n_{i=1} \left[ \frac{\alpha \sigma_{1, i}^2 + (1-\alpha)\sigma_{2, i}^2}{\sigma_{\alpha, i}^2} + \log{\left( \frac{\sigma_{\alpha, i}^2}{\sigma_{1, i}^{(2\alpha)}\sigma_{2, i}^{2(1 - \alpha)}} \right)} + \alpha \frac{(\mu_{\alpha, i} - \mu_{1, i})^2}{\sigma_{\alpha, i}^2} + (1 - \alpha) \frac{(\mu_{\alpha, i} - \mu_{2, i})^2}{\sigma_{\alpha, i}^2} -1 \right],
-% \end{align*}
-% \todo{Should I use a different notation here, since I also use mu, sigma for the CE model?}
-\begin{align}~\label{eq:js_norm_mvn_diag}
-JS^{G_{\alpha}}(F_1 \mid\mid F_2) = \frac{1}{2} \sum_{i=1}^d \Bigg[
-    & \frac{\alpha \sigma_{1,i}^2 + (1 - \alpha) \sigma_{2,i}^2}{\sigma_{\alpha,i}^2} 
-    + \log\left( \frac{\sigma_{\alpha,i}^2}{\sigma_{1,i}^{2\alpha} \sigma_{2,i}^{2(1 - \alpha)}} \right) \nonumber \\
-    & + \alpha \frac{(\mu_{\alpha,i} - \mu_{1,i})^2}{\sigma_{\alpha,i}^2} 
-    + (1 - \alpha) \frac{(\mu_{\alpha,i} - \mu_{2,i})^2}{\sigma_{\alpha,i}^2}
-    - 1 \Bigg],
-\end{align}
-where $\sigma_{\alpha, i}^2 = \frac{\sigma_{1, i}^2 \sigma_{2, i}^2}{\alpha\sigma_{1, i}^2 + (1 - \alpha)\sigma_{2, i}^2}$, and $\mu_{\alpha, i} = \sigma_{\alpha, i}^2 \left( \frac{\alpha\mu_{1, i}}{\sigma_{1, i}^2} + \frac{(1 - \alpha) \mu_{2, i}}{\sigma_{2, i}^2} \right)$, respectively.
+% A common simplifying assumption is to assume that the covariance matrices $\Sigma_1$ and $\Sigma_2$ are diagonal.
+% In this case, \citet{Thiagarajan2025} shows that the $\JSGa{}$ divergence simplifies to
+% \todo{Double check this formula is correct (R should give same output as above non-diagonal method)}
+% \todo{Standardise use of brackets, varies a lot}
+% % \begin{align*}
+% %   JS-G(P \mid \mid Q) = \frac{1}{2} \sum^n_{i=1} \left[ \frac{\alpha \sigma_{1, i}^2 + (1-\alpha)\sigma_{2, i}^2}{\sigma_{\alpha, i}^2} + \log{\left( \frac{\sigma_{\alpha, i}^2}{\sigma_{1, i}^{(2\alpha)}\sigma_{2, i}^{2(1 - \alpha)}} \right)} + \alpha \frac{(\mu_{\alpha, i} - \mu_{1, i})^2}{\sigma_{\alpha, i}^2} + (1 - \alpha) \frac{(\mu_{\alpha, i} - \mu_{2, i})^2}{\sigma_{\alpha, i}^2} -1 \right],
+% % \end{align*}
+% % \todo{Should I use a different notation here, since I also use mu, sigma for the CE model?}
+% \begin{align}~\label{eq:js_norm_mvn_diag}
+% JS^{G_{\alpha}}(F_1 \mid\mid F_2) = \frac{1}{2} \sum_{i=1}^d \Bigg[
+%     & \frac{\alpha \sigma_{1,i}^2 + (1 - \alpha) \sigma_{2,i}^2}{\sigma_{\alpha,i}^2} 
+%     + \log\left( \frac{\sigma_{\alpha,i}^2}{\sigma_{1,i}^{2\alpha} \sigma_{2,i}^{2(1 - \alpha)}} \right) \nonumber \\
+%     & + \alpha \frac{(\mu_{\alpha,i} - \mu_{1,i})^2}{\sigma_{\alpha,i}^2} 
+%     + (1 - \alpha) \frac{(\mu_{\alpha,i} - \mu_{2,i})^2}{\sigma_{\alpha,i}^2}
+%     - 1 \Bigg],
+% \end{align}
+% where $\sigma_{\alpha, i}^2 = \frac{\sigma_{1, i}^2 \sigma_{2, i}^2}{\alpha\sigma_{1, i}^2 + (1 - \alpha)\sigma_{2, i}^2}$, and $\mu_{\alpha, i} = \sigma_{\alpha, i}^2 \left( \frac{\alpha\mu_{1, i}}{\sigma_{1, i}^2} + \frac{(1 - \alpha) \mu_{2, i}}{\sigma_{2, i}^2} \right)$, respectively.
 
 % % Introduce KL divergence 
 % One common measure of dissimilarity between two distributions $P$ and $Q$ is the Kullback-Leibler (KL) divergence, defined as

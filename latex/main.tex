@@ -507,19 +507,50 @@ However, the sparsity of joint extreme observations, particularly in high dimens
 
 % Papers to possibly add?
 % Clustering (combined)
-NEED TO WRITE AGAIN, NOT GOOD
-Clustering is an unsupervised learning technique which seeks to group similar data \citep{Hastie2009}.
-Clustering approaches for extremes can be grouped into three types.
-Univariate clustering methods group sites by marginal extreme summaries such as return levels tail indices or Generalised Pareto Distribution (GPD) parameter estimates and then apply standard clustering algorithms such as k-means and k-medoids \citep{Coles2001, Lloyd1957, Kaufman1987}.
-% Examples of univariate or marginal clustering include finance applications that group assets by extreme value indices as in \citet{deCarvalho2023} and regional grouping by extreme temperature summaries as in \citet{Alonso2014-rr}.
-Some examples of univariate clustering include \citet{deCarvalho2023}, where financial securities were clustered based on indices of extremal frequency and magnitude, and in environmetal applications \citet{Cooley2007} clustered return levels for extreme precipitation in Colorado. \todo{add additional references here!}
-Other methods perform multivariate clustering by comparing joint tail summaries or fitted multivariate tail models at each site. 
+% NEED TO WRITE AGAIN, NOT GOOD
+% Clustering is an unsupervised learning technique which seeks to group similar data \citep{Hastie2009}.
+% Clustering approaches for extremes can be grouped into three types.
+% Univariate clustering methods group sites by marginal extreme summaries such as return levels tail indices or Generalised Pareto Distribution (GPD) parameter estimates and then apply standard clustering algorithms such as k-means and k-medoids \citep{Coles2001, Lloyd1957, Kaufman1987}.
+% % Examples of univariate or marginal clustering include finance applications that group assets by extreme value indices as in \citet{deCarvalho2023} and regional grouping by extreme temperature summaries as in \citet{Alonso2014-rr}.
+% Some examples of univariate clustering include \citet{deCarvalho2023}, where financial securities were clustered based on indices of extremal frequency and magnitude, and in environmetal applications \citet{Cooley2007} clustered return levels for extreme precipitation in Colorado. \todo{add additional references here!}
+% Other methods perform multivariate clustering by comparing joint tail summaries or fitted multivariate tail models at each site. 
+% For example, \citet{Vignotto2021} estimates pairwise KL style divergences from empirical bivariate wind speed and precipitation extremes and clusters with k-medoids.
+% \todo{More examples}
+% A further strand clusters entire spatial fields or process realizations 
+% and recent work develops divergence based spatial clustering for compound precipitation and wind extremes \citep{Boulin2025}. \todo{Check!}
+% Our method belongs to the second, multivariate site-wise strand.
+% We fit a bivariate conditional extremes model at each site compute a closed form model based dissimilarity between the fitted conditional tail distributions using the skew geometric Jensen Shannon divergence \(\JSGa{}\) and cluster sites according to that dissimilarity.
+% This approach accommodates both asymptotic dependence and asymptotic independence provides parametric models for direct tail inference and offers computationally efficient pairwise comparisons compared with purely empirical methods such as the KL based approach of \citet{Vignotto2021}.
 
-For example, \citet{Vignotto2021} estimates pairwise KL style divergences from empirical bivariate wind speed and precipitation extremes and clusters with k-medoids.
-A further strand clusters entire spatial fields or process realizations and recent work develops divergence based spatial clustering for compound precipitation and wind extremes \citep{Boulin2025}. \todo{Check!}
-Our method belongs to the second, multivariate site-wise strand.
-We fit a bivariate conditional extremes model at each site compute a closed form model based dissimilarity between the fitted conditional tail distributions using the skew geometric Jensen Shannon divergence \(\JSGa{}\) and cluster sites according to that dissimilarity.
-This approach accommodates both asymptotic dependence and asymptotic independence provides parametric models for direct tail inference and offers computationally efficient pairwise comparisons compared with purely empirical methods such as the KL based approach of \citet{Vignotto2021}.
+% Clustering: introduction + motivation
+% A useful and popular approach to improve interpretability in extremal dependence modelling is clustering, an unsupervised technique that groups observations by similarity without prior labels \citep{Hastie2009}.
+% In a spatial context with multivariate observations at each location we can partition sites into clusters that exhibit similar joint tail behaviour and thereby reveal spatial patterns in complex dependence structures.
+% We distinguish three types of clustering for extremes across sites.
+% \emph{Univariate} methods pool locations by marginal extreme summaries such as return levels, tail indices, or Generalised Pareto Distribution (GPD) parameter estimates and then apply standard clustering algorithms such as $k$-means or $k$-medoids \citep{Coles2001, Lloyd1957, Kaufman1987}.
+% GPD parameter estimates have been used to cluster extreme temperatures in Spain \citep{Alonso2014-rr}, and marginal summaries or frequency-based indices have supported clustering in finance and environmental applications \citep{deCarvalho2023, Zheng2023-jf}.
+% \emph{Multivariate} approaches compare joint tail summaries or fitted multivariate tail models at each site and include both nonparametric and model-based methods \citep{Carreau2017, Dupuis2023, Bottolo2003}.
+% A leading nonparametric example is \citet{Vignotto2021}, who estimate empirical pairwise Kullback--Leibler ($\KL{}$) divergences from bivariate wind and precipitation extremes and then apply $k$-medoids.
+% \emph{Spatial} clustering targets regions or processes with similar spatio-temporal tail dependence and typically builds pairwise tail-focused dissimilarities, for example the F-madogram, before applying generic clustering to map coherent regions \citep{Cooley2006variograms, Bernard2013, Rohrbeck2021}.
+% Model-based spatial alternatives incorporate spatial information into divergence measures to encourage spatially coherent clusters \citep{Boulin2025}.
+% Our problem is bivariate extremes of precipitation and wind at sites across Ireland.
+% At each site we fit a multivariate tail model for the two variables and then cluster sites by the fitted multivariate tail characteristics.
+% Thus our approach is fundamentally multivariate at each site while remaining applicable to spatial problems. 
+% In this context \citet{Vignotto2021} is our main competitor.
+% The method they employ has some weaknesses, namely in that it is restricted to the bivariate case, and, being non-parametric, lacks a generative model for tail dependence inference, and may perform poorly without a large dataset due to reliance on sufficient empirical occurrences of joint and marginal extremes to characterize tail dependence.
+% Also, it is undefined where no jointly extreme events are observed, which can occur frequently in practice, and so is unsuitable for applications where AI may be prevalent.
+A popular approach to improve interpretability in extremal dependence modelling is clustering, an unsupervised learning technique which seeks to group similar data \citep{Hastie2009}.
+We distinguish three types of clustering for extremes across spatial location. 
+\emph{Univariate} methods group sites by marginal tail summaries such as return levels or GPD parameter estimates \citep{Coles2001} and have been used in environmental and financial applications \citep{Alonso2014-rr, deCarvalho2023, Zheng2023-jf}.
+\emph{Multivariate} methods compare joint tail summaries or fitted multivariate tail models at each site.
+A leading nonparametric example is \citet{Vignotto2021}, which estimates empirical pairwise Kullback--Leibler ($\KL{}$) divergences from bivariate precipitation and wind extremes and then apply $k$-medoids \citet{Kullback1951}.
+% Finally, \emph{spatial} methods target regions or processes with similar spatial tail dependence and often build pairwise tail dissimilarities such as the F-madogram before clustering \citep{Cooley2006variograms, Bernard2013, Rohrbeck2021}.
+Finally, \emph{spatial} methods cluster over entire spatial fields or process realizations.
+They may build pairwise tail dissimilarities such as the F-madogram before clustering \citep{Cooley2006variograms, Bernard2013}, or fit spatially non-stationary GPD models \citep{Rohrbeck2021, Carreau2017, Dupuis2023}. \todo{are these really spatial, or just expanded univariate?}
+The model-based spatial method of \citet{Boulin2025} incorporates spatial information into divergence measures to encourage spatially coherent clusters, but is limited to the AI case.
+Our problem involves clustering bivariate extremes of precipitation and wind at sites across Ireland.
+We fit a multivariate tail model at each site and then cluster sites by the fitted multivariate tail characteristics, so our method is fundamentally multivariate at each site while remaining applicable to spatial questions.
+In this context \citet{Vignotto2021} is our main competitor, but has some weaknesses, in that it is restricted to the bivariate case, and, being non-parametric, lacks a generative model for tail dependence inference, and may perform poorly without a large sample size. 
+Also, it is undefined where no jointly extreme events are observed, which can occur frequently in practice, and so is unsuitable for applications where AI may be prevalent.
 
 % Clustering: Motivating our clustering algorithm
 % % While clustering is evidently not novel within extremes, we hope to identify some opportunities to adapt some of the existing methods in the field to the CE model, which has not yet been explored in the content of clustering.
@@ -531,7 +562,8 @@ This approach accommodates both asymptotic dependence and asymptotic independenc
 % Our main contributions to this literature are to adapt some of these existing approaches to the Conditional Extremes (CE) model, which has not previously been explored in clustering. 
 % Our main contribution to the literature is to perform clustering on the CE model, which has not previously been explored. 
 
-We perform clustering of multivariate extremes using the CE model.
+% Clustering: Motivating our clustering algorithm
+Our method performs clustering of multivariate extremes using the CE model.
 This enables parametric exploration of tail dependence structures in arbitrary dimensions, in contrast to the existing non-parametric approach of \citet{Vignotto2021}.
 % The Gaussian working assumption in the CE model allows for a simple, closed form divergence measure upon which to base our clustering framework.
 Using the working conditional Gaussianity assumption of \citet{Heffernan2004} for estimating the CE model, we define a simple, closed-form divergence measure for multivariate extremes which permits clustering.

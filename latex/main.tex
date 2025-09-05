@@ -211,6 +211,9 @@
 \newcommand{\rhou}[1]{\rho_{\text{#1}}}
 \newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
 
+% fix setminus for unicode-math
+\setmathfont[range=\setminus]{Asana Math}
+
 
 % Adjust spacing for sections
 \usepackage{titlesec}
@@ -622,17 +625,21 @@ Finally, in Section~\ref{subsec:clustering}, we outline how we perform clusterin
 % increase v" (Rohrbeck and Tawn)
 
 % Transformation
-The CE model, like many other models for multivariate extremes, requires a marginal transformation.
-Standardising to common margins is a widespread technique to ensure differences in variable scale do not affect estimation of the dependence structure. 
-A popular choice for CE models is Laplace margins, as introduced in \citet{Keef2013}.
+% The CE model, like many other models for multivariate extremes, requires a marginal transformation.
+% Standardising to common margins is a widespread technique to ensure differences in variable scale do not affect estimation of the dependence structure. 
+Like many other models for multivariate extremes, the conditional extremes model of \citet{Heffernan2004} is defined on standardised margins, to ensure that differences in variable scale do not affect estimation of the dependence structure.
+% A popular choice for CE models is Laplace margins, as introduced in \citet{Keef2013}.
+As introduced in \citet{Keef2013}, a popular choice for CE models is Laplace margins.
 \todo{Check X is defined correctly/nicely}
 % Each marginal random variable $X_i, i = 1, \ldots, d, (X_1, \ldots, X_d) \in \mathbb{R}^d$ is transformed to Laplace margins, as outlined in equation~\eqref{eq:laplace} in Section \ref{subsec:estimation}, and thereafter denoted by $Y_i, \(Y_1, \ldots Y_d\) \in \mathbb{R}^d$. 
 % To transform each marginal random variable $X_i$ to Laplace margins, denoted by $Y_i$, we let:
-Each marginal random variable $X_i, i = 1, \ldots, d, (X_1, \ldots, X_d) \in \mathbb{R}^d$ is transformed to Laplace margins, thereafter denoted as $Y_i$, using the probability integral transform:
+% Each marginal random variable $X_i, i = 1, \ldots, d, (X_1, \ldots, X_d) \in \mathbb{R}^d$ is transformed to Laplace margins, thereafter denoted as $Y_i$, using the probability integral transform:
+Each marginal random variable $X_i, i = 1, \ldots, d$ is transformed to Laplace margins, thereafter denoted as $Y_i$, using the probability integral transform:
  \begin{equation}~\label{eq:laplace}
-   Y_i = \begin{cases}
-     \log\left\{2F_{X_i}(X_i)\right\} &\text{ for } X_i < F_{X_i}^{-1}(0.5), \\
-     -\log\left\{2(1 - F_{X_i}(X_i))\right\} &\text{ for } X_i \ge F_{X_i}^{-1}(0.5), \\
+   Y_i \coloneqq \begin{cases}
+     \log\left\{2F_{X_i}(X_i)\right\}, &\text{ for } X_i < F_{X_i}^{-1}(0.5), \\
+     % -\log\left\{2(1 - F_{X_i}(X_i))\right\} &\text{ for } X_i \ge F_{X_i}^{-1}(0.5), \\
+     -\log\left[2(1 - F_{X_i}(X_i))\right], &\text{ for } X_i \ge F_{X_i}^{-1}(0.5), \\
    \end{cases}
  \end{equation}
 \todo{trying to be brief, but would like to have quick line about why we use Laplace!}
@@ -666,27 +673,35 @@ where $F_{X_i}$ is the cumulative distribution function (CDF) of $X_i$.
 % say Y in d dimensions
 % We use $Y_{-i} = \symbf{Y} \backslash Y_{i}, \symbf{Y} \in \mathbb{R}^d, y \in (1, \ldots, d)$ to denote the vector of all variables in $\symbf{Y}$ except $Y_i$, and assume all operations hereafter are performed component-wise.
 % For $d \in \mathbb{N}$, we use $ \symbf{Y} \in \mathbb{R}^d, d \in \mathbb{N}$ and for $i \in \{1,\ldots,d\}$ write $Y_{-i} = \symbf{Y}\setminus\{Y_i\}$ to denote the $(d-1)$-dimensional random vector of all components except $Y_i$, and assume all operations below are component-wise. 
-For $d \in \mathbb{N}$, we use $\symbf{Y} = \left(Y_1, \ldots, Y_d\right) \in \mathbb{R}^d$ and for $i \in \{1, \ldots, d\}$ write $\symbf{Y}_{-i} = \symbf{Y} \setminus Y_i$ to denote the $(d-1)$-dimensional random vector of $\symbf{Y}$ with its its $i^{\text{th}}$ component removed. 
-Assume all operations below are component-wise. 
+For $d \in \mathbb{N}$, we use $\symbf{Y} \coloneqq \left(Y_1, \ldots, Y_d\right) \in \mathbb{R}^d$ and for $i \in \{1, \ldots, d\}$ write $\symbf{Y}_{-i} \coloneq \symbf{Y} \setminus Y_i \in \mathbb{R}^{d-1}$ to denote vector $\symbf{Y}$ with its its $i^{\text{th}}$ component removed. 
+% Assume all operations below are component-wise. 
 % \item The CE model of \citet{Heffernan2004} assumes that there exists vector normalising parameters $\alpha_{\mid i} := \symbf{a}_{\mid i}(y_i), \beta_{\mid i} := \symbf{b}_{\mid i}(y_i) \in \mathbb{R} \rightarrow \mathbb{R}^{(d-1)}$ such that for fixed $\symbf{z}_{\mid i} \in \mathbb{R}^{(d-1)}$,
 % The CE model of \citet{Heffernan2004} assumes that there exist parameter vectors $\symbf{\alpha}_{\mid i}^{(\CE{})} := \left\{\alpha_{j \mid i}^{(\CE{})} : j\in\{1,\dots,d\}\setminus\{i\}\right\} \in [-1, 1]^{(d-1)}$ and $\symbf{\beta}_{\mid i}^{(\CE{})} := \left\{\beta_{j \mid i}^{(\CE{})} : j\in\{1,\dots,d\}\setminus\{i\} \right\} \in [-\infty, 1]^{(d-1)}$ such that for fixed $\symbf{z}_{\mid i} \in \mathbb{R}^{(d-1)}$, $y_i > 0$,
-The CE model of \citet{Heffernan2004} assumes that for each $i = 1, \ldots, d$ there exist parameter vectors $\symbf{\alpha}_{\mid i} := \left\{\alpha_{j \mid i} : j\in\{1,\dots,d\}\setminus i \right\} \in [-1, 1]^{d-1}$ and $\symbf{\beta}_{\mid i} := \left\{\beta_{j \mid i} : j\in\{1,\dots,d\}\setminus i \right\} \in [-\infty, 1]^{d-1}$ such that for fixed $\symbf{z}_{\mid i} \in \mathbb{R}^{d-1}$ and $y_i > 0$,
+% The CE model of \citet{Heffernan2004} assumes that for each $i = 1, \ldots, d$ there exist parameter vectors $\symbf{\alpha}_{\mid i} := \left\{\alpha_{j \mid i} : j\in\{1,\dots,d\}\setminus i \right\} \in [-1, 1]^{d-1}$ and $\symbf{\beta}_{\mid i} := \left\{\beta_{j \mid i} : j\in\{1,\dots,d\}\setminus i \right\} \in [-\infty, 1]^{d-1}$ such that for fixed $\symbf{z}_{\mid i} \in \mathbb{R}^{d-1}$ and $y_i > 0$,
+With all operations below taken component-wise, the CE model assumes that there exist parameter vectors $\symbf{\alpha}_{\mid i} \coloneqq \left\{\alpha_{j \mid i} : j\in\{1,\dots,d\}\setminus i \right\} \in [-1, 1]^{d-1}$ and $\symbf{\beta}_{\mid i} \coloneqq \left\{\beta_{j \mid i} : j\in\{1,\dots,d\}\setminus i \right\} \in [-\infty, 1]^{d-1}$ such that for fixed $\symbf{z}_{\mid i} \in \mathbb{R}^{d-1}$ and $y_i > 0$, such that for fixed $\symbf{z} \in \mathbb{R}^{(d-1)}$ and $y > 0$,
 % \todo{Check if probably is for equal to yi or greater than yi}
 \begin{equation}~\label{eq:ce_limiting_dist}
   % \mathbb{P}\left(\frac{\symbf{Y}_{-i} - \symbf{\alpha}_{\mid i}^{(\CE{})} Y_{i}}{Y_{i}^{\symbf{\beta}_{\mid i}^{(\CE{})}} \le \symbf{z}_{\mid i}, Y_i - u_i > y_i \mid Y_i > u_i \right) \longrightarrow \symbf{G}_{\mid i}(\symbf{z}_{\mid i}) \exp(-y_i) \text{ as } u_i \rightarrow \infty,
   \mathbb{P}\!\left(
   % \frac{\symbf{Y}_{-i} - \symbf{\alpha}_{\mid i}^{(\CE{})} Y_{i}}
   % {Y_{i}^{\symbf{\beta}_{\mid i}^{(\CE{})}}}
+  % \frac{\symbf{Y}_{-i} - \symbf{\alpha}_{\mid i} Y_{i}}
+  % {Y_{i}^{\symbf{\beta}_{\mid i}}}
+  % \le \symbf{z}_{\mid i},\; 
+  % Y_i - u_i > y_i \;\Big|\; Y_i > u_i
+  % \right)
   \frac{\symbf{Y}_{-i} - \symbf{\alpha}_{\mid i} Y_{i}}
   {Y_{i}^{\symbf{\beta}_{\mid i}}}
-  \le \symbf{z}_{\mid i},\; 
-  Y_i - u_i > y_i \;\Big|\; Y_i > u_i
+  \le \symbf{z},\; 
+  Y_i - u > y \;\Big|\; Y_i > u
   \right)
   \longrightarrow
   % \symbf{G}_{\mid i}(\symbf{z}_{\mid i})\,e^{-y_i}
-  \symbf{G}_{\mid i}(\symbf{z}_{\mid i})\,\exp{-y_i}
-  \quad\text{as } u_i \to \infty,
+  % \symbf{G}_{\mid i}(\symbf{z}_{\mid i})\,\exp{-y_i}
+  \symbf{G}_{\mid i}(\symbf{z})\,\exp{(-y_i)}
+  \quad\text{as } u_i \to \infty.
 \end{equation}
+\todo{i subscript removed from LHS, but not on RHS, is this ok?}
 % where $u_i$ is a suitably high threshold for $Y_i$, and $\symbf{G}_{j \mid i}$ is non-degenerate for all $j \ne i$. 
 % \todo{below points needed, or can some of this be removed?}
 % To ensure $\symbf{G}_{\mid i}$ is well-defined, we have the constraint that 
@@ -694,23 +709,24 @@ The CE model of \citet{Heffernan2004} assumes that for each $i = 1, \ldots, d$ t
 %   \lim_{z \rightarrow \infty}{\symbf{G}_{j \mid i}(\symbf{z})} = 1, \forall j \ne i,
 % \]
 % ensuring that there is no mass at $+\infty$ for any margin, but allowing for some mass to be at $-\infty$, in order to ensure uniqueness of the solution \citep{Keef2013}.
-where $u_i$ is a suitably high threshold. 
-The distribution function $\symbf{G}_{\mid i}$ is non-degenerate on $\mathbb{R}^{d-1}$ and, for each margin $j\neq i$, $\lim\limits_{z\to\infty}\symbf{G}_{j\mid i}(z)=1$, so that there is no mass at $+\infty$, while mass at $-\infty$ is permitted to ensure uniqueness \citep{Keef2013}. 
+% where $u_i$ is a suitably high threshold. 
+The distribution function $\symbf{G}_{\mid i}$ is non-degenerate on $\mathbb{R}^{d-1}$ and, for each margin $j\neq i$, $\lim\limits_{\symbf{z}\to\infty}\symbf{G}_{j\mid i}(z)=1$, so that there is no mass at $+\infty$, while mass at $-\infty$ is permitted to ensure uniqueness \citep{Keef2013}. 
 % An important consequence of this formulation is the weak assumption that
 % \begin{equation}~\label{eq:limit_independence}
 %   \mathbb{P}(\symbf{Z}_{\mid i} \le \symbf{z}_{\mid i}, Y_i - u_i = y_i \mid Y_i > u_i) \rightarrow \symbf{G}_{\mid i}(\symbf{z}_{\mid i}) \exp(-y_i) \text{ as } u_i \rightarrow \infty,
 % \end{equation}
 % so that in the limit as $u_i \to \infty$, the extremal exceedances $Y_i - u_i$ and the standardised residuals $\symbf{Z}_{\mid i} = \frac{\symbf{Y}_{-i} - \symbf{\alpha}_{\mid i} Y_{i}}{Y_{i}^{\symbf{\beta}_{\mid i}}}, \symbf{Z}_{\mid i} \sim \symbf{G}_{\mid i}$ are independent.
-Equation~\eqref{eq:ce_limiting_dist} implies that, in the limit $u_i\to\infty$, the excesses $Y_i-u_i$ and the standardised residuals $\symbf{Z}_{\mid i} = \frac{\symbf{Y}_{-i} - \symbf{\alpha}_{\mid i} Y_{i}}{Y_{i}^{\symbf{\beta}_{\mid i}}} \sim \symbf{G}_{\mid i}$ are asymptotically independent. 
+Equation~\eqref{eq:ce_limiting_dist} implies that, in the limit $u\to\infty$, the excesses $Y_i-u$ and the standardised residuals $\symbf{Z}_{\mid i} \coloneqq \frac{\symbf{Y}_{-i} - \symbf{\alpha}_{\mid i} Y_{i}}{Y_{i}^{\symbf{\beta}_{\mid i}}} \sim \symbf{G}_{\mid i}$ are independent. 
 % Equation~\eqref{eq:ce_limiting_dist} implies that, in the limit $u_i\to\infty$, the exceedances $Y_i-u_i$ and the standardised residuals $\symbf{Z}_{\mid i} = \frac{\symbf{Y}_{-i} - \symbf{\alpha}_{\mid i}^{(\CE{})} Y_{i}}{Y_{i}^{\symbf{\beta}_{\mid i}^{(\CE{})}}}$, where $\symbf{Z}_{\mid i} \sim \symbf{G}_{\mid i}$, are asymptotically independent.
 
 % heteroscedastic regression
 % The limiting distribution in equation~\eqref{eq:ce_limiting_dist} can be written as a heteroscedastic regression equation defined by
-Assuming that the limiting distribution in Equation~\eqref{eq:ce_limiting_dist} holds eactly for large $u_i$ gives the heteroscedastic regression model
+Assuming that the limiting distribution in Equation~\eqref{eq:ce_limiting_dist} holds eactly for a large threshold $u$ gives the heteroscedastic regression model
 % \todo{Should we be explicit that the equals here really should be an equality in distribution?}
 \begin{equation}~\label{eq:ce_model}
   % \bigl(\symbf{Y}_{-i} \mid Y_i = y_i \bigr) = \symbf{\alpha}_{\mid i}^{(\CE{})}\symbf{y}_i + \symbf{y}_i^{\symbf{\beta}_{\mid i}^{(\CE{})}}\symbf{Z}_{\mid i}, \text{ for } y_i > u_{_i},
-  \bigl(\symbf{Y}_{-i} \mid Y_i = y_i \bigr) = \symbf{\alpha}_{\mid i}\symbf{y}_i + \symbf{y}_i^{\symbf{\beta}_{\mid i}}\symbf{Z}_{\mid i}, \text{ for } y_i > u_{_i},
+  % \bigl(\symbf{Y}_{-i} \mid Y_i = y_i \bigr) = \symbf{\alpha}_{\mid i}\symbf{y}_i + \symbf{y}_i^{\symbf{\beta}_{\mid i}}\symbf{Z}_{\mid i}, \text{ for } y_i > u_{_i},
+  \bigl(\symbf{Y}_{-i} \mid Y_i = y \bigr) = \symbf{\alpha}_{\mid i}y + y^{\symbf{\beta}_{\mid i}}\symbf{Z}_{\mid i}, \text{ for } y > u_i,
 \end{equation}
 with residual vector $\symbf{Z}_{\mid i} \sim \symbf{G}_{\mid i}$.
 % The slope or linear regression coefficient $\symbf{\alpha}_{\mid i}^{(\CE{})} \in [-1, 1]$ describes the strength of association between $Y_{-i}$ and large $Y_i$ above the threshold $u_i$.
@@ -749,21 +765,19 @@ Some special cases (for $j\in\{1,\ldots,d\}\setminus i$) of the CE model are:
   \item $-1 < \symbf{\alpha}_{j \mid i} < 1$, which suggests asymptotic independence between $Y_j$ and $Y_i$, with dependence weakening as $Y_i \to \infty$, equivalent to $-1 < \chi(Y_j, Y_i) < 1$. 
 \end{itemize}
 
-Recall that we want to fit the CE model at different spatial sites. 
+Recall that we fit the CE model at different spatial sites. 
 % To allow for spatial variation, we may index by site $s \in \mathcal{S}$, and allow regression parameters to vary by site. 
-To allow for spatial variation, we may index the random vectors by spatial location $\mathcal{S} \in \left(S_1, \ldots, S_D\right)$, where $S_i \in \mathbb{R}^2, i = 1, \ldots, D$, and $D$ is the number of spatial locations. 
-This leads to the simple, spatially indexed extension of Equation \eqref{eq:ce_model}, where we have the site-specific random vector $\symbf{Y}(s) \in \mathbb{R}^d$ for $\mathcal{S} \in (S_1, \ldots, S_d)$, and
+To denote spatial variation, we index the random vectors by spatial location $\mathcal{s} \in \left(s_1, \ldots, s_D\right)$, where $s_i \in \mathbb{R}^2, i = 1, \ldots, D$, and $D$ is the number of spatial locations. 
+This leads to the spatially indexed extension of Equation \eqref{eq:ce_model}, where we have the site-specific random vector $\symbf{Y}(s) \in \mathbb{R}^d$ for $\mathcal{s} \in (s_1, \ldots, s_d)$, and
 \begin{equation} \label{eq:ce_model_spat}
-  \bigl(\symbf{Y}_{-i}(s) \mid Y_i(s) = y_i\bigr) 
-    = \symbf{\alpha}_{\mid i}(s) \, y_i 
-      + y_i^{\symbf{\beta}_{\mid i}(s)} \, \symbf{Z}_{\mid i}(s), 
-      \quad y_i > u_i(s),
+  \bigl(\symbf{Y}_{-i}(s) \mid Y_i(s) = y\bigr) 
+    = \symbf{\alpha}_{\mid i}(s) \, y 
+      + y^{\symbf{\beta}_{\mid i}(s)} \, \symbf{Z}_{\mid i}(s), 
+      \quad y > u_i(s),
 \end{equation}
 % with location-specific residuals $\symbf{Z}_{\mid i}(s) \sim \symbf{G}_{\mid i}(s)$. \todo{Do I need to define alpha(s), beta(s), ui(s) again?}
-where $\symbf{\alpha}_{\mid i}(s), \symbf{\beta}_{\mid i}(s)$ and $\symbf{Z}_{\mid i}(s) \sim \symbf{G}_{\mid i}(s)$ are the site-specific counterparts of the regression parameters and residuals introduced above.  
+where $\symbf{Y}_{-i}(s) \coloneqq \symbf{Y}(s) \setminus Y_i(s), \symbf{\alpha}_{\mid i}(s), \symbf{\beta}_{\mid i}(s)$ and $\symbf{Z}_{\mid i}(s) \sim \symbf{G}_{\mid i}(\cdot ; s)$ are the site-specific counterparts of the regression parameters and residuals introduced above.  
 Note that we make no assumptions about spatial smoothness in the regression model. 
-
-
 
 \subsection{Divergence measure}~\label{subsec:div}
 

@@ -204,7 +204,8 @@
 % \newcommand{\JSGa}[1]{\mathrm{JS}^{\mathrm{G}_{#1}}}
 % \newcommand{\JSGa}[1]{\mathrm{JS}^{\mathrm{G}_{\alpha}}}
 % \DeclareMathOperator{\JSGa}{\mathrm{JS}^{\mathrm{G}_{\alpha}}}
-\newcommand{\JSGa}{\mathop{\mathrm{JS}^{\mathrm{G}_{\alpha}}}\nolimits}
+% \newcommand{\JSGa}{\mathop{\mathrm{JS}^{\mathrm{G}_{\alpha}}}\nolimits}
+\newcommand{\JSGa}{\mathop{\mathrm{JS}^{\mathrm{G}_{k}}}\nolimits}
 % \newcommand{\GJS}[1]{\mathrm{JS}^{\mathrm{G}}}
 \DeclareMathOperator{\GJS}{\mathrm{JS}^{\mathrm{G}}}
 \DeclareMathOperator{\CE}{\mathrm{CE}}
@@ -842,7 +843,7 @@ One divergence measure introduced in \citet{Nielsen2019} which satisfies these p
 The $\JSGa{}$ divergence between two continuous distribution functions $F_1$ and $F_2$ is given by
 \begin{equation}~\label{eq:jsga}
   % \JSGa{(P \mid\mid Q)} = \frac{1}{2} \left\{\KL{(P \mid\mid G_{\alpha}(P, Q))} + \KL{(Q \mid\mid G_{\alpha}(P, Q))} \right\},
-  \JSGa{(F_1 \mid\mid F_2)} = \frac{1}{2} \left\{\KL{(F_1 \mid\mid G_{\alpha}(F_1, F_2))} + \KL{(F_2 \mid\mid G_{\alpha}(F_1, F_2))} \right\},
+  \JSGa{(F_1 \mid\mid F_2)} = \frac{1}{2} \left\{\KL{(F_1 \mid\mid G_{k}(F_1, F_2))} + \KL{(F_2 \mid\mid G_{k}(F_1, F_2))} \right\},
 \end{equation}
 % where $G_{\alpha}(P, Q) = P^{\alpha} Q^{1 - \alpha}, \alpha \in [0, 1]$ is the weighted geometric mean of $P$ and $Q$, with $\alpha$ controlling the weighting between them, and $\KL{(P \mid\mid Q)}$ is the Kullback--Leibler divergence between $P$ and $Q$ \citep{Kullback1951}. 
 \todo{Use different symbol to alpha!}
@@ -854,10 +855,10 @@ where $G_{\alpha}(F_1, F_2) = F_{1}^{\alpha} F_{2}^{1 - \alpha}, \alpha \in [0, 
 where $f_1$ and $f_2$ are the continuous density functions of $F_1$ and $F_2$, respectively. 
 % Here, $P$ and $Q$ represent the conditional multivariate Gaussian distributions induced by the CE model at two different sites.
 In this context, $F_1$ and $F_2$ represent the conditional multivariate Gaussian distributions induced by the CE model at two different sites, say $s_1$ and $s_2$.
-The parameter $\alpha$ skews the geometric mean $G_{\alpha}(F_1,F_2)\propto F_1^{\alpha}F_{2}^{1-\alpha}$ towards $F_1$ (when $\alpha$ is close to 1) or towards $F_2$ (when $\alpha$ is close to 0). 
+The parameter $k$ skews the geometric mean $G_{k}(F_1,F_2)\propto F_1^{k}F_{2}^{1-k}$ towards $F_1$ (when $k$ is close to 1) or towards $F_2$ (when $k$ is close to 0). 
 % When one site has a more reliable CE fit, we set $\alpha$ to a reliability weight $w\in[0,1]$ (e.g.\ proportional to effective sample size), and apply the symmetrised divergence so that the final dissimilarity remains symmetric.
 One possible advantage for having a skew parameter such as $\alpha$ is that in our divergence measure we can favour sites with a more reliable CE fit, as determined by, for example, the effective sample size available for both.
-In this paper, we simply use $\alpha = 0.5$, because each site has a similar number of observations in our simulation and case studies. 
+In this paper, we simply use $k = 0.5$, because each site has a similar number of observations in our simulation and case studies. 
 % For our application, we set $\alpha = 0.5$, so that $G_{\alpha}(P, Q)$ is unweighted, but note that $\alpha$ 
 % The Kullback--Leibler (KL) divergence, $KL(P \mid\mid Q)$, is defined as
 % \begin{equation}~\label{eq:kl}
@@ -868,12 +869,12 @@ In this paper, we simply use $\alpha = 0.5$, because each site has a similar num
 % Explain why it is a good dissimilarity metric to use
 For two multivariate Gaussian distributions, the $\KL{}$ divergence has a closed form, analytical solution \citep{Duchi2007}.
 The $\JSGa{}$ divergence exploits the property that the (weighted) product of two members of the same exponential family is itself a member of the same exponential family distribution. 
-It follows that $G_{\alpha}(F_1, F_2)$ is multivariate Gaussian, and so the $\KL{}$ divergences in Equation~\eqref{eq:jsga} are between multivariate Gaussian distributions and can be computed in closed form.
+It follows that $G_{k}(F_1, F_2)$ is multivariate Gaussian, and so the $\KL{}$ divergences in Equation~\eqref{eq:jsga} are between multivariate Gaussian distributions and can be computed in closed form.
 Hence, the principle advantage of the $\JSGa{}$ here follows, as it also has a closed form solution for two multivariate Gaussian distributions, and so is computationally efficient to compute \citep{Nielsen2019}.
 The $\JSGa{}$ divergence between two multivariate Gaussian distributions has been used in several applications, including clustering, deep learning, variational inference and remote sensing imagery  \citep{Nielsen2019, Deasy2020, Ni2023-cd, Thiagarajan2025}. \todo{Add more references?}
 % Furthermore, it is clearly symmetric and non-negative, as the sum of two $KL$ divergences, which is also important for clustering.
 Furthermore, it is clearly symmetric and non-negative, as the average of two $\KL{}$ divergences.
-Finally, where $\alpha = 0.5$, $\JSGa{}$ is bounded above by
+Finally, where $k = 0.5$, $\JSGa{}$ is bounded above by
 \begin{equation}~\label{eq:jsga_bound}
   \JSGa{(F_1 \mid\mid F_2)} \leq \frac{1}{4} \mathrm{J}(F_1 \mid\mid F_2),
 \end{equation}
@@ -888,12 +889,12 @@ Hence, we identify the $\JSGa{}$ divergence as a suitable measure of dissimilari
 \todo{Double check!}
 For two multivariate Gaussian distributions $F_1 \sim \mbox{MVN}(\symbf{\mu_1}, \Sigma_1)$ and $F_2 \sim \mbox{MVN}(\symbf{\mu_2}, \Sigma_2)$ in $\mathbb{R}^d$, \citet{Nielsen2019} shows that the $\JSGa{}$ divergence introduced in Equation~\eqref{eq:jsga} has the closed form solution 
 \begin{align*}%~\label{eq:js_norm_mvn}
-  % JS^{G_{\alpha}}(F_1 \mid\mid F_2) &= \frac{1}{2} \left( (1 - \alpha) \mu_1^T \Sigma_1^{-1} \mu_1 + \alpha \mu_2^T \Sigma_2^{-1} \mu_2 - \mu_{\alpha}^T \Sigma_{\alpha}^{-1} \mu_{\alpha} + \log{\left( \frac{\abs{\Sigma_1}^{1-\alpha} \abs{\Sigma_2}^{\alpha}}{\abs{\Sigma_{\alpha}}} \right)} \right), \\
-  JS^{G_{\alpha}}(F_1 \mid\mid F_2) &= \frac{1}{2} \left( \alpha \mu_1^T \Sigma_1^{-1} \mu_1 + (1 - \alpha) \mu_2^T \Sigma_2^{-1} \mu_2 - \mu_{\alpha}^T \Sigma_{\alpha}^{-1} \mu_{\alpha} + \log{\left( \frac{\abs{\Sigma_1}^{\alpha} \abs{\Sigma_2}^{1-\alpha}}{\abs{\Sigma_{\alpha}}} \right)} \right), \\
-  % \Sigma_{\alpha} &= \left( (1 - \alpha) \Sigma_1^{-1} + \alpha \Sigma_2^{-1} \right)^{-1}, \\
-  \Sigma_{\alpha} &= \left( \alpha \Sigma_1^{-1} + (1 - \alpha) \Sigma_2^{-1} \right)^{-1}, \\
-  % \mu_{\alpha} &= \Sigma_{\alpha} \left( (1 - \alpha) \Sigma_1^{-1} \mu_1 + \alpha \Sigma_2^{-1} \mu_2 \right), \numberthis~\label{eq:js_norm_mvn1}
-  \mu_{\alpha} &= \Sigma_{\alpha} \left( \alpha \Sigma_1^{-1} \mu_1 + (1 - \alpha) \Sigma_2^{-1} \mu_2 \right), \numberthis~\label{eq:js_norm_mvn1}
+  % JS^{G_{k}}(F_1 \mid\mid F_2) &= \frac{1}{2} \left( (1 - k) \mu_1^T \Sigma_1^{-1} \mu_1 + k \mu_2^T \Sigma_2^{-1} \mu_2 - \mu_{k}^T \Sigma_{k}^{-1} \mu_{k} + \log{\left( \frac{\abs{\Sigma_1}^{1-k} \abs{\Sigma_2}^{k}}{\abs{\Sigma_{k}}} \right)} \right), \\
+  JS^{G_{k}}(F_1 \mid\mid F_2) &= \frac{1}{2} \left( k \mu_1^T \Sigma_1^{-1} \mu_1 + (1 - k) \mu_2^T \Sigma_2^{-1} \mu_2 - \mu_{k}^T \Sigma_{k}^{-1} \mu_{k} + \log{\left( \frac{\abs{\Sigma_1}^{k} \abs{\Sigma_2}^{1-k}}{\abs{\Sigma_{k}}} \right)} \right), \\
+  % \Sigma_{k} &= \left( (1 - k) \Sigma_1^{-1} + k \Sigma_2^{-1} \right)^{-1}, \\
+  \Sigma_{k} &= \left( k \Sigma_1^{-1} + (1 - k) \Sigma_2^{-1} \right)^{-1}, \\
+  % \mu_{k} &= \Sigma_{k} \left( (1 - k) \Sigma_1^{-1} \mu_1 + k \Sigma_2^{-1} \mu_2 \right), \numberthis~\label{eq:js_norm_mvn1}
+  \mu_{k} &= \Sigma_{k} \left( k \Sigma_1^{-1} \mu_1 + (1 - k) \Sigma_2^{-1} \mu_2 \right), \numberthis~\label{eq:js_norm_mvn1}
 \end{align*} 
 where:
 \begin{itemize}

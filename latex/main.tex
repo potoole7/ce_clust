@@ -1088,17 +1088,34 @@ We then plot $\mathrm{TWGSS}(k)$ vs.\ $k$, and choose $k^*$, the optimal number 
 \section{Simulation study}~\label{sec:sim}
 % Introduce section
 % Throughout this section, we evaluate the effectiveness of our clustering method using a simulation study.
-Throughout this section, we assess the performance of our clustering method through a simulation study. 
+% Throughout this section, we assess the performance of our clustering method through a simulation study. 
+We illustrate performance of our clustering approach using simulated data. 
+Clustering accuracy is evaluated using the adjusted Rand index (ARI) of \citet{Hubert1985-ys}, which measures similarity between the true and estimated clustering solutions, adjusted for chance.
 % In Section~\ref{subsec:sim_gauss}, a simple simulation design using a Gaussian copula to generate data is described. 
 % This data has the advantage of having theoretical asymptotic values for the CE parameters, to which we can directly compare our finite simulation estimates, as a test to ensure that our clustering is working as desired, reducing uncertainty in parameter estimates. 
-Section~\ref{subsec:sim_gauss} introduces a simple design based on the Gaussian copula, which provides known asymptotic values for the CE parameters. 
-These allow us to benchmark our finite-sample estimates and verify that clustering reduces estimation uncertainty. 
+% Section~\ref{subsec:sim_gauss} introduces a simple design based on the Gaussian copula, which provides known asymptotic values for the CE parameters. 
+In Section~\ref{subsec:sim_gauss}, we generate data from a Gaussian copula for which the parameters of the CE model are available in closed form \citep{Keef2013}.
+% These allow us to benchmark our finite-sample estimates and verify that clustering reduces estimation uncertainty. 
+This allows us to verify that our clustering approach reduces the estimation uncertainty and to investigate the sensitivity to the threshold.
 % In Section~\ref{subsec:sim_mixture}, we extend this study to a more complex simulation design using a mixture of Gaussian and t-copulas, for a variety of simple and more complex dependence structures and scenarios. 
 Section~\ref{subsec:sim_mixture} extends the study to more complex scenarios, using mixtures of Gaussian and $t$-copulas to generate a range of dependence structures. 
 % We evaluate our clustering solution using the adjusted rand index (ARI), and in Section~\ref{subsubsec:boot} ascertain the improvement of parameter estimation post-clustering using a bootstrapping scheme. 
-We evaluate clustering accuracy using the adjusted Rand index (ARI), and in Section~\ref{subsubsec:boot} examine improvements in parameter estimation through a bootstrap resampling scheme \citet{Hubert1985-ys}.
+% We evaluate clustering accuracy using the adjusted Rand index (ARI), and in Section~\ref{subsubsec:boot} examine improvements in parameter estimation through a bootstrap resampling scheme \citet{Hubert1985-ys}.
 
 \subsection{Gaussian copula}~\label{subsec:sim_gauss}
+
+% Single location
+% We first consider a simple simulation design based on the Gaussian copula.  
+% % Our Gaussian copula simulation design for a single ``location'', nomenclature chosen to match the spatial nature of our applications, is as follows:
+% % We generate multivariate data from a bivariate Gaussian copula, where we control the dependence structure through its correlation parameter, $\rhou{Gauss}$. 
+% For a single ``location'', terminology chosen to reflect our spatial application, we generate bivariate data from a Gaussian copula with correlation parameter $\rho^{\text{Gauss}}$, which controls the dependence structure.  
+% \citet{Keef2013} show that for a bivariate Gaussian copula, the asymptotic CE parameters are $\alpha = \text{sign}(\rho^{\text{Gauss}}) (\rho^{\text{Gauss}})^2$ and $\beta = 1/2$, implying asymptotic independence.  
+% % \citet{Keef2013} show that for a bivariate Gaussian copula, the asymptotic CE parameters are $\alpha^{(\CE{})} = \rhou{Gauss}^2$ and $\beta^{(\CE{})} = 1/2$, corresponding to asymptotic independence.
+% % \item We sample from this copula and transform to GPD margins with shape $\xi = -0.05$, scale $\sigma = 1$, to generate our data. \todo{mention why we chose these?}
+% % \item Each variable in this multivariate dataset may represent, for example, a meteorological or air pollution variable at a given location.
+% % \item We can then transform to Laplace margins and use the CE model to estimate the multivariate extremal dependence structure at this location.
+% % We sample from this copula and transform to Laplace margins and use the CE model to estimate the bivariate extremal dependence structure at this location.
+% We sample from this copula, transform to Laplace margins, and then fit the CE model to estimate the extremal dependence structure at the location.
 
 % Single location
 We first consider a simple simulation design based on the Gaussian copula.  

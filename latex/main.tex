@@ -1394,24 +1394,27 @@ While the method of \citet{Vignotto2021} is restricted to two dimensions, our ap
 % To illustrate this, we repeated the simulation study and grid search of Section~\ref{subsubsec:sim_competing_methods} for three variables, with results shown in Figure~\ref{fig:02_3d}. 
 To illustrate this, we repeat the simulation study and grid search of Section~\ref{subsubsec:sim_competing_methods} by simulating $S = 12$ locations with two equally sized latent clusters of sites each with $n = 1000$ observations, but this time for $J = 3$ variables.
 Now the mixture copula $C_{\mathrm{mix}}^{(s)}$ described in equation has three dimensions, and we fit six CE models at each site, averaging the $\JSGa{}$ divergence over all of these models between each pair of sites to obtain a single dissimilarity matrix over which we perform PAM clustering.
-This grid search was again repeated 500 times, with the results shown in Figure \ref{fig:02_3d}.
+
+This grid search was again repeated 500 times, with the results shown and compared to the bivariate case in Figure \ref{fig:02_3d}.
 % The proposed method is shown to work well for three dimensions, and the same patterns in the ARI emerge as in the bivariate case.
 These clearly show that our proposed method performs well in three dimensions, with the same patterns in ARI emerging as in the bivariate case in Section~\ref{subsubsec:sim_competing_methods}.
 % The method is shown to actually perform better in three dimensions than in two.
-In fact, performance is even stronger in three dimensions than in two. 
+In fact, performance is markedly stronger in three dimensions than in two. 
 % This comes with the caveat that in these simulations, the variables all have the same margins, and so including three variables naturally increases the amount of data available to estimate the same dependence structure as in the bivariate case, and does not introduce additional noise which might be present in real multivariate applications.
 % This improvement comes with the caveat that, in these simulations, all variables have the same margins. 
 % Thus, including three variables naturally increases the amount of data available to estimate the same dependence structure as in the bivariate case, without introducing the additional noise that might arise in real multivariate applications. 
-However, this is not surprising, as the CE models in this setup are the same in both two and three dimensions, and the $\JSGa{}$ divergence and its integral in Equation~\eqref{eq:jsga_integral} are computed in the same way, just averaged over more models with more data.
-\todo{Change to plot 2 and 3 dimensions}
+However, this is not surprising, as the CE models in this setup are the same in both two and three dimensions, and the $\JSGa{}$ divergence and its integral from Equation~\eqref{eq:jsga_integral} are computed in the same way, just averaged over more models with more data.
 \begin{figure}[H]
     \centering
     % \includegraphics[width = 0.9\linewidth]{plots/sim_01c_js_sens_3_var_dqu_0.9.png}
-    \includegraphics[width = 0.9\linewidth]{plots/sim_01d_js_sens_3_var_dqu_0.9_man.png}
-    \caption{\emph{Evaluation of clustering performance for three variables and two equally sized clusters for simulations of 12 ``locations'', each with 1000 observations for each variable, from a mixture of Gaussian and t-copulas. 
-    A grid search was performed,  with the x-axis representing the Gaussian correlation parameter used for both clusters, and the facet labels showing the t-copula correlation parameters for each ``known'' cluster. 
-    This grid search was repeated 500 times. 
-    The smoothed lines show the smoothed median of the Adjusted Rand Index for both clustering methods, with smoothing performing using a generalised additive model.}} % Points show individual values of the ARI for a given simulation.}} 
+    % \includegraphics[width = 0.9\linewidth]{plots/sim_01d_js_sens_3_var_dqu_0.9_man.png}
+    % \caption{\emph{Evaluation of clustering performance for three variables and two equally sized clusters for simulations of 12 ``locations'', each with 1000 observations for each variable, from a mixture of Gaussian and t-copulas. 
+    % A grid search was performed,  with the x-axis representing the Gaussian correlation parameter used for both clusters, and the facet labels showing the t-copula correlation parameters for each ``known'' cluster. 
+    % This grid search was repeated 500 times. 
+    % The smoothed lines show the smoothed median of the Adjusted Rand Index for both clustering methods, with smoothing performing using a generalised additive model.}} % Points show individual values of the ARI for a given simulation.}} 
+    \includegraphics[width = 0.9\linewidth]{plots/sim_01d_js_sens_2_3_var_dqu_0.9_man.png}
+    \caption{\emph{Comparison of clustering perfomance for two and three variables and two equally sized clusters for simulations of 12 locations from a mixture of Gaussian and t-copulas.
+    The smoothed lines show the smoothed median of the Adjusted Rand Index for both dimensions, with smoothing performing using a generalised additive model.}} % Points show individual values of the ARI for a given simulation.}} 
    ~\label{fig:02_3d}
 \end{figure}
 

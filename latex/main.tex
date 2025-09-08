@@ -213,6 +213,12 @@
 \newcommand{\rhou}[1]{\rho_{\text{#1}}}
 \newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
 
+\newcommand{\rG}[1]{\rho_{\mathrm{Gauss}}_{#1}}
+\newcommand{\rT}[1]{\rho_{t}_{#1}}
+\newcommand{\RG}[1]{\Sigma_{\mathrm{Gauss}}^{#1}}   % JxJ correlation matrix
+\newcommand{\RT}[1]{\Sigma_{t}^{#1}}                % JxJ correlation matrix
+\newcommand{\LapTrans}{T_{\mathrm{Laplace}}}
+
 % fix setminus for unicode-math
 \setmathfont[range=\setminus]{Asana Math}
 
@@ -1245,16 +1251,98 @@ We observe a bias-variance tradeoff in the choice of dependence quantile for the
 % In this section, we extend our simulation design to a mixture of Gaussian and t-copulas, where we control the dependence structure through their respective correlation parameters, $\rhou{Gauss}$ and $\rhou{t}$, with each t-copula having 3 degrees of freedom.
 % The idea behind this design is that the Gaussian copula generates observations exhibiting extremal independence, whereas the t-copula induces extremal dependence, the strength of which is determined by their respective correlation parameters.
 % While there are no theoretical guarantees about our estimates, we can still evaluate our clustering solution for this more difficult setting using the ARI.
-We next extend our simulation design to mixtures of Gaussian and $t$-copulas, with dependence controlled by their respective correlation parameters, $\rhou{Gauss}$ and $\rhou{t}$, and the $t$-copula fixed at 3 degrees of freedom.  
-The idea is that the Gaussian copula induces asymptotic independence, while the $t$-copula induces asymptotic dependence, with strength determined by $\rho^{t}$.  
+
+We next extend our simulation design to mixtures of Gaussian and $t$-copulas \citep{Demarta2007-ap}.
+% The idea is that the Gaussian copula induces asymptotic independence, while the $t$-copula induces asymptotic dependence, with strength determined by $\rho^{t}$.  
+The idea is that the Gaussian copula will induce asymptotic independence, while the $t$-copula will induce asymptotic dependence, whose strength is determined by $\rho_{t}$, the correlation parameter of the $t$-copula.
 Although no theoretical CE parameter values are available in this setting, clustering performance can still be assessed via the ARI.  
 
+% We next extend our simulation design to mixtures of Gaussian and $t$-copulas.
+% More formally, the mixture copula is defined as
+% \[
+%   C_{\text{mix}}(u_1,u_2)= \tfrac{1}{2}\,C_{\text{t},\nu=3}(u_1,u_2;\Sigma(\rho_{\text{t}}^s)) +
+%   \tfrac{1}{2}\,C_{\text{Gauss}}(u_1,u_2;\Sigma(\rho_{\text{Gauss}}^s)),
+% \]
+% where $C_{\text{Gauss}}$ and $C_{\text{t},\nu=3}$ are the bivariate Gaussian and $t$ copulas with correlation matrices $\Sigma(\rho_{\text{Gauss}}^s)$ and $\Sigma(\rho_{\text{t}}^s)$ respectively, and $\nu$ is the degrees of freedom parameter of the $t$-copula, fixed at $\nu=3$ throughout.
+
+% Formally, for site $s=1,\dots,S$ we define the mixture copula
+% \[
+%   C_{\mathrm{\text{mix}}}^{s}(u_1,u_2)
+%   \;=\; \tfrac{1}{2}\,C_{t,\nu=3}\big(u_1,u_2;\Sigma(\rT{s})\big)
+%        \;+\; \tfrac{1}{2}\,C_{\mathrm{Gauss}}\big(u_1,u_2;\Sigma(\rG{s})\big),
+% \]
+% where \(C_{\mathrm{Gauss}}\) and \(C_{t,\nu=3}\) denote the bivariate Gaussian and $t$ copulas, respectively, with correlation matrices
+% \[
+% \Sigma(\rG{s})=\begin{pmatrix}1 & \rG{s}\\[4pt]\rG{s} & 1\end{pmatrix},\qquad
+% \Sigma(\rT{s})=\begin{pmatrix}1 & \rT{s}\\[4pt]\rT{s} & 1\end{pmatrix},
+% \]
+% and the $t$-copula degrees of freedom are fixed at \(\nu=3\).
+% 
+% We implement an exact 50/50 composition of Gaussian and $t$-copulas at each site.  At site $s$, we draw \(m=n/2\) observations from the bivariate Gaussian copula with correlation matrix \(\Sigma(\rG{s})\) and independently draw \(m=n/2\) observations from the bivariate $t$-copula with correlation matrix \(\Sigma(\rT{s})\).  The two halves are then pooled to give \(n\) observations at site \(s\). 
+% 
+% More precisely, for the Gaussian half we draw
+% \[
+%   (Z_{ij}^{s},Z_{i2}^{s})^\top \sim \mbox{MVN}\big(0,\Sigma(\rG{s})\big),\quad i=1,\dots,m, 
+% \]
+% and for the $t$ half
+% \[
+% (Z_{i1}^{s},Z_{i2}^{s})^\top \sim \mathrm{MVT}_{\nu=3}\big(0,\Sigma(\rT{s})\big),\quad i=m+1,\dots,n.
+% \]
+% We then transform these latent draws to uniform margins using the appropriate CDFs:
+% \[
+% U_{ij}^{(s)} =
+% \begin{cases}
+% \Phi\big(Z_{ij}^{(s)}\big), & i=1,\dots,m,\\[6pt]
+% F_{t_3}\big(Z_{ij}^{(s)}\big), & i=m+1,\dots,n,
+% \end{cases}
+% \qquad j=1,2,
+% \]
+% where \(\Phi\) and \(F_{t_3}\) are the standard normal and \(t_3\) CDFs.  
+% We then apply the Laplace quantile map to every uniform:
+% Finally, we apply the Laplace transformation as described in~\eqref{eq:laplace} to obtain the Laplace-scale pairs \((Y_{1}^{(s)},Y_{2}^{(s)})\) at site \(s\).
+
+More formally, for site $s=1,\dots,S$ and dimension $J\ge2$, let $\RG{s},\RT{s}\in\mathbb{R}^{J\times J}$ be correlation matrices where $\RG{s}$ has all off-diagonal entries equal to $\rhou{Gauss}^s$ and $\RT{s}$ has all off-diagonal entries equal to $\rhou{t}^s$, and all diagonal entries equal to 1 for both.
+We define the $J$-variate mixture copula
+\[
+  C_{\mathrm{mix}}^{(s)}(\mathbf{u})
+  \;=\; \tfrac{1}{2}\,C_{t,\nu=3}\!\big(\mathbf{u};\RT{s}\big)
+       \;+\; \tfrac{1}{2}\,C_{\mathrm{Gauss}}\!\big(\mathbf{u};\RG{s}\big),
+  \qquad \mathbf{u}\in[0,1]^J,
+\]
+i.e.\ an equal-weight combination of the $J$-variate $t$-copula (with $\nu=3$ degrees of freedom) and the $J$-variate Gaussian copula.
+
+At site $s$, we generate an exact half–half sample of size $n$ by drawing $m=n/2$ observations from each component. 
+Let $\mathbf{Z}_{i}^{(s)}\in\mathbb{R}^J$ denote latent vectors. We sample
+\[
+\begin{aligned}
+&\text{Gaussian half:}\quad &&\mathbf{Z}_{i}^{(s)} \sim \mbox{MVN}_J\!\big(\mathbf{0},\RG{s}\big),
+&& i=1,\dots,m,\\[2pt]
+&\text{$t$ half:}\quad      &&\mathbf{Z}_{i}^{(s)} \sim \mbox{MVT}_{J,\nu=3}\!\big(\mathbf{0},\RT{s}\big),
+&& i=m+1,\dots,n,
+\end{aligned}
+\]
+where $\mbox{MVT}_{J, \nu = 3}$ denotes the $J$-variate $t$ distribution with $\nu=3$ degrees of freedom.
+We map these latent draws to uniforms componentwise using the appropriate univariate CDF:
+\[
+U_{ij}^{(s)} =
+\begin{cases}
+\Phi\!\big(Z_{ij}^{(s)}\big), & i=1,\dots,m,\\[4pt]
+F_{t_3}\!\big(Z_{ij}^{(s)}\big), & i=m+1,\dots,n,
+\end{cases}
+\qquad j=1,\dots,J,
+\]
+where $\Phi$ and $F_{t_3}$ are the standard normal and univariate $t$ CDFs, respectively.
+Pooling the $n$ uniforms $\{\mathbf{U}_{i}^{(s)}\}_{i=1}^n$ yields a size-$n$ sample from the 50/50 mixture copula $C_{\mathrm{mix}}^{(s)}$, up to ordering. 
+Finally, we apply the Laplace transformation as described in~\eqref{eq:laplace} to obtain the Laplace-scale pairs \((Y_{1}^{(s)},Y_{2}^{(s)})\) at site \(s\).
+
 % Below, we will describe the results of this simulation study in a variety of scenarios, as defined by a grid search over possible $\rhou{Gauss}$ and $\rhou{t}$ values. 
-We consider a range of scenarios defined by a grid search over $\rhou{Gauss}$ and $\rhou{t}$ values.  
+We consider a range of scenarios defined by a grid search over $\rhou{Gauss}$ and $\rhou{t}$ values, and for different numbers of sites and variables. 
 % In Section~\ref{subsubsec:sim_competing_methods}, we compare our method to the leading competitor in the bivariate case, \cite{Vignotto2021}, and also show how our clustering algorithm uniquely provides a tool for clustering in the multivariate extremal dependence setting in  Section~\ref{subsubsec:sim_extension}.
-In Section~\ref{subsubsec:sim_competing_methods}, we compare our method to the leading competitor in the bivariate case \citep{Vignotto2021}, and in Section~\ref{subsubsec:sim_extension} we show how our approach uniquely handles clustering in the multivariate extremal dependence setting.  
+% In Section~\ref{subsubsec:sim_competing_methods}, we compare our method to the leading competitor in the bivariate case \citep{Vignotto2021}, and in Section~\ref{subsubsec:sim_extension} we show how our approach uniquely handles clustering in the multivariate extremal dependence setting.  
+In Section~\ref{subsubsec:sim_competing_methods}, we compare our method to the leading competitor in the bivariate case \citep{Vignotto2021}, and in Section~\ref{subsubsec:sim_extension} we show how our approach uniquely handles clustering in higher dimensions.
 % A more realistic setting is considered in Section~\ref{subsubsec:sim_realistic}, where we simulate data from 60 locations with three unequally sized clusters, and perturb the correlation parameters to make the clustering solution more challenging.
-A more realistic experiment is presented in Section~\ref{subsubsec:sim_realistic}, where data are simulated from 60 locations in three unequally sized clusters, with perturbed correlation parameters to make clustering more challenging.  
+% A more realistic experiment is presented in Section~\ref{subsubsec:sim_realistic}, where data are simulated from 60 locations in three unequally sized clusters, with perturbed correlation parameters to make clustering more challenging.  
+Section \ref{subsubsec:sim_realistic} then considers a setting with 60 locations across three unequally sized clusters, and locations in the same cluster exhibiting perturbations in their correlation parameters.
 % We can also evaluate the improvement in parameter estimation post-clustering using the bootstrapping scheme described in \cite{Heffernan2004}, as done in Section~\ref{subsubsec:boot}.
 Finally, in Section~\ref{subsubsec:boot} we assess improvements in parameter estimation post-clustering using the bootstrap scheme of \citet{Heffernan2004}.  
 

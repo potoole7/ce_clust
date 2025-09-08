@@ -1346,35 +1346,38 @@ Section \ref{subsubsec:sim_realistic} then considers a setting with 60 locations
 % We can also evaluate the improvement in parameter estimation post-clustering using the bootstrapping scheme described in \cite{Heffernan2004}, as done in Section~\ref{subsubsec:boot}.
 Finally, in Section~\ref{subsubsec:boot} we assess improvements in parameter estimation post-clustering using the bootstrap scheme of \citet{Heffernan2004}.  
 
-\subsubsection{Comparison to competing methods}~\label{subsubsec:sim_competing_methods}
+\subsubsection{Comparison to \citet{Vignotto2021}}~\label{subsubsec:sim_competing_methods}
 
-
-
-We compared our method to the leading competitor in the bivariate case, \citet{Vignotto2021}, using the max risk function which they propose.
-As in Section~\ref{subsec:sim_gauss}, we generated data for 12 locations, each with 1000 observations of two variables, but this time using a mixture of Gaussian and t-copulas with Laplace margins. 
+% We compared our method to the leading competitor in the bivariate case, \citet{Vignotto2021}, using the max risk function which they propose.
+We compared our method to the leading competitor in the bivariate case, \citet{Vignotto2021}.
+As in Section~\ref{subsec:sim_gauss}, we generated data for 12 locations, each with 1000 observations of two variables, but this time using a mixture of Gaussian and t-copulas with Laplace margins, as described above in Section~\ref{subsec:sim_mixture}. 
 Two known clusters were defined using different values of $\rhou{t}$, keeping $\rhou{Gauss}$ the same for both clusters. % (but varying across simulations).
   % \item These values were varied across a grid search.
-The CE model was fit at the 90th dependence quantile, i.e., the 90th quantile of $Y_{i} \mid Y_{j} = y_j$, and clustering solutions were obtained using the $\JSGa{}$ divergence. 
+The CE model was fit at the $90^{th}$ quantile, i.e., the $90^{th}$ quantile of $Y_{i} \mid Y_{j} = y_j$, and clustering solutions were obtained using the $\JSGa{}$ divergence. 
 % The clustering solutions were evaluated using the ARI, with results shown in Figure \ref{fig:01_ce_vs_vi} for a grid search over different $\rhou{Gauss}$ and $\rhou{t}$ values, with 500 simulations for each setting.
 Performance was evaluated with the ARI, based on a grid search over values of $\rhou{Gauss}$ and $\rhou{t}$, with 500 simulations per setting.
-Results are shown in Figure~\ref{fig:01_ce_vs_vi}). 
+This grid search was repeated 500 times, the results of which are shown in Figure~\ref{fig:01_ce_vs_vi}. 
 
 % The proposed method is shown to be superior to the method of \cite{Vignotto2021}, across a range of possible bivariate dependence structures, as defined by $\rhou{t}$.
 Across this range of bivariate dependence structures, our method consistently outperformed that of \citet{Vignotto2021}. 
 % Both models perform better when the difference in the t-copula correlation parameters between the two clusters is larger, as the clusters are naturally more distinct when there is greater disparity in dependence.
 Both methods had higher ARI when the difference in t-copula correlation parameters between the clusters was larger, since greater disparity naturally makes clusters more distinct. 
 % Both models also perform better when Gaussian and t-copula correlation are higher, as the signal of extremal dependence is stronger, with more extremal data available.
-Similarly, both performed better when the Gaussian and t-copula correlations were higher, as stronger extremal dependence increases the availability of extremal data. \todo{Is this why performance was better for higher Gaussian correlation?}
+% Similarly, both performed better when the Gaussian and t-copula correlations were higher, as stronger extremal dependence increases the availability of extremal data. \todo{Is this why performance was better for higher Gaussian correlation?}
+Also, both performed better when the Gaussian and t-copula correlations were higher.
+This may be because the data from the Gaussian copula becoming more similar to that of the t-copula for higher correlation, thus allowing the clustering approach to focus on differences in the t-copula.
 
-\todo{Come up with better acronym than CE}
+% \todo{Come up with better acronym than CE}
 \begin{figure}[H]
     \centering
     \includegraphics[width = 0.9\linewidth]{plots/sim_01b_ce_vs_vi_dqu_0.9_man.png}
     % \caption{\emph{Comparison of \citep{Vignotto2021} clustering with our proposed method (labelled ``Cond. Extremes''), for two variables and two equally sized clusters for simulations of 12 ``locations'', each with 1000 observations of each variable, from a mixture of Normal and Gaussian copulas. A grid search was performed, with the x-axis representing the Gaussian correlation parameter used for both clusters, and the facet labels showing the t-copula correlation parameters for each ``known'' cluster. This grid search was repeated 500 times. The smoothed lines show the smoothed median of the Adjusted Rand Index for both clustering methods, with smoothing performing using a generalised additive model.}} % The lines show the median of the Adjusted Rand Index for both clustering methods, with uncertainty coming from the 90\% credible interval.}} % The proposed method is shown to be superior to the leading competitor in the bivariate case, that of \cite{Vignotto2021}. Both models perform better when the difference in the t-copula correlation parameters between the two clusters is larger, and when Gaussian correlation is higher.
-    \caption{\emph{Comparison of our clustering method based on the Conditional Extremes model and the method of \citet{Vignotto2021} for extremal clustering.  
-    Bivariate data from two equally sized clusters were simulated for 12 ``locations,'' each with 1000 observations of each variable, from a mixture of Gaussian and t-copulas with Laplace margins. 
-    A grid search was performed, with the x-axis representing the Gaussian correlation parameter, and facet labels indicating the t-copula correlation parameters for each ``known'' cluster. 
-    This grid search was repeated 500 times. 
+    % \caption{\emph{Comparison of our clustering method based on the Conditional Extremes model and the method of \citet{Vignotto2021} for extremal clustering.  
+    \caption{\emph{Comparison of performance for CE clustering and \citet{Vignotto2021}. 
+    The x-axis represents the Gaussian correlation parameters, and facet labels indicating the t-copula correlation parameters for each ``known'' cluster, generated from a mixture of Gaussian and t-copulas with Laplace margins.
+    % Bivariate data from two equally sized clusters were simulated for 12 ``locations,'' each with 1000 observations of each variable, from a mixture of Gaussian and t-copulas with Laplace margins. 
+    % A grid search was performed, with the x-axis representing the Gaussian correlation parameter, and facet labels indicating the t-copula correlation parameters for each ``known'' cluster. 
+    % This grid search was repeated 500 times. 
     The smoothed lines show the Adjusted Rand Index (ARI) for both methods, with smoothing performed using a generalised additive model.}} 
     ~\label{fig:01_ce_vs_vi}
 \end{figure}

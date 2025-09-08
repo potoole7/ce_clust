@@ -1117,82 +1117,125 @@ Section~\ref{subsec:sim_mixture} extends the study to more complex scenarios, us
 % % We sample from this copula and transform to Laplace margins and use the CE model to estimate the bivariate extremal dependence structure at this location.
 % We sample from this copula, transform to Laplace margins, and then fit the CE model to estimate the extremal dependence structure at the location.
 
-% Single location
-We first consider a simple simulation design based on the Gaussian copula.  
-% Our Gaussian copula simulation design for a single ``location'', nomenclature chosen to match the spatial nature of our applications, is as follows:
-% We generate multivariate data from a bivariate Gaussian copula, where we control the dependence structure through its correlation parameter, $\rhou{Gauss}$. 
-For a single ``location'', terminology chosen to reflect our spatial application, we generate bivariate data from a Gaussian copula with correlation parameter $\rho^{\text{Gauss}}$, which controls the dependence structure.  
-\citet{Keef2013} show that for a bivariate Gaussian copula, the asymptotic CE parameters are $\alpha = \text{sign}(\rho^{\text{Gauss}}) (\rho^{\text{Gauss}})^2$ and $\beta = 1/2$, implying asymptotic independence.  
-% \citet{Keef2013} show that for a bivariate Gaussian copula, the asymptotic CE parameters are $\alpha^{(\CE{})} = \rhou{Gauss}^2$ and $\beta^{(\CE{})} = 1/2$, corresponding to asymptotic independence.
-% \item We sample from this copula and transform to GPD margins with shape $\xi = -0.05$, scale $\sigma = 1$, to generate our data. \todo{mention why we chose these?}
-% \item Each variable in this multivariate dataset may represent, for example, a meteorological or air pollution variable at a given location.
-% \item We can then transform to Laplace margins and use the CE model to estimate the multivariate extremal dependence structure at this location.
-% We sample from this copula and transform to Laplace margins and use the CE model to estimate the bivariate extremal dependence structure at this location.
-We sample from this copula, transform to Laplace margins, and then fit the CE model to estimate the extremal dependence structure at the location.
+% % Single location
+% We first consider a simple simulation design based on the Gaussian copula.  
+% % Our Gaussian copula simulation design for a single ``location'', nomenclature chosen to match the spatial nature of our applications, is as follows:
+% % We generate multivariate data from a bivariate Gaussian copula, where we control the dependence structure through its correlation parameter, $\rhou{Gauss}$. 
+% For a single ``location'', terminology chosen to reflect our spatial application, we generate bivariate data from a Gaussian copula with correlation parameter $\rho^{\text{Gauss}}$, which controls the dependence structure.  
+% \citet{Keef2013} show that for a bivariate Gaussian copula, the asymptotic CE parameters are $\alpha = \text{sign}(\rho^{\text{Gauss}}) (\rho^{\text{Gauss}})^2$ and $\beta = 1/2$, implying asymptotic independence.  
+% % \citet{Keef2013} show that for a bivariate Gaussian copula, the asymptotic CE parameters are $\alpha^{(\CE{})} = \rhou{Gauss}^2$ and $\beta^{(\CE{})} = 1/2$, corresponding to asymptotic independence.
+% % \item We sample from this copula and transform to GPD margins with shape $\xi = -0.05$, scale $\sigma = 1$, to generate our data. \todo{mention why we chose these?}
+% % \item Each variable in this multivariate dataset may represent, for example, a meteorological or air pollution variable at a given location.
+% % \item We can then transform to Laplace margins and use the CE model to estimate the multivariate extremal dependence structure at this location.
+% % We sample from this copula and transform to Laplace margins and use the CE model to estimate the bivariate extremal dependence structure at this location.
+% We sample from this copula, transform to Laplace margins, and then fit the CE model to estimate the extremal dependence structure at the location.
+% 
+% For a single ``location'', terminology chosen to reflect our spatial application, we generate bivariate data from a Gaussian copula with correlation parameter $\rho_{\text{Gauss}}$, which controls the dependence structure.  
+% Let
+% \[
+% \Sigma(\rho_{\text{Gauss}})=
+% \begin{pmatrix}
+% 1 & \rho_{\text{Gauss}}\\[4pt]
+% \rho_{\text{Gauss}} & 1
+% \end{pmatrix}.
+% \]
+% We sample
+% \[
+%   (Z_1,Z_2)^\top \sim \mbox{MVN}\big(0,\Sigma(\rho_{\text{Gauss}})\big),
+% \qquad
+% X_i=\Phi(Z_i),\ i=1,2
+% \]
+% where $\Phi$ is the standard normal CDF. 
+% \citet{Keef2013} show that the asymptotic CE parameters for the bivariate Gaussian copula are $\alpha=\operatorname{sign}(\rho_{\text{Gauss}})\,(\rho_{\text{Gauss}})^2$ and $\beta=1/2$, which imply asymptotic independence.  
+% We sample from this copula, transform to Laplace margins as in \eqref{eq:laplace_transform}, and then fit the CE model to estimate the extremal dependence structure at the location.
+% 
+% % Multiple locations
+% % We can easily extend this design by generating multiple locations with different $\rhou{Gauss}$ values.
+% This design extends naturally to multiple locations by varying $\rho_{\text{Gauss}}$ across sites.  
+% % The knowledge of these parameters provides our ``known'' clustering solution.
+% The collection of correlation values defines the ``true'' clustering structure.  
+% % For example, we could generate data for four locations, the first cluster being two locations with $\rhou{Gauss} = 0.1$, and the second having $\rhou{Gauss} = 0.9$ for its two locations.
+% For example, we may generate data for four locations: two with $\rho_{\text{Gauss}} = 0.1$ and two with $\rho_{\text{Gauss}} = 0.9$, corresponding to two clusters.  
+% % We can use the CE model to estimate the bivariate extremal dependence structure at each location, and then apply the $\JSGa{}$ divergence to cluster these locations based on the similarity of the estimated CE parameters.
+% We then estimate the CE parameters at each site and apply the $\JSGa{}$ divergence to cluster locations based on the similarity of their extremal dependence structures.  
+% % These simulations can be repeated many times and we can evaluate the clustering solution using the ARI, and observe the bias and variance of our simulation estimates around their theoretical values.
+% Repeating this procedure many times allows us to assess clustering performance using the ARI and quantify the bias and variance of the finite-sample CE parameter estimates relative to their theoretical asymptotic values.
+% 
+% % Results
+% % To this end, we generated data for 12 locations each with 1000 observations of two variables using the above design.
+% To this end, we generated data for 12 locations, each with 1000 observations of two variables, using the design described above.  
+% % Three known clusters of four locations each were designated as having $\rhou{Gauss}$ values of 0.1, 0.5, and 0.9, respectively.
+% Three known clusters of four locations each were assigned correlation values $\rho_{\text{Gauss}} = 0.1, 0.5,$ and $0.9$, respectively.  
+% Conditional dependence quantiles of 0.9 and 0.99 were used to estimate the CE model parameters before and after clustering. 
+% % The number of clusters $k$ was ascertained using the method described in Section~\ref{subsubsec:choose_k}, and was found to be $k = 3$.
+% The number of clusters $k$ was selected using the method in Section~\ref{subsubsec:choose_k}, yielding $k = 3$.  
+% Simulations were repeated 500 times, and the results are shown in Figure~\ref{fig:00_gauss_cop}.  
 
-For a single ``location'', terminology chosen to reflect our spatial application, we generate bivariate data from a Gaussian copula with correlation parameter $\rho_{\text{Gauss}}$, which controls the dependence structure.  
-Let
+% Sim design
+We first consider a simulation design based on the Gaussian copula.  
+We consider $S=12$ ``locations'', each associated with two variables. 
+Data are generated independently across sites, with $n=1000$ bivariate observations per location.  
+% At site $s=1,\dots,S$, dependence is introduced through a Gaussian copula with correlation parameter $\rho_{\text{Gauss},s}$.
+At each site $s=1,\dots,S$, dependence is introduced through a Gaussian copula with correlation parameter $\rho_{\text{Gauss}}^s$.
+
+% Per-site sampling
+For each site, let
 \[
-\Sigma(\rho_{\text{Gauss}})=
+\Sigma(\rho_{\text{Gauss}}^s)=
 \begin{pmatrix}
-1 & \rho_{\text{Gauss}}\\[4pt]
-\rho_{\text{Gauss}} & 1
+1 & \rho_{\text{Gauss}}^s\\[4pt]
+\rho_{\text{Gauss}}^s & 1
 \end{pmatrix}.
 \]
-We sample
+We draw
 \[
-  (Z_1,Z_2)^\top \sim \mbox{MVN}\big(0,\Sigma(\rho_{\text{Gauss}})\big),
+  (Z_{1},Z_{2})^\top \sim \mbox{MVN}\big(0,\Sigma(\rho_{\text{Gauss}}^s)\big),
 \qquad
-X_i=\Phi(Z_i),\ i=1,2
+U_i=\Phi(Z_i),\ i=1,2,
 \]
-where $\Phi$ is the standard normal CDF. 
-\citet{Keef2013} show that the asymptotic CE parameters for the bivariate Gaussian copula are $\alpha=\operatorname{sign}(\rho_{\text{Gauss}})\,(\rho_{\text{Gauss}})^2$ and $\beta=1/2$, which imply asymptotic independence.  
-We sample from this copula, transform to Laplace margins as in \eqref{eq:laplace_transform}, and then fit the CE model to estimate the extremal dependence structure at the location.
+where $\Phi$ is the standard normal CDF.  
+The uniforms $(U_1,U_2)$ are then transformed to standard Laplace margins as in~\eqref{eq:laplace}, yielding the observed pair $(X_1,X_2)$ at site $s$.
 
-% Multiple locations
-% We can easily extend this design by generating multiple locations with different $\rhou{Gauss}$ values.
-This design extends naturally to multiple locations by varying $\rho^{\text{Gauss}}$ across sites.  
-% The knowledge of these parameters provides our ``known'' clustering solution.
-The collection of correlation values defines the ``true'' clustering structure.  
-% For example, we could generate data for four locations, the first cluster being two locations with $\rhou{Gauss} = 0.1$, and the second having $\rhou{Gauss} = 0.9$ for its two locations.
-For example, we may generate data for four locations: two with $\rho^{\text{Gauss}} = 0.1$ and two with $\rho^{\text{Gauss}} = 0.9$, corresponding to two clusters.  
-% We can use the CE model to estimate the bivariate extremal dependence structure at each location, and then apply the $\JSGa{}$ divergence to cluster these locations based on the similarity of the estimated CE parameters.
-We then estimate the CE parameters at each site and apply the $\JSGa{}$ divergence to cluster locations based on the similarity of their extremal dependence structures.  
-% These simulations can be repeated many times and we can evaluate the clustering solution using the ARI, and observe the bias and variance of our simulation estimates around their theoretical values.
-Repeating this procedure many times allows us to assess clustering performance using the ARI and quantify the bias and variance of the finite-sample CE parameter estimates relative to their theoretical asymptotic values.
+% Parameter choices and true clustering
+The sites are arranged into three latent clusters of equal size, defined by their copula correlations. 
+As a proof of concept, we choose well-separated values to ensure clear clustering.
+Specifically, the first cluster, comprising sites 1 to 4, has $\rho_{\text{Gauss}}^s=0.1, s = 1, \ldots, 4$, the second cluster has $\rho_{\text{Gauss}}^s=0.5, s = 5, \ldots, 8$ 
+and the third cluster has $\rho_{\text{Gauss}}^s=0.9, s = 9, \ldots, 12$.
+These values determine the ground-truth clustering structure against which methods are evaluated.
 
-% Results
-% To this end, we generated data for 12 locations each with 1000 observations of two variables using the above design.
-To this end, we generated data for 12 locations, each with 1000 observations of two variables, using the design described above.  
-% Three known clusters of four locations each were designated as having $\rhou{Gauss}$ values of 0.1, 0.5, and 0.9, respectively.
-Three known clusters of four locations each were assigned correlation values $\rho^{\text{Gauss}} = 0.1, 0.5,$ and $0.9$, respectively.  
-Conditional dependence quantiles of 0.9 and 0.99 were used to estimate the CE model parameters before and after clustering. 
-% The number of clusters $k$ was ascertained using the method described in Section~\ref{subsubsec:choose_k}, and was found to be $k = 3$.
-The number of clusters $k$ was selected using the method in Section~\ref{subsubsec:choose_k}, yielding $k = 3$.  
-Simulations were repeated 500 times, and the results are shown in Figure~\ref{fig:00_gauss_cop}.  
+% Estimation
+% At each site the CE model is fitted using conditional quantile levels $q=0.9$ and $q=0.99$, equivalent to taking the largest 100 and 10 observations of the conditioning variable, respectively, to estimate the dependence structure between the two variables as described by the CE parameters $\alpha$ and $\beta$.
+After data generation, the conditional extremes (CE) model is fitted at each site using conditional quantile levels \(q=0.9\) and \(q=0.99\), equivalent to using the largest 100 and 10 observations of the conditioning variable, respectively.
+% Pairwise dissimilarities between sites are computed using the $\JSGa{}$ divergence, and clusters are identified using PAM, following the procedure in Section~\ref{subsec:clustering}.
+Pairwise dissimilarities between sites are computed using the $\JSGa{}$ divergence, and clusters are identified using PAM, following Section~\ref{subsec:clustering}. 
+\citet{Keef2013} show that for a bivariate Gaussian copula, the asymptotic CE parameters are $\alpha = \text{sign}(\rho_{\text{Gauss}}) (\rho_{\text{Gauss}})^2$ and $\beta = 1/2$, implying asymptotic independence.  
+These theoretical values serve as the reference for the CE estimates.
+% Simulations are repeated 500 times, with performance assessed via the ARI and by comparing finite-sample CE estimates to these asymptotic values.
+Simulations are repeated 500 times, with performance assessed via the ARI and by comparing finite-sample CE estimates to these asymptotic benchmarks. 
+% Across all simulations, the correct number of clusters, $k=3$, was identified using the elbow method described in Section~\ref{subsubsec:choose_k}, and the ARI was always equal to 1, indicating perfect clustering, as expected given such well-separated clusters.
+% Figure~\ref{fig:00_gauss_cop} summarises the results.
 
 % The estimation of $k$ through the elbow method and the ARI for this simple, well-defined example were perfect across all simulations.
-The elbow method consistently recovered the correct number of clusters, and the ARI was perfect across all simulations.  
+% The elbow method consistently recovered the correct number of clusters, and the ARI was perfect across all simulations.  
 % Several interesting points can be made from the results.
 % Pre-clustering, the CE model estimates have greater uncertainty, especially for $\beta$, where the bias is also larger.
-Pre-clustering, CE parameter estimates exhibit considerable uncertainty, particularly for $\beta$, where bias is also more pronounced. \todo{beta hat?}
-% This is especially the case for the higher dependence quantile, where data is scarcer, although this also corresponds to less bias, with the true values lying within the first and third quantiles of each boxplot for almost all scenarios, as we take our data from further into the tail, where convergence to the asymptotic values is better.
-This effect is strongest at the higher conditional quantile (0.99), where data are scarcer.  
-However, estimates at this level display less bias overall, with true values typically lying between the first and third quartiles of the boxplots, reflecting improved convergence to the asymptotic parameters further into the tail.  
-% Bias and variance are lower for higher $\rhou{Gauss}$, which appears to also be associated with better convergence to these theoretical asymptotic values.
-Bias and variance both decrease with increasing $\rhou{Gauss}$, suggesting faster convergence under stronger dependence.  
+% Pre-clustering, CE parameter estimates exhibit considerable uncertainty, particularly for $\beta$, where bias, defined as the difference between the finite-sample estimate and the asymptotic parameter, is also more pronounced. \todo{beta hat?}
+% This effect is strongest at the higher conditional quantile (0.99), where data are scarcer.  
+% However, estimates at this level display less bias overall, with true values typically lying between the first and third quartiles of the boxplots, reflecting improved convergence to the asymptotic parameters further into the tail.  
+% % Bias and variance are lower for higher $\rhou{Gauss}$, which appears to also be associated with better convergence to these theoretical asymptotic values.
+% Bias and variance both decrease with increasing $\rhou{Gauss}$, suggesting faster convergence under stronger dependence. \todo{Need to switch to s superscript in plots and here?}
+% These same patterns are present post-clustering, but with reduced variability in the estimates, especially in the problematic cases of estimating $\beta$ and for the higher conditional quantile level, as desired. \todo{Quote any specific values? Or are plots self-evident?}
 
-% % Post-clustering, the same patterns emerge, but the variability in the estimates is reduced, especially in the problematic cases of estimating $\beta$ and for the higher conditional quantile level, as desired. \todo{Quote any specific values? Or are plots self-evident?}
-% After pooling data within clusters, the variability in the estimates is reduced, especially in the problematic cases of estimating $\beta$ and for the higher conditional quantile level, as desired. \todo{Quote any specific values? Or are plots self-evident?}
-After pooling data within clusters, variability in the estimates is substantially reduced, most notably for $\beta$ and for the 0.99 quantile level.  
-The same qualitative patterns remain, but with improved precision, as desired.  
+Figure~\ref{fig:00_gauss_cop} shows that our approach is able to reduce the uncertainty in the estimates for both $\alpha$ and $\beta$ for all considered conditioning quantiles. 
+Bias, as defined as the difference between the finite-sample estimate and the asymptotic parameter, and variance also decrease with increasing $\rho_{\text{Gauss}}$, indicating faster convergence under stronger dependence. 
+We observe a bias-variance tradeoff in the choice of dependence quantile for the CE model, with the higher quantile ($q=0.99$) yielding less biased estimates, as expected due to improved convergence to the asymptotic parameters further into the tail, but with greater variance due to data scarcity.
 
 \begin{figure}[H]
     \centering
     % \includegraphics[width = 0.9\linewidth]{plots/sim_01_gauss_cop.png}
     \includegraphics[width = 0.9\linewidth]{plots/sim_01_gauss_cop_man.png}
     % \caption{Boxplots of \emph{$\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$ parameter estimates for the conditional extremes model pre- and post-clustering for a bivariate Gaussian copula simulation of 12 datasets, or ``locations'', each with 1000 observations of each variable, belonging equally to three known clusters. Simulations were repeated 500 times. The x-axis represents the conditional quantile used to fit the conditional extremes model, and the boxes are coloured by their Gaussian copula correlation parameter, $\rhou{Gauss}$. Dotted horizontal lines indicate the theoretical asymptotic values of $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$ for a bivariate Gaussian copula, coloured by the same $\rhou{Gauss}$ values for $\alpha^{(\CE{})}$ and black for $\beta^{(\CE{})}$ to indicate the same value across all clusters, at $1/2$.}}
-    \caption{Boxplots of \emph{$\alpha$ and $\beta$ parameter estimates for the conditional extremes model pre- and post-clustering for a bivariate Gaussian copula simulation of 12 datasets, or ``locations'', each with 1000 observations of each variable, belonging equally to three known clusters. Simulations were repeated 500 times. The x-axis represents the conditional quantile used to fit the conditional extremes model, and the boxes are coloured by their Gaussian copula correlation parameter, $\rhou{Gauss}$. Dotted horizontal lines indicate the theoretical asymptotic values of $\alpha$ and $\beta$ for a bivariate Gaussian copula, coloured by the same $\rhou{Gauss}$ values for $\alpha$ and black for $\beta$ to indicate the same value across all clusters, at $1/2$.}}
+    \caption{\emph{Boxplots of $\alpha$ and $\beta$ parameter estimates for the conditional extremes model pre- and post-clustering for a bivariate Gaussian copula simulation of 12 datasets, or ``locations'', each with 1000 observations of each variable, belonging equally to three known clusters. Simulations were repeated 500 times. The x-axis represents the conditional quantile used to fit the conditional extremes model, and the boxes are coloured by their Gaussian copula correlation parameter, $\rhou{Gauss}$. Dotted horizontal lines indicate the theoretical asymptotic values of $\alpha$ and $\beta$ for a bivariate Gaussian copula, coloured by the same $\rhou{Gauss}$ values for $\alpha$ and black for $\beta$ to indicate the same value across all clusters, at $1/2$.}}
    ~\label{fig:00_gauss_cop}
 \end{figure}
 

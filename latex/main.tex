@@ -677,7 +677,7 @@ As introduced in \citet{Keef2013}, a popular choice for CE models is Laplace mar
 % Each marginal random variable $X_i, i = 1, \ldots, d, (X_1, \ldots, X_d) \in \mathbb{R}^d$ is transformed to Laplace margins, as outlined in equation~\eqref{eq:laplace} in Section \ref{subsec:estimation}, and thereafter denoted by $Y_i, \(Y_1, \ldots Y_d\) \in \mathbb{R}^d$. 
 % To transform each marginal random variable $X_i$ to Laplace margins, denoted by $Y_i$, we let:
 % Each marginal random variable $X_i, i = 1, \ldots, d, (X_1, \ldots, X_d) \in \mathbb{R}^d$ is transformed to Laplace margins, thereafter denoted as $Y_i$, using the probability integral transform:
-Each marginal random variable $X_i, i = 1, \ldots, d$ is transformed to Laplace margins, thereafter denoted as $Y_i$, using the probability integral transform:
+As it allows for both positive and negative dependence to be modelled, each marginal random variable $X_i, i = 1, \ldots, d$, is transformed to Laplace margins, thereafter denoted as $Y_i$, using the probability integral transform:
  \begin{equation}~\label{eq:laplace}
    Y_i \coloneqq \begin{cases}
      \log\left\{2F_{X_i}(X_i)\right\}, &\text{ for } X_i < F_{X_i}^{-1}(0.5), \\
@@ -686,7 +686,7 @@ Each marginal random variable $X_i, i = 1, \ldots, d$ is transformed to Laplace 
    \end{cases}
  \end{equation}
 \todo{trying to be brief, but would like to have quick line about why we use Laplace!}
-where $F_{X_i}$ is the cumulative distribution function (CDF) of $X_i$. 
+where $F_{X_i}$ is the distribution function of $X_i$. 
 
 % Rigorous Conditional Extremes definition
 % \begin{itemize}
@@ -716,12 +716,12 @@ where $F_{X_i}$ is the cumulative distribution function (CDF) of $X_i$.
 % say Y in d dimensions
 % We use $Y_{-i} = \symbf{Y} \backslash Y_{i}, \symbf{Y} \in \mathbb{R}^d, y \in (1, \ldots, d)$ to denote the vector of all variables in $\symbf{Y}$ except $Y_i$, and assume all operations hereafter are performed component-wise.
 % For $d \in \mathbb{N}$, we use $ \symbf{Y} \in \mathbb{R}^d, d \in \mathbb{N}$ and for $i \in \{1,\ldots,d\}$ write $Y_{-i} = \symbf{Y}\setminus\{Y_i\}$ to denote the $(d-1)$-dimensional random vector of all components except $Y_i$, and assume all operations below are component-wise. 
-For $d \in \mathbb{N}$, we use $\symbf{Y} \coloneqq \left(Y_1, \ldots, Y_d\right) \in \mathbb{R}^d$ and for $i \in \{1, \ldots, d\}$ write $\symbf{Y}_{-i} \coloneq \symbf{Y} \setminus Y_i \in \mathbb{R}^{d-1}$ to denote vector $\symbf{Y}$ with its its $i^{\text{th}}$ component removed. 
+For $d \in \mathbb{N}$, we consider the random vector $\symbf{Y} \coloneqq \left(Y_1, \ldots, Y_d\right) \in \mathbb{R}^d$ and, for $i \in \{1, \ldots, d\}$, we write $\symbf{Y}_{-i} \coloneq \symbf{Y} \setminus Y_i \in \mathbb{R}^{d-1}$ to denote $\symbf{Y}$ with its $i^{\text{th}}$ component removed. 
 % Assume all operations below are component-wise. 
 % \item The CE model of \citet{Heffernan2004} assumes that there exists vector normalising parameters $\alpha_{\mid i} := \symbf{a}_{\mid i}(y_i), \beta_{\mid i} := \symbf{b}_{\mid i}(y_i) \in \mathbb{R} \rightarrow \mathbb{R}^{(d-1)}$ such that for fixed $\symbf{z}_{\mid i} \in \mathbb{R}^{(d-1)}$,
 % The CE model of \citet{Heffernan2004} assumes that there exist parameter vectors $\symbf{\alpha}_{\mid i}^{(\CE{})} := \left\{\alpha_{j \mid i}^{(\CE{})} : j\in\{1,\dots,d\}\setminus\{i\}\right\} \in [-1, 1]^{(d-1)}$ and $\symbf{\beta}_{\mid i}^{(\CE{})} := \left\{\beta_{j \mid i}^{(\CE{})} : j\in\{1,\dots,d\}\setminus\{i\} \right\} \in [-\infty, 1]^{(d-1)}$ such that for fixed $\symbf{z}_{\mid i} \in \mathbb{R}^{(d-1)}$, $y_i > 0$,
 % The CE model of \citet{Heffernan2004} assumes that for each $i = 1, \ldots, d$ there exist parameter vectors $\symbf{\alpha}_{\mid i} := \left\{\alpha_{j \mid i} : j\in\{1,\dots,d\}\setminus i \right\} \in [-1, 1]^{d-1}$ and $\symbf{\beta}_{\mid i} := \left\{\beta_{j \mid i} : j\in\{1,\dots,d\}\setminus i \right\} \in [-\infty, 1]^{d-1}$ such that for fixed $\symbf{z}_{\mid i} \in \mathbb{R}^{d-1}$ and $y_i > 0$,
-With all operations below taken component-wise, the CE model assumes that there exist parameter vectors $\symbf{\alpha}_{\mid i} \coloneqq \left\{\alpha_{j \mid i} : j\in\{1,\dots,d\}\setminus i \right\} \in [-1, 1]^{d-1}$ and $\symbf{\beta}_{\mid i} \coloneqq \left\{\beta_{j \mid i} : j\in\{1,\dots,d\}\setminus i \right\} \in [-\infty, 1]^{d-1}$ such that for fixed $\symbf{z}_{\mid i} \in \mathbb{R}^{d-1}$ and $y_i > 0$, such that for fixed $\symbf{z} \in \mathbb{R}^{(d-1)}$ and $y > 0$,
+With all operations below taken component-wise, the CE model assumes that there exist parameter vectors $\symbf{\alpha}_{\mid i} \coloneqq \left\{\alpha_{j \mid i} : j\in\{1,\dots,d\}\setminus i \right\} \in [-1, 1]^{d-1}$ and $\symbf{\beta}_{\mid i} \coloneqq \left\{\beta_{j \mid i} : j\in\{1,\dots,d\}\setminus i \right\} \in [-\infty, 1]^{d-1}$ such that for fixed $\symbf{z} \in \mathbb{R}^{d-1}$ and % $y_i > 0$, such that for fixed $\symbf{z} \in \mathbb{R}^{(d-1)}$ and $y > 0$,
 % \todo{Check if probably is for equal to yi or greater than yi}
 \begin{equation}~\label{eq:ce_limiting_dist}
   % \mathbb{P}\left(\frac{\symbf{Y}_{-i} - \symbf{\alpha}_{\mid i}^{(\CE{})} Y_{i}}{Y_{i}^{\symbf{\beta}_{\mid i}^{(\CE{})}} \le \symbf{z}_{\mid i}, Y_i - u_i > y_i \mid Y_i > u_i \right) \longrightarrow \symbf{G}_{\mid i}(\symbf{z}_{\mid i}) \exp(-y_i) \text{ as } u_i \rightarrow \infty,
@@ -741,8 +741,10 @@ With all operations below taken component-wise, the CE model assumes that there 
   \longrightarrow
   % \symbf{G}_{\mid i}(\symbf{z}_{\mid i})\,e^{-y_i}
   % \symbf{G}_{\mid i}(\symbf{z}_{\mid i})\,\exp{-y_i}
-  \symbf{G}_{\mid i}(\symbf{z})\,\exp{(-y_i)}
-  \quad\text{as } u_i \to \infty.
+  % \symbf{G}_{\mid i}(\symbf{z})\,\exp{(-y_i)}
+  \symbf{G}_{\mid i}(\symbf{z})\,\exp{(-y)}
+  % \quad\text{as } u_i \to \infty.
+  \quad\text{as } u \to \infty.
 \end{equation}
 \todo{i subscript removed from LHS, but not on RHS, is this ok?}
 % where $u_i$ is a suitably high threshold for $Y_i$, and $\symbf{G}_{j \mid i}$ is non-degenerate for all $j \ne i$. 
@@ -753,7 +755,7 @@ With all operations below taken component-wise, the CE model assumes that there 
 % \]
 % ensuring that there is no mass at $+\infty$ for any margin, but allowing for some mass to be at $-\infty$, in order to ensure uniqueness of the solution \citep{Keef2013}.
 % where $u_i$ is a suitably high threshold. 
-The distribution function $\symbf{G}_{\mid i}$ is non-degenerate on $\mathbb{R}^{d-1}$ and, for each margin $j\neq i$, $\lim\limits_{\symbf{z}\to\infty}\symbf{G}_{j\mid i}(z)=1$, so that there is no mass at $+\infty$, while mass at $-\infty$ is permitted to ensure uniqueness \citep{Keef2013}. 
+The distribution function $\symbf{G}_{\mid i}$ is non-degenerate on $\mathbb{R}^{d-1}$ and, for each margin $j\neq i$, $\lim\limits_{z\to\infty}\symbf{G}_{j\mid i}(z)=1$, so that there is no mass at $+\infty$, while mass at $-\infty$ is permitted to ensure uniqueness \citep{Keef2013}. 
 % An important consequence of this formulation is the weak assumption that
 % \begin{equation}~\label{eq:limit_independence}
 %   \mathbb{P}(\symbf{Z}_{\mid i} \le \symbf{z}_{\mid i}, Y_i - u_i = y_i \mid Y_i > u_i) \rightarrow \symbf{G}_{\mid i}(\symbf{z}_{\mid i}) \exp(-y_i) \text{ as } u_i \rightarrow \infty,
@@ -764,7 +766,7 @@ Equation~\eqref{eq:ce_limiting_dist} implies that, in the limit $u\to\infty$, th
 
 % heteroscedastic regression
 % The limiting distribution in equation~\eqref{eq:ce_limiting_dist} can be written as a heteroscedastic regression equation defined by
-Assuming that the limiting distribution in Equation~\eqref{eq:ce_limiting_dist} holds eactly for a large threshold $u$ gives the heteroscedastic regression model
+Assuming that the limiting distribution in Equation~\eqref{eq:ce_limiting_dist} holds exactly for a large threshold $u_i > 0$ gives the heteroscedastic regression model
 % \todo{Should we be explicit that the equals here really should be an equality in distribution?}
 \begin{equation}~\label{eq:ce_model}
   % \bigl(\symbf{Y}_{-i} \mid Y_i = y_i \bigr) = \symbf{\alpha}_{\mid i}^{(\CE{})}\symbf{y}_i + \symbf{y}_i^{\symbf{\beta}_{\mid i}^{(\CE{})}}\symbf{Z}_{\mid i}, \text{ for } y_i > u_{_i},
@@ -773,7 +775,7 @@ Assuming that the limiting distribution in Equation~\eqref{eq:ce_limiting_dist} 
 \end{equation}
 with residual vector $\symbf{Z}_{\mid i} \sim \symbf{G}_{\mid i}$.
 % The slope or linear regression coefficient $\symbf{\alpha}_{\mid i}^{(\CE{})} \in [-1, 1]$ describes the strength of association between $Y_{-i}$ and large $Y_i$ above the threshold $u_i$.
-The slope coefficient vectors $\symbf{\alpha}_{\mid i} \in [-1, 1]^{d-1}$ describe the strength of extremal association between components of $\symbf{Y}_{-i}$ and $Y_i$. 
+The slope coefficient vectors $\symbf{\alpha}_{\mid i} \in [-1, 1]^{d-1}$ describe the strength of extremal association between components of $\symbf{Y}_{-i}$ and the conditioning variable $Y_i$. 
 % \item $\symbf{\beta}_{\mid i} \in [-\infty, 1]$ can be interpretated as a ``spread'' parameter, controlling the levels of heteroscedasticity in the model.
 % The levels of heteroscedasticity in the model is controlled by $\symbf{\beta}_{\mid i}^{(\CE{})} \in [-\infty, 1]$, and can be loosely interpreted as a ``spread'' parameter.
 The degree of heteroscedasticity in the model is controlled by entries to $\symbf{\beta}_{\mid i} \in [-\infty, 1]^{d - 1}$, and can be loosely interpreted as a ``spread'' parameter.
@@ -802,13 +804,14 @@ Some special cases (for $j\in\{1,\ldots,d\}\setminus i$) of the CE model are:
 % \end{itemize}
 \todo{Write inline (what is meant by that?}
 \begin{itemize}
-  \item $\symbf{\alpha}_{j \mid i} = 0$ and  $\symbf{\beta}_{j \mid i} = 0$, for which we have perfect independence, between the $j^{\text{th}}$ component of $\symbf{Y}_{-i}$ and large $Y_i$, corresponding to $\chi\left(Y_j, Y_i\right) = 0, j = 1, \ldots, d, j \ne i$,
+  % \item $\symbf{\alpha}_{j \mid i} = 0$ and  $\symbf{\beta}_{j \mid i} = 0$, for which we have perfect independence, between the $j^{\text{th}}$ component of $\symbf{Y}_{-i}$ and large $Y_i$, corresponding to $\chi\left(Y_j, Y_i\right) = 0, j = 1, \ldots, d, j \ne i$,
+  \item $\symbf{\alpha}_{j \mid i} = 0$ and  $\symbf{\beta}_{j \mid i} = 0$, for which we have perfect independence, between $Y_j$ and $Y_i \mid Y_i > u_i, j \ne i$, corresponding to $\chi= 0$;
   % \item $\symbf{\alpha}_{j \mid i} = 0, \symbf{\beta}_{j \mid i} = 0$, for which we have perfect independence,
-  \item $\symbf{\alpha}_{j \mid i} = -1(+1)$ and $\symbf{\beta}_{j \mid i} = 0$, which corresponds to perfect negative (positive) extremal dependence, equivalent to having $\chi(Y_j, Y_i) = -1 (1)$, and 
-  \item $-1 < \symbf{\alpha}_{j \mid i} < 1$, which suggests asymptotic independence between $Y_j$ and $Y_i$, with dependence weakening as $Y_i \to \infty$, equivalent to $-1 < \chi(Y_j, Y_i) < 1$. 
+  \item $\symbf{\alpha}_{j \mid i} = 1(-1)$ and $\symbf{\beta}_{j \mid i} = 0$, which corresponds to positive (negative) asymptotic dependence, equivalent to having $\chi = 1 (\chi = 0)$, and 
+  \item $-1 < \symbf{\alpha}_{j \mid i} < 1$, which suggests asymptotic independence between $Y_j$ and $Y_i$, with dependence weakening as $Y_i \to \infty$, equivalent to $\chi < 1$. 
 \end{itemize}
 
-Recall that we fit the CE model at different spatial sites. 
+We fit the CE model at different spatial sites. 
 % To allow for spatial variation, we may index by site $s \in \mathcal{S}$, and allow regression parameters to vary by site. 
 To denote spatial variation, we index the random vectors by spatial location $\mathcal{s} \in \left(s_1, \ldots, s_D\right)$, where $s_i \in \mathbb{R}^2, i = 1, \ldots, D$, and $D$ is the number of spatial locations. 
 This leads to the spatially indexed extension of Equation~\eqref{eq:ce_model}, where we have the site-specific random vector $\symbf{Y}(s) \in \mathbb{R}^d$ for $\mathcal{s} \in (s_1, \ldots, s_d)$, and
@@ -821,11 +824,6 @@ This leads to the spatially indexed extension of Equation~\eqref{eq:ce_model}, w
 % with location-specific residuals $\symbf{Z}_{\mid i}(s) \sim \symbf{G}_{\mid i}(s)$. \todo{Do I need to define alpha(s), beta(s), ui(s) again?}
 where $\symbf{Y}_{-i}(s) \coloneqq \symbf{Y}(s) \setminus Y_i(s), \symbf{\alpha}_{\mid i}(s), \symbf{\beta}_{\mid i}(s)$ and $\symbf{Z}_{\mid i}(s) \sim \symbf{G}_{\mid i}(\cdot ; s)$ are the site-specific counterparts of the regression parameters and residuals introduced above.  
 Note that we make no assumptions about spatial smoothness in the regression model. 
-
-\subsection{Divergence measure}~\label{subsec:div}
-
-\todo{Should I use divergence interchangeably with more commonly used distance?}
-\todo{Need some references for applications of this metric! In intro, or here?}
 
 % Intro: CE gives distributions, which need to be compared
 % Definition of Z moved here to be impactful than after eq:ce_model
@@ -843,15 +841,17 @@ As a working assumption that permits inference on $\symbf{\alpha}_{\mid i}(s)$ a
 % This is the key assumption of the CE model on which we derive our divergence measure, and was chosen in \citet{Heffernan2004} after testing several candidate distributions.
 % This is the key aspect of the CE model with which we derive our divergence measure, and is a working assumption chosen in \citet{Heffernan2004} after testing several candidate distributions.
 % This Gaussian working assumption, proposed in \citet{Heffernan2004} after testing several candidate distributions, is the key property we exploit when deriving a closed-form divergence measure for computationally efficient clustering.
-This Gaussian working assumption, proposed in \citet{Heffernan2004}, is the key property we exploit when deriving a closed-form divergence measure for computationally efficient clustering; see Section~\ref{subsec:ce_model}.
+This Gaussian working assumption, proposed in \citet{Heffernan2004}, is the key property we exploit when deriving a closed-form divergence measure for computationally efficient clustering; see Section~\ref{subsec:div}.
 
 % \citet{Heffernan2004} shows that inference can be made about the extremal dependence of a random vector $\symbf{Y}_{-i} = \symbf{Y} \backslash Y_i$ on $Y_i$ by conditioning on the exceedance of a high threshold $u$ by $Y_i$, and assuming that this conditional distribution is a diagonal multivariate Gaussian distribution: % with vector mean and standard deviation:
 % An important consequence following from this assumption is that inference can be made about the extremal dependence of a random vector $\symbf{Y}_{-i} = \symbf{Y} \setminus \{Y_i\}$ on $Y_i$ by conditioning on the exceedance of a high threshold $u_i$ by $Y_i$, and assuming that this conditional distribution is a multivariate Gaussian distribution, i.e.\ 
-Consequently, inference can be made about the extremal dependence of a random vector $\symbf{Y}_{-i}(s)$ on $Y_i(s)$ at site $s$ by conditioning on the exceedance of a high threshold $u_i(s)$ by $Y_i(s)$, and assuming that this conditional distribution is multivariate Gaussian, i.e.\
+Consequently, inference can be made about the extremal dependence of a random vector $\symbf{Y}(s)$ at site $s$ by conditioning on the exceedance of a high threshold $u_i(s)$ by $Y_i(s)$, and assuming that this conditional distribution is multivariate Gaussian, i.e.,\@
+
 \begin{equation}~\label{eq:ce_norm}
   % \bigl( \symbf{Y}_{-i} \mid Y_i  = y_i \bigr) \sim N\left(\symbf{\alpha}_{\mid i}^{(\CE{})} y_i + y_i^{\symbf{\beta}_{\mid i}^{(\CE{})}} \symbf{\mu}_{\mid i}^{(\CE{})}, y_i^{\symbf{\beta}_{\mid i}^{(\CE{})}} \Sigma_{\mid i}^{(\CE{})}\right), Y_i > u_i,
   % \bigl( \symbf{Y}_{-i} \mid Y_i  = y_i \bigr) \sim N\left(\symbf{\alpha}_{\mid i} y_i + y_i^{\symbf{\beta}_{\mid i}} \symbf{\mu}_{\mid i}, y_i^{\symbf{\beta}_{\mid i}} \symbf{\Sigma_{\mid i}}\right), Y_i > u_i,
-  \bigl( \symbf{Y}_{-i}(s) \mid Y_i(s)  = y) \sim \mbox{MVN}_{d-1}\left(\symbf{\alpha}_{\mid i}(s) y + y^{\symbf{\beta}_{\mid i}(s)} \symbf{\mu}_{\mid i}(s), y^{\symbf{\beta}_{\mid i}(s)} \Sigma_{\mid i}(s)\right), y > u_i(s),
+  % \bigl( \symbf{Y}_{-i}(s) \mid Y_i(s)  = y) \sim \mbox{MVN}_{d-1}\left(\symbf{\alpha}_{\mid i}(s) y + y^{\symbf{\beta}_{\mid i}(s)} \symbf{\mu}_{\mid i}(s), y^{\symbf{\beta}_{\mid i}(s)} \Sigma_{\mid i}(s)\right), y > u_i(s),
+  \bigl( \symbf{Y}_{-i}(s) \mid Y_i(s)  = y) \sim \mbox{MVN}_{d-1}\left(\symbf{\alpha}_{\mid i}(s) y + y^{\symbf{\beta}_{\mid i}(s)} \symbf{\mu}_{\mid i}(s), \left(y^{\beta_{\mid i}(s)}\right)^{\mathrm{T}} \Sigma_{\mid i}(s) y^{\beta_{\mid i}(s)} \right), y > u_i(s),
 \end{equation}
 where $\symbf{\alpha}_{\mid i}(s), \symbf{\beta}_{\mid i}(s), \symbf{\mu}_{\mid i}(s), \Sigma_{\mid i}(s)$ are the site-specific parameters of the CE model for the $i^{\text{th}}$ conditioning variable, $i = 1, \ldots, d$.
 % where $\symbf{\alpha}_{\mid i}^{(\CE{})}, \symbf{\beta}_{\mid i}^{(\CE{})}, \symbf{\mu}_{\mid i}^{(\CE{})}, \Sigma_{\mid i}^{(\CE{})} \in \mathbb{R}^{(d-1)}$ are the parameters of the CE model. 
@@ -863,10 +863,15 @@ where $\symbf{\alpha}_{\mid i}(s), \symbf{\beta}_{\mid i}(s), \symbf{\mu}_{\mid 
 Therefore, to compare tail dependence at different sites, we can compare the conditional distributions in Equation~\eqref{eq:ce_norm}, i.e.\ the assumed multivariate Gaussian distributions parameterised by $(\symbf{\alpha}_{\mid i}(s),\symbf{\beta}_{\mid i}(s),\symbf{\mu}_{\mid i}(s),\Sigma_{\mid i}(s))$ (or a chosen subset thereof).
 
 % Estimation
-The model parameters $\symbf{\alpha}_{\mid i}(s), \symbf{\beta}_{\mid i}(s), \symbf{\mu}_{\mid i}(s), \Sigma_{\mid i}(s)$ in Equation~\eqref{eq:ce_norm} are estimated at each site $s$ using maximum likelihood estimation.
-In practice, we set the threshold $u_i(s) = F^{-1}(q)$ to the $q^{\text{th}}$ Laplace quantile.  
-We choose $q$ such that there are sufficient exceedances above $u_i(s)$ to fit the CE model, while keeping $q$ high enough so that the limiting assumption in Equation~\eqref{eq:ce_limiting_dist} is reasonable.
+The model parameters $\symbf{\alpha}_{\mid i}(s), \symbf{\beta}_{\mid i}(s), \symbf{\mu}_{\mid i}(s), \Sigma_{\mid i}(s)$ in Equation~\eqref{eq:ce_norm} are estimated at each site $s$ and for each conditioning variable, $Y_i, i = 1, \ldots, d$, using maximum likelihood estimation.
+In practice, for each $i = 1, \ldots, d$ and $s \in (s_1, \ldots, s_D)$, we set the threshold $u_i(s)$ to the $q^{\text{th}}$ Laplace quantile.  
+We choose $q$ such that there are a sufficient number of exceedances above $u_i(s)$ to fit the CE model, while keeping $q$ high enough so that the limiting assumption in Equation~\eqref{eq:ce_limiting_dist} is reasonable.
 The bootstrapping procedure of \citet{Heffernan2004} is used to obtain standard errors for the parameter estimates, and we choose the highest value of $q$ such that the parameter estimates are stable, and the bootstrap standard errors are reasonably small.
+
+\subsection{Divergence measure for multivariate extremes}~\label{subsec:div}
+
+\todo{Should I use divergence interchangeably with more commonly used distance?}
+\todo{Need some references for applications of this metric! In intro, or here?}
 
 There are several qualities we desire from a divergence measure for clustering based on the conditional distribution in Equation~\eqref{eq:ce_norm}.
 % We would like to exploit the fact that the CE model is a multivariate Gaussian distribution to provide some gains in computational efficiency, and for our divergence to more generally be cheap to compute.

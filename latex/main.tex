@@ -1690,9 +1690,10 @@ To mitigate this uncertainty and aid interpretation, we next cluster the locatio
 
 % Clustering (including choice of k for each measure)
 % We clustered the locations using the $\JSGa{}$ dissimilarity matrix for their CE parameters, as described in Section~\ref{subsec:div}, for the CE models fit to precipitation conditional on extreme wind speed and vice versa, separately. 
-We clustered the locations using the $\JSGa{}$ dissimilarity matrix of their CE parameter estimates, as described in Section~\ref{subsec:div}, for the CE models fitted to precipitation conditional on extreme wind speed and vice versa, separately.
+% We clustered the locations using the $\JSGa{}$ dissimilarity matrix of their CE parameter estimates, as described in Section~\ref{subsec:div}, for the CE models fitted to precipitation conditional on extreme wind speed and vice versa, separately.
+We clustered the locations using the integral form of the $\JSGa{}$ dissimilarity matrix, as described in Equation~\ref{eq:jsga_integral} in Section~\ref{subsec:div}, for the CE models fitted to precipitation conditional on extreme wind speed and vice versa, separately.
 % We also combine information from both models to cluster by summing their dissimilarity matrices.
-We also considered a combined solution by summing the two dissimilarity matrices.  
+We also considered a combined solution by averaging over the two dissimilarity matrices.
 The number of clusters $k$ was chosen via the method described in Section~\ref{subsubsec:choose_k}, using the elbow plot of the TWGSS. 
 For all three clustering solutions, clear elbows were observed at $k = 3$, so this was the number of clusters chosen \todo{Include plots in Appendix?}.
 

@@ -875,7 +875,8 @@ The bootstrapping procedure of \citet{Heffernan2004} is used to obtain standard 
 
 There are several qualities we desire from a divergence measure for clustering based on the conditional distribution in Equation~\eqref{eq:ce_norm}.
 % We would like to exploit the fact that the CE model is a multivariate Gaussian distribution to provide some gains in computational efficiency, and for our divergence to more generally be cheap to compute.
-We particularly want to exploit the multivariate Gaussian nature of the CE model, to provide computational efficiency through a closed-form solution, and for our divergence to be generally cheap to compute.
+% We particularly want to exploit the multivariate Gaussian nature of the CE model, to provide computational efficiency through a closed-form solution, and for our divergence to be generally cheap to compute.
+We want to provide computational efficiency through a closed-form solution, and for our divergence to be generally cheap to compute, which we achieve using the Gaussian assumption in Equation~\eqref{eq:ce_norm}.
 For clustering, the measure must be non-negative and symmetric, as the ``distance'' between two sites as defined by the divergence between their CE models should be the same regardless of the order in which they are compared.
 % Ideally, our measure should also be bounded above by a finite value, as smaller divergences lead to more well-defined clusters, and very large divergences can lead to numerical instability.
 % Ideally, our measure should also have some form of upper bound, as smaller divergences lead to more well-defined clusters, and very large divergences can lead to numerical instability. \todo{Citation!}
@@ -884,27 +885,27 @@ Ideally, our measure should also have an upper bound, as larger divergences can 
 \todo{Any other properties? Convex (as KL is?) (which may be better?) (need citation)}
 
 % Introduce JSGa
-One divergence measure introduced in \citet{Nielsen2019} which satisfies these properties is the skew-geometric Jensen--Shannon divergence ($\JSGa{}$), a generalisation of the Jensen--Shannon ($\JS{}$) divergence \citep{Lin1991}. 
+One divergence measure introduced in \citet{Nielsen2019} which satisfies these properties is the skew-geometric Jensen--Shannon divergence ($\JSGa{}$), which is a generalisation of the Jensen--Shannon ($\JS{}$) divergence \citep{Lin1991}. 
 \todo{Improve definition of P, Q, as measures? Or with detail as to their relation to CE?}
 % The $\JSGa{}$ divergence between two distribution functions $P$ and $Q$ is given by
-The $\JSGa{}$ divergence between two continuous distribution functions $F_1$ and $F_2$ is given by
+The $\JSGa{}$ divergence between two continuous $d$-variate distribution functions, $F_1$ and $F_2$, is given by
 \begin{equation}~\label{eq:jsga}
   % \JSGa{(P \mid\mid Q)} = \frac{1}{2} \left\{\KL{(P \mid\mid G_{\alpha}(P, Q))} + \KL{(Q \mid\mid G_{\alpha}(P, Q))} \right\},
   \JSGa{(F_1 \mid\mid F_2)} = \frac{1}{2} \left\{\KL{(F_1 \mid\mid G_{\lambda}(F_1, F_2))} + \KL{(F_2 \mid\mid G_{\lambda}(F_1, F_2))} \right\},
 \end{equation}
 % where $G_{\alpha}(P, Q) = P^{\alpha} Q^{1 - \alpha}, \alpha \in [0, 1]$ is the weighted geometric mean of $P$ and $Q$, with $\alpha$ controlling the weighting between them, and $\KL{(P \mid\mid Q)}$ is the Kullback--Leibler divergence between $P$ and $Q$ \citep{Kullback1951}. 
-where $G_{\alpha}(F_1, F_2) = F_{1}^{\alpha} F_{2}^{1 - \alpha}, \alpha \in [0, 1]$ is the weighted geometric mean of $F_1$ and $F_2$, and $\KL{(F_1 \mid\mid F_2)}$ is the Kullback--Leibler divergence between $F_1$ and $F_2$, \citep{Kullback1951}, given by 
+where $G_{\lambda}(F_1, F_2) = F_{1}^{\lambda} F_{2}^{1 - \lambda}, \alpha \in [0, 1]$, is the weighted geometric mean of $F_1$ and $F_2$, and $\KL{(F_1 \mid\mid F_2)}$ is the Kullback--Leibler divergence between $F_1$ and $F_2$ \citep{Kullback1951}, given by 
 \begin{equation}~\label{eq:kl}
   % KL(F_1 \mid\mid F_2) = \int_{-\infty}^{\infty} f_1(y) \log\left(\frac{f_1(y)}{f_2(y)}\right) dy,
   \KL{(F_1 \mid\mid F_2)} = \int_{\mathbb{R}^d} f_1(\symbf{y}) \log\left(\frac{f_1(\symbf{y})}{f_2(\symbf{y})}\right) d\symbf{y},
 \end{equation}
 where $f_1$ and $f_2$ are the continuous density functions of $F_1$ and $F_2$, respectively. 
 % Here, $P$ and $Q$ represent the conditional multivariate Gaussian distributions induced by the CE model at two different sites.
-In this context, $F_1$ and $F_2$ represent the conditional multivariate Gaussian distributions induced by the CE model at two different sites, say $s_1$ and $s_2$.
-The parameter $k$ skews the geometric mean $G_{\lambda}(F_1,F_2)\propto F_1^{\lambda}F_{2}^{1-k}$ towards $F_1$ (when $k$ is close to 1) or towards $F_2$ (when $k$ is close to 0). 
+In this context, $F_1$ and $F_2$ will represent the conditional multivariate Gaussian distributions induced by the CE model at two different sites, say $s_1$ and $s_2$.
+The parameter $\lambda$ skews the geometric mean $G_{\lambda}(F_1,F_2)\propto F_1^{\lambda}F_{2}^{1-\lambda}$ towards $F_1$ (when $\lambda$ is close to 1) or towards $F_2$ (when $\lambda$ is close to 0). 
 % When one site has a more reliable CE fit, we set $\alpha$ to a reliability weight $w\in[0,1]$ (e.g.\ proportional to effective sample size), and apply the symmetrised divergence so that the final dissimilarity remains symmetric.
-One possible advantage for having a skew parameter such as $\lambda$ is that in our divergence measure we can favour sites with a more reliable CE fit, as determined by, for example, the effective sample size available for both.
-In this paper, we simply use $\lambda = 0.5$, because each site has a similar number of observations in our simulation and case studies. 
+One possible advantage for having a skew parameter such as $\lambda$ is that in our divergence measure we can favour sites with a more reliable CE fit, as determined by, for example, the effective sample size.
+In this paper, we use $\lambda = 0.5$, because all sites have equal number of observations in both our simulation and case studies. 
 % For our application, we set $\alpha = 0.5$, so that $G_{\alpha}(P, Q)$ is unweighted, but note that $\alpha$ 
 % The Kullback--Leibler (KL) divergence, $KL(P \mid\mid Q)$, is defined as
 % \begin{equation}~\label{eq:kl}
@@ -915,19 +916,19 @@ In this paper, we simply use $\lambda = 0.5$, because each site has a similar nu
 % Explain why it is a good dissimilarity metric to use
 For two multivariate Gaussian distributions, the $\KL{}$ divergence has a closed form, analytical solution \citep{Duchi2007}.
 The $\JSGa{}$ divergence exploits the property that the (weighted) product of two members of the same exponential family is itself a member of the same exponential family distribution. 
-It follows that $G_{k}(F_1, F_2)$ is multivariate Gaussian, and so the $\KL{}$ divergences in Equation~\eqref{eq:jsga} are between multivariate Gaussian distributions and can be computed in closed form.
+It then follows that $G_{\lambda}(F_1, F_2)$ is multivariate Gaussian, and so the $\KL{}$ divergences in Equation~\eqref{eq:jsga} are between multivariate Gaussian distributions and can be computed in closed form.
 Hence, the principle advantage of the $\JSGa{}$ here follows, as it also has a closed form solution for two multivariate Gaussian distributions, and so is computationally efficient to compute \citep{Nielsen2019}.
-The $\JSGa{}$ divergence between two multivariate Gaussian distributions has been used in several applications, including clustering, deep learning, variational inference and remote sensing imagery  \citep{Nielsen2019, Deasy2020, Ni2023-cd, Thiagarajan2025}. \todo{Add more references?}
+The $\JSGa{}$ divergence between two multivariate Gaussian distributions has been used in several applications, including clustering, deep learning, variational inference and remote sensing \citep{Nielsen2019, Deasy2020, Ni2023-cd, Thiagarajan2025}. \todo{Add more references?}
 % Furthermore, it is clearly symmetric and non-negative, as the sum of two $KL$ divergences, which is also important for clustering.
-Furthermore, it is clearly symmetric and non-negative, as the average of two $\KL{}$ divergences.
-Finally, where $\lambda = 0.5$, $\JSGa{}$ is bounded above by
-\begin{equation}~\label{eq:jsga_bound}
-  \JSGa{(F_1 \mid\mid F_2)} \leq \frac{1}{4} \mathrm{J}(F_1 \mid\mid F_2),
-\end{equation}
-where the Jeffreys' divergence $\mathrm{J}(F_1 \mid\mid F_2) = \KL{(F_1 \mid\mid F_2)} + \KL{(Q \mid\mid P)}$ is simply the sum of the forward and backward $\KL{}$ divergences \citep{Nielsen2025}.
+Furthermore, as the average of two $\KL{}$ divergences, it is clearly symmetric and non-negative.
+Finally, when $\lambda = 0.5$, $\JSGa{}$ is bounded above by $\JSGa{(F_1 \mid\mid F_2)} \leq \frac{1}{4} \mathrm{J}(F_1 \mid\mid F_2)$,
+% \begin{equation}~\label{eq:jsga_bound}
+%   \JSGa{(F_1 \mid\mid F_2)} \leq \frac{1}{4} \mathrm{J}(F_1 \mid\mid F_2),
+% \end{equation}
+where the Jeffreys' divergence $\mathrm{J}(F_1 \mid\mid F_2) = \KL{(F_1 \mid\mid F_2)} + \KL{(F_2 \mid\mid F_1)}$ is simply the sum of the forward and backward $\KL{}$ divergences \citep{Nielsen2025}.
 % Therefore, $\JSGa{}$ provides more well-defined clusters than the Jeffreys' divergence, motivating the higher conceptual complexity by comparison. 
-Therefore, the $\JSGa{}$ divergence is less susceptible to runaway distances and numerical instability than this simple sum, and also provides more tightly defined clusters.
-Hence, we identify the $\JSGa{}$ divergence as a suitable measure of dissimilarity for clustering based on the CE model.
+Therefore, the $\JSGa{}$ divergence is less susceptible to numerical instability than this simple sum. %, and also provides more tightly defined clusters.
+Hence, we identify the $\JSGa{}$ divergence as a suitable measure of dissimilarity for clustering CE model fits.
 
 % JSGa form
 % For two multivariate normals, \citet{Nielsen2019} shows that the $\JSGa{}$ divergence introduced in Equation~\eqref{eq:js_norm} has the closed form solution
@@ -1060,7 +1061,7 @@ This procedure allows us to construct a matrix of pairwise dissimilarities, or d
 % Describe clustering process via JS divergence and k-medoids/PAM algorithm (give?
 % See Vignotto)
 
-Using Equation~\eqref{eq:jsga_integral}, we can now contruct a dissimilarity measure to compare two conditional distributions, representing our pairwise ``distances`` between sites. 
+Using Equation~\eqref{eq:jsga_integral}, we can now contruct a dissimilarity measure to compare two conditional distributions, representing our pairwise ``distances'' between sites. 
 We can also aggregate these distances across multiple conditioning variables to pool information across multiple comparisons. 
 % PAM (K-means not suitable as clusters cannot be assumed to be spherical) (see
 % Vignotto)

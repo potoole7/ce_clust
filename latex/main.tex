@@ -213,6 +213,12 @@
 \newcommand{\rhou}[1]{\rho_{\text{#1}}}
 \newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
 
+\newcommand{\rG}[1]{\rho_{\mathrm{Gauss}}_{#1}}
+\newcommand{\rT}[1]{\rho_{t}_{#1}}
+\newcommand{\RG}[1]{\Sigma_{\mathrm{Gauss}}^{#1}}   % JxJ correlation matrix
+\newcommand{\RT}[1]{\Sigma_{t}^{#1}}                % JxJ correlation matrix
+\newcommand{\LapTrans}{T_{\mathrm{Laplace}}}
+
 % fix setminus for unicode-math
 \setmathfont[range=\setminus]{Asana Math}
 
@@ -802,7 +808,7 @@ Some special cases (for $j\in\{1,\ldots,d\}\setminus i$) of the CE model are:
 Recall that we fit the CE model at different spatial sites. 
 % To allow for spatial variation, we may index by site $s \in \mathcal{S}$, and allow regression parameters to vary by site. 
 To denote spatial variation, we index the random vectors by spatial location $\mathcal{s} \in \left(s_1, \ldots, s_D\right)$, where $s_i \in \mathbb{R}^2, i = 1, \ldots, D$, and $D$ is the number of spatial locations. 
-This leads to the spatially indexed extension of Equation \eqref{eq:ce_model}, where we have the site-specific random vector $\symbf{Y}(s) \in \mathbb{R}^d$ for $\mathcal{s} \in (s_1, \ldots, s_d)$, and
+This leads to the spatially indexed extension of Equation~\eqref{eq:ce_model}, where we have the site-specific random vector $\symbf{Y}(s) \in \mathbb{R}^d$ for $\mathcal{s} \in (s_1, \ldots, s_d)$, and
 \begin{equation} \label{eq:ce_model_spat}
   \bigl(\symbf{Y}_{-i}(s) \mid Y_i(s) = y\bigr) 
     = \symbf{\alpha}_{\mid i}(s) \, y 
@@ -851,7 +857,7 @@ where $\symbf{\alpha}_{\mid i}(s), \symbf{\beta}_{\mid i}(s), \symbf{\mu}_{\mid 
 % Therefore, under this model, when comparing the multivariate tail dependence structure at different sites, we are effectively comparing the conditional distributions given by Equation~\eqref{eq:ce_norm}.
 % Therefore, to compare tail dependence at different sites, we can compare the conditional distributions in \eqref{eq:ce_norm}, i.e.\ the induced multivariate Gaussian distributions parameterised by $(\symbf{\alpha}_{\mid i}^{(\CE{})},\symbf{\beta}_{\mid i}^{(\CE{})},\symbf{\mu}_{\mid i}^{(\CE{})},\Sigma_{\mid i}^{(\CE{})})$ (or a chosen subset thereof).
 % Therefore, to compare tail dependence at different sites, we can compare the conditional distributions in \eqref{eq:ce_norm}, i.e.\ the induced multivariate Gaussian distributions parameterised by $(\symbf{\alpha}_{\mid i},\symbf{\beta}_{\mid i},\symbf{\mu}_{\mid i},\Sigma_{\mid i})$ (or a chosen subset thereof).
-Therefore, to compare tail dependence at different sites, we can compare the conditional distributions in \eqref{eq:ce_norm}, i.e.\ the assumed multivariate Gaussian distributions parameterised by $(\symbf{\alpha}_{\mid i}(s),\symbf{\beta}_{\mid i}(s),\symbf{\mu}_{\mid i}(s),\Sigma_{\mid i}(s))$ (or a chosen subset thereof).
+Therefore, to compare tail dependence at different sites, we can compare the conditional distributions in Equation~\eqref{eq:ce_norm}, i.e.\ the assumed multivariate Gaussian distributions parameterised by $(\symbf{\alpha}_{\mid i}(s),\symbf{\beta}_{\mid i}(s),\symbf{\mu}_{\mid i}(s),\Sigma_{\mid i}(s))$ (or a chosen subset thereof).
 
 % Estimation
 The model parameters $\symbf{\alpha}_{\mid i}(s), \symbf{\beta}_{\mid i}(s), \symbf{\mu}_{\mid i}(s), \Sigma_{\mid i}(s)$ in Equation~\eqref{eq:ce_norm} are estimated at each site $s$ using maximum likelihood estimation.
@@ -1046,7 +1052,7 @@ This procedure allows us to construct a matrix of pairwise dissimilarities, or d
 % Describe clustering process via JS divergence and k-medoids/PAM algorithm (give?
 % See Vignotto)
 
-Using equation~\eqref{eq:jsga_integral}, we can now contruct a dissimilarity measure to compare two conditional distributions, representing our pairwise ``distances`` between sites. 
+Using Equation~\eqref{eq:jsga_integral}, we can now contruct a dissimilarity measure to compare two conditional distributions, representing our pairwise ``distances`` between sites. 
 We can also aggregate these distances across multiple conditioning variables to pool information across multiple comparisons. 
 % PAM (K-means not suitable as clusters cannot be assumed to be spherical) (see
 % Vignotto)
@@ -1088,75 +1094,156 @@ We then plot $\mathrm{TWGSS}(k)$ vs.\ $k$, and choose $k^*$, the optimal number 
 \section{Simulation study}~\label{sec:sim}
 % Introduce section
 % Throughout this section, we evaluate the effectiveness of our clustering method using a simulation study.
-Throughout this section, we assess the performance of our clustering method through a simulation study. 
+% Throughout this section, we assess the performance of our clustering method through a simulation study. 
+We illustrate performance of our clustering approach using simulated data. 
+Clustering accuracy is evaluated using the adjusted Rand index (ARI) of \citet{Hubert1985-ys}, which measures similarity between the true and estimated clustering solutions, adjusted for chance.
 % In Section~\ref{subsec:sim_gauss}, a simple simulation design using a Gaussian copula to generate data is described. 
 % This data has the advantage of having theoretical asymptotic values for the CE parameters, to which we can directly compare our finite simulation estimates, as a test to ensure that our clustering is working as desired, reducing uncertainty in parameter estimates. 
-Section~\ref{subsec:sim_gauss} introduces a simple design based on the Gaussian copula, which provides known asymptotic values for the CE parameters. 
-These allow us to benchmark our finite-sample estimates and verify that clustering reduces estimation uncertainty. 
+% Section~\ref{subsec:sim_gauss} introduces a simple design based on the Gaussian copula, which provides known asymptotic values for the CE parameters. 
+In Section~\ref{subsec:sim_gauss}, we generate data from a Gaussian copula for which the parameters of the CE model are available in closed form \citep{Keef2013}.
+% These allow us to benchmark our finite-sample estimates and verify that clustering reduces estimation uncertainty. 
+This allows us to verify that our clustering approach reduces the estimation uncertainty and to investigate the sensitivity to the threshold.
 % In Section~\ref{subsec:sim_mixture}, we extend this study to a more complex simulation design using a mixture of Gaussian and t-copulas, for a variety of simple and more complex dependence structures and scenarios. 
 Section~\ref{subsec:sim_mixture} extends the study to more complex scenarios, using mixtures of Gaussian and $t$-copulas to generate a range of dependence structures. 
 % We evaluate our clustering solution using the adjusted rand index (ARI), and in Section~\ref{subsubsec:boot} ascertain the improvement of parameter estimation post-clustering using a bootstrapping scheme. 
-We evaluate clustering accuracy using the adjusted Rand index (ARI), and in Section~\ref{subsubsec:boot} examine improvements in parameter estimation through a bootstrap resampling scheme \citet{Hubert1985-ys}.
+% We evaluate clustering accuracy using the adjusted Rand index (ARI), and in Section~\ref{subsubsec:boot} examine improvements in parameter estimation through a bootstrap resampling scheme \citet{Hubert1985-ys}.
 
 \subsection{Gaussian copula}~\label{subsec:sim_gauss}
 
 % Single location
-We first consider a simple simulation design based on the Gaussian copula.  
-% Our Gaussian copula simulation design for a single ``location'', nomenclature chosen to match the spatial nature of our applications, is as follows:
-% We generate multivariate data from a bivariate Gaussian copula, where we control the dependence structure through its correlation parameter, $\rhou{Gauss}$. 
-For a single ``location'', terminology chosen to reflect our spatial application, we generate bivariate data from a Gaussian copula with correlation parameter $\rho^{\text{Gauss}}$, which controls the dependence structure.  
-\citet{Keef2013} show that for a bivariate Gaussian copula, the asymptotic CE parameters are $\alpha = \text{sign}(\rho^{\text{Gauss}}) (\rho^{\text{Gauss}})^2$ and $\beta = 1/2$, implying asymptotic independence.  
-% \citet{Keef2013} show that for a bivariate Gaussian copula, the asymptotic CE parameters are $\alpha^{(\CE{})} = \rhou{Gauss}^2$ and $\beta^{(\CE{})} = 1/2$, corresponding to asymptotic independence.
-% \item We sample from this copula and transform to GPD margins with shape $\xi = -0.05$, scale $\sigma = 1$, to generate our data. \todo{mention why we chose these?}
-% \item Each variable in this multivariate dataset may represent, for example, a meteorological or air pollution variable at a given location.
-% \item We can then transform to Laplace margins and use the CE model to estimate the multivariate extremal dependence structure at this location.
-% We sample from this copula and transform to Laplace margins and use the CE model to estimate the bivariate extremal dependence structure at this location.
-We sample from this copula, transform to Laplace margins, and then fit the CE model to estimate the extremal dependence structure at the location.
+% We first consider a simple simulation design based on the Gaussian copula.  
+% % Our Gaussian copula simulation design for a single ``location'', nomenclature chosen to match the spatial nature of our applications, is as follows:
+% % We generate multivariate data from a bivariate Gaussian copula, where we control the dependence structure through its correlation parameter, $\rhou{Gauss}$. 
+% For a single ``location'', terminology chosen to reflect our spatial application, we generate bivariate data from a Gaussian copula with correlation parameter $\rho^{\text{Gauss}}$, which controls the dependence structure.  
+% \citet{Keef2013} show that for a bivariate Gaussian copula, the asymptotic CE parameters are $\alpha = \text{sign}(\rho^{\text{Gauss}}) (\rho^{\text{Gauss}})^2$ and $\beta = 1/2$, implying asymptotic independence.  
+% % \citet{Keef2013} show that for a bivariate Gaussian copula, the asymptotic CE parameters are $\alpha^{(\CE{})} = \rhou{Gauss}^2$ and $\beta^{(\CE{})} = 1/2$, corresponding to asymptotic independence.
+% % \item We sample from this copula and transform to GPD margins with shape $\xi = -0.05$, scale $\sigma = 1$, to generate our data. \todo{mention why we chose these?}
+% % \item Each variable in this multivariate dataset may represent, for example, a meteorological or air pollution variable at a given location.
+% % \item We can then transform to Laplace margins and use the CE model to estimate the multivariate extremal dependence structure at this location.
+% % We sample from this copula and transform to Laplace margins and use the CE model to estimate the bivariate extremal dependence structure at this location.
+% We sample from this copula, transform to Laplace margins, and then fit the CE model to estimate the extremal dependence structure at the location.
 
-% Multiple locations
-% We can easily extend this design by generating multiple locations with different $\rhou{Gauss}$ values.
-This design extends naturally to multiple locations by varying $\rho^{\text{Gauss}}$ across sites.  
-% The knowledge of these parameters provides our ``known'' clustering solution.
-The collection of correlation values defines the ``true'' clustering structure.  
-% For example, we could generate data for four locations, the first cluster being two locations with $\rhou{Gauss} = 0.1$, and the second having $\rhou{Gauss} = 0.9$ for its two locations.
-For example, we may generate data for four locations: two with $\rho^{\text{Gauss}} = 0.1$ and two with $\rho^{\text{Gauss}} = 0.9$, corresponding to two clusters.  
-% We can use the CE model to estimate the bivariate extremal dependence structure at each location, and then apply the $\JSGa{}$ divergence to cluster these locations based on the similarity of the estimated CE parameters.
-We then estimate the CE parameters at each site and apply the $\JSGa{}$ divergence to cluster locations based on the similarity of their extremal dependence structures.  
-% These simulations can be repeated many times and we can evaluate the clustering solution using the ARI, and observe the bias and variance of our simulation estimates around their theoretical values.
-Repeating this procedure many times allows us to assess clustering performance using the ARI and quantify the bias and variance of the finite-sample CE parameter estimates relative to their theoretical asymptotic values.
+% % Single location
+% We first consider a simple simulation design based on the Gaussian copula.  
+% % Our Gaussian copula simulation design for a single ``location'', nomenclature chosen to match the spatial nature of our applications, is as follows:
+% % We generate multivariate data from a bivariate Gaussian copula, where we control the dependence structure through its correlation parameter, $\rhou{Gauss}$. 
+% For a single ``location'', terminology chosen to reflect our spatial application, we generate bivariate data from a Gaussian copula with correlation parameter $\rho^{\text{Gauss}}$, which controls the dependence structure.  
+% \citet{Keef2013} show that for a bivariate Gaussian copula, the asymptotic CE parameters are $\alpha = \text{sign}(\rho^{\text{Gauss}}) (\rho^{\text{Gauss}})^2$ and $\beta = 1/2$, implying asymptotic independence.  
+% % \citet{Keef2013} show that for a bivariate Gaussian copula, the asymptotic CE parameters are $\alpha^{(\CE{})} = \rhou{Gauss}^2$ and $\beta^{(\CE{})} = 1/2$, corresponding to asymptotic independence.
+% % \item We sample from this copula and transform to GPD margins with shape $\xi = -0.05$, scale $\sigma = 1$, to generate our data. \todo{mention why we chose these?}
+% % \item Each variable in this multivariate dataset may represent, for example, a meteorological or air pollution variable at a given location.
+% % \item We can then transform to Laplace margins and use the CE model to estimate the multivariate extremal dependence structure at this location.
+% % We sample from this copula and transform to Laplace margins and use the CE model to estimate the bivariate extremal dependence structure at this location.
+% We sample from this copula, transform to Laplace margins, and then fit the CE model to estimate the extremal dependence structure at the location.
+% 
+% For a single ``location'', terminology chosen to reflect our spatial application, we generate bivariate data from a Gaussian copula with correlation parameter $\rho_{\text{Gauss}}$, which controls the dependence structure.  
+% Let
+% \[
+% \Sigma(\rho_{\text{Gauss}})=
+% \begin{pmatrix}
+% 1 & \rho_{\text{Gauss}}\\[4pt]
+% \rho_{\text{Gauss}} & 1
+% \end{pmatrix}.
+% \]
+% We sample
+% \[
+%   (Z_1,Z_2)^\top \sim \mbox{MVN}\big(0,\Sigma(\rho_{\text{Gauss}})\big),
+% \qquad
+% X_i=\Phi(Z_i),\ i=1,2
+% \]
+% where $\Phi$ is the standard normal CDF. 
+% \citet{Keef2013} show that the asymptotic CE parameters for the bivariate Gaussian copula are $\alpha=\operatorname{sign}(\rho_{\text{Gauss}})\,(\rho_{\text{Gauss}})^2$ and $\beta=1/2$, which imply asymptotic independence.  
+% We sample from this copula, transform to Laplace margins as in \eqref{eq:laplace_transform}, and then fit the CE model to estimate the extremal dependence structure at the location.
+% 
+% % Multiple locations
+% % We can easily extend this design by generating multiple locations with different $\rhou{Gauss}$ values.
+% This design extends naturally to multiple locations by varying $\rho_{\text{Gauss}}$ across sites.  
+% % The knowledge of these parameters provides our ``known'' clustering solution.
+% The collection of correlation values defines the ``true'' clustering structure.  
+% % For example, we could generate data for four locations, the first cluster being two locations with $\rhou{Gauss} = 0.1$, and the second having $\rhou{Gauss} = 0.9$ for its two locations.
+% For example, we may generate data for four locations: two with $\rho_{\text{Gauss}} = 0.1$ and two with $\rho_{\text{Gauss}} = 0.9$, corresponding to two clusters.  
+% % We can use the CE model to estimate the bivariate extremal dependence structure at each location, and then apply the $\JSGa{}$ divergence to cluster these locations based on the similarity of the estimated CE parameters.
+% We then estimate the CE parameters at each site and apply the $\JSGa{}$ divergence to cluster locations based on the similarity of their extremal dependence structures.  
+% % These simulations can be repeated many times and we can evaluate the clustering solution using the ARI, and observe the bias and variance of our simulation estimates around their theoretical values.
+% Repeating this procedure many times allows us to assess clustering performance using the ARI and quantify the bias and variance of the finite-sample CE parameter estimates relative to their theoretical asymptotic values.
+% 
+% % Results
+% % To this end, we generated data for 12 locations each with 1000 observations of two variables using the above design.
+% To this end, we generated data for 12 locations, each with 1000 observations of two variables, using the design described above.  
+% % Three known clusters of four locations each were designated as having $\rhou{Gauss}$ values of 0.1, 0.5, and 0.9, respectively.
+% Three known clusters of four locations each were assigned correlation values $\rho_{\text{Gauss}} = 0.1, 0.5,$ and $0.9$, respectively.  
+% Conditional quantiles of 0.9 and 0.99 were used to estimate the CE model parameters before and after clustering. 
+% % The number of clusters $k$ was ascertained using the method described in Section~\ref{subsubsec:choose_k}, and was found to be $k = 3$.
+% The number of clusters $k$ was selected using the method in Section~\ref{subsubsec:choose_k}, yielding $k = 3$.  
+% Simulations were repeated 500 times, and the results are shown in Figure~\ref{fig:00_gauss_cop}.  
 
-% Results
-% To this end, we generated data for 12 locations each with 1000 observations of two variables using the above design.
-To this end, we generated data for 12 locations, each with 1000 observations of two variables, using the design described above.  
-% Three known clusters of four locations each were designated as having $\rhou{Gauss}$ values of 0.1, 0.5, and 0.9, respectively.
-Three known clusters of four locations each were assigned correlation values $\rho^{\text{Gauss}} = 0.1, 0.5,$ and $0.9$, respectively.  
-Conditional dependence quantiles of 0.9 and 0.99 were used to estimate the CE model parameters before and after clustering. 
-% The number of clusters $k$ was ascertained using the method described in Section~\ref{subsubsec:choose_k}, and was found to be $k = 3$.
-The number of clusters $k$ was selected using the method in Section~\ref{subsubsec:choose_k}, yielding $k = 3$.  
-Simulations were repeated 500 times, and the results are shown in Figure~\ref{fig:00_gauss_cop}.  
+% Sim design
+We first consider a simulation design based on the Gaussian copula.  
+We consider $S=12$ ``locations'', each associated with two variables. 
+Data are generated independently across sites, with $n=1000$ bivariate observations per location.  
+% At site $s=1,\dots,S$, dependence is introduced through a Gaussian copula with correlation parameter $\rho_{\text{Gauss},s}$.
+At each site $s=1,\dots,S$, dependence is introduced through a Gaussian copula with correlation parameter $\rho_{\text{Gauss}}^s$.
+
+% Per-site sampling
+For each site, let
+\[
+\Sigma(\rho_{\text{Gauss}}^s)=
+\begin{pmatrix}
+1 & \rho_{\text{Gauss}}^s\\[4pt]
+\rho_{\text{Gauss}}^s & 1
+\end{pmatrix}.
+\]
+We draw
+\[
+  (Z_{1},Z_{2})^\top \sim \mbox{MVN}\big(0,\Sigma(\rho_{\text{Gauss}}^s)\big),
+\qquad
+U_i=\Phi(Z_i),\ i=1,2,
+\]
+where $\Phi$ is the standard normal CDF.  
+The uniforms $(U_1,U_2)$ are then transformed to standard Laplace margins as in Equation~\eqref{eq:laplace}, yielding the observed pair $(X_1,X_2)$ at site $s$.
+
+% Parameter choices and true clustering
+The sites are arranged into three latent clusters of equal size, defined by their copula correlations. 
+As a proof of concept, we choose well-separated values to ensure clear clustering.
+Specifically, the first cluster, comprising sites 1 to 4, has $\rho_{\text{Gauss}}^s=0.1, s = 1, \ldots, 4$, the second cluster has $\rho_{\text{Gauss}}^s=0.5, s = 5, \ldots, 8$ 
+and the third cluster has $\rho_{\text{Gauss}}^s=0.9, s = 9, \ldots, 12$.
+These values determine the ground-truth clustering structure against which methods are evaluated.
+
+% Estimation
+% At each site the CE model is fitted using conditional quantile levels $q=0.9$ and $q=0.99$, equivalent to taking the largest 100 and 10 observations of the conditioning variable, respectively, to estimate the dependence structure between the two variables as described by the CE parameters $\alpha$ and $\beta$.
+After data generation, the conditional extremes (CE) model is fitted at each site using conditional quantile levels \(q=0.9\) and \(q=0.99\), equivalent to using the largest 100 and 10 observations of the conditioning variable, respectively.
+% Pairwise dissimilarities between sites are computed using the $\JSGa{}$ divergence, and clusters are identified using PAM, following the procedure in Section~\ref{subsec:clustering}.
+% Pairwise dissimilarities between sites are computed using the $\JSGa{}$ divergence between the fitted CE models for $X_1 \mid X_2$ and $X_2 \mid X_1$, which are averaged to obtain a single dissimilarity measure. 
+Pairwise dissimilarities between sites are computed using the expected divergence from Equation~\eqref{eq:jsga_integral}, averaged over both conditioning directions, \(X_1 \mid X_2\) and \(X_2 \mid X_1\), to obtain a single dissimilarity measure.
+Clusters are identified using the PAM algorithm, following Section~\ref{subsec:clustering}. 
+\citet{Keef2013} show that for a bivariate Gaussian copula, the asymptotic CE parameters are $\alpha = \text{sign}(\rho_{\text{Gauss}}) (\rho_{\text{Gauss}})^2$ and $\beta = 1/2$, implying asymptotic independence.  
+These theoretical values serve as the reference for the CE estimates.
+% Simulations are repeated 500 times, with performance assessed via the ARI and by comparing finite-sample CE estimates to these asymptotic values.
+Simulations are repeated 500 times, with performance assessed via the ARI and by comparing finite-sample CE estimates to these asymptotic benchmarks. 
+% Across all simulations, the correct number of clusters, $k=3$, was identified using the elbow method described in Section~\ref{subsubsec:choose_k}, and the ARI was always equal to 1, indicating perfect clustering, as expected given such well-separated clusters.
+% Figure~\ref{fig:00_gauss_cop} summarises the results.
 
 % The estimation of $k$ through the elbow method and the ARI for this simple, well-defined example were perfect across all simulations.
-The elbow method consistently recovered the correct number of clusters, and the ARI was perfect across all simulations.  
+% The elbow method consistently recovered the correct number of clusters, and the ARI was perfect across all simulations.  
 % Several interesting points can be made from the results.
 % Pre-clustering, the CE model estimates have greater uncertainty, especially for $\beta$, where the bias is also larger.
-Pre-clustering, CE parameter estimates exhibit considerable uncertainty, particularly for $\beta$, where bias is also more pronounced. \todo{beta hat?}
-% This is especially the case for the higher dependence quantile, where data is scarcer, although this also corresponds to less bias, with the true values lying within the first and third quantiles of each boxplot for almost all scenarios, as we take our data from further into the tail, where convergence to the asymptotic values is better.
-This effect is strongest at the higher conditional quantile (0.99), where data are scarcer.  
-However, estimates at this level display less bias overall, with true values typically lying between the first and third quartiles of the boxplots, reflecting improved convergence to the asymptotic parameters further into the tail.  
-% Bias and variance are lower for higher $\rhou{Gauss}$, which appears to also be associated with better convergence to these theoretical asymptotic values.
-Bias and variance both decrease with increasing $\rhou{Gauss}$, suggesting faster convergence under stronger dependence.  
+% Pre-clustering, CE parameter estimates exhibit considerable uncertainty, particularly for $\beta$, where bias, defined as the difference between the finite-sample estimate and the asymptotic parameter, is also more pronounced. \todo{beta hat?}
+% This effect is strongest at the higher conditional quantile (0.99), where data are scarcer.  
+% However, estimates at this level display less bias overall, with true values typically lying between the first and third quartiles of the boxplots, reflecting improved convergence to the asymptotic parameters further into the tail.  
+% % Bias and variance are lower for higher $\rhou{Gauss}$, which appears to also be associated with better convergence to these theoretical asymptotic values.
+% Bias and variance both decrease with increasing $\rhou{Gauss}$, suggesting faster convergence under stronger dependence. \todo{Need to switch to s superscript in plots and here?}
+% These same patterns are present post-clustering, but with reduced variability in the estimates, especially in the problematic cases of estimating $\beta$ and for the higher conditional quantile level, as desired. \todo{Quote any specific values? Or are plots self-evident?}
 
-% % Post-clustering, the same patterns emerge, but the variability in the estimates is reduced, especially in the problematic cases of estimating $\beta$ and for the higher conditional quantile level, as desired. \todo{Quote any specific values? Or are plots self-evident?}
-% After pooling data within clusters, the variability in the estimates is reduced, especially in the problematic cases of estimating $\beta$ and for the higher conditional quantile level, as desired. \todo{Quote any specific values? Or are plots self-evident?}
-After pooling data within clusters, variability in the estimates is substantially reduced, most notably for $\beta$ and for the 0.99 quantile level.  
-The same qualitative patterns remain, but with improved precision, as desired.  
+Figure~\ref{fig:00_gauss_cop} shows that our approach is able to reduce the uncertainty in the estimates for both $\alpha$ and $\beta$ for all considered conditioning quantiles. 
+Bias, as defined as the difference between the finite-sample estimate and the asymptotic parameter, and variance also decrease with increasing $\rho_{\text{Gauss}}$, indicating faster convergence under stronger dependence. 
+We observe a bias-variance tradeoff in the choice of quantile for the CE model, with the higher quantile ($q=0.99$) yielding less biased estimates, as expected due to improved convergence to the asymptotic parameters further into the tail, but with greater variance due to data scarcity.
 
 \begin{figure}[H]
     \centering
     % \includegraphics[width = 0.9\linewidth]{plots/sim_01_gauss_cop.png}
     \includegraphics[width = 0.9\linewidth]{plots/sim_01_gauss_cop_man.png}
     % \caption{Boxplots of \emph{$\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$ parameter estimates for the conditional extremes model pre- and post-clustering for a bivariate Gaussian copula simulation of 12 datasets, or ``locations'', each with 1000 observations of each variable, belonging equally to three known clusters. Simulations were repeated 500 times. The x-axis represents the conditional quantile used to fit the conditional extremes model, and the boxes are coloured by their Gaussian copula correlation parameter, $\rhou{Gauss}$. Dotted horizontal lines indicate the theoretical asymptotic values of $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$ for a bivariate Gaussian copula, coloured by the same $\rhou{Gauss}$ values for $\alpha^{(\CE{})}$ and black for $\beta^{(\CE{})}$ to indicate the same value across all clusters, at $1/2$.}}
-    \caption{Boxplots of \emph{$\alpha$ and $\beta$ parameter estimates for the conditional extremes model pre- and post-clustering for a bivariate Gaussian copula simulation of 12 datasets, or ``locations'', each with 1000 observations of each variable, belonging equally to three known clusters. Simulations were repeated 500 times. The x-axis represents the conditional quantile used to fit the conditional extremes model, and the boxes are coloured by their Gaussian copula correlation parameter, $\rhou{Gauss}$. Dotted horizontal lines indicate the theoretical asymptotic values of $\alpha$ and $\beta$ for a bivariate Gaussian copula, coloured by the same $\rhou{Gauss}$ values for $\alpha$ and black for $\beta$ to indicate the same value across all clusters, at $1/2$.}}
+    \caption{\emph{Boxplots of $\alpha$ and $\beta$ parameter estimates for the conditional extremes model pre- and post-clustering for a bivariate Gaussian copula simulation of 12 datasets, or ``locations'', each with 1000 observations of each variable, belonging equally to three known clusters. Simulations were repeated 500 times. The x-axis represents the conditional quantile used to fit the conditional extremes model, and the boxes are coloured by their Gaussian copula correlation parameter, $\rhou{Gauss}$. Dotted horizontal lines indicate the theoretical asymptotic values of $\alpha$ and $\beta$ for a bivariate Gaussian copula, coloured by the same $\rhou{Gauss}$ values for $\alpha$ and black for $\beta$ to indicate the same value across all clusters, at $1/2$.}}
    ~\label{fig:00_gauss_cop}
 \end{figure}
 
@@ -1166,77 +1253,174 @@ The same qualitative patterns remain, but with improved precision, as desired.
 % In this section, we extend our simulation design to a mixture of Gaussian and t-copulas, where we control the dependence structure through their respective correlation parameters, $\rhou{Gauss}$ and $\rhou{t}$, with each t-copula having 3 degrees of freedom.
 % The idea behind this design is that the Gaussian copula generates observations exhibiting extremal independence, whereas the t-copula induces extremal dependence, the strength of which is determined by their respective correlation parameters.
 % While there are no theoretical guarantees about our estimates, we can still evaluate our clustering solution for this more difficult setting using the ARI.
-We next extend our simulation design to mixtures of Gaussian and $t$-copulas, with dependence controlled by their respective correlation parameters, $\rhou{Gauss}$ and $\rhou{t}$, and the $t$-copula fixed at 3 degrees of freedom.  
-The idea is that the Gaussian copula induces asymptotic independence, while the $t$-copula induces asymptotic dependence, with strength determined by $\rho^{t}$.  
+
+We next extend our simulation design to mixtures of Gaussian and $t$-copulas \citep{Demarta2007-ap}.
+% The idea is that the Gaussian copula induces asymptotic independence, while the $t$-copula induces asymptotic dependence, with strength determined by $\rho^{t}$.  
+The idea is that the Gaussian copula will induce asymptotic independence, while the $t$-copula will induce asymptotic dependence, whose strength is determined by $\rho_{t}$, the correlation parameter of the $t$-copula.
 Although no theoretical CE parameter values are available in this setting, clustering performance can still be assessed via the ARI.  
 
+% We next extend our simulation design to mixtures of Gaussian and $t$-copulas.
+% More formally, the mixture copula is defined as
+% \[
+%   C_{\text{mix}}(u_1,u_2)= \tfrac{1}{2}\,C_{\text{t},\nu=3}(u_1,u_2;\Sigma(\rho_{\text{t}}^s)) +
+%   \tfrac{1}{2}\,C_{\text{Gauss}}(u_1,u_2;\Sigma(\rho_{\text{Gauss}}^s)),
+% \]
+% where $C_{\text{Gauss}}$ and $C_{\text{t},\nu=3}$ are the bivariate Gaussian and $t$ copulas with correlation matrices $\Sigma(\rho_{\text{Gauss}}^s)$ and $\Sigma(\rho_{\text{t}}^s)$ respectively, and $\nu$ is the degrees of freedom parameter of the $t$-copula, fixed at $\nu=3$ throughout.
+
+% Formally, for site $s=1,\dots,S$ we define the mixture copula
+% \[
+%   C_{\mathrm{\text{mix}}}^{s}(u_1,u_2)
+%   \;=\; \tfrac{1}{2}\,C_{t,\nu=3}\big(u_1,u_2;\Sigma(\rT{s})\big)
+%        \;+\; \tfrac{1}{2}\,C_{\mathrm{Gauss}}\big(u_1,u_2;\Sigma(\rG{s})\big),
+% \]
+% where \(C_{\mathrm{Gauss}}\) and \(C_{t,\nu=3}\) denote the bivariate Gaussian and $t$ copulas, respectively, with correlation matrices
+% \[
+% \Sigma(\rG{s})=\begin{pmatrix}1 & \rG{s}\\[4pt]\rG{s} & 1\end{pmatrix},\qquad
+% \Sigma(\rT{s})=\begin{pmatrix}1 & \rT{s}\\[4pt]\rT{s} & 1\end{pmatrix},
+% \]
+% and the $t$-copula degrees of freedom are fixed at \(\nu=3\).
+% 
+% We implement an exact 50/50 composition of Gaussian and $t$-copulas at each site.  At site $s$, we draw \(m=n/2\) observations from the bivariate Gaussian copula with correlation matrix \(\Sigma(\rG{s})\) and independently draw \(m=n/2\) observations from the bivariate $t$-copula with correlation matrix \(\Sigma(\rT{s})\).  The two halves are then pooled to give \(n\) observations at site \(s\). 
+% 
+% More precisely, for the Gaussian half we draw
+% \[
+%   (Z_{ij}^{s},Z_{i2}^{s})^\top \sim \mbox{MVN}\big(0,\Sigma(\rG{s})\big),\quad i=1,\dots,m, 
+% \]
+% and for the $t$ half
+% \[
+% (Z_{i1}^{s},Z_{i2}^{s})^\top \sim \mathrm{MVT}_{\nu=3}\big(0,\Sigma(\rT{s})\big),\quad i=m+1,\dots,n.
+% \]
+% We then transform these latent draws to uniform margins using the appropriate CDFs:
+% \[
+% U_{ij}^{(s)} =
+% \begin{cases}
+% \Phi\big(Z_{ij}^{(s)}\big), & i=1,\dots,m,\\[6pt]
+% F_{t_3}\big(Z_{ij}^{(s)}\big), & i=m+1,\dots,n,
+% \end{cases}
+% \qquad j=1,2,
+% \]
+% where \(\Phi\) and \(F_{t_3}\) are the standard normal and \(t_3\) CDFs.  
+% We then apply the Laplace quantile map to every uniform:
+% Finally, we apply the Laplace transformation as described in~\eqref{eq:laplace} to obtain the Laplace-scale pairs \((Y_{1}^{(s)},Y_{2}^{(s)})\) at site \(s\).
+
+More formally, for site $s=1,\dots,S$ and dimension $J\ge2$, let $\RG{s},\RT{s}\in\mathbb{R}^{J\times J}$ be correlation matrices where $\RG{s}$ has all off-diagonal entries equal to $\rhou{Gauss}^s$ and $\RT{s}$ has all off-diagonal entries equal to $\rhou{t}^s$, and all diagonal entries equal to 1 for both.
+We define the $J$-variate mixture copula
+\begin{equation} ~\label{eq:mix_copula}
+  C_{\mathrm{mix}}^{(s)}(\mathbf{u})
+  \;=\; \tfrac{1}{2}\,C_{t,\nu=3}\!\big(\mathbf{u};\RT{s}\big)
+       \;+\; \tfrac{1}{2}\,C_{\mathrm{Gauss}}\!\big(\mathbf{u};\RG{s}\big),
+  \qquad \mathbf{u}\in[0,1]^J,
+\end{equation}
+i.e.\ an equal-weight combination of the $J$-variate $t$-copula (with $\nu=3$ degrees of freedom) and the $J$-variate Gaussian copula.
+
+At site $s$, we generate an exact half–half sample of size $n$ by drawing $m=n/2$ observations from each component. 
+Let $\mathbf{Z}_{i}^{(s)}\in\mathbb{R}^J$ denote latent vectors. We sample
+\todo{Check if each line is numbered}
+\begin{equation} ~\label{eq:mix_latent}
+\begin{aligned}
+&\text{Gaussian half:}\quad &&\mathbf{Z}_{i}^{(s)} \sim \mbox{MVN}_J\!\big(\mathbf{0},\RG{s}\big),
+&& i=1,\dots,m,\\[2pt]
+&\text{$t$ half:}\quad      &&\mathbf{Z}_{i}^{(s)} \sim \mbox{MVT}_{J,\nu=3}\!\big(\mathbf{0},\RT{s}\big),
+&& i=m+1,\dots,n,
+\end{aligned}
+\end{equation}
+where $\mbox{MVT}_{J, \nu = 3}$ denotes the $J$-variate $t$ distribution with $\nu=3$ degrees of freedom.
+We map these latent draws to uniforms componentwise using the appropriate univariate CDF:
+\[
+U_{ij}^{(s)} =
+\begin{cases}
+\Phi\!\big(Z_{ij}^{(s)}\big), & i=1,\dots,m,\\[4pt]
+F_{t_3}\!\big(Z_{ij}^{(s)}\big), & i=m+1,\dots,n,
+\end{cases}
+\qquad j=1,\dots,J,
+\]
+where $\Phi$ and $F_{t_3}$ are the standard normal and univariate $t$ CDFs, respectively.
+Pooling the $n$ uniforms $\{\mathbf{U}_{i}^{(s)}\}_{i=1}^n$ yields a size-$n$ sample from the 50/50 mixture copula $C_{\mathrm{mix}}^{(s)}$, up to ordering. 
+Finally, we apply the Laplace transformation as described in Equation~\eqref{eq:laplace} to obtain the Laplace-scale pairs \((Y_{1}^{(s)},Y_{2}^{(s)})\) at site \(s\).
+
 % Below, we will describe the results of this simulation study in a variety of scenarios, as defined by a grid search over possible $\rhou{Gauss}$ and $\rhou{t}$ values. 
-We consider a range of scenarios defined by a grid search over $\rhou{Gauss}$ and $\rhou{t}$ values.  
+We consider a range of scenarios defined by a grid search over $\rhou{Gauss}$ and $\rhou{t}$ values, and for different numbers of sites and variables. 
 % In Section~\ref{subsubsec:sim_competing_methods}, we compare our method to the leading competitor in the bivariate case, \cite{Vignotto2021}, and also show how our clustering algorithm uniquely provides a tool for clustering in the multivariate extremal dependence setting in  Section~\ref{subsubsec:sim_extension}.
-In Section~\ref{subsubsec:sim_competing_methods}, we compare our method to the leading competitor in the bivariate case \citep{Vignotto2021}, and in Section~\ref{subsubsec:sim_extension} we show how our approach uniquely handles clustering in the multivariate extremal dependence setting.  
+% In Section~\ref{subsubsec:sim_competing_methods}, we compare our method to the leading competitor in the bivariate case \citep{Vignotto2021}, and in Section~\ref{subsubsec:sim_extension} we show how our approach uniquely handles clustering in the multivariate extremal dependence setting.  
+In Section~\ref{subsubsec:sim_competing_methods}, we compare our method to the leading competitor in the bivariate case \citep{Vignotto2021}, and in Section~\ref{subsubsec:sim_extension} we show how our approach uniquely handles clustering in higher dimensions.
 % A more realistic setting is considered in Section~\ref{subsubsec:sim_realistic}, where we simulate data from 60 locations with three unequally sized clusters, and perturb the correlation parameters to make the clustering solution more challenging.
-A more realistic experiment is presented in Section~\ref{subsubsec:sim_realistic}, where data are simulated from 60 locations in three unequally sized clusters, with perturbed correlation parameters to make clustering more challenging.  
+% A more realistic experiment is presented in Section~\ref{subsubsec:sim_realistic}, where data are simulated from 60 locations in three unequally sized clusters, with perturbed correlation parameters to make clustering more challenging.  
+Section \ref{subsubsec:sim_realistic} then considers a setting with 60 locations across three unequally sized clusters, and locations in the same cluster exhibiting perturbations in their correlation parameters.
 % We can also evaluate the improvement in parameter estimation post-clustering using the bootstrapping scheme described in \cite{Heffernan2004}, as done in Section~\ref{subsubsec:boot}.
 Finally, in Section~\ref{subsubsec:boot} we assess improvements in parameter estimation post-clustering using the bootstrap scheme of \citet{Heffernan2004}.  
 
-\subsubsection{Comparison to competing methods}~\label{subsubsec:sim_competing_methods}
+\subsubsection{Comparison to \citet{Vignotto2021}}~\label{subsubsec:sim_competing_methods}
 
-
-
-We compared our method to the leading competitor in the bivariate case, \citet{Vignotto2021}, using the max risk function which they propose.
-As in Section~\ref{subsec:sim_gauss}, we generated data for 12 locations, each with 1000 observations of two variables, but this time using a mixture of Gaussian and t-copulas with Laplace margins. 
+% We compared our method to the leading competitor in the bivariate case, \citet{Vignotto2021}, using the max risk function which they propose.
+We compared our method to the leading competitor in the bivariate case, \citet{Vignotto2021}.
+As in Section~\ref{subsec:sim_gauss}, we generated data for $S = 12$ locations, each with $n = 1000$ observations of $J = 2$ variables.
+However, this time we use the mixture of Gaussian and t-copulas with Laplace margins, as described above in Section~\ref{subsec:sim_mixture}. 
 Two known clusters were defined using different values of $\rhou{t}$, keeping $\rhou{Gauss}$ the same for both clusters. % (but varying across simulations).
   % \item These values were varied across a grid search.
-The CE model was fit at the 90th dependence quantile, i.e., the 90th quantile of $Y_{i} \mid Y_{j} = y_j$, and clustering solutions were obtained using the $\JSGa{}$ divergence. 
+% The CE model was fit at the $90^{th}$ quantile, i.e., the $90^{th}$ quantile of $Y_{i} \mid Y_{j} = y_j$, and clustering solutions were obtained using the $\JSGa{}$ divergence. 
+The CE model was fit at the $90^{th}$ quantile, i.e., the $90^{th}$ quantile of $Y_{i} \mid Y_{j} = y_j$, and clustering solutions were obtained using the divergence in Equation~\eqref{eq:jsga_integral}.
 % The clustering solutions were evaluated using the ARI, with results shown in Figure \ref{fig:01_ce_vs_vi} for a grid search over different $\rhou{Gauss}$ and $\rhou{t}$ values, with 500 simulations for each setting.
 Performance was evaluated with the ARI, based on a grid search over values of $\rhou{Gauss}$ and $\rhou{t}$, with 500 simulations per setting.
-Results are shown in Figure~\ref{fig:01_ce_vs_vi}). 
+This grid search was repeated 500 times, the results of which are shown in Figure~\ref{fig:01_ce_vs_vi}. 
 
 % The proposed method is shown to be superior to the method of \cite{Vignotto2021}, across a range of possible bivariate dependence structures, as defined by $\rhou{t}$.
 Across this range of bivariate dependence structures, our method consistently outperformed that of \citet{Vignotto2021}. 
 % Both models perform better when the difference in the t-copula correlation parameters between the two clusters is larger, as the clusters are naturally more distinct when there is greater disparity in dependence.
 Both methods had higher ARI when the difference in t-copula correlation parameters between the clusters was larger, since greater disparity naturally makes clusters more distinct. 
 % Both models also perform better when Gaussian and t-copula correlation are higher, as the signal of extremal dependence is stronger, with more extremal data available.
-Similarly, both performed better when the Gaussian and t-copula correlations were higher, as stronger extremal dependence increases the availability of extremal data. \todo{Is this why performance was better for higher Gaussian correlation?}
+% Similarly, both performed better when the Gaussian and t-copula correlations were higher, as stronger extremal dependence increases the availability of extremal data. \todo{Is this why performance was better for higher Gaussian correlation?}
+Also, both performed better when the Gaussian and t-copula correlations were higher.
+This may be because the data from the Gaussian copula becoming more similar to that of the t-copula for higher correlation, thus allowing the clustering approach to focus on differences in the t-copula.
 
-\todo{Come up with better acronym than CE}
+% \todo{Come up with better acronym than CE}
 \begin{figure}[H]
     \centering
     \includegraphics[width = 0.9\linewidth]{plots/sim_01b_ce_vs_vi_dqu_0.9_man.png}
     % \caption{\emph{Comparison of \citep{Vignotto2021} clustering with our proposed method (labelled ``Cond. Extremes''), for two variables and two equally sized clusters for simulations of 12 ``locations'', each with 1000 observations of each variable, from a mixture of Normal and Gaussian copulas. A grid search was performed, with the x-axis representing the Gaussian correlation parameter used for both clusters, and the facet labels showing the t-copula correlation parameters for each ``known'' cluster. This grid search was repeated 500 times. The smoothed lines show the smoothed median of the Adjusted Rand Index for both clustering methods, with smoothing performing using a generalised additive model.}} % The lines show the median of the Adjusted Rand Index for both clustering methods, with uncertainty coming from the 90\% credible interval.}} % The proposed method is shown to be superior to the leading competitor in the bivariate case, that of \cite{Vignotto2021}. Both models perform better when the difference in the t-copula correlation parameters between the two clusters is larger, and when Gaussian correlation is higher.
-    \caption{\emph{Comparison of our clustering method based on the Conditional Extremes model and the method of \citet{Vignotto2021} for extremal clustering.  
-    Bivariate data from two equally sized clusters were simulated for 12 ``locations,'' each with 1000 observations of each variable, from a mixture of Gaussian and t-copulas with Laplace margins. 
-    A grid search was performed, with the x-axis representing the Gaussian correlation parameter, and facet labels indicating the t-copula correlation parameters for each ``known'' cluster. 
-    This grid search was repeated 500 times. 
+    % \caption{\emph{Comparison of our clustering method based on the Conditional Extremes model and the method of \citet{Vignotto2021} for extremal clustering.  
+    \caption{\emph{Comparison of performance for CE clustering and \citet{Vignotto2021}. 
+    The x-axis represents the Gaussian correlation parameters, and facet labels indicating the t-copula correlation parameters for each ``known'' cluster, generated from a mixture of Gaussian and t-copulas with Laplace margins.
+    % Bivariate data from two equally sized clusters were simulated for 12 ``locations,'' each with 1000 observations of each variable, from a mixture of Gaussian and t-copulas with Laplace margins. 
+    % A grid search was performed, with the x-axis representing the Gaussian correlation parameter, and facet labels indicating the t-copula correlation parameters for each ``known'' cluster. 
+    % This grid search was repeated 500 times. 
     The smoothed lines show the Adjusted Rand Index (ARI) for both methods, with smoothing performed using a generalised additive model.}} 
     ~\label{fig:01_ce_vs_vi}
 \end{figure}
-
 
 \subsubsection{Extension to $>2$ dimensions}~\label{subsubsec:sim_extension}
 
 While the method of \citet{Vignotto2021} is restricted to two dimensions, our approach can be extended to three dimensions and beyond. 
 % To illustrate this, we can repeat the simulation study and grid search of Section~\ref{subsubsec:sim_competing_methods}, but now for three variables, the results of which are shown in Figure \ref{fig:02_3d}.
-To illustrate this, we repeated the simulation study and grid search of Section~\ref{subsubsec:sim_competing_methods} for three variables, with results shown in Figure~\ref{fig:02_3d}. 
-% The proposed method is shown to work well for three dimensions, and the same patterns in the ARI emerge as in the bivariate case.
-The proposed method performs well in three dimensions, and the same patterns in ARI emerge as in the bivariate case. 
-% The method is shown to actually perform better in three dimensions than in two.
-In fact, performance is even stronger in three dimensions than in two. 
-% This comes with the caveat that in these simulations, the variables all have the same margins, and so including three variables naturally increases the amount of data available to estimate the same dependence structure as in the bivariate case, and does not introduce additional noise which might be present in real multivariate applications.
-This improvement comes with the caveat that, in these simulations, all variables have the same margins. 
-Thus, including three variables naturally increases the amount of data available to estimate the same dependence structure as in the bivariate case, without introducing the additional noise that might arise in real multivariate applications. 
+% To illustrate this, we repeated the simulation study and grid search of Section~\ref{subsubsec:sim_competing_methods} for three variables, with results shown in Figure~\ref{fig:02_3d}. 
+To illustrate this, we repeat the simulation study and grid search of Section~\ref{subsubsec:sim_competing_methods} by simulating $S = 12$ locations with two equally sized latent clusters of sites each with $n = 1000$ observations, but this time for $J = 3$ variables.
+Now the mixture copula $C_{\mathrm{mix}}^{(s)}$ described in equation has three dimensions, and we fit six CE models at each site, averaging the $\JSGa{}$ divergence over all of these models between each pair of sites to obtain a single dissimilarity matrix over which we perform PAM clustering.
 
+This grid search was again repeated 500 times, with the results shown and compared to the bivariate case in Figure \ref{fig:02_3d}.
+% The proposed method is shown to work well for three dimensions, and the same patterns in the ARI emerge as in the bivariate case.
+These clearly show that our proposed method performs well in three dimensions, with the same patterns in ARI emerging as in the bivariate case in Section~\ref{subsubsec:sim_competing_methods}.
+% The method is shown to actually perform better in three dimensions than in two.
+In fact, performance is markedly stronger in three dimensions than in two. 
+% This comes with the caveat that in these simulations, the variables all have the same margins, and so including three variables naturally increases the amount of data available to estimate the same dependence structure as in the bivariate case, and does not introduce additional noise which might be present in real multivariate applications.
+% This improvement comes with the caveat that, in these simulations, all variables have the same margins. 
+% Thus, including three variables naturally increases the amount of data available to estimate the same dependence structure as in the bivariate case, without introducing the additional noise that might arise in real multivariate applications. 
+However, this is not surprising, as the CE models in this setup are the same in both two and three dimensions, and the $\JSGa{}$ divergence and its integral from Equation~\eqref{eq:jsga_integral} are computed in the same way, just averaged over more models with more data.
 \begin{figure}[H]
     \centering
     % \includegraphics[width = 0.9\linewidth]{plots/sim_01c_js_sens_3_var_dqu_0.9.png}
-    \includegraphics[width = 0.9\linewidth]{plots/sim_01d_js_sens_3_var_dqu_0.9_man.png}
-    \caption{\emph{Evaluation of clustering performance for three variables and two equally sized clusters for simulations of 12 ``locations'', each with 1000 observations for each variable, from a mixture of Gaussian and t-copulas. A grid search was performed,  with the x-axis representing the Gaussian correlation parameter used for both clusters, and the facet labels showing the t-copula correlation parameters for each ``known'' cluster. This grid search was repeated 500 times. The smoothed lines show the smoothed median of the Adjusted Rand Index for both clustering methods, with smoothing performing using a generalised additive model. Points show individual values of the ARI for a given simulation.}} 
+    % \includegraphics[width = 0.9\linewidth]{plots/sim_01d_js_sens_3_var_dqu_0.9_man.png}
+    % \caption{\emph{Evaluation of clustering performance for three variables and two equally sized clusters for simulations of 12 ``locations'', each with 1000 observations for each variable, from a mixture of Gaussian and t-copulas. 
+    % A grid search was performed,  with the x-axis representing the Gaussian correlation parameter used for both clusters, and the facet labels showing the t-copula correlation parameters for each ``known'' cluster. 
+    % This grid search was repeated 500 times. 
+    % The smoothed lines show the smoothed median of the Adjusted Rand Index for both clustering methods, with smoothing performing using a generalised additive model.}} % Points show individual values of the ARI for a given simulation.}} 
+    \includegraphics[width = 0.9\linewidth]{plots/sim_01d_js_sens_2_3_var_dqu_0.9_man.png}
+    \caption{\emph{Comparison of clustering perfomance for two and three variables and two equally sized clusters for simulations of 12 locations from a mixture of Gaussian and t-copulas.
+    The smoothed lines show the smoothed median of the Adjusted Rand Index for both dimensions, with smoothing performing using a generalised additive model.}} % Points show individual values of the ARI for a given simulation.}} 
    ~\label{fig:02_3d}
 \end{figure}
 
 % Expand to up to 5 dimensions!
 % To further illustrate how our method can be extended to higher dimensions and why this is useful, let us consider a specific example from our grid search, where we have $\rho_{\text{t}_1}, \rho_{\text{t}_2} = 0.5$.
-To further illustrate the extension of our method to higher dimensions, we consider a specific case from the grid search where $\rho_{\text{t}_1} = 0.4, \rho_{\text{t}_2} = 0.5$. 
+To further illustrate the extension of our method to higher dimensions, we consider a specific case from the grid search where $\rho_{\text{t}_1} = 0.4$ and $\rho_{\text{t}_2} = 0.5$. 
 % This is a relatively difficult clustering scenario in both the bivariate and three-dimensional cases, as the difference in the t-copula correlation parameters between the two clusters is small.
 This setting presents a challenging clustering scenario in both two and three dimensions, as the difference in the t-copula correlation parameters between clusters is small. 
 % In Figure~\ref{fig:02b_5d}, we show the results of our clustering algorithm when the dimensions of the mixture of copula is progressively increased from two to five, for 500 simulations at each $\rhou{Gauss}$ value. 
@@ -1247,44 +1431,55 @@ Clustering accuracy, measured by the ARI, improves steadily with dimension, reac
 % Again, we must be cautious in interpreting these results, as in this example we merely increase the amount of data in our simulation and keep the dependence structure the same across each pair of variables, 
 These gains should be interpreted cautiously, since the simulations increase the amount of data without altering the dependence structure across variable pairs. 
 % However, we can still conclude that these results show that our method performs well for extremal clustering in higher dimensions, and motivates such a use. 
-Nevertheless, the results demonstrate that the proposed method scales effectively to higher dimensions and performs well for extremal clustering in multivariate settings. 
+Nevertheless, the results demonstrate that the proposed method scales effectively to higher dimensions and performs well in multivariate settings. 
 
 % \todo{Look into this, is this correct?? Shouldn't the clustering performance be much worse for 0.4 and 0.5?}
 \begin{figure}[H]
     \centering
     % \includegraphics[width = 0.9\linewidth]{plots/sim_01c_js_sens_3_var_dqu_0.9.png}
     \includegraphics[width = 0.9\linewidth]{plots/sim_01d_js_sens_3_var_dqu_0.9mult_var_man.png}
-    \caption{\emph{Evaluation of clustering performance for two to five variables and two equally sized clusters for simulations of 12 ``locations'', each with 1000 observations for each variable, from a mixture of Gaussian and t-copulas. The t-copula correlation parameters for each ``known'' cluster were set to $\rho_{t_1} = 0.4, \rho_{t_2} = 0.5$. A grid search was performed over the values of the Gaussian correlation parameter, as represented on the x-axis. This grid search was repeated 500 times. The smoothed lines show the smoothed median of the Adjusted Rand Index for both clustering methods, with smoothing performing using a generalised additive model. Points show individual values of the ARI for a given simulation.}} 
+    \caption{\emph{Evaluation of clustering performance for two to five variables and two equally sized clusters for simulations of 12 ``locations'', each with 1000 observations for each variable, from a mixture of Gaussian and t-copulas. The t-copula correlation parameters for each ``known'' cluster were set to $\rho_{t_1} = 0.4, and \rho_{t_2} = 0.5$. A grid search was performed over the values of the Gaussian correlation parameter, as represented on the x-axis. This grid search was repeated 500 times. The smoothed lines show the smoothed median of the Adjusted Rand Index for both clustering methods, with smoothing performing using a generalised additive model. Points show individual values of the ARI for a given simulation.}} 
    ~\label{fig:02b_5d}
 \end{figure}
 
-
-\subsubsection{More realistic example}~\label{subsubsec:sim_realistic}
+\subsubsection{Extension to 60 sites}~\label{subsubsec:sim_realistic}
 
 % We also design a more realistic example to somewhat mimic the structure of the Irish dataset introduced in Section~\ref{sec:ire}.
 % We also design a more realistic example to somewhat mimic the structure of the Irish dataset in our application in Section~\ref{sec:application}.
-To mimic the structure of the Irish dataset introduced in Section~\ref{sec:application}, we designed a more realistic simulation study. 
+% To mimic the structure of the Irish dataset introduced in Section~\ref{sec:application}, we designed a more realistic simulation study. 
+We designed another simulation study to mimic the structure of the Irish dataset introduced in Section~\ref{sec:application}. 
 % We generated data from 60 locations, each with 1000 observations of two variables, using a mixture of Gaussian and t-copulas with Laplace margins.
-Data were generated from 60 locations, each with 1000 observations of two variables, using a mixture of Gaussian and t-copulas with Laplace margins. 
+Data were generated from $S = 60$ locations, each with $n = 1000$ observations of $J = 2$ variables, using a mixture of Gaussian and t-copulas with Laplace margins. 
 % The 60 locations had three known clusters, with 10, 20, and 30 locations in each cluster, respectively.
-The 60 locations were partitioned into three unequally sized clusters of 10, 20, and 30 sites, respectively.
+The 60 locations were partitioned into three unequally sized clusters of 10, 20, and 30 sites, respectively. 
+% A slight perturbation via a uniform sample between $-0.05$ and $0.05$ was added to the correlation parameters of the t-copula for each location, to make the clustering solution more challenging.
+The $\rho_{t}^s$ values which make up the off-diagonal elements of $\Sigma_{t}^s$, the correlation matrix of the $t$-copula at site $s$ as described in Equation~\eqref{eq:mix_copula}, were perturbed for each location by a uniform random value between $-0.05$ and $0.05$, making the clustering task more challenging. 
 % A constant $\rhou{Gauss}$ of 0.5 was used for all locations and simulations, to reduce the dimensionality of the grid search.
 To reduce the dimensionality of the grid search, a constant $\rhou{Gauss} = 0.5$ was used for all locations and simulations. 
-% A slight perturbation via a uniform sample between $-0.05$ and $0.05$ was added to the correlation parameters of the t-copula for each location, to make the clustering solution more challenging.
-For additional realism, the t-copula correlation parameters were perturbed for each location by a uniform random value between $-0.05$ and $0.05$, making the clustering task more challenging. 
 % Again, clustering was done on the CE model parameters using the $\JSGa{}$ divergence, and the ARI for a grid search over different $\rhou{t}$ values is shown in Figure~\ref{fig:03_realistic}.
-Clustering was performed on the CE model parameters using the $\JSGa{}$ divergence, and the ARI for a grid search over $\rhou{t}$ values is shown in Figure~\ref{fig:03_realistic}. 
+% Clustering was performed on the CE model parameters using the $\JSGa{}$ divergence, and the ARI for a grid search over $\rhou{t}$ values is shown in Figure~\ref{fig:03_realistic}. 
+The CE model was again fit at the 90th quantile, i.e., the 90th quantile of $Y_{i} \mid Y_{j} = y_j$, and clustering solutions were obtained using the expected divergence from Equation~\ref{eq:jsga_integral}, averaged across all models. 
+The results of 500 repetitions of this simulation study are shown in Figure~\ref{fig:03_realistic}.
 % The algorithm is again shown to perform well, particularly where the difference in the t-copula correlation parameters between the clusters is largest, as expected.
-The method performs well, particularly when the differences in t-copula correlation parameters between clusters are larger. 
+Similarly to the previous simulation studies, the method performs well, particularly when the differences in t-copula correlation parameters between clusters are larger. 
 % The variability in ARI across simulations is also quite low, indicating that the clustering solution is robust.
 Moreover, variability in ARI across simulations is low, indicating that the clustering solution is robust. 
 
 % \todo{Have x-axis ticks match unique values in grid search}
+\todo{Remove points}
+\todo{Add rho t3 to top of plot as well!}
 \begin{figure}[H]
     \centering
     % \includegraphics[width = 0.9\linewidth]{plots/sim_01d_js_sens_3_var_dqu_0.9.png}
-    \includegraphics[width = 0.9\linewidth]{plots/01c2_js_sens_sim_60_locs_dqu_0.9_smooth_man.png}
-    \caption{\emph{Evaluation of clustering performance for two variables and three clusters for simulations from a mixture of Gaussian and t-copulas in a more realistic clustering setting. 60 locations with 1000 observations for each variable were simulated, with 10, 20 and 30 belonging to each respective cluster. A grid search was performed, with the x-axis and facet labels showing the t-copula correlation parameters for each of the three ``known'' clusters, for a Gaussian copula correlation of 0.5. Perturbations were added to these parameters. This grid search was repeated 500 times. The smoothed lines show the smoothed median of the Adjusted Rand Index for both clustering methods, with smoothing performing using a generalised additive model. Points show individual values of the ARI for a given simulation.}} 
+    \includegraphics[width = 0.9\linewidth]{plots/01c2_js_sens_sim_60_locs_dqu_0.9_smooth_man_no_points.png}
+    \caption{\emph{Evaluation of clustering performance for two variables and three clusters of 60 locations for simulations from a mixture of Gaussian and t-copulas.
+    % 60 locations with 1000 observations for each variable were simulated, with 10, 20 and 30 belonging to each respective cluster. 
+% A grid search was performed, with the x-axis and facet labels showing the t-copula correlation parameters for each of the three ``known'' clusters, for a Gaussian copula correlation of 0.5. 
+    The x-axis and facet labels show the t-copula correlation parameters for each of the three ``known'' clusters, for a Gaussian copula correlation of 0.5. 
+     % Perturbations were added to these parameters. 
+     % This grid search was repeated 500 times. 
+    The smoothed lines show the smoothed Adjusted Rand Index for both clustering methods, with smoothing performing using a generalised additive model.}}
+     % Points show individual values of the ARI for a given simulation.}} 
  % The line shows the median of the Adjusted Rand Index for both clustering methods, with uncertainty coming from the 90\% credible interval. Points show individual values of the ARI for a given simulation.}} 
    ~\label{fig:03_realistic}
 \end{figure}
@@ -1301,22 +1496,22 @@ Uncertainty is quantified using the bootstrap procedure of \citet{Heffernan2004}
 
 % % As we are estimating two parameters, $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$, for which we do not know the true values, it may be that although our uncertainty is diminished post-clustering, the estimates may still be biased, with the parameters unidentifiable.
 % As we are estimating two parameters, $\alpha$ and $\beta$, for which we do not know the true values, it may be that although our uncertainty is diminished post-clustering, the estimates may still be biased, with the parameters unidentifiable.
-As the true values of the CE model parameters $(\alpha, \beta)$ are unknown, reduced variability in estimates post-clustering could still be accompanied by bias.  \todo{hats?}
+As the true values of the CE model parameters $(\alpha(s), \beta(s))$ for a location $s$ are unknown, reduced variability in estimates post-clustering could still be accompanied by bias. 
 % There are also many possible combinations of $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$ that could give the same conditional estimates, and so the estimates may be biased in this sengse as well.
 % There are also many possible combinations of $\alpha$ and $\beta$ that could
 % give the same conditional estimates, and so the estimates may be biased in
 % this sense as well.
-Indeed, many combinations of $\alpha$ and $\beta$ can yield similar conditional estimates, making these parameters only weakly identifiable. 
+Indeed, many combinations of $\alpha(s)$ and $\beta(s)$ can yield similar conditional estimates, making these parameters only weakly identifiable. 
 % To avoid this, we adopt the approach of \citet{Richards2021-qm} in calculating the conditional expectation of one variable given the other at the $98\%$ marginal quantile $u_i$ for the conditioning variable, given by
 To address this, we follow the approach of \citet{Richards2021-qm} and instead calculate the conditional expectation of one variable given another at the 98\% marginal quantile $u_i$ of the conditioning variable,  
-\todo{Need to match better to previous notation? I.e. Y instead of X?}
-  \begin{equation}~\label{eq:boot}
-    \mathbb{E}[Y_j \mid Y_i = u_i] = \hat{\alpha}_{j \mid i} u_i + u_i^{\hat{\beta}_{j \mid i}} \hat{\mu}_{j \mid i},
-  \end{equation}
-  % where ($\hat{\alpha}, \hat{\beta}, \hat{\mu}$) are the estimated CE model parameters.
-  % where $(\hat{\alpha}_{j \mid i}^{(\CE{})}, \hat{\beta}_{j \mid i}^{(\CE{})}, \hat{\mu}_{j \mid i}^{(\CE{})})$ are the estimated CE model parameters for the $j$-th variable given the conditioning variable $Y_i$ at the $98\%$ marginal quantile $u_i$.
+\begin{equation}~\label{eq:boot}
+  % \mathbb{E}[Y_j \mid Y_i = u_i] = \hat{\alpha}_{j \mid i} u_i + u_i^{\hat{\beta}_{j \mid i}} \hat{\mu}_{j \mid i},
+  \mathbb{E}[Y_j(s) \mid Y_i(s) = u_i] = \hat{\alpha}_{j \mid i}(s) u_i + u_i^{\hat{\beta}_{j \mid i}(s)} \hat{\mu}_{j \mid i}(s),
+\end{equation}
+% where ($\hat{\alpha}, \hat{\beta}, \hat{\mu}$) are the estimated CE model parameters.
+% where $(\hat{\alpha}_{j \mid i}^{(\CE{})}, \hat{\beta}_{j \mid i}^{(\CE{})}, \hat{\mu}_{j \mid i}^{(\CE{})})$ are the estimated CE model parameters for the $j$-th variable given the conditioning variable $Y_i$ at the $98\%$ marginal quantile $u_i$.
 % where $(\hat{\alpha}_{j \mid i}, \hat{\beta}_{j \mid i}, \hat{\mu}_{j \mid i})$ are the estimated CE model parameters for the $j$-th variable given the conditioning variable $Y_i$ at the $98\%$ marginal quantile $u_i$.
-where $(\hat{\alpha}_{j \mid i}, \hat{\beta}_{j \mid i}, \hat{\mu}_{j \mid i})$ are the estimated CE model parameters for the $j$th variable given $Y_i$. 
+where $(\hat{\alpha}_{j \mid i}(s), \hat{\beta}_{j \mid i}(s), \hat{\mu}_{j \mid i}(s))$ are the estimated CE model parameters for the $j$th variable given $Y_i(s)$. 
 % We can bootstrap this conditional expectation to evaluate the reduction in uncertainty post-clustering. \todo{Tense consistency}
 We then apply bootstrapping to this conditional expectation to evaluate the reduction in uncertainty achieved through clustering. 
 
@@ -1450,23 +1645,23 @@ It may be of interest to investigate if these outliers in $\chi$ and $\bar{\chi}
 
 \subsection{Conditional extremes model}~\label{subsec:app_ce}
 
-% Procedure and results pre-clustering (choice of dependence quantile)
+% Procedure and results pre-clustering (choice of quantile)
 % In our analysis, we first transformed the data to Laplace margins, using the empirical cumulative distribution function (ECDF) to approximate density functions for precipitation and wind speed at each location. \todo{reference specific equation in methods}
 We first transformed precipitation and wind speed data at each location to Laplace margins, using the empirical cumulative distribution function (ECDF) to approximate marginal distributions.  
 We then fit the CE model to this transformed data.
-% % Using the bootstrapping scheme of \citet{Heffernan2004}, we estimated the CE model parameters $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$ at various dependence quantiles. \todo{Sufficient reference to bootstrapping scheme?}
-% Using the bootstrapping scheme of \citet{Heffernan2004}, we estimated the CE model parameters $\alpha$ and $\beta$ at various dependence quantiles. \todo{Sufficient reference to bootstrapping scheme?}
-The CE model was then fitted to the transformed data, and parameter estimates $(\alpha, \beta)$ were obtained at various dependence quantiles using the bootstrap procedure of \citet{Heffernan2004}.  
+% % Using the bootstrapping scheme of \citet{Heffernan2004}, we estimated the CE model parameters $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$ at various quantiles. \todo{Sufficient reference to bootstrapping scheme?}
+% Using the bootstrapping scheme of \citet{Heffernan2004}, we estimated the CE model parameters $\alpha$ and $\beta$ at various quantiles. \todo{Sufficient reference to bootstrapping scheme?}
+The CE model was then fitted to the transformed data, and parameter estimates $(\alpha, \beta)$ were obtained at various quantiles using the bootstrap procedure of \citet{Heffernan2004}.  
 % This revealed that estimates in general were quite stable up to the 88th quantile.  \todo{Need to expand with more details, could include plots in Appendix?}
 Estimates were generally stable up to the 85th quantile, with similar maximum likelihood estimates for $(\alpha, \beta)$ and clustering solutions obtained when using the 85th quantile were quite similar to higher quantiles.
 Therefore, subsequent analysis was performed at the 85th quantile for both variables, balancing stability and extremity.
-Clustering sensitivity to the choice of dependence quantile is discussed further in Section~\ref{subsec:app_clust}, sorounding Figure~\ref{fig:clust_sens}.
+Clustering sensitivity to the choice of quantile is discussed further in Section~\ref{subsec:app_clust}, sorounding Figure~\ref{fig:clust_sens}.
 
 % Subsequent analysis was also performed at the 85th, 88th and 90th quantiles, and shown to provide similar MLEs for our CE parameters, and clustering solutions. \todo{Include in Appendix also?}
 
 % The results of this CE analysis are shown in Figure \ref{fig:a_b_vals}.
 % The estimates of the CE model parameters at the 85th quantile are shown in Figure~\ref{fig:a_b_vals}.
-The estimated CE parameters at the 85th dependence quantile for both variables are displayed in Figure~\ref{fig:a_b_vals}.  
+The estimated CE parameters at the 85th quantile for both variables are displayed in Figure~\ref{fig:a_b_vals}.  
 % Interpretation of these plots is difficult, but we can see some, albeit uneven, increases in the $\alpha^{(\CE{})}$ values for both variables as we move further West and particularly South. \todo{Should I estimate/show uncertainty in these estimates somehow? these estimates have been bootstrapped!}
 % Interpretation of these plots is difficult, but we can see some, albeit uneven, increases in the $\alpha$ values for both variables as we move further West and particularly South. \todo{Should I estimate/show uncertainty in these estimates somehow? these estimates have been bootstrapped!}
 Although interpretation is challenging due to variability in the estimates, we observe some evidence of increasing $\alpha$ values for both variables towards the West and particularly in the South.  
@@ -1480,8 +1675,8 @@ To mitigate this uncertainty and aid interpretation, we next cluster the locatio
 \begin{figure}[H]
     \centering
     \includegraphics[width = 0.9\linewidth]{plots/ire_ce_new.png}
-    % \caption{\emph{Map of conditional extremes model parameters $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$ for precipitation conditional on wind speed (left) and wind speed conditional on precipitation (right), estimated at the 88th dependence quantile. The $\alpha^{(\CE{})}$ parameter is shown in the top row, and $\beta^{(\CE{})}$ in the bottom row. The colour scale is the same for both variables, with darker red indicating larger positive values of $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$, and darker blue indicating larger negative values.}}
-    \caption{\emph{Map of conditional extremes model parameters $\alpha$ and $\beta$ for precipitation conditional on wind speed (left) and wind speed conditional on precipitation (right), estimated at the 88th dependence quantile. The $\alpha$ parameter is shown in the top row, and $\beta$ in the bottom row. The colour scale is the same for both variables, with darker red indicating larger positive values of $\alpha$ and $\beta$, and darker blue indicating larger negative values.}}
+    % \caption{\emph{Map of conditional extremes model parameters $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$ for precipitation conditional on wind speed (left) and wind speed conditional on precipitation (right), estimated at the 88th quantile. The $\alpha^{(\CE{})}$ parameter is shown in the top row, and $\beta^{(\CE{})}$ in the bottom row. The colour scale is the same for both variables, with darker red indicating larger positive values of $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$, and darker blue indicating larger negative values.}}
+    \caption{\emph{Map of conditional extremes model parameters $\alpha$ and $\beta$ for precipitation conditional on wind speed (left) and wind speed conditional on precipitation (right), estimated at the 88th quantile. The $\alpha$ parameter is shown in the top row, and $\beta$ in the bottom row. The colour scale is the same for both variables, with darker red indicating larger positive values of $\alpha$ and $\beta$, and darker blue indicating larger negative values.}}
    ~\label{fig:a_b_vals}
 \end{figure}
 
@@ -1495,8 +1690,8 @@ We also considered a combined solution by summing the two dissimilarity matrices
 The number of clusters $k$ was chosen via the method described in Section~\ref{subsubsec:choose_k}, using the elbow plot of the TWGSS. 
 For all three clustering solutions, clear elbows were observed at $k = 3$, so this was the number of clusters chosen \todo{Include plots in Appendix?}.
 
-% Our clustering solutions for each of the three dissimilarity matrices at the 85th dependence quantile are shown in Figure \ref{fig:clust_sol}.
-The resulting clustering solutions for the 88th dependence quantile are displayed in Figure~\ref{fig:clust_sol}.  
+% Our clustering solutions for each of the three dissimilarity matrices at the 85th quantile are shown in Figure \ref{fig:clust_sol}.
+The resulting clustering solutions for the 88th quantile are displayed in Figure~\ref{fig:clust_sol}.  
 % Clustering appears to be quite similar across dissimilarity matrices, and the three clusters appear to be quite spatially distinct. 
 Across all three dissimilarity matrices, the clusterings are broadly consistent, with three spatially distinct groups emerging.  
 % This is interesting given no spatial information was used in the clustering, and suggests that the CE model parameters are indeed capturing some spatial structure in the data.
@@ -1517,7 +1712,7 @@ It could also reflect the use of ERA5 reanalysis data for wind speed, which is k
 \begin{figure}[H]
     \centering
     \includegraphics[width = 0.9\linewidth]{plots/cluster_dqu_sep_new_crop.png}
-    \caption{\emph{Clustering solutions for the conditional extremes model parameters estimated at the 88th dependence quantile across all 59 sites, using the $\JSGa{}$ dissimilarity matrix for wind speed conditional on precipitation (centre), precipitation conditional on wind speed (right), and the combined dissimilarity matrix (left). The clusters are shown in different colours.}}
+    \caption{\emph{Clustering solutions for the conditional extremes model parameters estimated at the 88th quantile across all 59 sites, using the $\JSGa{}$ dissimilarity matrix for wind speed conditional on precipitation (centre), precipitation conditional on wind speed (right), and the combined dissimilarity matrix (left). The clusters are shown in different colours.}}
    ~\label{fig:clust_sol}
 \end{figure}
 
@@ -1526,7 +1721,7 @@ It could also reflect the use of ERA5 reanalysis data for wind speed, which is k
     \centering
     % \includegraphics[width = 0.9\linewidth]{plots/ire_dist_heatmap.png}
     \includegraphics[width = 0.9\linewidth]{plots/ire_dist_heatmap_man.png}
-    \caption{\emph{Heatmap of the $\JSGa{}$ dissimilarity matrix for the conditional extremes model parameters estimated at the 85th dependence quantile across all 59 sites, using the combined dissimilarity matrix. The names of each site are coloured and ordered according to the clustering solution, matching that of Figure \ref{fig:clust_sol}. The dissimilarity colour scale is shown on the right, with darker colours indicating larger values.}}
+    \caption{\emph{Heatmap of the $\JSGa{}$ dissimilarity matrix for the conditional extremes model parameters estimated at the 85th quantile across all 59 sites, using the combined dissimilarity matrix. The names of each site are coloured and ordered according to the clustering solution, matching that of Figure \ref{fig:clust_sol}. The dissimilarity colour scale is shown on the right, with darker colours indicating larger values.}}
     ~\label{fig:dist_heatmap}
 \end{figure}
 
@@ -1535,9 +1730,9 @@ We can also visualise the dissimilarity matrix for the combined clustering solut
 This shows that the clusters are quite distinct, with the dissimilarity between clusters being much larger than within-cluster dissimilarity, which rarely exceeds 0.01.
 In particular, the difference between the eastern and western clusters is quite pronounced, with the central cluster being somewhat intermediate, acting as somewhat of a `buffer' between the two.
 % The western and central clusters exhibit many sites with small pairwise dissimilarities, indicating that their allocations are not always clear-cut. 
-% In particular, several central sites are nearly interchangeable with those in the western cluster, a pattern that is also reflected in the variable-specific clustering solutions in Figure~\ref{fig:clust_sol} and in the dependence quantile sensitivity analysis in Figure~\ref{fig:clust_sens}. 
+% In particular, several central sites are nearly interchangeable with those in the western cluster, a pattern that is also reflected in the variable-specific clustering solutions in Figure~\ref{fig:clust_sol} and in the quantile sensitivity analysis in Figure~\ref{fig:clust_sens}. 
 In constrast, the western and central clusters seem to be quite close, in that we observe many small inter-cluster pairwise dissimilarities between them. 
-This indicates that allocation between the two is not always clear-cut and for several sites is nearly interchangeable, as observed in  the variable-specific clustering solutions in Figure~\ref{fig:clust_sol} and in the dependence quantile sensitivity analysis in Figure~\ref{fig:clust_sens}, where membership between the two often switches. \todo{Mention specific sites}
+This indicates that allocation between the two is not always clear-cut and for several sites is nearly interchangeable, as observed in  the variable-specific clustering solutions in Figure~\ref{fig:clust_sol} and in the quantile sensitivity analysis in Figure~\ref{fig:clust_sens}, where membership between the two often switches. \todo{Mention specific sites}
 Also, if we only fit two clusters, we find that most of the central cluster members are assigned to the ``western'' cluster, reflecting this less obvious separation between the two compared to the more markedly different eastern cluster. 
 A noticeable outlier in the dissimilarity matrix is the site at Malahide Castle, which is located in Dublin, which even amongst its own cluster has a relatively high dissimilarity to the other sites.
 Furthermore, if we go to having four clusters, Malahide Castle becomes the only member of the new cluster, and so it is quite distinct from the other sites.
@@ -1550,14 +1745,14 @@ We also see that Kilcar in county Donegal, which had a low $\chi$ value relative
 \begin{figure}[H]
     \centering
     \includegraphics[width = 0.9\linewidth]{plots/cluster_dqu_crop.png}
-    % \caption{\emph{ Clustering solutions for the conditional extremes model parameters estimated at the 88th dependence quantile across all 59 sites, using the $\JSGa{}$ dissimilarity matrix for precipitation conditional on wind speed (centre), wind speed conditional on precipitation (right), and the combined dissimilarity matrix (left). The clusters are shown in different colours.}}
-    \caption{\emph{Clustering solutions for the conditional extremes model parameters estimated at the 85th, 88th and 90th dependence quantiles across all 59 sites, using the combined $\JSGa{}$ dissimilarity matrix for precipitation conditional on wind speed and wind speed conditional on precipitation. The clusters are shown in different colours.}}
+    % \caption{\emph{ Clustering solutions for the conditional extremes model parameters estimated at the 88th quantile across all 59 sites, using the $\JSGa{}$ dissimilarity matrix for precipitation conditional on wind speed (centre), wind speed conditional on precipitation (right), and the combined dissimilarity matrix (left). The clusters are shown in different colours.}}
+    \caption{\emph{Clustering solutions for the conditional extremes model parameters estimated at the 85th, 88th and 90th quantiles across all 59 sites, using the combined $\JSGa{}$ dissimilarity matrix for precipitation conditional on wind speed and wind speed conditional on precipitation. The clusters are shown in different colours.}}
     ~\label{fig:clust_sens}
 \end{figure}
 
 % Sensitivity Analysis (to choice of DQU)
-Another interesting aspect of our clustering method is its robustness to the choice of dependence quantile.
-We performed a sensitivity analysis of the clustering solution to the choice of dependence quantile, using the 85th, 88th and 90th quantiles, the results of which are shown in Figure~\ref{fig:clust_sens}.
+Another interesting aspect of our clustering method is its robustness to the choice of quantile.
+We performed a sensitivity analysis of the clustering solution to the choice of quantile, using the 85th, 88th and 90th quantiles, the results of which are shown in Figure~\ref{fig:clust_sens}.
 The clustering solutions are clearly quite similar across the three quantiles.
 There are some small differences, however. 
 Noticeably, Kilcar in county Donegal is assigned to the eastern cluster for the 85th and 90th quantile, but to the central cluster for the 88th quantile.
@@ -1565,14 +1760,14 @@ Noticeably, Kilcar in county Donegal is assigned to the eastern cluster for the 
 \todo{Name some of these sites?}
 Also, there are more sites in the western cluster for the 85th quantile, with some sites moving to the central cluster for the 88th quantile. 
 Interestingly, some of these sites are then moved back to the western cluster for the 90th quantile.
-Apart from these observations, the clustering solutions are generally quite similar across the three quantiles, and so we can conclude that our clustering method is relatively robust to the choice of dependence quantile, as desired. 
+Apart from these observations, the clustering solutions are generally quite similar across the three quantiles, and so we can conclude that our clustering method is relatively robust to the choice of quantile, as desired. 
 
 % Results and interpretation post-clustering
 \todo{Write again to make clearer/tighter}
 \todo{Use hat(alpha) rather than alpha (and beta)?}
 Taking the clustering results for the combined dissimilarity matrices, we can combine the data from the three clusters to estimate the CE model parameters for each cluster.
 Specifically, across each cluster, we take the weekly sum of precipitation and weekly maxima of wind speeds across all locations, and assign these to the cluster centroids/medoids.
-We then refit the CE model to these cluster centroids, again at the 88th dependence quantile, although results for other quantile levels are similar. 
+We then refit the CE model to these cluster centroids, again at the 88th quantile, although results for other quantile levels are similar. 
 Goodness-of-fit plots, exploring the assumption of independence between the residuals and variable conditioned on, were much improved post-clustering. \todo{Include? Appendix?}
 The estimated CE parameters for each cluster are shown in figure \ref{fig:ce_post_clust}.
 % For precipitation conditional on wind speed, $\alpha^{(\CE{})}$ gets progressively larger as we move from the eastern to western clusters, indicating that the dependence structure is stronger in the west, as expected.
@@ -1591,8 +1786,8 @@ Interpreting these results is much easier post-clustering. \todo{More detail her
     \centering
     % \includegraphics[width = 0.9\linewidth]{plots/ab_map_post_clust.png}
     \includegraphics[width = 0.9\linewidth]{plots/ab_map_post_clust_new.png}
-    % \caption{\emph{Estimated conditional extremes model parameters $\alpha^{(\CE{})}$ and $\beta{(\CE{})}$ for precipitation conditional on wind speed (left) and wind speed conditional on precipitation (right), estimated at the 88th dependence quantile, post-clustering. The $\alpha^{(\CE{})}$ parameter is shown in the top row, and $\beta^{(\CE{})}$ in the bottom row. The colour scale is the same for both variables, with darker red indicating larger positive values of $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$, and darker blue indicating larger negative values.}}
-    \caption{\emph{Estimated conditional extremes model parameters $\alpha$ and $\beta{(\CE{})}$ for precipitation conditional on wind speed (left) and wind speed conditional on precipitation (right), estimated at the 88th dependence quantile, post-clustering. The $\alpha$ parameter is shown in the top row, and $\beta$ in the bottom row. The colour scale is the same for both variables, with darker red indicating larger positive values of $\alpha$ and $\beta$, and darker blue indicating larger negative values.}}
+    % \caption{\emph{Estimated conditional extremes model parameters $\alpha^{(\CE{})}$ and $\beta{(\CE{})}$ for precipitation conditional on wind speed (left) and wind speed conditional on precipitation (right), estimated at the 88th quantile, post-clustering. The $\alpha^{(\CE{})}$ parameter is shown in the top row, and $\beta^{(\CE{})}$ in the bottom row. The colour scale is the same for both variables, with darker red indicating larger positive values of $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$, and darker blue indicating larger negative values.}}
+    \caption{\emph{Estimated conditional extremes model parameters $\alpha$ and $\beta{(\CE{})}$ for precipitation conditional on wind speed (left) and wind speed conditional on precipitation (right), estimated at the 88th quantile, post-clustering. The $\alpha$ parameter is shown in the top row, and $\beta$ in the bottom row. The colour scale is the same for both variables, with darker red indicating larger positive values of $\alpha$ and $\beta$, and darker blue indicating larger negative values.}}
    ~\label{fig:ce_post_clust}
 \end{figure}
 
@@ -1677,7 +1872,7 @@ This GPD marginal model can be extended to include covariates such as spatial lo
 We wanted to show that our clustering could produce sensible results using just the ECDF in the early exploratory stages of modelling, where a sensible GPD or other such marginal model may not be immediately obvious.
 We believe we were successful in this, showing that with no spatial information our clustering solution did indeed indicate some spatial structure in the extremal dependence in our data.
 As future work, a more sophisticated marginal model could be considered, using the information we have gained from our exploratory clustering. 
-\todo{Also talk about not exploring other dependence quantiles to ascert robustness!}
+\todo{Also talk about not exploring other quantiles to ascert robustness!}
 \todo{Could also mention that we could weight results more towards model cond. on precipitation since wind speed data is weird!}
 
 % Future Work: (Application, potential other uses)

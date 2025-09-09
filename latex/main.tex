@@ -1650,15 +1650,18 @@ It may be of interest to investigate if these outliers in $\chi$ are reflected i
 
 % Procedure and results pre-clustering (choice of quantile)
 % In our analysis, we first transformed the data to Laplace margins, using the empirical cumulative distribution function (ECDF) to approximate density functions for precipitation and wind speed at each location. \todo{reference specific equation in methods}
-We first transformed precipitation and wind speed data at each location to Laplace margins, using the empirical cumulative distribution function (ECDF) to approximate marginal distributions.  
-We then fit the CE model to this transformed data.
+We transform precipitation and wind speed data at each location to Laplace margins as described in Equation~\eqref{eq:laplace_transform}, using the empirical cumulative distribution function (ECDF) to approximate marginal distributions.  
+% We then fit the CE model to this transformed data.
 % % Using the bootstrapping scheme of \citet{Heffernan2004}, we estimated the CE model parameters $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$ at various quantiles. \todo{Sufficient reference to bootstrapping scheme?}
 % Using the bootstrapping scheme of \citet{Heffernan2004}, we estimated the CE model parameters $\alpha$ and $\beta$ at various quantiles. \todo{Sufficient reference to bootstrapping scheme?}
-The CE model was then fitted to the transformed data, and parameter estimates $(\alpha, \beta)$ were obtained at various quantiles using the bootstrap procedure of \citet{Heffernan2004}.  
+% The CE model was then fitted to the transformed data, and parameter estimates $(\alpha, \beta)$ were obtained at various quantiles using the bootstrap procedure of \citet{Heffernan2004}.  
+In order to select an appropriate quantile for fitting the CE model, we estimated the parameters $(\alpha, \beta)$ at various quantiles using the bootstrap procedure of \citet{Heffernan2004}.
+The idea was to identify the highest quantile at which parameter estimates remained stable, balancing extremity and stability.
 % This revealed that estimates in general were quite stable up to the 88th quantile.  \todo{Need to expand with more details, could include plots in Appendix?}
-Estimates were generally stable up to the 85th quantile, with similar maximum likelihood estimates for $(\alpha, \beta)$ and clustering solutions obtained when using the 85th quantile were quite similar to higher quantiles.
-Therefore, subsequent analysis was performed at the 85th quantile for both variables, balancing stability and extremity.
-Clustering sensitivity to the choice of quantile is discussed further in Section~\ref{subsec:app_clust}, sorounding Figure~\ref{fig:clust_sens}.
+Estimates were generally stable up to the 85th quantile, with similar maximum likelihood estimates for $(\alpha, \beta)$. % and clustering solutions obtained when using the 85th quantile were quite similar to higher quantiles.
+Therefore, we chose to fit the CE model at the 85th quantile.
+In Section~\ref{app_clust} and Figure~\ref{fig:clust_sens}, we show that clustering solutions are also quite robust to the choice of quantile between the 85th, 88th and 90th quantiles, and so this choice does not have a major impact on results.
+% Clustering sensitivity to the choice of quantile is discussed further in Section~\ref{subsec:app_clust}, surrounding Figure~\ref{fig:clust_sens}.
 
 % Subsequent analysis was also performed at the 85th, 88th and 90th quantiles, and shown to provide similar MLEs for our CE parameters, and clustering solutions. \todo{Include in Appendix also?}
 
@@ -1679,7 +1682,7 @@ To mitigate this uncertainty and aid interpretation, we next cluster the locatio
     \centering
     \includegraphics[width = 0.9\linewidth]{plots/ire_ce_new.png}
     % \caption{\emph{Map of conditional extremes model parameters $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$ for precipitation conditional on wind speed (left) and wind speed conditional on precipitation (right), estimated at the 88th quantile. The $\alpha^{(\CE{})}$ parameter is shown in the top row, and $\beta^{(\CE{})}$ in the bottom row. The colour scale is the same for both variables, with darker red indicating larger positive values of $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$, and darker blue indicating larger negative values.}}
-    \caption{\emph{Map of conditional extremes model parameters $\alpha$ and $\beta$ for precipitation conditional on wind speed (left) and wind speed conditional on precipitation (right), estimated at the 88th quantile. The $\alpha$ parameter is shown in the top row, and $\beta$ in the bottom row. The colour scale is the same for both variables, with darker red indicating larger positive values of $\alpha$ and $\beta$, and darker blue indicating larger negative values.}}
+    \caption{\emph{Map of conditional extremes model parameters $\alpha$ and $\beta$ for precipitation conditional on wind speed (left) and wind speed conditional on precipitation (right), estimated at the 85th quantile. The $\alpha$ parameter is shown in the top row, and $\beta$ in the bottom row. The colour scale is the same for both variables, with darker red indicating larger positive values of $\alpha$ and $\beta$, and darker blue indicating larger negative values.}}
    ~\label{fig:a_b_vals}
 \end{figure}
 

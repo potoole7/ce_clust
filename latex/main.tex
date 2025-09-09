@@ -1413,7 +1413,7 @@ In fact, performance is markedly stronger in three dimensions than in two.
 % This improvement comes with the caveat that, in these simulations, all variables have the same margins. 
 % Thus, including three variables naturally increases the amount of data available to estimate the same dependence structure as in the bivariate case, without introducing the additional noise that might arise in real multivariate applications. 
 However, this is not surprising, as the CE models in this setup are the same in both two and three dimensions, and the $\JSGa{}$ divergence and its integral from Equation~\eqref{eq:jsga_integral} are computed in the same way, just averaged over more models with more data.
-\begin{figure}[H]
+\begin{figure}[t!]
     \centering
     % \includegraphics[width = 0.9\linewidth]{plots/sim_01c_js_sens_3_var_dqu_0.9.png}
     % \includegraphics[width = 0.9\linewidth]{plots/sim_01d_js_sens_3_var_dqu_0.9_man.png}
@@ -1443,7 +1443,7 @@ These gains should be interpreted cautiously, since the simulations increase the
 Nevertheless, the results demonstrate that the proposed method scales effectively to higher dimensions and performs well in multivariate settings. 
 
 % \todo{Look into this, is this correct?? Shouldn't the clustering performance be much worse for 0.4 and 0.5?}
-\begin{figure}[H]
+\begin{figure}[t!]
     \centering
     % \includegraphics[width = 0.9\linewidth]{plots/sim_01c_js_sens_3_var_dqu_0.9.png}
     \includegraphics[width = 0.9\linewidth]{plots/sim_01d_js_sens_3_var_dqu_0.9mult_var_man.png}
@@ -1452,7 +1452,6 @@ Nevertheless, the results demonstrate that the proposed method scales effectivel
 \end{figure}
 
 \subsubsection{Extension to 60 sites}~\label{subsubsec:sim_realistic}
-
 % We also design a more realistic example to somewhat mimic the structure of the Irish dataset introduced in Section~\ref{sec:ire}.
 % We also design a more realistic example to somewhat mimic the structure of the Irish dataset in our application in Section~\ref{sec:application}.
 % To mimic the structure of the Irish dataset introduced in Section~\ref{sec:application}, we designed a more realistic simulation study. 
@@ -1477,7 +1476,7 @@ Moreover, variability in ARI across simulations is low, indicating that the clus
 % \todo{Have x-axis ticks match unique values in grid search}
 \todo{Remove points}
 \todo{Add rho t3 to top of plot as well!}
-\begin{figure}[H]
+\begin{figure}[t]
     \centering
     % \includegraphics[width = 0.9\linewidth]{plots/sim_01d_js_sens_3_var_dqu_0.9.png}
     \includegraphics[width = 0.9\linewidth]{plots/01c2_js_sens_sim_60_locs_dqu_0.9_smooth_man_no_points.png}
@@ -1686,8 +1685,7 @@ Several $\beta$ estimates are negative, which is unexpected and may reflect non-
 % \item It appears that high uncertainty is making interpretation difficult, and so we will cluster the locations based on their CE parameters, to aid in interpretation.
 % We will cluster the locations based on their CE parameters, to help improve the interpretation of CE results.
 To mitigate this uncertainty and aid interpretation, we next cluster the locations based on their estimated CE parameters.  
-
-\begin{figure}[H]
+\begin{figure}[t!]
     \centering
     \includegraphics[width = 0.9\linewidth]{plots/ire_ce_new.png}
     % \caption{\emph{Map of conditional extremes model parameters $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$ for precipitation conditional on wind speed (left) and wind speed conditional on precipitation (right), estimated at the 88th quantile. The $\alpha^{(\CE{})}$ parameter is shown in the top row, and $\beta^{(\CE{})}$ in the bottom row. The colour scale is the same for both variables, with darker red indicating larger positive values of $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$, and darker blue indicating larger negative values.}}
@@ -1722,10 +1720,9 @@ For precipitation conditional on wind speed, the clustering is somewhat less dis
 This may indicate greater complexity in the behaviour of wind speed extremes compared to rainfall extremes.  
 % This may also be due to our wind speeds coming from the ERA5 reanalysis dataset, which performs smoothing over a grid and so may underestimate wind speed extremes, and fail to capture more granular local variability.
 It could also reflect the use of ERA5 reanalysis data for wind speed, which is known to smooth across grid cells, potentially underestimating local extremes and failing to capture fine-scale variability.  
-
 \todo{Combine with post-clustering parameter estimates (legend)}
 \todo{Highlight Malahide Castle as outlier? Also Kilcar?}
-\begin{figure}[H]
+\begin{figure}[t!]
     \centering
     \includegraphics[width = 0.9\linewidth]{plots/cluster_dqu_sep_new_crop.png}
     \caption{\emph{Clustering solutions for the conditional extremes model parameters estimated at the 88th quantile across all 59 sites, using the $\JSGa{}$ dissimilarity matrix for wind speed conditional on precipitation (centre), precipitation conditional on wind speed (right), and the combined dissimilarity matrix (left). The clusters are shown in different colours.}}
@@ -1733,7 +1730,7 @@ It could also reflect the use of ERA5 reanalysis data for wind speed, which is k
 \end{figure}
 
 \todo{Add back in site names to x-axis}
-\begin{figure}[H]
+\begin{figure}[b!]
     \centering
     % \includegraphics[width = 0.9\linewidth]{plots/ire_dist_heatmap.png}
     \includegraphics[width = 0.9\linewidth]{plots/ire_dist_heatmap_man.png}
@@ -1758,7 +1755,7 @@ Furthermore, if we go to having four clusters, Malahide Castle becomes the only 
 Malahide Castle has the lowest mean weekly precipitation of any site, with the second lowest being in Ringsend, which is closest in terms of $\JSGa{}$ to Malahide, which may explain its outlying behaviour, even amongst the eastern cluster, in that rainfall extremes and consequently concomitant extremes are less likely to occur, as shown by its low $\chi$ and $\alpha$ estimates.
 We also see that Kilcar in county Donegal, which had a low $\chi$ value relative to other sites on the west coast as shown in Figure \ref{fig:chi}, is the member of the eastern cluster with the lowest dissimilarity to the members of the western cluster, reflecting its geographical location in the northwest of Ireland, despite its low $\chi$ value.
 
-\begin{figure}[H]
+\begin{figure}[t]
     \centering
     \includegraphics[width = 0.9\linewidth]{plots/cluster_dqu_crop.png}
     % \caption{\emph{ Clustering solutions for the conditional extremes model parameters estimated at the 88th quantile across all 59 sites, using the $\JSGa{}$ dissimilarity matrix for precipitation conditional on wind speed (centre), wind speed conditional on precipitation (right), and the combined dissimilarity matrix (left). The clusters are shown in different colours.}}
@@ -1798,7 +1795,7 @@ This is likely because weather patterns are more consistent inland than along th
 Interpreting these results is much easier post-clustering. \todo{More detail here!}
 
 \todo{Switch to using hat for estimates?}
-\begin{figure}[H]
+\begin{figure}[t!]
     \centering
     % \includegraphics[width = 0.9\linewidth]{plots/ab_map_post_clust.png}
     \includegraphics[width = 0.9\linewidth]{plots/ab_map_post_clust_new.png}
@@ -1931,12 +1928,6 @@ examples in the article. (GNU zipped tar file)
 Data set used in the illustration of MYNEW method in
 Section~\ref{sec-verify} (.txt file).
 \end{description}
-
-\section{BibTeX}\label{bibtex}
-
-We encourage you to use BibTeX. If you have, please feel free to use the
-package natbib with any bibliography style you're comfortable with. The
-.bst file agsm has been included here for your convenience. 
 
 \bibliography{library.bib}
 

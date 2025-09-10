@@ -897,16 +897,19 @@ We also want to provide computational efficiency through a closed-form solution,
 
 % Introduce JSGa
 One divergence measure introduced in \citet{Nielsen2019} which satisfies these properties is the skew-geometric Jensen--Shannon divergence ($\JSGa{}$), which is a generalisation of the Jensen--Shannon ($\JS{}$) divergence \citep{Lin1991}. 
-\todo{Improve definition of P, Q, as measures? Or with detail as to their relation to CE?}
 % The $\JSGa{}$ divergence between two distribution functions $P$ and $Q$ is given by
 \todo{Switch to F and F star to match below?}
-The $\JSGa{}$ divergence between two continuous $d$-variate distribution functions, say $F_1$ and $F_2$, is given by
+% The $\JSGa{}$ divergence between two continuous $d$-variate distribution functions, say $F_1$ and $F_2$, is given by
+\todo{Say why Deasy uses dual form?}
+Specifically, we will use the dual form of the $\JSGa{}$ divergence, which in \citet{Deasy2020}, which is defined between two continuous $d$-variate distribution functions, say $F_1$ and $F_2$, as
 \begin{equation}~\label{eq:jsga}
   % \JSGa{(P \mid\mid Q)} = \frac{1}{2} \left\{\KL{(P \mid\mid G_{\alpha}(P, Q))} + \KL{(Q \mid\mid G_{\alpha}(P, Q))} \right\},
-  \JSGa{(F_1 \mid\mid F_2)} = \frac{1}{2} \left\{\KL{(F_1 \mid\mid G_{\lambda}(F_1, F_2))} + \KL{(F_2 \mid\mid G_{\lambda}(F_1, F_2))} \right\},
+  % \JSGa{(F_1 \mid\mid F_2)} = \frac{1}{2} \left\{\KL{(F_1 \mid\mid G_{\lambda}(F_1, F_2))} + \KL{(F_2 \mid\mid G_{\lambda}(F_1, F_2))} \right\},
+  % dual-version
+  \JSGa{(F_1 \mid\mid F_2)} = (1- \lambda) \KL{(G_{\lambda}(F_1, F_2) \mid\mid F_1)} + \lambda \KL{(G_{\lambda}(F_1, F_2) \mid\mid F_2)},
 \end{equation}
 % where $G_{\alpha}(P, Q) = P^{\alpha} Q^{1 - \alpha}, \alpha \in [0, 1]$ is the weighted geometric mean of $P$ and $Q$, with $\alpha$ controlling the weighting between them, and $\KL{(P \mid\mid Q)}$ is the Kullback--Leibler divergence between $P$ and $Q$ \citep{Kullback1951}. 
-where $G_{\lambda}(F_1, F_2) = F_{1}^{\lambda} F_{2}^{1 - \lambda}, \alpha \in [0, 1]$, is the weighted geometric mean of $F_1$ and $F_2$, and $\KL{(F_1 \mid\mid F_2)}$ is the Kullback--Leibler divergence between $F_1$ and $F_2$ \citep{Kullback1951}, given by 
+where $G_{\lambda}(F_1, F_2) = F_{1}^{1-\lambda} F_{2}^{\lambda}, \lambda \in [0, 1]$, is the weighted geometric mean of $F_1$ and $F_2$, and $\KL{(F_1 \mid\mid F_2)}$ is the Kullback--Leibler divergence between $F_1$ and $F_2$ \citep{Kullback1951}, given by 
 \begin{equation}~\label{eq:kl}
   % KL(F_1 \mid\mid F_2) = \int_{-\infty}^{\infty} f_1(y) \log\left(\frac{f_1(y)}{f_2(y)}\right) dy,
   \KL{(F_1 \mid\mid F_2)} = \int_{\mathbb{R}^d} f_1(\symbf{y}) \log\left(\frac{f_1(\symbf{y})}{f_2(\symbf{y})}\right) d\symbf{y},
@@ -946,14 +949,14 @@ Hence, we identify the $\JSGa{}$ divergence as a suitable measure of dissimilari
 % For two multivariate normals, \citet{Nielsen2019} shows that the $\JSGa{}$ divergence introduced in Equation~\eqref{eq:js_norm} has the closed form solution
 % \todo{eq:js_norm can't be found}
 \todo{Double check!}
-For two multivariate Gaussian distributions $F_1 \sim \mbox{MVN}(\symbf{\mu}_1, \Sigma_1)$ and $F_2 \sim \mbox{MVN}(\symbf{\mu}_2, \Sigma_2)$ in $\mathbb{R}^d$, \citet{Nielsen2019} shows that the $\JSGa{}$ divergence introduced in Equation~\eqref{eq:jsga} has the closed form solution 
+For two multivariate Gaussian distributions $F_1 \sim \mbox{MVN}(\symbf{\mu}_1, \Sigma_1)$ and $F_2 \sim \mbox{MVN}(\symbf{\mu}_2, \Sigma_2)$ in $\mathbb{R}^d$, \citet{Nielsen2019} shows that the dual $\JSGa{}$ divergence introduced in Equation~\eqref{eq:jsga} has the closed form solution 
 \begin{align*}%~\label{eq:js_norm_mvn}
   % JS^{G_{\lambda}}(F_1 \mid\mid F_2) &= \frac{1}{2} \left( (1 - k) \mu_1^T \Sigma_1^{-1} \mu_1 + k \mu_2^T \Sigma_2^{-1} \mu_2 - \mu_{\lambda}^T \Sigma_{\lambda}^{-1} \mu_{\lambda} + \log{\left( \frac{\abs{\Sigma_1}^{1-k} \abs{\Sigma_2}^{\lambda}}{\abs{\Sigma_{\lambda}}} \right)} \right), \\
-  JS^{G_{\lambda}}(F_1 \mid\mid F_2) &= \frac{1}{2} \left( \lambda \symbf{\mu}_1^T \Sigma_1^{-1} \symbf{\mu}_1 + (1 - \lambda) \symbf{\mu}_2^T \Sigma_2^{-1} \symbf{\mu}_2 - \symbf{\mu}_{\lambda}^T \Sigma_{\lambda}^{-1} \symbf{\mu}_{\lambda} + \log{\left( \frac{\abs{\Sigma_1}^{\lambda} \abs{\Sigma_2}^{1-\lambda}}{\abs{\Sigma_{\lambda}}} \right)} \right), \\
+  JS^{G_{\lambda}}(F_1 \mid\mid F_2) &= \frac{1}{2} \left( (1-\lambda) \symbf{\mu}_1^T \Sigma_1^{-1} \symbf{\mu}_1 + \lambda \symbf{\mu}_2^T \Sigma_2^{-1} \symbf{\mu}_2 - \symbf{\mu}_{\lambda}^T \Sigma_{\lambda}^{-1} \symbf{\mu}_{\lambda} + \log{\left( \frac{\abs{\Sigma_1}^{1-\lambda} \abs{\Sigma_2}^{\lambda}}{\abs{\Sigma_{\lambda}}} \right)} \right), \\
   % \Sigma_{\lambda} &= \left( (1 - k) \Sigma_1^{-1} + k \Sigma_2^{-1} \right)^{-1}, \\
-  \Sigma_{\lambda} &= \left( \lambda \Sigma_1^{-1} + (1 - \lambda) \Sigma_2^{-1} \right)^{-1}, \\
+  \Sigma_{\lambda} &= \left( (1-\lambda) \Sigma_1^{-1} + \lambda \Sigma_2^{-1} \right)^{-1}, \\
   % \mu_{\lambda} &= \Sigma_{\lambda} \left( (1 - k) \Sigma_1^{-1} \mu_1 + k \Sigma_2^{-1} \mu_2 \right), \numberthis~\label{eq:js_norm_mvn1}
-  \symbf{\mu}_{\lambda} &= \Sigma_{\lambda} \left( \lambda \Sigma_1^{-1} \symbf{\mu}_1 + (1 - \lambda) \Sigma_2^{-1} \symbf{\mu}_2 \right), \numberthis~\label{eq:js_norm_mvn1}
+  \symbf{\mu}_{\lambda} &= \Sigma_{\lambda} \left( (1-\lambda) \Sigma_1^{-1} \symbf{\mu}_1 + \lambda \Sigma_2^{-1} \symbf{\mu}_2 \right), \numberthis~\label{eq:js_norm_mvn1}
 \end{align*} 
 % where:
 % \begin{itemize}

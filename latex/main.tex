@@ -949,6 +949,8 @@ Hence, we identify the $\JSGa{}$ divergence as a suitable measure of dissimilari
 % For two multivariate normals, \citet{Nielsen2019} shows that the $\JSGa{}$ divergence introduced in Equation~\eqref{eq:js_norm} has the closed form solution
 % \todo{eq:js_norm can't be found}
 \todo{Double check!}
+\todo{Replace mu and sigma with something else to distinguish from ce model?}
+\todo{Use star instead of 2, to match below?}
 For two multivariate Gaussian distributions $F_1 \sim \mbox{MVN}(\symbf{\mu}_1, \Sigma_1)$ and $F_2 \sim \mbox{MVN}(\symbf{\mu}_2, \Sigma_2)$ in $\mathbb{R}^d$, \citet{Nielsen2019} shows that the dual $\JSGa{}$ divergence introduced in Equation~\eqref{eq:jsga} has the closed form solution 
 \begin{align*}%~\label{eq:js_norm_mvn}
   % JS^{G_{\lambda}}(F_1 \Vert F_2) &= \frac{1}{2} \left( (1 - k) \mu_1^T \Sigma_1^{-1} \mu_1 + k \mu_2^T \Sigma_2^{-1} \mu_2 - \mu_{\lambda}^T \Sigma_{\lambda}^{-1} \mu_{\lambda} + \log{\left( \frac{\abs{\Sigma_1}^{1-k} \abs{\Sigma_2}^{\lambda}}{\abs{\Sigma_{\lambda}}} \right)} \right), \\
@@ -1006,11 +1008,11 @@ Substituting the means and covariances of these conditional distributions from E
       \left(\mvcov{s^*}\right)^{-1} \\
 &\qquad\qquad\qquad\quad
       \left(\mvmean{s^*}\right) \\
-&\qquad - \boldsymbol{\mu}_{\lambda}^{T}\Sigma_{\lambda}^{-1}\boldsymbol{\mu}_{\lambda} \\
+&\qquad - \symbf{\mu}_{\lambda}^{T}\Sigma_{\lambda}^{-1}\symbf{\mu}_{\lambda} \\
 &\qquad + \log\!\left(\frac{\left\lvert \mvcov{s}\right\rvert^{\lambda}\,\left\lvert \mvcov{s^*}\right\rvert^{1-\lambda}}{\left\lvert \Sigma_{\lambda}\right\rvert}\right) \right\}, \numberthis~\label{eq:cjsga_ce} \\
 \Sigma_{\lambda}
   &= \left(\lambda\,\left(\mvcov{s}\right)^{-1} + (1-\lambda)\,\left(\mvcov{s^*}\right)^{-1}\right)^{-1}, \\
-\boldsymbol{\mu}_{\lambda}
+\symbf{\mu}_{\lambda}
   &= \Sigma_{\lambda}\left(\lambda\,
       \left(\mvcov{s}\right)^{-1}\left(\mvmean{s}\right) \\
 &\qquad\quad + (1-\lambda)\,

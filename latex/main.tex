@@ -207,11 +207,20 @@
 % \newcommand{\JSGa}{\mathop{\mathrm{JS}^{\mathrm{G}_{\alpha}}}\nolimits}
 % \newcommand{\JSGa}{\mathop{\mathrm{JS}^{\mathrm{G}_{k}}}\nolimits}
 \newcommand{\JSGa}{\mathop{\mathrm{JS}^{\mathrm{G}_{\lambda}}}\nolimits}
+\newcommand{\cJSGa}{\mathop{\mathrm{cJS}^{\mathrm{G}_{\lambda}}}\nolimits}
+\newcommand{\eJSGa}{\mathop{\mathrm{eJS}^{\mathrm{G}_{\lambda}}}\nolimits}
 % \newcommand{\GJS}[1]{\mathrm{JS}^{\mathrm{G}}}
 \DeclareMathOperator{\GJS}{\mathrm{JS}^{\mathrm{G}}}
 \DeclareMathOperator{\CE}{\mathrm{CE}}
 \newcommand{\rhou}[1]{\rho_{\text{#1}}}
 \newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
+
+
+\newcommand{\mvmean}[1]{\symbf{\alpha}_{\mid i}(#1) y + y^{\symbf{\beta}_{\mid i}(s)} \symbf{\mu}_{\mid i}(#1)}
+% \newcommand{\mvcov}[1]{\diag\big(y^{2\symbf{\beta}_{\mid i}(#1)} \symbf{\Sigma}_{\mid i}(#1)\big)}
+\newcommand{\mvcov}[1]{\left(y^{\beta_{\mid i}(s)}\right)^{\mathrm{T}} \Sigma_{\mid i}(s) y^{\beta_{\mid i}(s)}}
+
+% \symbf{\alpha}_{\mid i}(s) y + y^{\symbf{\beta}_{\mid i}(s)} \symbf{\mu}_{\mid i}(s)
 
 \newcommand{\rG}[1]{\rho_{\mathrm{Gauss}}_{#1}}
 \newcommand{\rT}[1]{\rho_{t}_{#1}}
@@ -286,6 +295,10 @@ Conditional extreme value (CE) models have proven useful for analysing the joint
 
 \newpage
 \spacingset{1.8} % DON'T change the spacing!
+
+\todo{Check equation numbering, especially for 10?}
+\todo{Replace mid mid with Vert}
+\todo{Are all equation numbers for align environments correct?}
 
 \section{Introduction}
 \label{sec:intro}
@@ -816,7 +829,7 @@ This leads to the spatially indexed extension of Equation~\eqref{eq:ce_model}, w
   \bigl(\symbf{Y}_{-i}(s) \mid Y_i(s) = y\bigr) 
     = \symbf{\alpha}_{\mid i}(s) \, y 
       + y^{\symbf{\beta}_{\mid i}(s)} \, \symbf{Z}_{\mid i}(s), 
-      \quad y > u_i(s),
+      \quad y > u_i,
 \end{equation}
 % with location-specific residuals $\symbf{Z}_{\mid i}(s) \sim \symbf{G}_{\mid i}(s)$. \todo{Do I need to define alpha(s), beta(s), ui(s) again?}
 where $\symbf{Y}_{-i}(s) \coloneqq \symbf{Y}(s) \setminus Y_i(s), \symbf{\alpha}_{\mid i}(s), \symbf{\beta}_{\mid i}(s)$ and $\symbf{Z}_{\mid i}(s) \sim \symbf{G}_{\mid i}(\cdot ; s)$ are the site-specific counterparts of the regression parameters and residuals introduced above.  
@@ -842,13 +855,14 @@ This Gaussian working assumption, proposed in \citet{Heffernan2004}, is the key 
 
 % \citet{Heffernan2004} shows that inference can be made about the extremal dependence of a random vector $\symbf{Y}_{-i} = \symbf{Y} \backslash Y_i$ on $Y_i$ by conditioning on the exceedance of a high threshold $u$ by $Y_i$, and assuming that this conditional distribution is a diagonal multivariate Gaussian distribution: % with vector mean and standard deviation:
 % An important consequence following from this assumption is that inference can be made about the extremal dependence of a random vector $\symbf{Y}_{-i} = \symbf{Y} \setminus \{Y_i\}$ on $Y_i$ by conditioning on the exceedance of a high threshold $u_i$ by $Y_i$, and assuming that this conditional distribution is a multivariate Gaussian distribution, i.e.\ 
-Consequently, inference can be made about the extremal dependence of a random vector $\symbf{Y}(s)$ at site $s$ by conditioning on the exceedance of a high threshold $u_i(s)$ by $Y_i(s)$, and assuming that this conditional distribution is multivariate Gaussian, i.e.,\@
+Consequently, inference can be made about the extremal dependence of a random vector $\symbf{Y}(s)$ at site $s$ by conditioning on the exceedance of a high threshold $u_i$ by $Y_i(s)$, and assuming that this conditional distribution is multivariate Gaussian, i.e.,\@
 
 \begin{equation}~\label{eq:ce_norm}
   % \bigl( \symbf{Y}_{-i} \mid Y_i  = y_i \bigr) \sim N\left(\symbf{\alpha}_{\mid i}^{(\CE{})} y_i + y_i^{\symbf{\beta}_{\mid i}^{(\CE{})}} \symbf{\mu}_{\mid i}^{(\CE{})}, y_i^{\symbf{\beta}_{\mid i}^{(\CE{})}} \Sigma_{\mid i}^{(\CE{})}\right), Y_i > u_i,
   % \bigl( \symbf{Y}_{-i} \mid Y_i  = y_i \bigr) \sim N\left(\symbf{\alpha}_{\mid i} y_i + y_i^{\symbf{\beta}_{\mid i}} \symbf{\mu}_{\mid i}, y_i^{\symbf{\beta}_{\mid i}} \symbf{\Sigma_{\mid i}}\right), Y_i > u_i,
   % \bigl( \symbf{Y}_{-i}(s) \mid Y_i(s)  = y) \sim \mbox{MVN}_{d-1}\left(\symbf{\alpha}_{\mid i}(s) y + y^{\symbf{\beta}_{\mid i}(s)} \symbf{\mu}_{\mid i}(s), y^{\symbf{\beta}_{\mid i}(s)} \Sigma_{\mid i}(s)\right), y > u_i(s),
-  \bigl( \symbf{Y}_{-i}(s) \mid Y_i(s)  = y) \sim \mbox{MVN}_{d-1}\left(\symbf{\alpha}_{\mid i}(s) y + y^{\symbf{\beta}_{\mid i}(s)} \symbf{\mu}_{\mid i}(s), \left(y^{\beta_{\mid i}(s)}\right)^{\mathrm{T}} \Sigma_{\mid i}(s) y^{\beta_{\mid i}(s)} \right), y > u_i(s),
+  % \bigl( \symbf{Y}_{-i}(s) \mid Y_i(s)  = y) \sim \mbox{MVN}_{d-1}\left(\symbf{\alpha}_{\mid i}(s) y + y^{\symbf{\beta}_{\mid i}(s)} \symbf{\mu}_{\mid i}(s), \left(y^{\beta_{\mid i}(s)}\right)^{\mathrm{T}} \Sigma_{\mid i}(s) y^{\beta_{\mid i}(s)} \right), y > u_i(s),
+  \bigl( \symbf{Y}_{-i}(s) \mid Y_i(s)  = y) \sim \mbox{MVN}_{d-1}\left(\mvmean{s}, \mvcov{s}\right), y > u_i,
 \end{equation}
 where $\symbf{\alpha}_{\mid i}(s), \symbf{\beta}_{\mid i}(s), \symbf{\mu}_{\mid i}(s), \Sigma_{\mid i}(s)$ are the site-specific parameters of the CE model for the $i^{\text{th}}$ conditioning variable, $i = 1, \ldots, d$.
 % where $\symbf{\alpha}_{\mid i}^{(\CE{})}, \symbf{\beta}_{\mid i}^{(\CE{})}, \symbf{\mu}_{\mid i}^{(\CE{})}, \Sigma_{\mid i}^{(\CE{})} \in \mathbb{R}^{(d-1)}$ are the parameters of the CE model. 
@@ -873,40 +887,44 @@ The bootstrapping procedure of \citet{Heffernan2004} is used to obtain standard 
 There are several qualities we desire from a divergence measure for clustering based on the conditional distribution in Equation~\eqref{eq:ce_norm}.
 % We would like to exploit the fact that the CE model is a multivariate Gaussian distribution to provide some gains in computational efficiency, and for our divergence to more generally be cheap to compute.
 % We particularly want to exploit the multivariate Gaussian nature of the CE model, to provide computational efficiency through a closed-form solution, and for our divergence to be generally cheap to compute.
-We want to provide computational efficiency through a closed-form solution, and for our divergence to be generally cheap to compute, which we achieve using the Gaussian assumption in Equation~\eqref{eq:ce_norm}.
 For clustering, the measure must be non-negative and symmetric, as the ``distance'' between two sites as defined by the divergence between their CE models should be the same regardless of the order in which they are compared.
 % Ideally, our measure should also be bounded above by a finite value, as smaller divergences lead to more well-defined clusters, and very large divergences can lead to numerical instability.
 % Ideally, our measure should also have some form of upper bound, as smaller divergences lead to more well-defined clusters, and very large divergences can lead to numerical instability. \todo{Citation!}
 Ideally, our measure should also have an upper bound, as larger divergences can lead to numerical instability and less stable and well-defined clusters. \todo{Need citation?}
 % Finally, we would like our measure to be a true metric, so that it satisfies the triangle inequality and is non-negative, and this is known to improve the performance of clustering algorithms \todo{Again, citation?}.
+We also want to provide computational efficiency through a closed-form solution, and for our divergence to be generally cheap to compute, which we achieve using the Gaussian assumption in Equation~\eqref{eq:ce_norm}.
 \todo{Any other properties? Convex (as KL is?) (which may be better?) (need citation)}
 
 % Introduce JSGa
 One divergence measure introduced in \citet{Nielsen2019} which satisfies these properties is the skew-geometric Jensen--Shannon divergence ($\JSGa{}$), which is a generalisation of the Jensen--Shannon ($\JS{}$) divergence \citep{Lin1991}. 
-\todo{Improve definition of P, Q, as measures? Or with detail as to their relation to CE?}
 % The $\JSGa{}$ divergence between two distribution functions $P$ and $Q$ is given by
-The $\JSGa{}$ divergence between two continuous $d$-variate distribution functions, $F_1$ and $F_2$, is given by
+\todo{Switch to F and F star to match below?}
+% The $\JSGa{}$ divergence between two continuous $d$-variate distribution functions, say $F_1$ and $F_2$, is given by
+\todo{Say why Deasy uses dual form?}
+Specifically, we will use the dual form of the $\JSGa{}$ divergence, which in \citet{Deasy2020}, which is defined between two continuous $d$-variate distribution functions, say $F_1$ and $F_2$, as
 \begin{equation}~\label{eq:jsga}
-  % \JSGa{(P \mid\mid Q)} = \frac{1}{2} \left\{\KL{(P \mid\mid G_{\alpha}(P, Q))} + \KL{(Q \mid\mid G_{\alpha}(P, Q))} \right\},
-  \JSGa{(F_1 \mid\mid F_2)} = \frac{1}{2} \left\{\KL{(F_1 \mid\mid G_{\lambda}(F_1, F_2))} + \KL{(F_2 \mid\mid G_{\lambda}(F_1, F_2))} \right\},
+  % \JSGa{(P \Vert Q)} = \frac{1}{2} \left\{\KL{(P \Vert G_{\alpha}(P, Q))} + \KL{(Q \Vert G_{\alpha}(P, Q))} \right\},
+  % \JSGa{(F_1 \Vert F_2)} = \frac{1}{2} \left\{\KL{(F_1 \Vert G_{\lambda}(F_1, F_2))} + \KL{(F_2 \Vert G_{\lambda}(F_1, F_2))} \right\},
+  % dual-version
+  \JSGa{(F_1 \Vert F_2)} = (1- \lambda) \KL{(G_{\lambda}(F_1, F_2) \Vert F_1)} + \lambda \KL{(G_{\lambda}(F_1, F_2) \Vert F_2)},
 \end{equation}
-% where $G_{\alpha}(P, Q) = P^{\alpha} Q^{1 - \alpha}, \alpha \in [0, 1]$ is the weighted geometric mean of $P$ and $Q$, with $\alpha$ controlling the weighting between them, and $\KL{(P \mid\mid Q)}$ is the Kullback--Leibler divergence between $P$ and $Q$ \citep{Kullback1951}. 
-where $G_{\lambda}(F_1, F_2) = F_{1}^{\lambda} F_{2}^{1 - \lambda}, \alpha \in [0, 1]$, is the weighted geometric mean of $F_1$ and $F_2$, and $\KL{(F_1 \mid\mid F_2)}$ is the Kullback--Leibler divergence between $F_1$ and $F_2$ \citep{Kullback1951}, given by 
+% where $G_{\alpha}(P, Q) = P^{\alpha} Q^{1 - \alpha}, \alpha \in [0, 1]$ is the weighted geometric mean of $P$ and $Q$, with $\alpha$ controlling the weighting between them, and $\KL{(P \Vert Q)}$ is the Kullback--Leibler divergence between $P$ and $Q$ \citep{Kullback1951}. 
+where $G_{\lambda}(F_1, F_2) = F_{1}^{1-\lambda} F_{2}^{\lambda}, \lambda \in [0, 1]$, is the weighted geometric mean of $F_1$ and $F_2$, and $\KL{(F_1 \Vert F_2)}$ is the Kullback--Leibler divergence between $F_1$ and $F_2$ \citep{Kullback1951}, given by 
 \begin{equation}~\label{eq:kl}
-  % KL(F_1 \mid\mid F_2) = \int_{-\infty}^{\infty} f_1(y) \log\left(\frac{f_1(y)}{f_2(y)}\right) dy,
-  \KL{(F_1 \mid\mid F_2)} = \int_{\mathbb{R}^d} f_1(\symbf{y}) \log\left(\frac{f_1(\symbf{y})}{f_2(\symbf{y})}\right) d\symbf{y},
+  % KL(F_1 \Vert F_2) = \int_{-\infty}^{\infty} f_1(y) \log\left(\frac{f_1(y)}{f_2(y)}\right) dy,
+  \KL{(F_1 \Vert F_2)} = \int_{\mathbb{R}^d} f_1(\symbf{y}) \log\left(\frac{f_1(\symbf{y})}{f_2(\symbf{y})}\right) d\symbf{y},
 \end{equation}
 where $f_1$ and $f_2$ are the continuous density functions of $F_1$ and $F_2$, respectively. 
 % Here, $P$ and $Q$ represent the conditional multivariate Gaussian distributions induced by the CE model at two different sites.
-In this context, $F_1$ and $F_2$ will represent the conditional multivariate Gaussian distributions induced by the CE model at two different sites, say $s_1$ and $s_2$.
+In our context, $F_1$ and $F_2$ will represent the conditional multivariate Gaussian distributions induced by the CE model at two different sites, say $s_1$ and $s_2$. \todo{Change to s and s star?}
 The parameter $\lambda$ skews the geometric mean $G_{\lambda}(F_1,F_2)\propto F_1^{\lambda}F_{2}^{1-\lambda}$ towards $F_1$ (when $\lambda$ is close to 1) or towards $F_2$ (when $\lambda$ is close to 0). 
 % When one site has a more reliable CE fit, we set $\alpha$ to a reliability weight $w\in[0,1]$ (e.g.\ proportional to effective sample size), and apply the symmetrised divergence so that the final dissimilarity remains symmetric.
 One possible advantage for having a skew parameter such as $\lambda$ is that in our divergence measure we can favour sites with a more reliable CE fit, as determined by, for example, the effective sample size.
 In this paper, we use $\lambda = 0.5$, because all sites have equal number of observations in both our simulation and case studies. 
 % For our application, we set $\alpha = 0.5$, so that $G_{\alpha}(P, Q)$ is unweighted, but note that $\alpha$ 
-% The Kullback--Leibler (KL) divergence, $KL(P \mid\mid Q)$, is defined as
+% The Kullback--Leibler (KL) divergence, $KL(P \Vert Q)$, is defined as
 % \begin{equation}~\label{eq:kl}
-%   KL(P \mid\mid Q) = \int_{-\infty}^{\infty} p(y) \log\left(\frac{p(y)}{q(y)}\right) dy.
+%   KL(P \Vert Q) = \int_{-\infty}^{\infty} p(y) \log\left(\frac{p(y)}{q(y)}\right) dy.
 % \end{equation}
 % The $\JSGa{}$ divergence is derived from the popular Kullback--Leibler ($KL$) divergence \citep{Killback1951}. 
 
@@ -918,34 +936,36 @@ Hence, the principle advantage of the $\JSGa{}$ here follows, as it also has a c
 The $\JSGa{}$ divergence between two multivariate Gaussian distributions has been used in several applications, including clustering, deep learning, variational inference and remote sensing \citep{Nielsen2019, Deasy2020, Ni2023-cd, Thiagarajan2025}. \todo{Add more references?}
 % Furthermore, it is clearly symmetric and non-negative, as the sum of two $KL$ divergences, which is also important for clustering.
 Furthermore, as the average of two $\KL{}$ divergences, it is clearly symmetric and non-negative.
-Finally, when $\lambda = 0.5$, $\JSGa{}$ is bounded above by $\JSGa{(F_1 \mid\mid F_2)} \leq \frac{1}{4} \mathrm{J}(F_1 \mid\mid F_2)$,
+Finally, when $\lambda = 0.5$, $\JSGa{}$ is bounded above by $\JSGa{(F_1 \Vert F_2)} \leq \frac{1}{4} \mathrm{J}(F_1 \Vert F_2)$,
 % \begin{equation}~\label{eq:jsga_bound}
-%   \JSGa{(F_1 \mid\mid F_2)} \leq \frac{1}{4} \mathrm{J}(F_1 \mid\mid F_2),
+%   \JSGa{(F_1 \Vert F_2)} \leq \frac{1}{4} \mathrm{J}(F_1 \Vert F_2),
 % \end{equation}
-where the Jeffreys' divergence $\mathrm{J}(F_1 \mid\mid F_2) = \KL{(F_1 \mid\mid F_2)} + \KL{(F_2 \mid\mid F_1)}$ is simply the sum of the forward and backward $\KL{}$ divergences \citep{Nielsen2025}.
+where the Jeffreys' divergence $\mathrm{J}(F_1 \Vert F_2) = \KL{(F_1 \Vert F_2)} + \KL{(F_2 \Vert F_1)}$ is simply the sum of the forward and backward $\KL{}$ divergences \citep{Nielsen2025}.
 % Therefore, $\JSGa{}$ provides more well-defined clusters than the Jeffreys' divergence, motivating the higher conceptual complexity by comparison. 
-Therefore, the $\JSGa{}$ divergence is less susceptible to numerical instability than this simple sum. %, and also provides more tightly defined clusters.
+Therefore, the $\JSGa{}$ divergence is less susceptible to numerical instability than this simple summation. %, and also provides more tightly defined clusters.
 Hence, we identify the $\JSGa{}$ divergence as a suitable measure of dissimilarity for clustering CE model fits.
 
 % JSGa form
 % For two multivariate normals, \citet{Nielsen2019} shows that the $\JSGa{}$ divergence introduced in Equation~\eqref{eq:js_norm} has the closed form solution
 % \todo{eq:js_norm can't be found}
 \todo{Double check!}
-For two multivariate Gaussian distributions $F_1 \sim \mbox{MVN}(\symbf{\mu}_1, \Sigma_1)$ and $F_2 \sim \mbox{MVN}(\symbf{\mu}_2, \Sigma_2)$ in $\mathbb{R}^d$, \citet{Nielsen2019} shows that the $\JSGa{}$ divergence introduced in Equation~\eqref{eq:jsga} has the closed form solution 
+\todo{Replace mu and sigma with something else to distinguish from ce model?}
+\todo{Use star instead of 2, to match below?}
+For two multivariate Gaussian distributions $F_1 \sim \mbox{MVN}(\symbf{\mu}_1, \Sigma_1)$ and $F_2 \sim \mbox{MVN}(\symbf{\mu}_2, \Sigma_2)$ in $\mathbb{R}^d$, \citet{Nielsen2019} shows that the dual $\JSGa{}$ divergence introduced in Equation~\eqref{eq:jsga} has the closed form solution 
 \begin{align*}%~\label{eq:js_norm_mvn}
-  % JS^{G_{\lambda}}(F_1 \mid\mid F_2) &= \frac{1}{2} \left( (1 - k) \mu_1^T \Sigma_1^{-1} \mu_1 + k \mu_2^T \Sigma_2^{-1} \mu_2 - \mu_{\lambda}^T \Sigma_{\lambda}^{-1} \mu_{\lambda} + \log{\left( \frac{\abs{\Sigma_1}^{1-k} \abs{\Sigma_2}^{\lambda}}{\abs{\Sigma_{\lambda}}} \right)} \right), \\
-  JS^{G_{\lambda}}(F_1 \mid\mid F_2) &= \frac{1}{2} \left( k \mu_1^T \Sigma_1^{-1} \mu_1 + (1 - k) \mu_2^T \Sigma_2^{-1} \mu_2 - \mu_{\lambda}^T \Sigma_{\lambda}^{-1} \mu_{\lambda} + \log{\left( \frac{\abs{\Sigma_1}^{\lambda} \abs{\Sigma_2}^{1-k}}{\abs{\Sigma_{\lambda}}} \right)} \right), \\
+  % JS^{G_{\lambda}}(F_1 \Vert F_2) &= \frac{1}{2} \left( (1 - k) \mu_1^T \Sigma_1^{-1} \mu_1 + k \mu_2^T \Sigma_2^{-1} \mu_2 - \mu_{\lambda}^T \Sigma_{\lambda}^{-1} \mu_{\lambda} + \log{\left( \frac{\abs{\Sigma_1}^{1-k} \abs{\Sigma_2}^{\lambda}}{\abs{\Sigma_{\lambda}}} \right)} \right), \\
+  JS^{G_{\lambda}}(F_1 \Vert F_2) &= \frac{1}{2} \left( (1-\lambda) \symbf{\mu}_1^T \Sigma_1^{-1} \symbf{\mu}_1 + \lambda \symbf{\mu}_2^T \Sigma_2^{-1} \symbf{\mu}_2 - \symbf{\mu}_{\lambda}^T \Sigma_{\lambda}^{-1} \symbf{\mu}_{\lambda} + \log{\left( \frac{\abs{\Sigma_1}^{1-\lambda} \abs{\Sigma_2}^{\lambda}}{\abs{\Sigma_{\lambda}}} \right)} \right), \\
   % \Sigma_{\lambda} &= \left( (1 - k) \Sigma_1^{-1} + k \Sigma_2^{-1} \right)^{-1}, \\
-  \Sigma_{\lambda} &= \left( k \Sigma_1^{-1} + (1 - k) \Sigma_2^{-1} \right)^{-1}, \\
+  \Sigma_{\lambda} &= \left( (1-\lambda) \Sigma_1^{-1} + \lambda \Sigma_2^{-1} \right)^{-1}, \\
   % \mu_{\lambda} &= \Sigma_{\lambda} \left( (1 - k) \Sigma_1^{-1} \mu_1 + k \Sigma_2^{-1} \mu_2 \right), \numberthis~\label{eq:js_norm_mvn1}
-  \mu_{\lambda} &= \Sigma_{\lambda} \left( k \Sigma_1^{-1} \mu_1 + (1 - k) \Sigma_2^{-1} \mu_2 \right), \numberthis~\label{eq:js_norm_mvn1}
+  \symbf{\mu}_{\lambda} &= \Sigma_{\lambda} \left( (1-\lambda) \Sigma_1^{-1} \symbf{\mu}_1 + \lambda \Sigma_2^{-1} \symbf{\mu}_2 \right), \numberthis~\label{eq:js_norm_mvn1}
 \end{align*} 
-where:
-\begin{itemize}
-  \item $\mu_1 = (\mu_{1,1}, \mu_{1,2}, \ldots, \mu_{1,d})^\top$ and $\mu_2 = (\mu_{2,1}, \mu_{2,2}, \ldots, \mu_{2,d})^\top$ are the mean vectors,
-  \item $\Sigma_1 = \text{diag}(\sigma_{1,1}^2, \sigma_{1,2}^2, \ldots, \sigma_{1,d}^2)$ and $\Sigma_2 = \text{diag}(\sigma_{2,1}^2, \sigma_{2,2}^2, \ldots, \sigma_{2,d}^2)$ are diagonal covariance matrices, \todo{Are they diagonal??}
-  \item $\sigma_{1,i}^2$ and $\sigma_{2,i}^2$ denote the $i$-th diagonal element of $\Sigma_1$ and $\Sigma_2$, respectively.
-\end{itemize}
+% where:
+% \begin{itemize}
+%   \item $\mu_1 = (\mu_{1,1}, \mu_{1,2}, \ldots, \mu_{1,d})^\top$ and $\mu_2 = (\mu_{2,1}, \mu_{2,2}, \ldots, \mu_{2,d})^\top$ are the mean vectors,
+%   \item $\Sigma_1 = \text{diag}(\sigma_{1,1}^2, \sigma_{1,2}^2, \ldots, \sigma_{1,d}^2)$ and $\Sigma_2 = \text{diag}(\sigma_{2,1}^2, \sigma_{2,2}^2, \ldots, \sigma_{2,d}^2)$ are diagonal covariance matrices, \todo{Are they diagonal??}
+%   \item $\sigma_{1,i}^2$ and $\sigma_{2,i}^2$ denote the $i$-th diagonal element of $\Sigma_1$ and $\Sigma_2$, respectively.
+% \end{itemize}
 
 % We may also assume that our covariance matrices are diagonal, as is often the case in practice.
 % A common simplifying assumption is to assume that the covariance matrices $\Sigma_1$ and $\Sigma_2$ are diagonal.
@@ -953,11 +973,11 @@ where:
 % \todo{Double check this formula is correct (R should give same output as above non-diagonal method)}
 % \todo{Standardise use of brackets, varies a lot}
 % % \begin{align*}
-% %   JS-G(P \mid \mid Q) = \frac{1}{2} \sum^n_{i=1} \left[ \frac{\alpha \sigma_{1, i}^2 + (1-\alpha)\sigma_{2, i}^2}{\sigma_{\alpha, i}^2} + \log{\left( \frac{\sigma_{\alpha, i}^2}{\sigma_{1, i}^{(2\alpha)}\sigma_{2, i}^{2(1 - \alpha)}} \right)} + \alpha \frac{(\mu_{\alpha, i} - \mu_{1, i})^2}{\sigma_{\alpha, i}^2} + (1 - \alpha) \frac{(\mu_{\alpha, i} - \mu_{2, i})^2}{\sigma_{\alpha, i}^2} -1 \right],
+% %   JS-G(P \Vert Q) = \frac{1}{2} \sum^n_{i=1} \left[ \frac{\alpha \sigma_{1, i}^2 + (1-\alpha)\sigma_{2, i}^2}{\sigma_{\alpha, i}^2} + \log{\left( \frac{\sigma_{\alpha, i}^2}{\sigma_{1, i}^{(2\alpha)}\sigma_{2, i}^{2(1 - \alpha)}} \right)} + \alpha \frac{(\mu_{\alpha, i} - \mu_{1, i})^2}{\sigma_{\alpha, i}^2} + (1 - \alpha) \frac{(\mu_{\alpha, i} - \mu_{2, i})^2}{\sigma_{\alpha, i}^2} -1 \right],
 % % \end{align*}
 % % \todo{Should I use a different notation here, since I also use mu, sigma for the CE model?}
 % \begin{align}~\label{eq:js_norm_mvn_diag}
-% JS^{G_{\alpha}}(F_1 \mid\mid F_2) = \frac{1}{2} \sum_{i=1}^d \Bigg[
+% JS^{G_{\alpha}}(F_1 \Vert F_2) = \frac{1}{2} \sum_{i=1}^d \Bigg[
 %     & \frac{\alpha \sigma_{1,i}^2 + (1 - \alpha) \sigma_{2,i}^2}{\sigma_{\alpha,i}^2} 
 %     + \log\left( \frac{\sigma_{\alpha,i}^2}{\sigma_{1,i}^{2\alpha} \sigma_{2,i}^{2(1 - \alpha)}} \right) \nonumber \\
 %     & + \alpha \frac{(\mu_{\alpha,i} - \mu_{1,i})^2}{\sigma_{\alpha,i}^2} 
@@ -966,10 +986,43 @@ where:
 % \end{align}
 % where $\sigma_{\alpha, i}^2 = \frac{\sigma_{1, i}^2 \sigma_{2, i}^2}{\alpha\sigma_{1, i}^2 + (1 - \alpha)\sigma_{2, i}^2}$, and $\mu_{\alpha, i} = \sigma_{\alpha, i}^2 \left( \frac{\alpha\mu_{1, i}}{\sigma_{1, i}^2} + \frac{(1 - \alpha) \mu_{2, i}}{\sigma_{2, i}^2} \right)$, respectively.
 
+% Paragraph defining conditional JSGa for sites (s, s*) in cond variable
+Now suppose we have fitted the CE model at two different sites, say $s$ and $s^*$, and we want to compare the extremal dependence structure of the random vector $\symbf{Y}(s)$ at site $s$ with that of $\symbf{Y}(s^*)$ at site $s^*$, for a given conditioning variable $Y_i(s)$ and $Y_i(s^*)$, respectively, where $i \in \{1, \ldots, d\}$.
+Using the $\JSGa{}$ divergence in Equation~\eqref{eq:js_norm_mvn1}, we define the \textit{conditional skew-geometric Jensen--Shannon divergence} ($\cJSGa{}$) between the two sites $s$ and $s^*$ for the conditioning variable $Y_i$ as
+\begin{equation} \label{eq:cjsga}
+  \cJSGa{}\bigl(y; s \Vert s^*\bigr) = \JSGa{}\left(F_{\mathbf{Y}_{-i}(s)|Y_i(s)=y} \Vert F_{\mathbf{Y}_{-i}(s^*)|Y_i(s^*)=y}\right),
+\end{equation}
+where $F_{\mathbf{Y}_{-i}(s)|Y_i(s)=y}$ and $F_{\mathbf{Y}_{-i}(s^*)|Y_i(s^*)=y}$ are the conditional multivariate Gaussian distributions induced by the CE model at sites $s$ and $s^*$, respectively, for a given value of $y > \max(u_i(s), u_i(s^*))$. \todo{Wrong!!}
+Substituting the means and covariances of these conditional distributions from Equation\eqref{eq:ce_norm} into Equation~\eqref{eq:js_norm_mvn1} gives the closed form expression
+
+\todo{Need help tidying up}
+\todo{move equation number to right}
+\todo{What is random word at very end of last line?}
+\begin{align*}% \label{eq:cjsga}
+\cJSGa{}\left(y; s \Vert s^*\right)
+  &= \tfrac{1}{2}\left\{
+    \lambda\,\left(\mvmean{s}\right)^{T}\left(\mvcov{s}\right)^{-1}\left(\mvmean{s}\right) \\
+&\qquad + (1-\lambda)\,
+      \left(\mvmean{s^*}\right)^{T} \\
+&\qquad\qquad\qquad\quad
+      \left(\mvcov{s^*}\right)^{-1} \\
+&\qquad\qquad\qquad\quad
+      \left(\mvmean{s^*}\right) \\
+&\qquad - \symbf{\mu}_{\lambda}^{T}\Sigma_{\lambda}^{-1}\symbf{\mu}_{\lambda} \\
+&\qquad + \log\!\left(\frac{\left\lvert \mvcov{s}\right\rvert^{\lambda}\,\left\lvert \mvcov{s^*}\right\rvert^{1-\lambda}}{\left\lvert \Sigma_{\lambda}\right\rvert}\right) \right\}, \numberthis~\label{eq:cjsga_ce} \\
+\Sigma_{\lambda}
+  &= \left(\lambda\,\left(\mvcov{s}\right)^{-1} + (1-\lambda)\,\left(\mvcov{s^*}\right)^{-1}\right)^{-1}, \\
+\symbf{\mu}_{\lambda}
+  &= \Sigma_{\lambda}\left(\lambda\,
+      \left(\mvcov{s}\right)^{-1}\left(\mvmean{s}\right) \\
+&\qquad\quad + (1-\lambda)\,
+      \left(\mvcov{s^*}\right)^{-1}\left(\mvmean{s^*}\right)\right).
+\end{align*}
+
 % % Introduce KL divergence 
 % One common measure of dissimilarity between two distributions $P$ and $Q$ is the Kullback-Leibler (KL) divergence, defined as
 % \begin{equation}~\label{eq:kl}
-%   KL(F_1 \mid\mid F_2) = \int_{-\infty}^{\infty} p(y) \log\left(\frac{p(y)}{q(y)}\right) dy.
+%   KL(F_1 \Vert F_2) = \int_{-\infty}^{\infty} p(y) \log\left(\frac{p(y)}{q(y)}\right) dy.
 % \end{equation}
 % \todo{define mid mid!?}
 % where $p(y)$ and $q(y)$ are the densities of $P$ and $Q$, respectively \citep{Kullback1951}.
@@ -978,11 +1031,11 @@ where:
 % % \Sigma_1)$, Q \sim N(\mu_2, \Sigma_2)$ in $\mathbb{R}^n$ has closed form
 % % solution.
 % The KL divergence is always non-negative and zero if and only if $P = Q$.
-% % For two multivariate normal distributions $P \sim N(\mu_1, \Sigma_1), Q \sim N(\mu_2, \Sigma_2) \in \mathbb{R}^n$ with diagonal covariance matrices, $KL(F_1 \mid\mid F_2)$ has closed form.
+% % For two multivariate normal distributions $P \sim N(\mu_1, \Sigma_1), Q \sim N(\mu_2, \Sigma_2) \in \mathbb{R}^n$ with diagonal covariance matrices, $KL(F_1 \Vert F_2)$ has closed form.
 % A well known result is that the KL divergence between two multivariate normal distributions $P \sim N(\mu_1, \Sigma_1)$ and $Q \sim N(\mu_2, \Sigma_2)$ in $\mathbb{R}^n$ has a closed form solution.
 %   % \item In the case where both covariance matrices are diagonal, this simplifies to
 %     % \begin{equation}~\label{eq:kl_mvn_diag}
-%     %   KL(F_1 \mid\mid F_2) = \frac{1}{2} \sum_{i=1}^{n} \left( \frac{\sigma_{1,i}^2}{\sigma_{2,i}^2} + \frac{(\mu_{1,i} - \mu_{2,i})^2}{\sigma_{2,i}^2} - 1 - \log\left(\frac{\sigma_{1,i}^2}{\sigma_{2,i}^2}\right) \right),
+%     %   KL(F_1 \Vert F_2) = \frac{1}{2} \sum_{i=1}^{n} \left( \frac{\sigma_{1,i}^2}{\sigma_{2,i}^2} + \frac{(\mu_{1,i} - \mu_{2,i})^2}{\sigma_{2,i}^2} - 1 - \log\left(\frac{\sigma_{1,i}^2}{\sigma_{2,i}^2}\right) \right),
 %     % \end{equation}
 %     % where: \todo{Should I use a different notation here, since I also use mu, sigma for the CE model?}
 %     % \begin{itemize}
@@ -995,14 +1048,14 @@ where:
 % \todo{Do we need to use the backward Geometric mean, as described in Deasy and Thiagarajan? Fine if using alpha = 0.5?}
 % The JS divergence is a simple extension of the KL divergence, defined as
 % \begin{equation}~\label{eq:js}
-%   % JS(F_1 \mid\mid F_2) = \frac{1}{2} KL(P \mid\mid M) + \frac{1}{2} KL(Q \mid\mid M),
-%   JS(F_1 \mid\mid F_2) = \frac{1}{2} \left\{ KL(P \mid\mid M) + KL(Q \mid\mid M) \right\},
+%   % JS(F_1 \Vert F_2) = \frac{1}{2} KL(P \Vert M) + \frac{1}{2} KL(Q \Vert M),
+%   JS(F_1 \Vert F_2) = \frac{1}{2} \left\{ KL(P \Vert M) + KL(Q \Vert M) \right\},
 % \end{equation}
 % % where $M = \frac{1}{2}(P + Q)$ is a mixture distribution \citep{Lin1991}.
 % where $M$ is the two-component mixture of $P$ and $Q$. 
 % The JS divergence provides a symmetric measure of dissimilarity between two distributions.
-%   % \item The JS divergence is a true metric bounded by $[0, \log{(2)}]$, unlike the simple sum of the forward and backward KL divergences $KL(F_1 \mid\mid F_2) + KL(Q \mid\mid P)$.
-% The JS divergence is a true metric unlike the simple sum of the forward and backward KL divergences $KL(F_1 \mid\mid F_2) + KL(Q \mid\mid P)$. % don't reference bounds, as JS-G doesn't have any
+%   % \item The JS divergence is a true metric bounded by $[0, \log{(2)}]$, unlike the simple sum of the forward and backward KL divergences $KL(F_1 \Vert F_2) + KL(Q \Vert P)$.
+% The JS divergence is a true metric unlike the simple sum of the forward and backward KL divergences $KL(F_1 \Vert F_2) + KL(Q \Vert P)$. % don't reference bounds, as JS-G doesn't have any
 %   % \item A problem arises from the fact that the mixture distribution $M$ of two normals is not itself normal.
 %   % \item In fact, $M$ becomes increasingly bimodal as $P$ and $Q$ become more dissimilar, and so the JS divergence does not have a closed form solution for multivariate normals.
 % A problem arises from the fact that the mixture distribution $M$ of two normals is not itself normal, and so the KL divergence does not have a closed form solution for multivariate normals.
@@ -1011,8 +1064,8 @@ where:
 % \todo{Need to use backward version instead?}
 % From this, we define the skew-geometric JS divergence as
 % \begin{equation}~\label{eq:js_norm}
-%   % JS^{G_{\alpha}}(F_1 \mid\mid F_2) = \frac{1}{2} KL(P \mid\mid G_{\alpha}(P, Q)) + \frac{1}{2} KL(Q \mid\mid G_{\alpha}(P, Q)).
-%   JS^{G_{\alpha}}(F_1 \mid\mid F_2) = \frac{1}{2} \left\{ KL(P \mid\mid G_{\alpha}(P, Q)) + KL(Q \mid\mid G_{\alpha}(P, Q)) \right\}.
+%   % JS^{G_{\alpha}}(F_1 \Vert F_2) = \frac{1}{2} KL(P \Vert G_{\alpha}(P, Q)) + \frac{1}{2} KL(Q \Vert G_{\alpha}(P, Q)).
+%   JS^{G_{\alpha}}(F_1 \Vert F_2) = \frac{1}{2} \left\{ KL(P \Vert G_{\alpha}(P, Q)) + KL(Q \Vert G_{\alpha}(P, Q)) \right\}.
 % \end{equation}
 % The parameter $\alpha$ is called a skew parameter, and controls the divergence skew between P and Q. 
 % For our purposes, we will set $\alpha = 0.5$, which corresponds to giving equal weight to both distributions. \todo{Need to explore this further!}
@@ -1024,28 +1077,52 @@ where:
 % \todo{Hard/confusing to describe using Yi, switch to another notation?}
 % Since the models $P$ and $Q$ depend on the value of $Y_i$, the conditioning variable, we define the expected value
 % Since the conditional distributions $P$ and $Q$ are functions of the conditioning variable $Y_i$, the divergence between them depends on the specific value of $Y_i$. 
-Since the conditional distributions $P$ and $Q$ depend on the value of the conditioning variable $Y_i(s)$, the divergence between them also depends on $Y_i(s)$. 
-To obtain a single measure of dissimilarity, we define the expected divergence
-\todo{Need to clean up expectation?}
-\begin{equation}~\label{eq:jsga_integral}
-% \mathbb{E}\!\left[ JS^{G_{\alpha}}(P(y_i)\, \| \, Q(y_i)) \,\middle|\, Y_i > u_i \right] 
-% = \int_{u_i}^\infty JS^{G_{\alpha}}(P(y_i)\, \| \, Q(y_i)) \, f(y_i \mid Y_i > u_i)\, dy_i,
-  % \mathbb{E}\!\left[ \JSGa{(P(y_i)\, \| \, Q(y_i))} \,\middle|\, Y_i > u_i \right] = \int_{u_i}^\infty \JSGa{(P(y_i)\, \| \, Q(y_i))} \, f(y_i \mid Y_i > u_i)\, dy_i,
-  \mathbb{E}\!\left[ \JSGa{(P(y_i)\, \| \, Q(y_i))} \,\middle|\, Y_i(s) > u_i \right] = \int_{u_i}^\infty \JSGa{(P(y_i)\, \| \, Q(y_i))} \, f(y_i \mid Y_i(s) > u_i(s))\, dy_i,
-\end{equation}
-where $f(y_i \mid Y_i(s) > u_i(s))$ is the conditional density of $Y_i(s)$ given exceedance of the threshold. 
-This integral gives us our dissimilarity measure or ``distance'' between the two conditional distributions, averaged over the distribution of $Y_i$.
+% Since the conditional distributions $P$ and $Q$ depend on the value of the conditioning variable $Y_i(s)$, the divergence between them also depends on $Y_i(s)$. 
+% To obtain a single measure of dissimilarity, we define the expected divergence
+% \todo{Need to clean up expectation?}
+% \begin{equation}~\label{eq:jsga_integral}
+% % \mathbb{E}\!\left[ JS^{G_{\alpha}}(P(y_i)\, \| \, Q(y_i)) \,\middle|\, Y_i > u_i \right] 
+% % = \int_{u_i}^\infty JS^{G_{\alpha}}(P(y_i)\, \| \, Q(y_i)) \, f(y_i \mid Y_i > u_i)\, dy_i,
+%   % \mathbb{E}\!\left[ \JSGa{(P(y_i)\, \| \, Q(y_i))} \,\middle|\, Y_i > u_i \right] = \int_{u_i}^\infty \JSGa{(P(y_i)\, \| \, Q(y_i))} \, f(y_i \mid Y_i > u_i)\, dy_i,
+%   \mathbb{E}\!\left[ \JSGa{(P(y_i)\, \| \, Q(y_i))} \,\middle|\, Y_i(s) > u_i \right] = \int_{u_i}^\infty \JSGa{(P(y_i)\, \| \, Q(y_i))} \, f(y_i \mid Y_i(s) > u_i(s))\, dy_i,
+% \end{equation}
+
+Since the conditional $\JSGa{}$ divergence, $\cJSGa{}$, depends on the value of the conditioning variable $Y_i(s)$, we obtain a single measure of dissimilarity, by defining the expected divergence 
+\begin{align*}%~\label{eq:jsga_integral}
+  eJS^{G_\lambda}_i(s || s^*) &= \mathbb{E}(cJS^{G_\lambda}_i(Y_i(s); s || s^*)| Y_i(s) > u_i) \\
+                              &= \int_{u_i}^{\infty} \cJSGa{(y; s || s^*)} f(y \mid Y_i(s) > u_i) dy, \numberthis~\label{eq:jsga_integral}
+\end{align*}
+where $f(y \mid Y_i(s) > u_i)$ is the conditional density of $Y_i(s)$ given exceedance of the threshold. 
+This integral gives us our dissimilarity measure or ``distance'' between the two conditional distributions, averaged over the distribution of $Y_i(s) \mid Y_i(s) > u_i$.
 % We can estimate this integral using Monte Carlo (MC) methods, noting that the distribution of $Y_i$ is given by the standard Laplace distribution. 
-We can estimate this integral using Monte Carlo (MC) methods, noting that $Y_i(s)$ follows a standard Laplace distribution.
-We average across the individual scores for each individual realisation of $Y_i(s)$ to derive the divergence for a pair of sites, weighted by the distribution of $Y_i(s)$.
+We estimate this integral using Monte Carlo methods, noting that $Y_i(s)$ follows a standard Laplace distribution.
+% We average across the individual scores for each individual realisation of $Y_i(s)$ to derive the divergence for a pair of sites, weighted by the distribution of $Y_i(s)$.
 In practice, very large values of $Y_i(s)$ can lead to unstable estimates, and we also want to avoid extrapolating beyond the range of observed $Y_i(s)$ used to fit the CE model. 
-Hence, we truncate the expectation at the 99th percentile of the empirical distribution of $Y_i(s)$ across all sites.
+% Hence, we truncate the expectation at the 99th percentile of the empirical distribution of $Y_i(s)$ across all sites.
+Hence, we truncate the integral in Equation~\eqref{eq:jsga_integral} at the 99th percentile of the empirical distribution of $Y_i(s)$ across all sites.
+
+% Matrix
+\todo{Problem: Don't I have d(d-1) models here, not d?}
+We can repeat this procedure for each pair of sites $(s, s^*)$ and for each conditioning variable $Y_i$, to obtain a matrix of pairwise dissimilarities between all sites for each conditioning variable, given by
+\begin{equation} \label{eq:distance_matrix}
+  M_i=\left( eJS^{G_\lambda}_i(s || s^*)\right)_{s, s^* \in \{s_1,\dots,s_D\}},
+\end{equation}
+where $D$ is the total number of sites.
+If we have $d$ conditioning variables, we can also aggregate the $d$ distance matrices $M_1, \ldots, M_d$ into a single matrix $M$, by taking the element-wise average across all matrices, i.e. \todo{Do we like this representation of the elementwise average?}
+\begin{equation} \label{eq:aggregate_matrix}
+  \bar{M} = \frac{1}{d} \sum_{i=1}^d M_i.
+\end{equation}
+This aggregated matrix $\bar{M}$, or the individual matrices $M_i$, can then be used as input to the clustering algorithm described in Section~\ref{subsec:clustering}.
+Optionally, other forms of aggregation, such as a weighted average or median, could be used here instead. 
+Aggregating across multiple conditioning variables allows us to pool information across multiple comparisons and forms of information, and has some precedence in the extremal clustering literature \citep{Mornet2017-js}.
 
 % Summary
 % In summary, we define a dissimilarity measure between any two CE models based on the $\JSGa{}$ divergence, which is symmetric, non-negative, and computationally efficient. 
+\todo{Rewrite}
 In summary, we define a dissimilarity measure between any two CE models based on the $\JSGa{}$ divergence, which is computationally efficient, symmetric, non-negative and bounded above. \todo{Can we say its bounded above when its only by another metric?}
 For each pair of sites, the divergence depends on the conditional distributions of $\symbf{Y}_{-i} \mid Y_i$ and we integrate over the distribution of $Y_i$ above the threshold to obtain an expected divergence. 
-This procedure allows us to construct a matrix of pairwise dissimilarities, or distances, between all sites, representing differences in their extremal dependence structures and providing a basis for clustering.
+% This procedure allows us to construct a matrix of pairwise dissimilarities, or distances, between all sites, representing differences in their extremal dependence structures and providing a basis for clustering.
+This procedure allows us to construct matrices of pairwise dissimilarities, or distances, between all sites for a given conditioning variable, representing differences in their extremal dependence structures, which together or separately provide a basis for clustering.
 
 % \todo{Revisit this!}
 % \begin{itemize}
@@ -1058,8 +1135,9 @@ This procedure allows us to construct a matrix of pairwise dissimilarities, or d
 % Describe clustering process via JS divergence and k-medoids/PAM algorithm (give?
 % See Vignotto)
 
-Using Equation~\eqref{eq:jsga_integral}, we can now contruct a dissimilarity measure to compare two conditional distributions, representing our pairwise ``distances'' between sites. 
-We can also aggregate these distances across multiple conditioning variables to pool information across multiple comparisons. 
+% Using Equation~\eqref{eq:jsga_integral}, we can now contruct a dissimilarity measure to compare two conditional distributions, representing our pairwise ``distances'' between sites. 
+Using Equation~\eqref{eq:jsga_integral}, we can now construct a dissimilarity matrix $M_i$ (Equation~\eqref{eq:distance_matrix}) or an aggregated dissimilarity matrix $\bar{M}$ (Equation~\eqref{eq:aggregate_matrix}), to compare the conditional distributions at each pair of sites, representing our pairwise ``distances'' between sites for a given conditioning variable $Y_i$ or aggregated across multiple conditioning variables, respectively.
+% We can also aggregate these distances across multiple conditioning variables to pool information across multiple comparisons. 
 % PAM (K-means not suitable as clusters cannot be assumed to be spherical) (see
 % Vignotto)
 % Now we have a distance measure over which to compute the dissimilarity matrix of pairwise ``distances'' between sites.

@@ -1089,7 +1089,8 @@ Substituting the means and covariances of these conditional distributions from E
 
 Since the conditional $\JSGa{}$ divergence, $\cJSGa{}$, depends on the value of the conditioning variable $Y_i(s)$, we obtain a single measure of dissimilarity, by defining the expected divergence 
 \begin{align*}%~\label{eq:jsga_integral}
-  eJS^{G_\lambda}_i(s || s^*) &= \mathbb{E}(cJS^{G_\lambda}_i(Y_i(s); s || s^*)| Y_i(s) > u_i) \\
+  % eJS^{G_\lambda}_i(s || s^*) &= \mathbb{E}(cJS^{G_\lambda}_i(Y_i(s); s || s^*)| Y_i(s) > u_i) \\
+  \eJSGa{}(s || s^*) &= \mathbb{E}(cJS^{G_\lambda}_i(Y_i(s); s || s^*)| Y_i(s) > u_i) \\
                               &= \int_{u_i}^{\infty} \cJSGa{(y; s || s^*)} f(y \mid Y_i(s) > u_i) dy, \numberthis~\label{eq:jsga_integral}
 \end{align*}
 where $f(y \mid Y_i(s) > u_i)$ is the conditional density of $Y_i(s)$ given exceedance of the threshold. 
@@ -1105,7 +1106,8 @@ Hence, we truncate the integral in Equation~\eqref{eq:jsga_integral} at the 99th
 \todo{Problem: Don't I have d(d-1) models here, not d?}
 We can repeat this procedure for each pair of sites $(s, s^*)$ and for each conditioning variable $Y_i$, to obtain a matrix of pairwise dissimilarities between all sites for each conditioning variable, given by
 \begin{equation} \label{eq:distance_matrix}
-  M_i=\left( eJS^{G_\lambda}_i(s || s^*)\right)_{s, s^* \in \{s_1,\dots,s_D\}},
+  % M_i=\left( eJS^{G_\lambda}_i(s || s^*)\right)_{s, s^* \in \{s_1,\dots,s_D\}},
+  M_i=\left(\eJSGa{}(y; s\Verts^*)_{s, s^* \in \{s_1,\dots,s_D\}},
 \end{equation}
 where $D$ is the total number of sites.
 If we have $d$ conditioning variables, we can also aggregate the $d$ distance matrices $M_1, \ldots, M_d$ into a single matrix $M$, by taking the element-wise average across all matrices, i.e. \todo{Do we like this representation of the elementwise average?}

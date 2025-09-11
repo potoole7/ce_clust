@@ -190,6 +190,8 @@
 \usepackage{tikz}
 % \usepackage[colorlinks=true,citecolor=blue, linkcolor=blue]{hyperref}
 \usepackage{multirow}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
 
 % Define a custom note command for general notes
 \newcommand{\mynote}[1]{\todo[color=yellow!40,inline]{#1}}
@@ -629,9 +631,10 @@ In this section, we introduce our clustering framework for CE models.
 % We begin in Section~\ref{subsec:ce_model} by introducing the CE model of \citet{Heffernan2004}, which is used to model the joint tail behaviour of a random vector conditional on one of its components exceeding a suitably high threshold.
 Section~\ref{subsec:ce_model} provides a background on the conditional extremes model of \citet{Heffernan2004} and \citet{Keef2013}. %, which is used to model the joint tail behaviour of a random vector conditional on one of its components exceeding a suitably high threshold.
 % We explain how inference with this model is equivalent to estimating a multivariate Gaussian distribution. 
-In Section~\ref{subsec:div}, we describe our chosen dissimilarity measure, the skew-geometric Jensen-Shannon divergence, which has analytical form when comparing Gaussian distributions, and allows us to efficiently quantify the pairwise dissimilarity between fitted CE models.
+% In Section~\ref{subsec:div}, we describe our chosen dissimilarity measure, the skew-geometric Jensen-Shannon divergence, which has analytical form when comparing Gaussian distributions, and allows us to efficiently quantify the pairwise dissimilarity between fitted CE models.
+In Section~\ref{subsec:div}, we describe our chosen dissimilarity measure, the skew-geometric Jensen-Shannon divergence, which allows us to efficiently quantify the pairwise dissimilarity between fitted CE models.
 % Finally, Section~\ref{subsec:clustering} outlines how we perform k-medoids clustering using this dissimilarity measure, to identify sites with similar tail dependence structures, and how the number of clusters is selected.
-Finally, in Section~\ref{subsec:clustering}, we outline how we perform clustering using this dissimilarity measure, and provide practical advice on choosing the the number of clusters.
+Finally, in Section~\ref{subsec:clustering}, we outline how we perform clustering using this dissimilarity measure, and provide practical advice on choosing the number of clusters.
 % Finally, in Section~\ref{subsec:estimation} we describe some of the computational details which are important for estimating the CE model and computing the $\JSGa{}$ divergence.
 
 % \subsection{Asymptotic dependence}~\label{subsec:asym_dep}
@@ -681,7 +684,8 @@ Finally, in Section~\ref{subsec:clustering}, we outline how we perform clusterin
 % % A framework which provides a flexible approach to modelling extremal dependence is the CE model of \citet{Heffernan2004}. 
 % One such model which provides a flexible framework for describing tail dependence is the CE model of \citet{Heffernan2004}.
 
-\subsection{Multivariate conditional extremes}~\label{subsec:ce_model}
+% \subsection{Multivariate conditional extremes}~\label{subsec:ce_model}
+\subsection{The conditional extremes model}~\label{subsec:ce_model}
 
 % See Jordan's paper for quick summary (TFR a bit long winded) (and Keef)
 % Need to talk about marginals, transformations and then model itself
@@ -697,21 +701,30 @@ Finally, in Section~\ref{subsec:clustering}, we outline how we perform clusterin
 % Standardising to common margins is a widespread technique to ensure differences in variable scale do not affect estimation of the dependence structure. 
 Like many other models for multivariate extremes, the conditional extremes model of \citet{Heffernan2004} is defined on standardised margins, to ensure that differences in variable scale do not affect estimation of the dependence structure.
 % A popular choice for CE models is Laplace margins, as introduced in \citet{Keef2013}.
-As introduced in \citet{Keef2013}, a popular choice for CE models is Laplace margins.
-\todo{Check X is defined correctly/nicely}
+As introduced in \citet{Keef2013}, a popular choice for CE models is transformation to Laplace margins, as it allows for both positive and negative dependence to be modelled.
 % Each marginal random variable $X_i, i = 1, \ldots, d, (X_1, \ldots, X_d) \in \mathbb{R}^d$ is transformed to Laplace margins, as outlined in equation~\eqref{eq:laplace} in Section \ref{subsec:estimation}, and thereafter denoted by $Y_i, \(Y_1, \ldots Y_d\) \in \mathbb{R}^d$. 
 % To transform each marginal random variable $X_i$ to Laplace margins, denoted by $Y_i$, we let:
 % Each marginal random variable $X_i, i = 1, \ldots, d, (X_1, \ldots, X_d) \in \mathbb{R}^d$ is transformed to Laplace margins, thereafter denoted as $Y_i$, using the probability integral transform:
-As it allows for both positive and negative dependence to be modelled, each marginal random variable $X_i, i = 1, \ldots, d$, is transformed to Laplace margins, thereafter denoted as $Y_i$, using the probability integral transform:
- \begin{equation}~\label{eq:laplace}
-   Y_i \coloneqq \begin{cases}
-     \log\left\{2F_{X_i}(X_i)\right\}, &\text{ for } X_i < F_{X_i}^{-1}(0.5), \\
-     % -\log\left\{2(1 - F_{X_i}(X_i))\right\} &\text{ for } X_i \ge F_{X_i}^{-1}(0.5), \\
-     -\log\left[2\left\{ 1 - F_{X_i}(X_i)\right\} \right], &\text{ for } X_i \ge F_{X_i}^{-1}(0.5), \\
-   \end{cases}
- \end{equation}
-\todo{trying to be brief, but would like to have quick line about why we use Laplace!}
-where $F_{X_i}$ is the distribution function of $X_i$. 
+% As it allows for both positive and negative dependence to be modelled, each marginal random variable $X_i, i = 1, \ldots, d$, is transformed to Laplace margins, thereafter denoted as $Y_i$, using the probability integral transform:
+%  \begin{equation}~\label{eq:laplace}
+%    Y_i \coloneqq \begin{cases}
+%      \log\left\{2F_{X_i}(X_i)\right\}, &\text{ for } X_i < F_{X_i}^{-1}(0.5), \\
+%      % -\log\left\{2(1 - F_{X_i}(X_i))\right\} &\text{ for } X_i \ge F_{X_i}^{-1}(0.5), \\
+%      -\log\left[2\left\{ 1 - F_{X_i}(X_i)\right\} \right], &\text{ for } X_i \ge F_{X_i}^{-1}(0.5), \\
+%    \end{cases}
+%  \end{equation}
+% \todo{trying to be brief, but would like to have quick line about why we use Laplace!}
+Let $\symbf{X} = (X_1, \ldots, X_d) \in \mathbb{R}^d$ be a $d$-dimensional random vector.
+We apply the probability intergral transformation to obtain a random vector with Laplace margins, denoted by $\symbf{Y} = (Y_1, \ldots, Y_d) \in \mathbb{R}^d$.
+Formally, 
+\begin{equation}~\label{eq:laplace}
+  Y_i \coloneqq \begin{cases}
+    \log\left\{2F_{X_i}(X_i)\right\}, &\text{ for } X_i < F_{X_i}^{-1}(0.5), \\
+    % -\log\left\{2(1 - F_{X_i}(X_i))\right\} &\text{ for } X_i \ge F_{X_i}^{-1}(0.5), \\
+    -\log\left[2\left\{ 1 - F_{X_i}(X_i)\right\} \right], &\text{ for } X_i \ge F_{X_i}^{-1}(0.5), \\
+  \end{cases}
+\end{equation}
+where $F_{X_i}$ denotes the distribution function of $X_i$. 
 
 % Rigorous Conditional Extremes definition
 % \begin{itemize}
@@ -741,7 +754,8 @@ where $F_{X_i}$ is the distribution function of $X_i$.
 % say Y in d dimensions
 % We use $Y_{-i} = \symbf{Y} \backslash Y_{i}, \symbf{Y} \in \mathbb{R}^d, y \in (1, \ldots, d)$ to denote the vector of all variables in $\symbf{Y}$ except $Y_i$, and assume all operations hereafter are performed component-wise.
 % For $d \in \mathbb{N}$, we use $ \symbf{Y} \in \mathbb{R}^d, d \in \mathbb{N}$ and for $i \in \{1,\ldots,d\}$ write $Y_{-i} = \symbf{Y}\setminus\{Y_i\}$ to denote the $(d-1)$-dimensional random vector of all components except $Y_i$, and assume all operations below are component-wise. 
-For $d \in \mathbb{N}$, we consider the random vector $\symbf{Y} \coloneqq \left(Y_1, \ldots, Y_d\right) \in \mathbb{R}^d$ and, for $i \in \{1, \ldots, d\}$, we write $\symbf{Y}_{-i} \coloneq \symbf{Y} \setminus Y_i \in \mathbb{R}^{d-1}$ to denote $\symbf{Y}$ with its $i^{\text{th}}$ component removed. 
+% For $d \in \mathbb{N}$, we consider the random vector $\symbf{Y} \coloneqq \left(Y_1, \ldots, Y_d\right) \in \mathbb{R}^d$ and, for $i \in \{1, \ldots, d\}$, we write $\symbf{Y}_{-i} \coloneq \symbf{Y} \setminus Y_i \in \mathbb{R}^{d-1}$ to denote $\symbf{Y}$ with its $i^{\text{th}}$ component removed. 
+Let $\symbf{Y}_{-i} \coloneq \symbf{Y} \setminus Y_i \in \mathbb{R}^{d-1}$ denote $\symbf{Y}$ with its $i^{\text{th}}$ component removed, for $i \in \{1, \ldots, d\}$.
 % Assume all operations below are component-wise. 
 % \item The CE model of \citet{Heffernan2004} assumes that there exists vector normalising parameters $\alpha_{\mid i} := \symbf{a}_{\mid i}(y_i), \beta_{\mid i} := \symbf{b}_{\mid i}(y_i) \in \mathbb{R} \rightarrow \mathbb{R}^{(d-1)}$ such that for fixed $\symbf{z}_{\mid i} \in \mathbb{R}^{(d-1)}$,
 % The CE model of \citet{Heffernan2004} assumes that there exist parameter vectors $\symbf{\alpha}_{\mid i}^{(\CE{})} := \left\{\alpha_{j \mid i}^{(\CE{})} : j\in\{1,\dots,d\}\setminus\{i\}\right\} \in [-1, 1]^{(d-1)}$ and $\symbf{\beta}_{\mid i}^{(\CE{})} := \left\{\beta_{j \mid i}^{(\CE{})} : j\in\{1,\dots,d\}\setminus\{i\} \right\} \in [-\infty, 1]^{(d-1)}$ such that for fixed $\symbf{z}_{\mid i} \in \mathbb{R}^{(d-1)}$, $y_i > 0$,
@@ -793,17 +807,20 @@ Equation~\eqref{eq:ce_limiting_dist} implies that, in the limit $u\to\infty$, th
 % The limiting distribution in equation~\eqref{eq:ce_limiting_dist} can be written as a heteroscedastic regression equation defined by
 Assuming that the limiting distribution in Equation~\eqref{eq:ce_limiting_dist} holds exactly for a large threshold $u_i > 0$ gives the heteroscedastic regression model
 % \todo{Should we be explicit that the equals here really should be an equality in distribution?}
-\begin{equation}~\label{eq:ce_model}
+\begin{align}~\label{eq:ce_model}
   % \bigl(\symbf{Y}_{-i} \mid Y_i = y_i \bigr) = \symbf{\alpha}_{\mid i}^{(\CE{})}\symbf{y}_i + \symbf{y}_i^{\symbf{\beta}_{\mid i}^{(\CE{})}}\symbf{Z}_{\mid i}, \text{ for } y_i > u_{_i},
   % \bigl(\symbf{Y}_{-i} \mid Y_i = y_i \bigr) = \symbf{\alpha}_{\mid i}\symbf{y}_i + \symbf{y}_i^{\symbf{\beta}_{\mid i}}\symbf{Z}_{\mid i}, \text{ for } y_i > u_{_i},
-  \bigl(\symbf{Y}_{-i} \mid Y_i = y \bigr) = \symbf{\alpha}_{\mid i}y + y^{\symbf{\beta}_{\mid i}}\symbf{Z}_{\mid i}, \text{ for } y > u_i,
-\end{equation}
+  % \bigl(\symbf{Y}_{-i} \mid Y_i = y \bigr) &= \symbf{\alpha}_{\mid i}y + y^{\symbf{\beta}_{\mid i}}\symbf{Z}_{\mid i}, \text{ for } y > u_i, \\
+  \bigl(\symbf{Y}_{-i} \mid Y_i = y \bigr) &= \symbf{\alpha}_{\mid i}y + y^{\symbf{\beta}_{\mid i}}\symbf{Z}_{\mid i}\qquad \text{ for } y > u_i,
+\end{align}
 with residual vector $\symbf{Z}_{\mid i} \sim \symbf{G}_{\mid i}$.
 % The slope or linear regression coefficient $\symbf{\alpha}_{\mid i}^{(\CE{})} \in [-1, 1]$ describes the strength of association between $Y_{-i}$ and large $Y_i$ above the threshold $u_i$.
-The slope coefficient vectors $\symbf{\alpha}_{\mid i} \in [-1, 1]^{d-1}$ describe the strength of extremal association between components of $\symbf{Y}_{-i}$ and the conditioning variable $Y_i$. 
+% The vector $\symbf{\alpha}_{\mid i} \in [-1, 1]^{d-1}$ describes the strength of extremal association between components of $\symbf{Y}_{-i}$ and the conditioning variable $Y_i$. 
+The vector $\symbf{\alpha}_{\mid i}$ describes the strength of extremal association between components of $\symbf{Y}_{-i}$ and the conditioning variable $Y_i$. 
 % \item $\symbf{\beta}_{\mid i} \in [-\infty, 1]$ can be interpretated as a ``spread'' parameter, controlling the levels of heteroscedasticity in the model.
 % The levels of heteroscedasticity in the model is controlled by $\symbf{\beta}_{\mid i}^{(\CE{})} \in [-\infty, 1]$, and can be loosely interpreted as a ``spread'' parameter.
-The degree of heteroscedasticity in the model is controlled by entries to $\symbf{\beta}_{\mid i} \in [-\infty, 1]^{d - 1}$, and can be loosely interpreted as a ``spread'' parameter.
+% The degree of heteroscedasticity in the model is controlled by entries to $\symbf{\beta}_{\mid i} \in [-\infty, 1]^{d - 1}$, and can be loosely interpreted as a ``spread'' parameter.
+The degree of heteroscedasticity in the model is controlled by entries to $\symbf{\beta}_{\mid i}$, and can be loosely interpreted as a ``spread'' parameter.
   % \item Several choices for $\symbf{G}_{\mid i}$, the distribution of
 % $\symbf{Z}_{\mid i}$, were proposed in \citet{Heffernan2004}, before ultimately
 % settling on a multivariate normal distribution with vector nuisance parameters
@@ -833,6 +850,7 @@ positive (negative) asymptotic dependence, equivalent to $\chi=1$ ($\chi=0$); an
 $-1<\symbf{\alpha}_{j\mid i}<1$, which suggests asymptotic independence between $Y_j$
 and $Y_i$, with dependence weakening as $Y_i\to\infty$, equivalent to $\chi<1$.
 
+\todo{Discuss with Christian}
 We fit the CE model at different spatial sites. 
 % To allow for spatial variation, we may index by site $s \in \mathcal{S}$, and allow regression parameters to vary by site. 
 To denote spatial variation, we index the random vectors by spatial location $\mathcal{s} \in \left(s_1, \ldots, s_D\right)$, where $s_i \in \mathbb{R}^2, i = 1, \ldots, D$, and $D$ is the number of spatial locations. 
@@ -855,7 +873,7 @@ Note that we make no assumptions about spatial smoothness in the regression mode
 % The residual vector $\symbf{Z}_{\mid i}$ in Equation~\eqref{eq:ce_model} is assumed to follow a multivariate Gaussian distribution with mean vector $\symbf{\mu}_{\mid i}\in\mathbb{R}^{d-1}$ and covariance matrix $\Sigma_{\mid i}\in\mathbb{R}^{(d-1)\times(d-1)}$. 
 % \todo{Use spatial index here, or first explain without and then add in at the end?}
 % The residual vector $\symbf{Z}_{\mid i}(s)$ in Equation~\eqref{eq:ce_model_spat} is assumed to follow a multivariate Gaussian distribution with mean vector $\symbf{\mu}_{\mid i}(s)\in\mathbb{R}^{d-1}$ and covariance matrix $\Sigma_{\mid i}(s)\in\mathbb{R}^{(d-1)\times(d-1)}$. 
-As a working assumption that permits inference on $\symbf{\alpha}_{\mid i}(s)$ and $\symbf{\beta}_{\mid i}(s)$, the residual vector $\symbf{Z}_{\mid i}(s)$ in Equation~\eqref{eq:ce_model_spat} is assumed to be multivariate Gaussian distribution with mean vector $\symbf{\mu}_{\mid i}(s)\in\mathbb{R}^{d-1}$ and covariance matrix $\Sigma_{\mid i}(s)\in\mathbb{R}^{(d-1)\times(d-1)}$.
+As a working assumption that permits inference on $\symbf{\alpha}_{\mid i}(s)$ and $\symbf{\beta}_{\mid i}(s)$, the residual vector $\symbf{Z}_{\mid i}(s)$ in Equation~\eqref{eq:ce_model_spat} is assumed to be multivariate normally distributed with mean vector $\symbf{\mu}_{\mid i}(s)\in\mathbb{R}^{d-1}$ and covariance matrix $\Sigma_{\mid i}(s)\in\mathbb{R}^{(d-1)\times(d-1)}$.
 % \todo{Use (CE) superscript for mu and Sigma to distinguish from clustering}
 % The residual vector $\symbf{Z}_{\mid i}$ in Equation~\eqref{eq:ce_model} is assumed to follow a multivariate Gaussian distribution with mean vector $\symbf{\mu}_{\mid i}^{(\CE{})}\in\mathbb{R}^{d-1}$ and covariance matrix $\Sigma_{\mid i}^{(\CE{})} \in\mathbb{R}^{(d-1)\times(d-1)}$. 
 % \todo{Heff04 assumes diagonal sigma, should we say we use full covariance?}
@@ -867,7 +885,8 @@ This Gaussian working assumption, proposed in \citet{Heffernan2004}, is the key 
 
 % \citet{Heffernan2004} shows that inference can be made about the extremal dependence of a random vector $\symbf{Y}_{-i} = \symbf{Y} \backslash Y_i$ on $Y_i$ by conditioning on the exceedance of a high threshold $u$ by $Y_i$, and assuming that this conditional distribution is a diagonal multivariate Gaussian distribution: % with vector mean and standard deviation:
 % An important consequence following from this assumption is that inference can be made about the extremal dependence of a random vector $\symbf{Y}_{-i} = \symbf{Y} \setminus \{Y_i\}$ on $Y_i$ by conditioning on the exceedance of a high threshold $u_i$ by $Y_i$, and assuming that this conditional distribution is a multivariate Gaussian distribution, i.e.\ 
-Consequently, inference can be made about the extremal dependence of a random vector $\symbf{Y}(s)$ at site $s$ by conditioning on the exceedance of a high threshold $u_i$ by $Y_i(s)$, and assuming that this conditional distribution is multivariate Gaussian, i.e.,\@
+% Consequently, inference can be made about the extremal dependence of a random vector $\symbf{Y}(s)$ at site $s$ by conditioning on the exceedance of a high threshold $u_i$ by $Y_i(s)$, and assuming that this conditional distribution is multivariate Gaussian, i.e.,\@
+Consequently, inference on $\alpha$ and $\beta$ by conditioning on the exceedance of a high threshold $u_i$ by $Y_i(s)$, and assuming that this conditional distribution is multivariate Gaussian, i.e.,\@
 
 \begin{equation}~\label{eq:ce_norm}
   % \bigl( \symbf{Y}_{-i} \mid Y_i  = y_i \bigr) \sim N\left(\symbf{\alpha}_{\mid i}^{(\CE{})} y_i + y_i^{\symbf{\beta}_{\mid i}^{(\CE{})}} \symbf{\mu}_{\mid i}^{(\CE{})}, y_i^{\symbf{\beta}_{\mid i}^{(\CE{})}} \Sigma_{\mid i}^{(\CE{})}\right), Y_i > u_i,
@@ -883,7 +902,7 @@ where $\symbf{\alpha}_{\mid i}(s), \symbf{\beta}_{\mid i}(s), \symbf{\mu}_{\mid 
 % Therefore, under this model, when comparing the multivariate tail dependence structure at different sites, we are effectively comparing the conditional distributions given by Equation~\eqref{eq:ce_norm}.
 % Therefore, to compare tail dependence at different sites, we can compare the conditional distributions in \eqref{eq:ce_norm}, i.e.\ the induced multivariate Gaussian distributions parameterised by $(\symbf{\alpha}_{\mid i}^{(\CE{})},\symbf{\beta}_{\mid i}^{(\CE{})},\symbf{\mu}_{\mid i}^{(\CE{})},\Sigma_{\mid i}^{(\CE{})})$ (or a chosen subset thereof).
 % Therefore, to compare tail dependence at different sites, we can compare the conditional distributions in \eqref{eq:ce_norm}, i.e.\ the induced multivariate Gaussian distributions parameterised by $(\symbf{\alpha}_{\mid i},\symbf{\beta}_{\mid i},\symbf{\mu}_{\mid i},\Sigma_{\mid i})$ (or a chosen subset thereof).
-Therefore, to compare tail dependence at different sites, we can compare the conditional distributions in Equation~\eqref{eq:ce_norm}, i.e.\ the assumed multivariate Gaussian distributions parameterised by $(\symbf{\alpha}_{\mid i}(s),\symbf{\beta}_{\mid i}(s),\symbf{\mu}_{\mid i}(s),\Sigma_{\mid i}(s))$ (or a chosen subset thereof).
+Therefore, to compare tail dependence at different sites, we can compare the conditional distributions in Equation~\eqref{eq:ce_norm}, i.e.\ the assumed multivariate Gaussian distributions parameterised by $(\symbf{\alpha}_{\mid i}(s),\symbf{\beta}_{\mid i}(s),\symbf{\mu}_{\mid i}(s),\Sigma_{\mid i}(s))$. %(or a chosen subset thereof).
 
 % Estimation
 The model parameters $\symbf{\alpha}_{\mid i}(s), \symbf{\beta}_{\mid i}(s), \symbf{\mu}_{\mid i}(s), \Sigma_{\mid i}(s)$ in Equation~\eqref{eq:ce_norm} are estimated at each site $s$ and for each conditioning variable, $Y_i, i = 1, \ldots, d$, using maximum likelihood estimation.
@@ -891,7 +910,7 @@ In practice, for each $i = 1, \ldots, d$ and $s \in (s_1, \ldots, s_D)$, we set 
 We choose $q$ such that there are a sufficient number of exceedances above $u_i(s)$ to fit the CE model, while keeping $q$ high enough so that the limiting assumption in Equation~\eqref{eq:ce_limiting_dist} is reasonable.
 The bootstrapping procedure of \citet{Heffernan2004} is used to obtain standard errors for the parameter estimates, and we choose the highest value of $q$ such that the parameter estimates are stable, and the bootstrap standard errors are reasonably small.
 
-\subsection{Divergence measure for multivariate extremes}~\label{subsec:div}
+\subsection{Divergence measure for conditional extremes models}~\label{subsec:div}
 
 \todo{Should I use divergence interchangeably with more commonly used distance?}
 \todo{Need some references for applications of this metric! In intro, or here?}
@@ -899,10 +918,10 @@ The bootstrapping procedure of \citet{Heffernan2004} is used to obtain standard 
 There are several qualities we desire from a divergence measure for clustering based on the conditional distribution in Equation~\eqref{eq:ce_norm}.
 % We would like to exploit the fact that the CE model is a multivariate Gaussian distribution to provide some gains in computational efficiency, and for our divergence to more generally be cheap to compute.
 % We particularly want to exploit the multivariate Gaussian nature of the CE model, to provide computational efficiency through a closed-form solution, and for our divergence to be generally cheap to compute.
-For clustering, the measure must be non-negative and symmetric, as the ``distance'' between two sites as defined by the divergence between their CE models should be the same regardless of the order in which they are compared.
+The measure must be non-negative and symmetric, as the ``distance'' between two sites as defined by the divergence between their CE models should be the same regardless of the order in which they are compared.
 % Ideally, our measure should also be bounded above by a finite value, as smaller divergences lead to more well-defined clusters, and very large divergences can lead to numerical instability.
 % Ideally, our measure should also have some form of upper bound, as smaller divergences lead to more well-defined clusters, and very large divergences can lead to numerical instability. \todo{Citation!}
-Ideally, our measure should also have an upper bound, as larger divergences can lead to numerical instability and less stable and well-defined clusters. \todo{Need citation?}
+Ideally, our measure should also have an upper bound, as large divergences can lead to numerical instability and less stable and well-defined clusters.
 % Finally, we would like our measure to be a true metric, so that it satisfies the triangle inequality and is non-negative, and this is known to improve the performance of clustering algorithms \todo{Again, citation?}.
 We also want to provide computational efficiency through a closed-form solution, and for our divergence to be generally cheap to compute, which we achieve using the Gaussian assumption in Equation~\eqref{eq:ce_norm}.
 \todo{Any other properties? Convex (as KL is?) (which may be better?) (need citation)}
@@ -913,7 +932,7 @@ One divergence measure introduced in \citet{Nielsen2019} which satisfies these p
 \todo{Switch to F and F star to match below?}
 % The $\JSGa{}$ divergence between two continuous $d$-variate distribution functions, say $F_1$ and $F_2$, is given by
 \todo{Say why Deasy uses dual form?}
-Specifically, we will use the dual form of the $\JSGa{}$ divergence, which in \citet{Deasy2020}, which is defined between two continuous $d$-variate distribution functions, say $F_1$ and $F_2$, as
+Specifically, we will use the dual form of the $\JSGa{}$ divergence, which in \citet{Deasy2020}, defined between two continuous $d$-variate distribution functions, say $F_1$ and $F_2$, as \todo{Discuss with Christian, change F to H?}
 \begin{equation}~\label{eq:jsga}
   % \JSGa{(P \Vert Q)} = \frac{1}{2} \left\{\KL{(P \Vert G_{\alpha}(P, Q))} + \KL{(Q \Vert G_{\alpha}(P, Q))} \right\},
   % \JSGa{(F_1 \Vert F_2)} = \frac{1}{2} \left\{\KL{(F_1 \Vert G_{\lambda}(F_1, F_2))} + \KL{(F_2 \Vert G_{\lambda}(F_1, F_2))} \right\},
@@ -929,7 +948,7 @@ where $G_{\lambda}(F_1, F_2) = F_{1}^{1-\lambda} F_{2}^{\lambda}, \lambda \in [0
 where $f_1$ and $f_2$ are the continuous density functions of $F_1$ and $F_2$, respectively. 
 % Here, $P$ and $Q$ represent the conditional multivariate Gaussian distributions induced by the CE model at two different sites.
 In our context, $F_1$ and $F_2$ will represent the conditional multivariate Gaussian distributions induced by the CE model at two different sites, say $s_1$ and $s_2$. \todo{Change to s and s star?}
-The parameter $\lambda$ skews the geometric mean $G_{\lambda}(F_1,F_2)\propto F_1^{\lambda}F_{2}^{1-\lambda}$ towards $F_1$ (when $\lambda$ is close to 1) or towards $F_2$ (when $\lambda$ is close to 0). 
+The parameter $\lambda$ skews the geometric mean $G_{\lambda}(F_1,F_2)\propto F_1^{1-\lambda}F_{2}^{\lambda}$ towards $F_1$ (when $\lambda$ is close to 0) or towards $F_2$ (when $\lambda$ is close to 1). 
 % When one site has a more reliable CE fit, we set $\alpha$ to a reliability weight $w\in[0,1]$ (e.g.\ proportional to effective sample size), and apply the symmetrised divergence so that the final dissimilarity remains symmetric.
 One possible advantage for having a skew parameter such as $\lambda$ is that in our divergence measure we can favour sites with a more reliable CE fit, as determined by, for example, the effective sample size.
 In this paper, we use $\lambda = 0.5$, because all sites have equal number of observations in both our simulation and case studies. 
@@ -941,13 +960,14 @@ In this paper, we use $\lambda = 0.5$, because all sites have equal number of ob
 % The $\JSGa{}$ divergence is derived from the popular Kullback--Leibler ($KL$) divergence \citep{Killback1951}. 
 
 % Explain why it is a good dissimilarity metric to use
+\todo{Discuss with Christian}
 For two multivariate Gaussian distributions, the $\KL{}$ divergence has a closed form, analytical solution \citep{Duchi2007}.
 The $\JSGa{}$ divergence exploits the property that the (weighted) product of two members of the same exponential family is itself a member of the same exponential family distribution. 
 It then follows that $G_{\lambda}(F_1, F_2)$ is multivariate Gaussian, and so the $\KL{}$ divergences in Equation~\eqref{eq:jsga} are between multivariate Gaussian distributions and can be computed in closed form.
 Hence, the principle advantage of the $\JSGa{}$ here follows, as it also has a closed form solution for two multivariate Gaussian distributions, and so is computationally efficient to compute \citep{Nielsen2019}.
 The $\JSGa{}$ divergence between two multivariate Gaussian distributions has been used in several applications, including clustering, deep learning, variational inference and remote sensing \citep{Nielsen2019, Deasy2020, Ni2023-cd, Thiagarajan2025}. \todo{Add more references?}
 % Furthermore, it is clearly symmetric and non-negative, as the sum of two $KL$ divergences, which is also important for clustering.
-Furthermore, as the average of two $\KL{}$ divergences, it is clearly symmetric and non-negative.
+% Furthermore, as the average of two $\KL{}$ divergences, it is clearly symmetric and non-negative.
 Finally, when $\lambda = 0.5$, $\JSGa{}$ is bounded above by $\JSGa{(F_1 \Vert F_2)} \leq \frac{1}{4} \mathrm{J}(F_1 \Vert F_2)$,
 % \begin{equation}~\label{eq:jsga_bound}
 %   \JSGa{(F_1 \Vert F_2)} \leq \frac{1}{4} \mathrm{J}(F_1 \Vert F_2),
@@ -963,20 +983,21 @@ Hence, we identify the $\JSGa{}$ divergence as a suitable measure of dissimilari
 \todo{Double check!}
 \todo{Replace mu and sigma with something else to distinguish from ce model?}
 \todo{Use star instead of 2, to match below?}
-For two multivariate Gaussian distributions $F_1 \sim \mbox{MVN}(\symbf{\mu}_1, \Sigma_1)$ and $F_2 \sim \mbox{MVN}(\symbf{\mu}_2, \Sigma_2)$ in $\mathbb{R}^d$, \citet{Nielsen2019} shows that the dual $\JSGa{}$ divergence introduced in Equation~\eqref{eq:jsga} has the closed form solution 
+\todo{Discuss with Christian, m and \omega okay?}
+For two multivariate Gaussian distributions $F_1 \sim \mbox{MVN}(\symbf{m}_1, \Omega_1)$ and $F_2 \sim \mbox{MVN}(\symbf{m}_2, \Omega_2)$ in $\mathbb{R}^d$, \citet{Nielsen2019} shows that the dual $\JSGa{}$ divergence introduced in Equation~\eqref{eq:jsga} has the closed form solution 
 \begin{align*}%~\label{eq:js_norm_mvn}
-  % JS^{G_{\lambda}}(F_1 \Vert F_2) &= \frac{1}{2} \left( (1 - k) \mu_1^T \Sigma_1^{-1} \mu_1 + k \mu_2^T \Sigma_2^{-1} \mu_2 - \mu_{\lambda}^T \Sigma_{\lambda}^{-1} \mu_{\lambda} + \log{\left( \frac{\abs{\Sigma_1}^{1-k} \abs{\Sigma_2}^{\lambda}}{\abs{\Sigma_{\lambda}}} \right)} \right), \\
-  JS^{G_{\lambda}}(F_1 \Vert F_2) &= \frac{1}{2} \left( (1-\lambda) \symbf{\mu}_1^T \Sigma_1^{-1} \symbf{\mu}_1 + \lambda \symbf{\mu}_2^T \Sigma_2^{-1} \symbf{\mu}_2 - \symbf{\mu}_{\lambda}^T \Sigma_{\lambda}^{-1} \symbf{\mu}_{\lambda} + \log{\left( \frac{\abs{\Sigma_1}^{1-\lambda} \abs{\Sigma_2}^{\lambda}}{\abs{\Sigma_{\lambda}}} \right)} \right), \\
-  % \Sigma_{\lambda} &= \left( (1 - k) \Sigma_1^{-1} + k \Sigma_2^{-1} \right)^{-1}, \\
-  \Sigma_{\lambda} &= \left( (1-\lambda) \Sigma_1^{-1} + \lambda \Sigma_2^{-1} \right)^{-1}, \\
-  % \mu_{\lambda} &= \Sigma_{\lambda} \left( (1 - k) \Sigma_1^{-1} \mu_1 + k \Sigma_2^{-1} \mu_2 \right), \numberthis~\label{eq:js_norm_mvn1}
-  \symbf{\mu}_{\lambda} &= \Sigma_{\lambda} \left( (1-\lambda) \Sigma_1^{-1} \symbf{\mu}_1 + \lambda \Sigma_2^{-1} \symbf{\mu}_2 \right), \numberthis~\label{eq:js_norm_mvn1}
+  % JS^{G_{\lambda}}(F_1 \Vert F_2) &= \frac{1}{2} \left( (1 - k) m_1^T \Omega_1^{-1} m_1 + k m_2^T \Omega_2^{-1} m_2 - m_{\lambda}^T \Omega_{\lambda}^{-1} m_{\lambda} + \log{\left( \frac{\abs{\Omega_1}^{1-k} \abs{\Omega_2}^{\lambda}}{\abs{\Omega_{\lambda}}} \right)} \right), \\
+  \JSGa{}(F_1 \Vert F_2) &= \frac{1}{2} \left( (1-\lambda) \symbf{m}_1^T \Omega_1^{-1} \symbf{m}_1 + \lambda \symbf{m}_2^T \Omega_2^{-1} \symbf{m}_2 - \symbf{m}_{\lambda}^T \Omega_{\lambda}^{-1} \symbf{m}_{\lambda} + \log{\left( \frac{\abs{\Omega_1}^{1-\lambda} \abs{\Omega_2}^{\lambda}}{\abs{\Omega_{\lambda}}} \right)} \right), \\
+  % \Omega_{\lambda} &= \left( (1 - k) \Omega_1^{-1} + k \Omega_2^{-1} \right)^{-1}, \\
+  \Omega_{\lambda} &= \left( (1-\lambda) \Omega_1^{-1} + \lambda \Omega_2^{-1} \right)^{-1}, \\
+  % m_{\lambda} &= \Omega_{\lambda} \left( (1 - k) \Omega_1^{-1} m_1 + k \Omega_2^{-1} m_2 \right), \numberthis~\label{eq:js_norm_mvn1}
+  \symbf{m}_{\lambda} &= \Omega_{\lambda} \left( (1-\lambda) \Omega_1^{-1} \symbf{m}_1 + \lambda \Omega_2^{-1} \symbf{m}_2 \right), \numberthis~\label{eq:js_norm_mvn1}
 \end{align*} 
 % where:
 % \begin{itemize}
-%   \item $\mu_1 = (\mu_{1,1}, \mu_{1,2}, \ldots, \mu_{1,d})^\top$ and $\mu_2 = (\mu_{2,1}, \mu_{2,2}, \ldots, \mu_{2,d})^\top$ are the mean vectors,
-%   \item $\Sigma_1 = \text{diag}(\sigma_{1,1}^2, \sigma_{1,2}^2, \ldots, \sigma_{1,d}^2)$ and $\Sigma_2 = \text{diag}(\sigma_{2,1}^2, \sigma_{2,2}^2, \ldots, \sigma_{2,d}^2)$ are diagonal covariance matrices, \todo{Are they diagonal??}
-%   \item $\sigma_{1,i}^2$ and $\sigma_{2,i}^2$ denote the $i$-th diagonal element of $\Sigma_1$ and $\Sigma_2$, respectively.
+%   \item $m_1 = (m_{1,1}, m_{1,2}, \ldots, m_{1,d})^\top$ and $m_2 = (m_{2,1}, m_{2,2}, \ldots, m_{2,d})^\top$ are the mean vectors,
+%   \item $\Omega_1 = \text{diag}(\sigma_{1,1}^2, \sigma_{1,2}^2, \ldots, \sigma_{1,d}^2)$ and $\Omega_2 = \text{diag}(\sigma_{2,1}^2, \sigma_{2,2}^2, \ldots, \sigma_{2,d}^2)$ are diagonal covariance matrices, \todo{Are they diagonal??}
+%   \item $\sigma_{1,i}^2$ and $\sigma_{2,i}^2$ denote the $i$-th diagonal element of $\Omega_1$ and $\Omega_2$, respectively.
 % \end{itemize}
 
 % We may also assume that our covariance matrices are diagonal, as is often the case in practice.
@@ -1021,12 +1042,12 @@ Substituting the means and covariances of these conditional distributions from E
       \left(\mvcov{s^*}\right)^{-1} \\
 &\qquad\qquad\qquad\quad
       \left(\mvmean{s^*}\right) \\
-&\qquad - \symbf{\mu}_{\lambda}^{T}\Sigma_{\lambda}^{-1}\symbf{\mu}_{\lambda} \\
-&\qquad + \log\!\left(\frac{\left\lvert \mvcov{s}\right\rvert^{\lambda}\,\left\lvert \mvcov{s^*}\right\rvert^{1-\lambda}}{\left\lvert \Sigma_{\lambda}\right\rvert}\right) \right\}, \numberthis~\label{eq:cjsga_ce} \\
-\Sigma_{\lambda}
+&\qquad - \symbf{m}_{\lambda}^{T}\Omega_{\lambda}^{-1}\symbf{m}_{\lambda} \\
+&\qquad + \log\!\left(\frac{\left\lvert \mvcov{s}\right\rvert^{\lambda}\,\left\lvert \mvcov{s^*}\right\rvert^{1-\lambda}}{\left\lvert \Omega_{\lambda}\right\rvert}\right) \right\}, \numberthis~\label{eq:cjsga_ce} \\
+\Omega_{\lambda}
   &= \left(\lambda\,\left(\mvcov{s}\right)^{-1} + (1-\lambda)\,\left(\mvcov{s^*}\right)^{-1}\right)^{-1}, \\
-\symbf{\mu}_{\lambda}
-  &= \Sigma_{\lambda}\left(\lambda\,
+\symbf{m}_{\lambda}
+  &= \Omega_{\lambda}\left(\lambda\,
       \left(\mvcov{s}\right)^{-1}\left(\mvmean{s}\right) \\
 &\qquad\quad + (1-\lambda)\,
       \left(\mvcov{s^*}\right)^{-1}\left(\mvmean{s^*}\right)\right).
@@ -1100,14 +1121,16 @@ Substituting the means and covariances of these conditional distributions from E
 %   \mathbb{E}\!\left[ \JSGa{(P(y_i)\, \| \, Q(y_i))} \,\middle|\, Y_i(s) > u_i \right] = \int_{u_i}^\infty \JSGa{(P(y_i)\, \| \, Q(y_i))} \, f(y_i \mid Y_i(s) > u_i(s))\, dy_i,
 % \end{equation}
 
-Since the conditional $\JSGa{}$ divergence, $\cJSGa{}$, depends on the value of the conditioning variable $Y_i(s)$, we obtain a single measure of dissimilarity, by defining the expected divergence 
+% Since the conditional $\JSGa{}$ divergence, $\cJSGa{}$, depends on the value of the conditioning variable $Y_i(s)$, we obtain a single measure of dissimilarity, by defining the expected divergence 
+The conditional $\JSGa{}$ divergence, $\cJSGa{}$, depends on the value of the conditioning variable $Y_i(s)$.
+Therefore, to obtain a single measure of dissimilarity between the two sites $s$ and $s^*$ for the conditioning variable $Y_i$, we define the expected divergence
 \begin{align*}%~\label{eq:jsga_integral}
   % eJS^{G_\lambda}_i(s || s^*) &= \mathbb{E}(cJS^{G_\lambda}_i(Y_i(s); s || s^*)| Y_i(s) > u_i) \\
   \eJSGa{}(s || s^*) &= \mathbb{E}(cJS^{G_\lambda}_i(Y_i(s); s || s^*)| Y_i(s) > u_i) \\
                               &= \int_{u_i}^{\infty} \cJSGa{(y; s || s^*)} f(y \mid Y_i(s) > u_i) dy, \numberthis~\label{eq:jsga_integral}
 \end{align*}
 where $f(y \mid Y_i(s) > u_i)$ is the conditional density of $Y_i(s)$ given exceedance of the threshold. 
-This integral gives us our dissimilarity measure or ``distance'' between the two conditional distributions, averaged over the distribution of $Y_i(s) \mid Y_i(s) > u_i$.
+This integral gives us our dissimilarity measure or ``distance'' between the two CE models, averaged over the distribution of $Y_i(s) \mid Y_i(s) > u_i$.
 % We can estimate this integral using Monte Carlo (MC) methods, noting that the distribution of $Y_i$ is given by the standard Laplace distribution. 
 We estimate this integral using Monte Carlo methods, noting that $Y_i(s)$ follows a standard Laplace distribution.
 % We average across the individual scores for each individual realisation of $Y_i(s)$ to derive the divergence for a pair of sites, weighted by the distribution of $Y_i(s)$.
@@ -1118,6 +1141,7 @@ Hence, we truncate the integral in Equation~\eqref{eq:jsga_integral} at the 99th
 % Matrix
 \todo{Problem: Don't I have d(d-1) models here, not d?}
 \todo{If so, could have M j mid i here?}
+\todo{Discuss with Christian}
 We can repeat this procedure for each pair of sites $(s, s^*)$ and for each conditioning variable $Y_i$, to obtain a matrix of pairwise dissimilarities between all sites for each conditioning variable, given by
 \begin{equation} \label{eq:distance_matrix}
   % M_i=\left( eJS^{G_\lambda}_i(s || s^*)\right)_{s, s^* \in \{s_1,\dots,s_D\}},
@@ -1130,15 +1154,16 @@ If we have $d$ conditioning variables, we can also aggregate the $d$ distance ma
 \end{equation}
 This aggregated matrix $\bar{M}$, or the individual matrices $M_i$, can then be used as input to the clustering algorithm described in Section~\ref{subsec:clustering}.
 Optionally, other forms of aggregation, such as a weighted average or median, could be used here instead. 
-Aggregating across multiple conditioning variables allows us to pool information across multiple comparisons and forms of information, and has some precedence in the extremal clustering literature \citep{Mornet2017-js}.
+% Aggregating across multiple conditioning variables allows us to pool information across multiple comparisons and forms of information, and has some precedence in the extremal clustering literature \citep{Mornet2017-js}.
+Aggregating allows us to pool information across multiple comparisons and forms of information, and is supported in the extremal clustering literature \citep{Mornet2017-is}.
 
-% Summary
-% In summary, we define a dissimilarity measure between any two CE models based on the $\JSGa{}$ divergence, which is symmetric, non-negative, and computationally efficient. 
-\todo{Rewrite}
-In summary, we define a dissimilarity measure between any two CE models based on the $\JSGa{}$ divergence, which is computationally efficient, symmetric, non-negative and bounded above. \todo{Can we say its bounded above when its only by another metric?}
-For each pair of sites, the divergence depends on the conditional distributions of $\symbf{Y}_{-i} \mid Y_i$ and we integrate over the distribution of $Y_i$ above the threshold to obtain an expected divergence. 
-% This procedure allows us to construct a matrix of pairwise dissimilarities, or distances, between all sites, representing differences in their extremal dependence structures and providing a basis for clustering.
-This procedure allows us to construct matrices of pairwise dissimilarities, or distances, between all sites for a given conditioning variable, representing differences in their extremal dependence structures, which together or separately provide a basis for clustering.
+% % Summary
+% % In summary, we define a dissimilarity measure between any two CE models based on the $\JSGa{}$ divergence, which is symmetric, non-negative, and computationally efficient. 
+% \todo{Rewrite}
+% In summary, we define a dissimilarity measure between any two CE models based on the $\JSGa{}$ divergence, which is computationally efficient, symmetric, non-negative and bounded above. \todo{Can we say its bounded above when its only by another metric?}
+% For each pair of sites, the divergence depends on the conditional distributions of $\symbf{Y}_{-i} \mid Y_i$ and we integrate over the distribution of $Y_i$ above the threshold to obtain an expected divergence. 
+% % This procedure allows us to construct a matrix of pairwise dissimilarities, or distances, between all sites, representing differences in their extremal dependence structures and providing a basis for clustering.
+% This procedure allows us to construct matrices of pairwise dissimilarities, or distances, between all sites for a given conditioning variable, representing differences in their extremal dependence structures, which together or separately provide a basis for clustering.
 
 % \todo{Revisit this!}
 % \begin{itemize}
@@ -1152,7 +1177,8 @@ This procedure allows us to construct matrices of pairwise dissimilarities, or d
 % See Vignotto)
 
 % Using Equation~\eqref{eq:jsga_integral}, we can now contruct a dissimilarity measure to compare two conditional distributions, representing our pairwise ``distances'' between sites. 
-Using Equation~\eqref{eq:jsga_integral}, we can now construct a dissimilarity matrix $M_i$ (Equation~\eqref{eq:distance_matrix}) or an aggregated dissimilarity matrix $\bar{M}$ (Equation~\eqref{eq:aggregate_matrix}), to compare the conditional distributions at each pair of sites, representing our pairwise ``distances'' between sites for a given conditioning variable $Y_i$ or aggregated across multiple conditioning variables, respectively.
+% Using Equation~\eqref{eq:jsga_integral}, we can now construct a dissimilarity matrix $M_i$ (Equation~\eqref{eq:distance_matrix}) or an aggregated dissimilarity matrix $\bar{M}$ (Equation~\eqref{eq:aggregate_matrix}), to compare the conditional distributions at each pair of sites, representing our pairwise ``distances'' between sites for a given conditioning variable $Y_i$ or aggregated across multiple conditioning variables, respectively.
+We peform clustering using the matrix $M_i$, or the aggregated matrix $\bar{M}$, defined in Equations~\eqref{eq:distance_matrix} and \eqref{eq:aggregate_matrix}, respectively.
 % We can also aggregate these distances across multiple conditioning variables to pool information across multiple comparisons. 
 % PAM (K-means not suitable as clusters cannot be assumed to be spherical) (see
 % Vignotto)
@@ -1160,15 +1186,79 @@ Using Equation~\eqref{eq:jsga_integral}, we can now construct a dissimilarity ma
 The choice remains as to which algorithm to use to perform clustering. 
 As in \citet{Vignotto2021}, we use the Partitioning Around Medoids (PAM) algorithm, which is a variant of the popular k-medoids algorithm of \citet{Kaufman1987}.
 A brief description of the algorithm is as follows:
-% \todo{Have as algorithm block?}
+\todo{Have as algorithm/pseudocode block? Dicuss with Christian}
 \begin{itemize} 
   \item The algorithm begins by randomly selecting $k$ medoids from the dataset as our cluster centroids. 
-  \item Each observation is then assigned to the cluster of the nearest medoid, using the dissimilarity measure defined in \ref{subsec:div}.
+  \item Each observation is then assigned to the cluster of the nearest medoid, using the dissimilarity measure defined in Section \ref{subsec:div}.
   \item The centroids are updated by selecting the observation in each cluster which minimises the sum of dissimilarities to all other observations in that cluster.
   \item This process is repeated until convergence, when no observations change clusters.
 \end{itemize}
+% \begin{algorithm}
+%   \caption{K-medoids (using \(\eJSGa{}\))} \label{alg:kmedoids_ejsg_op}
+%   \begin{algorithmic}[1]
+%     \Require dataset $D=\{x_1,\dots,x_n\}$, number of clusters $k$, dissimilarity $\eJSGa(\cdot,\cdot)$ (see Sec.~\ref{subsec:div})
+%     \Ensure medoids $M=\{m_1,\dots,m_k\}$ and clusters $\{C_1,\dots,C_k\}$
+%     %
+%     \State \textbf{Initialize:} randomly choose $k$ distinct medoids $M \subset D$
+%     \Repeat
+%       \For{each observation $x \in D$}
+%         \State assign $x$ to cluster $C_j$ where
+%         \[
+%           j = \arg\min_{i\in\{1,\dots,k\}} \eJSGa{}\big(x, m_i\big)
+%         \]
+%       \EndFor
+%       %
+%       \For{each cluster $C_j,\, j=1,\dots,k$}
+%         \State update medoid
+%         \[
+%           m_j \gets \arg\min_{y \in C_j} \sum_{x \in C_j} \eJSGa{}(x,y)
+%         \]
+%       \EndFor
+%     \Until{no observation changes cluster assignment}
+%   \end{algorithmic}
+% \end{algorithm}
+% \begin{algorithm}
+%   \caption{K-medoids using the $\eJSGa{}$ dissimilarity} \label{alg:kmedoids_ejsg_integral}
+%   \begin{algorithmic}[1]
+%     \Require spatial locations $S=\{s_1,\dots,s_D\}$ (with associated observations), number of clusters $k$, threshold $u_i$
+%     \Ensure medoids indices $M=\{m_1,\dots,m_k\}$ (indices into $S$) and clusters $\{C_1,\dots,C_k\}$
+%     %
+%     \State \textbf{Precompute pairwise dissimilarities:}
+%     \For{each pair $(p,q)$ with $p,q=1,\dots,n$}
+%       \State compute
+%       \[
+%         D_{pq} \;:=\; \eJSGa\big(s_p \,\|\, s_q\big)
+%         \quad\text{(see Eq.~\eqref{eq:jsga_integral})}
+%       \]
+%       \Statex where, using your definition,
+%       \[
+%         \eJSGa(s \,\|\, s^*) \;=\; \int_{u_i}^{\infty} \cJSGa\big(y; s \,\|\, s^*\big)\, f\big(y \mid Y_i(s)>u_i\big)\, dy.
+%       \]
+%       \Comment{If the integral has no closed form, approximate numerically (quadrature) or by Monte Carlo:}
+%       \Statex \(\;D_{pq}\approx \dfrac{1}{T}\sum_{t=1}^{T} \cJSGa\big(y^{(t)}; s_p \,\|\, s_q\big),\quad y^{(t)}\stackrel{\text{iid}}{\sim} f(\cdot\mid Y_i(s_p)>u_i).\)
+%     \EndFor
+%     %
+%     \State \textbf{Initialize:} randomly choose $k$ distinct medoid indices $M \subset \{1,\dots,n\}$
+%     \Repeat
+%       \For{each observation / location index $p=1,\dots,n$}
+%         \State assign $p$ to cluster $C_j$ where
+%         \[
+%           j = \arg\min_{i\in\{1,\dots,k\}} D_{p,m_i}
+%         \]
+%       \EndFor
+%       %
+%       \For{each cluster $C_j,\, j=1,\dots,k$}
+%         \State update medoid index
+%         \[
+%           m_j \gets \arg\min_{q \in C_j} \sum_{p \in C_j} D_{p q}
+%         \]
+%       \EndFor
+%     \Until{no location changes cluster assignment}
+%   \end{algorithmic}
+% \end{algorithm}
+
 We choose this algorithm over alternatives such as k-means for several reasons. 
-Firstly, since our clustering is designed to be performed in a spatial setting, it is preferable to have actual locations rather than summaries as cluster centres, for visualisation and also for refitting the CE model and reinterpreting results. 
+Firstly, since our clustering is designed to be performed in a spatial setting, it is preferable to have actual locations rather than summaries as cluster centres, for visualisation.
 Secondly, as we are clustering over a dissimilarity matrix defined over a functional space, we cannot assume that the clusters are spherical or equally sized, as k-means does. \todo{cite}
 Furthermore, using the median instead of the mean to define the cluster centre is more robust to outliers, which is important in an extremal setting where data for some or many sites may be scarce. 
 
@@ -1176,19 +1266,26 @@ Furthermore, using the median instead of the mean to define the cluster centre i
 
 % Describe methods for choosing k (AIC, TWGSS) (silhouette not suitable)
 The PAM algorithm takes a single hyperparameter, namely the number of clusters, $k$.
-There is a rich body of literature on methods for selecting $k$, including the silhouette method of \citet{Rousseeuw1987} and the Akaike Information Criterion (AIC) introduced in \citet{Akaike1974}.
-However, the silhouette method is not suitable for our application, as it is designed for spherical clusters. \todo{Cite, have reference for this somewhere?}
-The AIC is also unsuitable and has been found to perform poorly for our algorithm.
-This may be because it requires aggregating over each location, which if unweighted assumes independence between the models fit for each site.
-However, this assumption is often violated in spatial applications.
-We revert, therefore, to the simple method of \citet{Thorndike1953-ie}, which uses the total within-cluster sum of squares (TWGSS) to select $k$. \todo{Fix citation?}
-This method has been found to perform well in both our simulation study in Section~\ref{sec:sim} and our Irish meterological application in Section~\ref{sec:application}, making clear suggestions as to the value of $k$ to use. 
+% There is a rich body of literature on methods for selecting $k$, including the silhouette method of \citet{Rousseeuw1987} and the Akaike Information Criterion (AIC) introduced in \citet{Akaike1974}.
+% However, the silhouette method is not suitable for our application, as it is designed for spherical clusters. \todo{Cite, have reference for this somewhere?}
+% The AIC is also unsuitable and has been found to perform poorly for our algorithm.
+% This may be because it requires aggregating over each location, which if unweighted assumes independence between the models fit for each site.
+% However, this assumption is often violated in spatial applications.
+% We revert, therefore, to the simple method of \citet{Thorndike1953-ie}, which uses the total within-cluster sum of squares (TWGSS) to select $k$. \todo{Fix citation?}
+% This method has been found to perform well in both our simulation study in Section~\ref{sec:sim} and our Irish meterological application in Section~\ref{sec:application}, making clear suggestions as to the value of $k$ to use. 
+We find that the method of \citet{Thorndike1953-ie}, which uses the total within-cluster sum of squares (TWGSS) to select $k$, performs well in our setting.
+Namely, in both our simulation study in Section~\ref{sec:sim} and our Irish meteorological application in Section~\ref{sec:application}, this method provides clear suggestions for the value of $k$ to use.
 Specifically, the TWGSS is defined as
-    \begin{equation}~\label{eq:twgss}
-      % \mathrm{TWGSS}(k) = \sum_{i=1}^{k} \sum_{j=1}^{n_i} d_{ij}^2,
-      \mathrm{TWGSS}(k) = \sum_{i=1}^{k} \sum_{j=1}^{n_i} \delta_{ij}^2,
-    \end{equation}
-    where $\delta_{ij}$ is the dissimilarity between site $j$ and the centroid of cluster $i$, which we measure using the $\JSGa{}$ divergence defined in section \ref{subsec:div}, and $n_i$ is the number of observations in cluster $i$.
+\todo{Change notation here, i and j clash with earlier notation}
+% \begin{equation}~\label{eq:twgss}
+%   % \mathrm{TWGSS}(k) = \sum_{i=1}^{k} \sum_{j=1}^{n_i} d_{ij}^2,
+%   \mathrm{TWGSS}(k) = \sum_{i=1}^{k} \sum_{j=1}^{n_i} \delta_{ij}^2,
+% \end{equation}
+% where $\delta_{ij}$ is the dissimilarity between site $j$ and the centroid of cluster $i$, which we measure using the $\JSGa{}$ divergence defined in section \ref{subsec:div}, and $n_i$ is the number of observations in cluster $i$.
+\begin{equation}~\label{eq:twgss}
+  \mathrm{TWGSS}(k) = \sum_{c=1}^{k} \sum_{s \in S} \eJSGa{}(s \Vert m_c),
+\end{equation}
+where $\eJSGa{}(s \Vert m_c)$ is the dissimilarity between site $s$ and the medoid of cluster $c$, measured using the $\eJSGa{}$ divergence defined in Section \ref{subsec:div}, and $S$ is the set of sites in cluster $c$. \todo{Is this right?}
 We then plot $\mathrm{TWGSS}(k)$ vs.\ $k$, and choose $k^*$, the optimal number of clusters, as the value of $k$ at which the TWGSS reduction sharply slows, or equivalently, the point at which the curve has an ``elbow''.
 
 \section{Simulation study}~\label{sec:sim}

@@ -207,8 +207,10 @@
 % \newcommand{\JSGa}{\mathop{\mathrm{JS}^{\mathrm{G}_{\alpha}}}\nolimits}
 % \newcommand{\JSGa}{\mathop{\mathrm{JS}^{\mathrm{G}_{k}}}\nolimits}
 \newcommand{\JSGa}{\mathop{\mathrm{JS}^{\mathrm{G}_{\lambda}}}\nolimits}
-\newcommand{\cJSGa}{\mathop{\mathrm{cJS}^{\mathrm{G}_{\lambda}}}\nolimits}
-\newcommand{\eJSGa}{\mathop{\mathrm{eJS}^{\mathrm{G}_{\lambda}}}\nolimits}
+% \newcommand{\cJSGa}{\mathop{\mathrm{cJS}^{\mathrm{G}_{\lambda}}}\nolimits}
+\newcommand{\cJSGa}{\mathop{\mathrm{cJS}_{i}^{\mathrm{G}_{\lambda}}}\nolimits}
+% \newcommand{\eJSGa}{\mathop{\mathrm{eJS}^{\mathrm{G}_{\lambda}}}\nolimits}
+\newcommand{\eJSGa}{\mathop{\mathrm{eJS}_{i}^{\mathrm{G}_{\lambda}}}\nolimits}
 % \newcommand{\GJS}[1]{\mathrm{JS}^{\mathrm{G}}}
 \DeclareMathOperator{\GJS}{\mathrm{JS}^{\mathrm{G}}}
 \DeclareMathOperator{\CE}{\mathrm{CE}}
@@ -989,6 +991,7 @@ For two multivariate Gaussian distributions $F_1 \sim \mbox{MVN}(\symbf{\mu}_1, 
 % Paragraph defining conditional JSGa for sites (s, s*) in cond variable
 Now suppose we have fitted the CE model at two different sites, say $s$ and $s^*$, and we want to compare the extremal dependence structure of the random vector $\symbf{Y}(s)$ at site $s$ with that of $\symbf{Y}(s^*)$ at site $s^*$, for a given conditioning variable $Y_i(s)$ and $Y_i(s^*)$, respectively, where $i \in \{1, \ldots, d\}$.
 Using the $\JSGa{}$ divergence in Equation~\eqref{eq:js_norm_mvn1}, we define the \textit{conditional skew-geometric Jensen--Shannon divergence} ($\cJSGa{}$) between the two sites $s$ and $s^*$ for the conditioning variable $Y_i$ as
+\todo{Define for j mid i? or just mid i? Would lead to better M definition below}
 \begin{equation} \label{eq:cjsga}
   \cJSGa{}\bigl(y; s \Vert s^*\bigr) = \JSGa{}\left(F_{\mathbf{Y}_{-i}(s)|Y_i(s)=y} \Vert F_{\mathbf{Y}_{-i}(s^*)|Y_i(s^*)=y}\right),
 \end{equation}
@@ -1104,10 +1107,11 @@ Hence, we truncate the integral in Equation~\eqref{eq:jsga_integral} at the 99th
 
 % Matrix
 \todo{Problem: Don't I have d(d-1) models here, not d?}
+\todo{If so, could have M j mid i here?}
 We can repeat this procedure for each pair of sites $(s, s^*)$ and for each conditioning variable $Y_i$, to obtain a matrix of pairwise dissimilarities between all sites for each conditioning variable, given by
 \begin{equation} \label{eq:distance_matrix}
   % M_i=\left( eJS^{G_\lambda}_i(s || s^*)\right)_{s, s^* \in \{s_1,\dots,s_D\}},
-  M_i=\left(\eJSGa{}(y; s\Verts^*)_{s, s^* \in \{s_1,\dots,s_D\}},
+  M_i=\left(\eJSGa{}(y; s\Vert s^*)\right)_{s, s^* \in \{s_1,\dots,s_D\}},
 \end{equation}
 where $D$ is the total number of sites.
 If we have $d$ conditioning variables, we can also aggregate the $d$ distance matrices $M_1, \ldots, M_d$ into a single matrix $M$, by taking the element-wise average across all matrices, i.e. \todo{Do we like this representation of the elementwise average?}

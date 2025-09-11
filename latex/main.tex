@@ -281,7 +281,7 @@
 \bigskip
 \todo{Rewrite abstract with Christian}
 \begin{abstract}
-Conditional extreme value (CE) models have proven useful for analysing the joint tail behaviour of random vectors.
+Conditional extremes (CE) models have proven useful for analysing the joint tail behaviour of random vectors.
   However, when applied across many locations or variables, it can be difficult to interpret or compare the resulting extremal dependence structures, particularly in high dimensions. 
   % \todo{C: add 1-2 sentences before "We propose .." to clearly outline the scenario we are considering, and why it is useful}
   To address this, we propose a novel clustering framework for CE models, which can be used to identify groups with similar multivariate extremal dependence structures.
@@ -317,7 +317,8 @@ Extreme Value Theory (EVT) provides asymptotically justified models for estimati
 % This situation can arise in a variety of contexts, and is particularly popular in environmental applications.
 % EVT modelling can be used to assess the risk of extreme events, such as floods, droughts, heatwaves and storms, which can have significant impacts on society and the environment.
 % Environmental applications are one area where EVT methods are used frequently, because interest lies in estimating the severity of future extreme events. % , such as heatwaves or storms. 
-Environmental applications are one area where EVT methods are used frequently, because interest lies in estimating the severity of future extreme events, to develop risk management strategies and to assess the impacts of climate change. \todo{Keep reference to climate change?}
+% Environmental applications are one area where EVT methods are used frequently, because interest lies in estimating the severity of future extreme events, to develop risk management strategies and to assess the impacts of climate change. \todo{Keep reference to climate change?}
+Environmental applications are one area where EVT methods are used to estimate the severity of future extreme events in order to aid the development of risk management strategies and to assess the impact of climate change. 
 % For instance, heatwaves can lead to droughts and wild fires \citep{tanarhte2015heat, french2019quantifying, koh2023gradient}.
 % % Extreme rainfall contributes to storms and flooding, which can cause major damage and trigger large insurance claims \citep{Rohrbeck_flooding, osei2021estimation}.
 % Extreme rainfall and high wind speeds can cause major damage and large insurance claims, and thus it is important to understand their likelihood \citep{Rohrbeck_flooding, osei2021estimation, soukissian2015effect, steinkohl2013extreme}. 
@@ -373,9 +374,11 @@ Consequently, joint risks may be underestimated unless tail \emph{dependence} is
 % Tail dependence can be described using the coefficient of asymptotic dependence \(\chi\in[0,1]\) (see e.g.\ \citet{Coles1999}), which for two random variables \(X_1,X_2\) with corresponding marginal distribution functions \(F_1,F_2\) is defined as 
 Tail dependence is commonly summarised by the coefficient of asymptotic dependence \(\chi\in[0,1]\) (see e.g.\ \citealt{Coles1999}), defined for two random variables $X_1$ and $X_2$ with marginal distribution functions $F_1$ and $F_2$ respectively as
 \[
-\chi \;=\; \lim_{u\to 1}\Pr\big(F_1(X_1)>u \mid F_2(X_2)>u\big).
+  % \chi \;=\; \lim_{u\to 1}\Pr\big(F_1(X_1)>u \mid F_2(X_2)>u\big).
+  \chi \;=\; \lim_{u\to 1}\Pr\left[F_1(X_1)>u \mid F_2(X_2)>u\right].
 \]
-The values \(\chi>0\) indicate asymptotic dependence (AD) and \(\chi=0\) asymptotic independence (AI) for the random vector $\left(X_1, X_2\right)$. 
+% The values \(\chi>0\) indicate asymptotic dependence (AD) and \(\chi=0\) asymptotic independence (AI) for the random vector $\left(X_1, X_2\right)$. 
+When $\chi$ > 0, the variables $X_1$ and $X_2$ are termed asymptotically dependent (AD), while $\chi=0$ corresponds to asymptotic independence (AI).
 Although \(\chi\) is a useful pairwise summary, it does not fully characterise multivariate tail structure or support inference on joint exceedance probabilities, for which a full probabilistic model is required. 
 \todo{Make reference to Gaussian/max-stable process models?}
 Many classical models and clustering frameworks assume AD \citep{Vignotto2021,Boulin2025}, but a growing literature argues that environmental data often exhibit AI and that AD models can be inappropriate in such contexts \citep{Opitz2016,Dawkins2018,Huser2024}. 
@@ -409,9 +412,9 @@ Many classical models and clustering frameworks assume AD \citep{Vignotto2021,Bo
 % Conditional Extremes
 \todo{Check if references are relevant and correct}
 The Conditional extremes (CE) model of \citet{Heffernan2004} describes the tail behaviour of a random vector \emph{conditional} on one of its components exceeding a suitably high threshold.
-It provides a flexible framework which can capture both AD and AI, and other complex extremal dependence patterns. 
+It provides a flexible framework which can capture both AD and AI patterns. % , and other complex extremal dependence patterns. 
 This flexibility, along with its conceptual simplicity and computational efficiency, have made it a popular choice for modelling multivariate extremes. 
-Spatio-temporal extensions and single-site conditioning methods have been developed to handle high-dimensional settings \citep{Wadsworth2018, Simpson2021}, and adaptations that incorporate covariates, hierarchical structure, and mixture or random-scale constructions further increase the models flexibility \citep{Tawn2018, Richards2023, Tendijck2023}. 
+Spatio-temporal extensions and single-site conditioning methods have been developed to handle high-dimensional settings \citep{Wadsworth2022, Simpson2021}, and adaptations that incorporate covariates, hierarchical structure, and mixture or random-scale constructions further increase the models flexibility \citep{Tawn2018, Richards2023, Tendijck2023}. 
 As a result, CE models have been applied across a broad range of environmental problems, where AI as well as AD may be prevalent, including modelling river flow and flood risk \citep{Gilleland2013, Jane2020}, rainfall extremes \citep{Richards2022}, sea-surface temperature extremes \citep{Simpson2023,Kakampakou2024}, and heatwaves \citep{Winter2016}.
 % Despite these strengths, sparsity of joint extremes, particularly in high dimensions, can make pattern discovery and interpretation difficult.
 However, the sparsity of joint extreme observations, particularly in high dimensions, can make pattern discovery and interpretation using the CE model difficult.
@@ -562,15 +565,17 @@ However, the sparsity of joint extreme observations, particularly in high dimens
 % The method they employ has some weaknesses, namely in that it is restricted to the bivariate case, and, being non-parametric, lacks a generative model for tail dependence inference, and may perform poorly without a large dataset due to reliance on sufficient empirical occurrences of joint and marginal extremes to characterize tail dependence.
 % Also, it is undefined where no jointly extreme events are observed, which can occur frequently in practice, and so is unsuitable for applications where AI may be prevalent.
 A popular approach to improve interpretability in extremal dependence modelling is clustering, which is an unsupervised learning technique that groups data with similar statistical characteristics \citep{Hastie2009}.
-We distinguish three types of clustering for extremes across spatial location. 
-\emph{Univariate} methods group sites by marginal tail summaries, such as return levels or GPD parameter estimates \citep{Coles2001}, and have been used in environmental and financial applications \citep{Alonso2014-rr, deCarvalho2023, Zheng2023-jf}.
+We distinguish three types of clustering for extremes across spatial locations. 
+\emph{Univariate} methods group sites by marginal tail summaries, such as return levels or parameter estimates \citep{Coles2001}, and have been used in environmental and financial applications \citep{Alonso2014-rr, deCarvalho2023, Zheng2023-jf}.
 \emph{Multivariate} methods compare joint tail summaries or fitted multivariate tail models at each site.
 A leading nonparametric example was provided by \citet{Vignotto2021}.
-They estimated empirical pairwise Kullback--Leibler ($\KL{}$) divergences for bivariate precipitation and wind extremes and then applied $k$-medoids \citet{Kullback1951}. \todo{Jordan wants ``extreme value distributions fitted to'' added here, but I thought they didn't fit any?}
+They estimated empirical pairwise Kullback--Leibler ($\KL{}$) divergences for bivariate precipitation and wind extremes and then applied $k$-medoids.% \citet{Kullback1951}. \todo{Jordan wants ``extreme value distributions fitted to'' added here, but I thought they didn't fit any?}
 % Finally, \emph{spatial} methods target regions or processes with similar spatial tail dependence and often build pairwise tail dissimilarities such as the F-madogram before clustering \citep{Cooley2006variograms, Bernard2013, Rohrbeck2021}.
 Finally, \emph{spatial} methods cluster over entire spatial fields or process realizations.
 They may build pairwise tail dissimilarities such as the F-madogram before clustering \citep{Cooley2006variograms, Bernard2013}, or fit spatially non-stationary extreme value models \citep{Rohrbeck2021, Carreau2017, Dupuis2023}. \todo{are these really spatial, or just expanded univariate?}
-Our problem involves clustering bivariate extremes of precipitation and wind at sites across Ireland.
+
+\todo{Discuss paragraph with Christian}
+The problem considered herein involves clustering bivariate extremes of precipitation and wind at sites across Ireland.
 We fit a multivariate tail model at each site and then cluster sites by the fitted multivariate tail characteristics, so our method is fundamentally multivariate at each site while remaining applicable to spatial questions.
 In this context, \citet{Vignotto2021} is our main competitor.
 However, their method has some notable limitations, in that it is restricted to the bivariate case.
@@ -588,11 +593,13 @@ Also, it is undefined where no joint extreme events are observed, which can occu
 % Our main contribution to the literature is to perform clustering on the CE model, which has not previously been explored. 
 
 % Clustering: Motivating our clustering algorithm
-Our method performs clustering of multivariate extremes using the CE model.
+% Our method performs clustering of multivariate extremes using the CE model.
+In this paper we perform clustering using the CE model. 
 This enables parametric exploration of tail dependence structures in arbitrary dimensions, in contrast to the existing non-parametric approach of \citet{Vignotto2021}.
 % The Gaussian working assumption in the CE model allows for a simple, closed form divergence measure upon which to base our clustering framework.
-Using the working conditional Gaussianity assumption of \citet{Heffernan2004} for estimating the CE model, we define a simple, closed-form divergence measure for multivariate extremes which permits clustering.
-Our parametric approach delivers a unified and statistically principled tool for exploratory analysis of multivariate extremes, facilitating the identification of spatial locations with homogeneous tail dependence characteristics.  
+% Using the working conditional Gaussianity assumption of \citet{Heffernan2004} for estimating the CE model, we define a simple, closed-form divergence measure for multivariate extremes which permits clustering.
+Using the working conditional Gaussian assumption of \citet{Heffernan2004} for estimating the CE model, we define a closed-form divergence measure for CE models which permits clustering.
+Our parametric approach delivers a unified and statistically principled tool for exploratory analysis of multivariate extremes, facilitating the identification of spatial locations with similar tail dependence characteristics.  
 
 % Structure of paper
 The remainder of this paper is structured as follows.
@@ -601,8 +608,9 @@ The remainder of this paper is structured as follows.
 % which includes a novel dissimilarity measure based on the Jensen--Shannon (JS) divergence, and a method for selecting the number of clusters.
 Section~\ref{sec:method} introduces our clustering framework for CE models, which includes a novel dissimilarity measure based on the 
 % skew-geometric Jensen--Shannon divergence $\left(\text{JS}^{\textrm{G}_{\alpha}}\right)$, and a method for selecting the number of clusters.
-skew-geometric Jensen--Shannon divergence $\left(\JSGa{}\right)$ of \citet{Nielsen2019}, and a method for selecting the number of clusters.
-A simulation study is described and performed in Section~\ref{sec:sim}, to compare our method to the leading competitor in the bivariate case, and we show that it outperforms this method across a range of extremal dependence structures.
+skew-geometric Jensen--Shannon divergence $\left(\JSGa{}\right)$ of \citet{Nielsen2019}. %, and a method for selecting the number of clusters.
+% A simulation study is described and performed in Section~\ref{sec:sim}, to compare our method to the leading competitor in the bivariate case, and we show that it outperforms this method across a range of extremal dependence structures.
+Section~\ref{sec:sim} describes a simulation study, where we demonstrate that our approach outperforms the method by \citet{Vignotto2021} across a range of extremal dependence structures. 
 In Section~\ref{sec:application}, we apply our clustering framework to Irish meteorological data, and show how it can be used to identify sites with similar tail dependence between precipitation and wind speed.
 Section~\ref{sec:discuss} concludes with a discussion of our findings, the limitations of our method, and potential future work.
 

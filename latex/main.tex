@@ -856,16 +856,26 @@ and $Y_i$, with dependence weakening as $Y_i\to\infty$, equivalent to $\chi<1$.
 \todo{Discuss with Christian}
 We fit the CE model at different spatial sites. 
 % To allow for spatial variation, we may index by site $s \in \mathcal{S}$, and allow regression parameters to vary by site. 
-To denote spatial variation, we index the random vectors by spatial location $\mathcal{s} \in \left(s_1, \ldots, s_D\right)$, where $s_i \in \mathbb{R}^2, i = 1, \ldots, D$, and $D$ is the number of spatial locations. 
-This leads to the spatially indexed extension of Equation~\eqref{eq:ce_model}, where we have the site-specific random vector $\symbf{Y}(s) \in \mathbb{R}^d$ for $\mathcal{s} \in (s_1, \ldots, s_d)$, and
+% To denote spatial variation, we index the random vectors by spatial location $\mathcal{s} \in \left(s_1, \ldots, s_D\right)$, where $s_i \in \mathbb{R}^2, i = 1, \ldots, D$, and $D$ is the number of spatial locations. 
+To describe spatial variation, we add the additional subscript $s \in [1, \ldots, D]$, where $D$ is the number of spatial locations, so that $Y_{i,s}$ denotes the variable $Y_i$ at site $s$.
+% This leads to the spatially indexed extension of Equation~\eqref{eq:ce_model}, where we have the site-specific random vector $\symbf{Y}(s) \in \mathbb{R}^d$ for $\mathcal{s} \in (s_1, \ldots, s_d)$, and
+% \begin{equation} \label{eq:ce_model_spat}
+%   \bigl(\symbf{Y}_{-i}(s) \mid Y_i(s) = y\bigr) 
+%     = \symbf{\alpha}_{\mid i}(s) \, y 
+%       + y^{\symbf{\beta}_{\mid i}(s)} \, \symbf{Z}_{\mid i}(s), 
+%       \quad y > u_i,
+% \end{equation}
+% This leads to a spatial extension of Equation~\eqref{eq:ce_model}, where we have the site-specific random vector $\symbf{Y}_{s} \in \mathbb{R}^d$ for $s \in \mathcal{S}$, and
+This leads to a spatial extension of Equation~\eqref{eq:ce_model}, which we have the site-specific random vector $\symbf{Y}_{s} \in \mathbb{R}^d$, and 
 \begin{equation} \label{eq:ce_model_spat}
-  \bigl(\symbf{Y}_{-i}(s) \mid Y_i(s) = y\bigr) 
-    = \symbf{\alpha}_{\mid i}(s) \, y 
-      + y^{\symbf{\beta}_{\mid i}(s)} \, \symbf{Z}_{\mid i}(s), 
-      \quad y > u_i,
+  \bigl(\symbf{Y}_{-i, s} = \mid Y_{i, s} = y\bigr) 
+    = \symbf{\alpha}_{\mid i, s} \, y 
+      + y^{\symbf{\beta}_{\mid i, s}} \, \symbf{Z}_{\mid i, s}, 
+      \quad y > u_i, 
 \end{equation}
 % with location-specific residuals $\symbf{Z}_{\mid i}(s) \sim \symbf{G}_{\mid i}(s)$. \todo{Do I need to define alpha(s), beta(s), ui(s) again?}
-where $\symbf{Y}_{-i}(s) \coloneqq \symbf{Y}(s) \setminus Y_i(s), \symbf{\alpha}_{\mid i}(s), \symbf{\beta}_{\mid i}(s)$ and $\symbf{Z}_{\mid i}(s) \sim \symbf{G}_{\mid i}(\cdot ; s)$ are the site-specific counterparts of the regression parameters and residuals introduced above.  
+% where $\symbf{Y}_{-i}(s) \coloneqq \symbf{Y}(s) \setminus Y_i(s), \symbf{\alpha}_{\mid i}(s), \symbf{\beta}_{\mid i}(s)$ and $\symbf{Z}_{\mid i}(s) \sim \symbf{G}_{\mid i}(\cdot ; s)$ are the site-specific counterparts of the regression parameters and residuals introduced above.  
+where $\symbf{Y}_{-i, s} \coloneqq \symbf{Y}_{s} \setminus Y_{i, s}$, and $\symbf{\alpha}_{\mid i, s}$, $\symbf{\beta}_{\mid i, s}$ and $\symbf{Z}_{\mid i, s} \sim \symbf{G}_{\mid i, s}$ are the site-specific counterparts of the regression parameters and residuals introduced above.
 Note that we make no assumptions about spatial smoothness in the regression model. 
 
 % Intro: CE gives distributions, which need to be compared

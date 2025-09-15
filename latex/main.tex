@@ -284,7 +284,7 @@
   \medskip
 } \fi
 
-\todo{Order references by year or alphabetically}
+\todo{Check with Lou that project number is correct}
 
 \bigskip
 \todo{Rewrite abstract with Christian}
@@ -331,7 +331,7 @@ Environmental applications are one area where EVT methods are used to estimate t
 % % Extreme rainfall contributes to storms and flooding, which can cause major damage and trigger large insurance claims \citep{Rohrbeck_flooding, osei2021estimation}.
 % Extreme rainfall and high wind speeds can cause major damage and large insurance claims, and thus it is important to understand their likelihood \citep{Rohrbeck_flooding, osei2021estimation, soukissian2015effect, steinkohl2013extreme}. 
 % % High wind speeds can lead to significantly damaging events such as tropical cyclones, and have also seen much focus in the field of EVT \citep{soukissian2015effect, steinkohl2013extreme}.
-Examples include the analysis of heatwaves \citep{tanarhte2015heat, french2019quantifying}, extreme rainfall \citep{osei2021estimation}, and wind speeds \citep{soukissian2015effect, steinkohl2013extreme}, as well as the modelling of wildfire risks \citep{Koh2024} and the impact of environmental extremes on insurance claims \citep{Rohrbeck_flooding, Miralles2024}. 
+Examples include the analysis of heatwaves \citep{tanarhte2015heat, french2019quantifying}, extreme rainfall \citep{osei2021estimation}, and wind speeds \citep{steinkohl2013extreme, soukissian2015effect}, as well as the modelling of wildfire risks \citep{Koh2024} and the impact of environmental extremes on insurance claims \citep{Rohrbeck_flooding, Miralles2024}. 
 
 % Dependence modelling 
 % \todo{C: Shorten this paragraph}
@@ -380,7 +380,7 @@ Multivariate extremes frequently arise in spatial applications, where one or mor
 % Consequently, these joint risks are liable to be underestimated unless tail \emph{dependence} is explicitly modelled \citep{Zhang2024}. 
 Consequently, joint risks may be underestimated unless tail \emph{dependence} is explicitly modelled \citep{Zhang2024}. 
 % Tail dependence can be described using the coefficient of asymptotic dependence \(\chi\in[0,1]\) (see e.g.\ \citet{Coles1999}), which for two random variables \(X_1,X_2\) with corresponding marginal distribution functions \(F_1,F_2\) is defined as 
-Tail dependence is commonly summarised by the coefficient of asymptotic dependence \(\chi\in[0,1]\) (see e.g.\ \citealt{Coles1999}), defined for two random variables $X_1$ and $X_2$ with marginal distribution functions $F_1$ and $F_2$ respectively as
+Tail dependence is commonly summarised by the coefficient of asymptotic dependence \(\chi\in[0,1]\) (see e.g.\ \citet{Coles1999}), defined for two random variables $X_1$ and $X_2$ with marginal distribution functions $F_1$ and $F_2$ respectively as
 \[
   % \chi \;=\; \lim_{u\to 1}\Pr\big(F_1(X_1)>u \mid F_2(X_2)>u\big).
   \chi \;=\; \lim_{u\to 1}\Pr\left[F_1(X_1)>u \mid F_2(X_2)>u\right].
@@ -423,7 +423,7 @@ Many classical models and clustering frameworks assume AD \citep{Vignotto2021,Bo
 The Conditional extremes (CE) model of \citet{Heffernan2004} describes the tail behaviour of a random vector \emph{conditional} on one of its components exceeding a suitably high threshold.
 It provides a flexible framework which can capture both AD and AI patterns. % , and other complex extremal dependence patterns. 
 This flexibility, along with its conceptual simplicity and computational efficiency, have made it a popular choice for modelling multivariate extremes. 
-Spatio-temporal extensions and single-site conditioning methods have been developed to handle high-dimensional settings \citep{Wadsworth2022, Simpson2021}, and adaptations that incorporate covariates, hierarchical structure, and mixture or random-scale constructions further increase the models flexibility \citep{Tawn2018, Richards2023, Tendijck2023}. 
+Spatio-temporal extensions and single-site conditioning methods have been developed to handle high-dimensional settings \citep{Simpson2021, Wadsworth2022}, and adaptations that incorporate covariates, hierarchical structure, and mixture or random-scale constructions further increase the models flexibility \citep{Tawn2018, Richards2023, Tendijck2023}. 
 As a result, CE models have been applied across a broad range of environmental problems, where AI as well as AD may be prevalent, including modelling river flow and flood risk \citep{Gilleland2013, Jane2020}, rainfall extremes \citep{Richards2022}, sea-surface temperature extremes \citep{Simpson2023,Kakampakou2024}, and heatwaves \citep{Winter2016}.
 % Despite these strengths, sparsity of joint extremes, particularly in high dimensions, can make pattern discovery and interpretation difficult.
 However, the sparsity of joint extreme observations, particularly in high dimensions, can make pattern discovery and interpretation using the CE model difficult.
@@ -581,7 +581,7 @@ A leading nonparametric example was provided by \citet{Vignotto2021}.
 They estimated empirical pairwise Kullback--Leibler ($\KL{}$) divergences for bivariate precipitation and wind extremes and then applied $k$-medoids.% \citet{Kullback1951}. \todo{Jordan wants ``extreme value distributions fitted to'' added here, but I thought they didn't fit any?}
 % Finally, \emph{spatial} methods target regions or processes with similar spatial tail dependence and often build pairwise tail dissimilarities such as the F-madogram before clustering \citep{Cooley2006variograms, Bernard2013, Rohrbeck2021}.
 Finally, \emph{spatial} methods cluster over entire spatial fields or process realizations.
-They may build pairwise tail dissimilarities such as the F-madogram before clustering \citep{Cooley2006variograms, Bernard2013}, or fit spatially non-stationary extreme value models \citep{Rohrbeck2021, Carreau2017, Dupuis2023}. \todo{are these really spatial, or just expanded univariate?}
+They may build pairwise tail dissimilarities such as the F-madogram before clustering \citep{Cooley2006variograms, Bernard2013}, or fit spatially non-stationary extreme value models \citep{Carreau2017, Rohrbeck2021, Dupuis2023}. \todo{are these really spatial, or just expanded univariate?}
 
 \todo{Discuss paragraph with Christian}
 The problem considered herein involves clustering bivariate extremes of precipitation and wind at sites across Ireland.
@@ -1841,7 +1841,7 @@ In Section~\ref{subsec:app_ce}, we fit the CE model to the data, and in Section~
 We analyse the joint extremal behaviour of precipitation and wind speed at 59 sites across the Republic of Ireland from 1990 to 2020. 
 % The data we have performed our clustering on is precipitation data for the Republic of Ireland, collected from the Met Éireann website at \citet{metHistoricalData}, and wind speed data from the ERA5 Reanalysis dataset at \citet{Hersbach2020}, corresponding to the closest grid point to each location.
 % Precipitation data were collected from the Met Éireann website (accessed 2024-09-01), and wind speed data from the gridded ERA5 Reanalysis dataset \citep{metHistoricalData, Hersbach2020}.
-Precipitation data were obtained from the Met Éireann archive (accessed 2024-09-01), and wind speed data from the ERA5 Reanalysis dataset \citep{metHistoricalData, Hersbach2020}. 
+Precipitation data were obtained from the Met Éireann archive (accessed 2024-09-01), and wind speed data from the ERA5 Reanalysis dataset \citep{Hersbach2020, metHistoricalData}. 
 % ERA5 provides averages over a gridded box of $0.25^{\circ} \times 0.25^{\circ}$, so each site will lie within a grid cell, to which the wind speed data corresponds.
 ERA5 provides spatial averages on a $0.25^{\circ} \times 0.25^{\circ}$ grid, and each site was matched to the grid cell in which it lies. 
 Both datasets are available at daily resolution.
@@ -1882,7 +1882,8 @@ Weeks with no precipitation were excluded, resulting in 5,022 weekly observation
 % chi + chi-bar plots as quick exploratory analysis
 % As a brief exploration of the dependence profile in our data, we looked at the $\chi$ and $\bar{\chi}$ statistics introduced in Section~\ref{subsec:asym_dep}.
 % As a brief exploration of the dependence profile of our data, we looked at the $\chi$ statistic introduced in Section~\ref{subsec:asym_dep}.
-We begin exploring the dependence structure of the data using the $\chi$ statistic introduced in Section~\ref{subsec:asym_dep}. 
+% We begin exploring the dependence structure of the data using the $\chi$ statistic introduced in Section~\ref{subsec:asym_dep}. 
+We begin exploring the dependence structure of the data using the $\chi$ statistic introduced in Section~\ref{sec:intro}. 
 % Specifically, we estimated $\chi$ at the 95th quantile for each of our 59 sites, to determine the extent of asymptotic dependence between our variables, and whether any spatial patterns in this dependence emerge. 
 % Specifically, as shown in Figure \ref{fig:chi}, we estimated $\chi(0.95)$ at all 59 sites, to determine the extent of asymptotic dependence between precipitation and wind speed at each, and whether any discernible spatial patterns in this dependence emerge.
 % These values are shown in Figure \ref{fig:chi}.

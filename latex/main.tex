@@ -1022,8 +1022,11 @@ For two multivariate Gaussian distributions $H_1 \sim \mbox{MVN}(\symbf{m}_1, \O
 
 % Paragraph defining conditional JSGa for sites (s, s*) in cond variable
 Now suppose we have fitted the CE model at two different sites, say $s$ and $s^*$, and we want to compare the extremal dependence structure of the random vector $\symbf{Y}(s)$ at site $s$ with that of $\symbf{Y}(s^*)$ at site $s^*$, for a given conditioning variable $Y_i(s)$ and $Y_i(s^*)$, respectively, where $i \in \{1, \ldots, d\}$.
-% Using the $\JSGa{}$ divergence in Equation~\eqref{eq:js_norm_mvn1}, we define the \textit{conditional skew-geometric Jensen--Shannon divergence} ($\cJSGa{}$) between the two sites $s$ and $s^*$ for the conditioning variable $Y_i$ as
-% \begin{equation} \label{eq:cjsga}
+Using the $\JSGa{}$ divergence in Equation~\eqref{eq:js_norm_mvn1}, we define the \textit{conditional skew-geometric Jensen--Shannon divergence} ($\cJSGa{}$) between the two sites $s$ and $s^*$ for the conditioning variable $Y_i$ as
+\begin{equation} \label{eq:cjsga}
+  \cJSGa{}\bigl(y; s \Vert s^*\bigr) = \JSGa{}\left(F_{\mathbf{Y}_{-i}(s)|Y_i(s)=y} \Vert F_{\mathbf{Y}_{-i}(s^*)|Y_i(s^*)=y}\right),
+\end{equation}
+where $F_{\mathbf{Y}_{-i}(s)|Y_i(s)=y}$ and $F_{\mathbf{Y}_{-i}(s^*)|Y_i(s^*)=y}$ are the conditional multivariate Gaussian distributions induced by the CE model at sites $s$ and $s^*$, respectively, for a given value of $y > \max(u_i(s), u_i(s^*))$. \todo{Wrong!! (How?)}
 %   \cJSGa{}\left(y; s \Vert s^*\right)
 %   &= \tfrac{1}{2}\left\{
 %     \lambda\,\left(\mvmean{s}\right)^{T}\left(\mvcov{s}\right)^{-1}\left(\mvmean{s}\right) \\
@@ -1064,7 +1067,7 @@ $\Omega_2 = \mvcov{s^*}$,
 % \end{align*}
 and 
 \todo{Define with m and Omega or explicitly, as here?}
-\begin{align}
+\begin{align*}
 \Omega_{\lambda}
   &= \left[\,\lambda\,\left\{\mvcov{s}\right\}^{-1}
            +(1-\lambda)\,\left\{\mvcov{s^{*}}\right\}^{-1}\right]^{-1},\\[6pt]
@@ -1074,7 +1077,7 @@ and
        \Biggl[&\lambda\,\left\{\mvcov{s}\right\}^{-1}\mvmean{s}\\
             &\quad +(1-\lambda)\,\left\{\mvcov{s^{*}}\right\}^{-1}\mvmean{s^{*}}\Biggr]
      \end{aligned}.
-\end{align}
+\end{align*}
 
 % % Introduce KL divergence 
 % One common measure of dissimilarity between two distributions $P$ and $Q$ is the Kullback-Leibler (KL) divergence, defined as

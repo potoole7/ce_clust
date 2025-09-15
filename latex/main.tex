@@ -1175,21 +1175,23 @@ and
 % \end{equation}
 
 % Since the conditional $\JSGa{}$ divergence, $\cJSGa{}$, depends on the value of the conditioning variable $Y_i(s)$, we obtain a single measure of dissimilarity, by defining the expected divergence 
-The conditional $\JSGa{}$ divergence, $\cJSGa{}$, depends on the value of the conditioning variable $Y_i(s)$.
+The conditional $\JSGa{}$ divergence, $\cJSGa{}$, depends on the value of the conditioning variable $Y_{i,s}$.
 Therefore, to obtain a single measure of dissimilarity between the two sites $s$ and $s^*$ for the conditioning variable $Y_i$, we define the expected divergence
 \begin{align*}%~\label{eq:jsga_integral}
   % eJS^{G_\lambda}_i(s || s^*) &= \mathbb{E}(cJS^{G_\lambda}_i(Y_i(s); s || s^*)| Y_i(s) > u_i) \\
-  \eJSGa{}(s || s^*) &= \mathbb{E}(cJS^{G_\lambda}_i(Y_i(s); s || s^*)| Y_i(s) > u_i) \\
-                              &= \int_{u_i}^{\infty} \cJSGa{(y; s || s^*)} f(y \mid Y_i(s) > u_i) dy, \numberthis~\label{eq:jsga_integral}
-\end{align*}
-where $f(y \mid Y_i(s) > u_i)$ is the conditional density of $Y_i(s)$ given exceedance of the threshold. 
-This integral gives us our dissimilarity measure or ``distance'' between the two CE models, averaged over the distribution of $Y_i(s) \mid Y_i(s) > u_i$.
+  % \eJSGa{}(s || s^*) &= \mathbb{E}(cJS^{G_\lambda}_i(Y_i(s); s || s^*)| Y_i(s) > u_i) \\
+  %                             &= \int_{u_i}^{\infty} \cJSGa{(y; s || s^*)} f(y \mid Y_i(s) > u_i) dy, \numberthis~\label{eq:jsga_integral}
+  \eJSGa{s, s^*} &= \mathbb{E}\left(\cJSGa{s, s^*}(Y_{i,s}) \mid Y_{i,s} > u_{i}\right) \\
+                              &= \int_{u_{i,s}}^{\infty} \cJSGa{s, s^*}(y) h(y \mid Y_{i,s} > u_{i}) dy, \numberthis~\label{eq:jsga_integral}
+\end{align*} \todo{u i or u i s?}
+where $h(y \mid Y_{i, s} > u_i)$ is the conditional density of $Y_{i, s}$ given exceedance of the threshold. 
+This integral gives us our dissimilarity measure or ``distance'' between the two CE models, averaged over the distribution of $Y_{i, s} \mid Y_{i, s} > u_i$.
 % We can estimate this integral using Monte Carlo (MC) methods, noting that the distribution of $Y_i$ is given by the standard Laplace distribution. 
-We estimate this integral using Monte Carlo methods, noting that $Y_i(s)$ follows a standard Laplace distribution.
+We estimate this integral using Monte Carlo methods, noting that $Y_{i, s}$ follows a standard Laplace distribution.
 % We average across the individual scores for each individual realisation of $Y_i(s)$ to derive the divergence for a pair of sites, weighted by the distribution of $Y_i(s)$.
-In practice, very large values of $Y_i(s)$ can lead to unstable estimates, and we also want to avoid extrapolating beyond the range of observed $Y_i(s)$ used to fit the CE model. 
+In practice, very large values of $Y_{i, s}$ can lead to unstable estimates, and we also want to avoid extrapolating beyond the range of observed $Y_{i, s}$ used to fit the CE model. 
 % Hence, we truncate the expectation at the 99th percentile of the empirical distribution of $Y_i(s)$ across all sites.
-Hence, we truncate the integral in Equation~\eqref{eq:jsga_integral} at the 99th percentile of the empirical distribution of $Y_i(s)$ across all sites.
+Hence, we truncate the integral in Equation~\eqref{eq:jsga_integral} at the 99th percentile of the empirical distribution of $Y_{i, s}$ across all sites.
 
 % Matrix
 \todo{Problem: Don't I have d(d-1) models here, not d?}

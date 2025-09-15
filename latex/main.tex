@@ -1348,7 +1348,7 @@ Specifically, the TWGSS is defined as
   \mathrm{TWGSS}(k) = \sum_{c=1}^{k} \sum_{s =1}^{D} \eJSGa{s, s_c},
 \end{equation}
 % where $\eJSGa{}(s \Vert m_c)$ is the dissimilarity between site $s$ and the medoid of cluster $c$, measured using the $\eJSGa{}$ divergence defined in Section \ref{subsec:div}, and $S$ is the set of sites in cluster $c$. \todo{Is this right?}
-where $\eJSGa{s, m_c}$ is the dissimilarity between site $s$ and the medoid site $s_c$ of cluster $c$, and $D$ is the total number of sites. \todo{Is this right?}
+where $\eJSGa{s, s_c}$ is the dissimilarity between site $s$ and the medoid site $s_c$ of cluster $c$, and $D$ is the total number of sites. \todo{Is this right?}
 We then plot $\mathrm{TWGSS}(k)$ vs.\ $k$, and choose $k^*$, the optimal number of clusters, as the value of $k$ at which the TWGSS reduction sharply slows, or equivalently, the point at which the curve has an ``elbow''.
 
 \section{Simulation study}~\label{sec:sim}

@@ -1022,9 +1022,18 @@ For two multivariate Gaussian distributions $H_1 \sim \mbox{MVN}(\symbf{m}_1, \O
 
 % Paragraph defining conditional JSGa for sites (s, s*) in cond variable
 Now suppose we have fitted the CE model at two different sites, say $s$ and $s^*$, and we want to compare the extremal dependence structure of the random vector $\symbf{Y}(s)$ at site $s$ with that of $\symbf{Y}(s^*)$ at site $s^*$, for a given conditioning variable $Y_i(s)$ and $Y_i(s^*)$, respectively, where $i \in \{1, \ldots, d\}$.
-% Using the $\JSGa{}$ divergence in Equation~\eqref{eq:js_norm_mvn1}, we define the \textit{conditional skew-geometric Jensen--Shannon divergence} ($\cJSGa{}$) between the two sites $s$ and $s^*$ for the conditioning variable $Y_i$ as
-% \begin{equation} \label{eq:cjsga}
-%   \cJSGa{}\left(y; s \Vert s^*\right)
+Using the $\JSGa{}$ divergence in Equation~\eqref{eq:js_norm_mvn1}, we define the \textit{conditional skew-geometric Jensen--Shannon divergence} ($\cJSGa{}$) between the two sites $s$ and $s^*$ for the conditioning variable $Y_i$ as
+\todo{Define for j mid i? or just mid i? Would lead to better M definition below}
+\begin{equation} \label{eq:cjsga}
+  \cJSGa{}\bigl(y; s \Vert s^*\bigr) = \JSGa{}\left(H_{\mathbf{Y}_{-i}(s)|Y_i(s)=y} \Vert H_{\mathbf{Y}_{-i}(s^*)|Y_i(s^*)=y}\right),
+\end{equation}
+where $H_{\mathbf{Y}_{-i}(s)|Y_i(s)=y}$ and $H_{\mathbf{Y}_{-i}(s^*)|Y_i(s^*)=y}$ are the conditional multivariate Gaussian distributions induced by the CE model at sites $s$ and $s^*$, respectively, for a given value of $y > \max(u_i(s), u_i(s^*))$. \todo{Is this max correct?}
+% Substituting the means and covariances of these conditional distributions from Equation\eqref{eq:ce_norm} into Equation~\eqref{eq:js_norm_mvn1} gives the closed form expression
+% \todo{Need help tidying up}
+% \todo{move equation number to right}
+% \todo{What is random word at very end of last line?}
+% \begin{align*}% \label{eq:cjsga}
+% \cJSGa{}\left(y; s \Vert s^*\right)
 %   &= \tfrac{1}{2}\left\{
 %     \lambda\,\left(\mvmean{s}\right)^{T}\left(\mvcov{s}\right)^{-1}\left(\mvmean{s}\right) \\
 % &\qquad + (1-\lambda)\,
@@ -1043,8 +1052,6 @@ Now suppose we have fitted the CE model at two different sites, say $s$ and $s^*
 % &\qquad\quad + (1-\lambda)\,
 %       \left(\mvcov{s^*}\right)^{-1}\left(\mvmean{s^*}\right)\right).
 % \end{align*}
-% Using the $\JSGa{}$ divergence in Equation~\eqref{eq:js_norm_mvn1}, we define the \textit{conditional skew-geometric Jensen--Shannon divergence} ($\cJSGa{}$) between the two sites $s$ and $s^*$ for the conditioning variable $Y_i$ as
-% By substituting the $\JSGa{}$ divergence in Equation~\eqref{eq:js_norm_mvn1} into 
 We can substitute the multivariate Gaussian distribution in Equation~\eqref{eq:ce_norm} into the formula for the $\JSGa{}$ divergence in Equation~\eqref{eq:js_norm_mvn1} to compare the CE models fit at two sites $s$ and $s^*$, with 
 \todo{Should I switch 1 and 2 to s?}
 \todo{inline or not?}

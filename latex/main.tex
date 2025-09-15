@@ -1198,7 +1198,7 @@ Hence, we truncate the integral in Equation~\eqref{eq:jsga_integral} at the 99th
 \todo{If so, could have M j mid i here?}
 \todo{Discuss with Christian}
 We can repeat this procedure for each pair of sites $(s, s^*)$ and for each conditioning variable $Y_i$, to obtain a matrix of pairwise dissimilarities between all sites for each conditioning variable, given by
-\begin{align*} % \label{eq:distance_matrix}
+\begin{align*} %\label{eq:distance_matrix}
 %   % M_i=\left( eJS^{G_\lambda}_i(s || s^*)\right)_{s, s^* \in \{s_1,\dots,s_D\}},
   % M_i=\left(\eJSGa{}(y; s\Vert s^*)\right)_{s, s^* \in \{s_1,\dots,s_D\}},
   % M_i=\left[ M_{i, s, s*} \right]_{s, s^* = \{1, \ldots, D\}}, \\
@@ -1344,9 +1344,11 @@ Specifically, the TWGSS is defined as
 % \end{equation}
 % where $\delta_{ij}$ is the dissimilarity between site $j$ and the centroid of cluster $i$, which we measure using the $\JSGa{}$ divergence defined in section \ref{subsec:div}, and $n_i$ is the number of observations in cluster $i$.
 \begin{equation}~\label{eq:twgss}
-  \mathrm{TWGSS}(k) = \sum_{c=1}^{k} \sum_{s \in S} \eJSGa{}(s \Vert m_c),
+  % \mathrm{TWGSS}(k) = \sum_{c=1}^{k} \sum_{s \in S} \eJSGa{}(s \Vert m_c),
+  \mathrm{TWGSS}(k) = \sum_{c=1}^{k} \sum_{s =1}^{D} \eJSGa{s, s_c},
 \end{equation}
-where $\eJSGa{}(s \Vert m_c)$ is the dissimilarity between site $s$ and the medoid of cluster $c$, measured using the $\eJSGa{}$ divergence defined in Section \ref{subsec:div}, and $S$ is the set of sites in cluster $c$. \todo{Is this right?}
+% where $\eJSGa{}(s \Vert m_c)$ is the dissimilarity between site $s$ and the medoid of cluster $c$, measured using the $\eJSGa{}$ divergence defined in Section \ref{subsec:div}, and $S$ is the set of sites in cluster $c$. \todo{Is this right?}
+where $\eJSGa{s, m_c}$ is the dissimilarity between site $s$ and the medoid site $s_c$ of cluster $c$, and $D$ is the total number of sites. \todo{Is this right?}
 We then plot $\mathrm{TWGSS}(k)$ vs.\ $k$, and choose $k^*$, the optimal number of clusters, as the value of $k$ at which the TWGSS reduction sharply slows, or equivalently, the point at which the curve has an ``elbow''.
 
 \section{Simulation study}~\label{sec:sim}

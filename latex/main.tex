@@ -220,9 +220,10 @@
 \newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
 
 
-\newcommand{\mvmean}[1]{\symbf{\alpha}_{\mid i}(#1) y + y^{\symbf{\beta}_{\mid i}(s)} \symbf{\mu}_{\mid i}(#1)}
-% \newcommand{\mvcov}[1]{\diag\big(y^{2\symbf{\beta}_{\mid i}(#1)} \symbf{\Sigma}_{\mid i}(#1)\big)}
-\newcommand{\mvcov}[1]{\left(y^{\beta_{\mid i}(#1)}\right)^{\mathrm{T}} \Sigma_{\mid i}(#1) y^{\beta_{\mid i}(#1)}}
+% \newcommand{\mvmean}[1]{\symbf{\alpha}_{\mid i}(#1) y + y^{\symbf{\beta}_{\mid i}(s)} \symbf{\mu}_{\mid i}(#1)}
+\newcommand{\mvmean}[1]{\symbf{\alpha}_{\mid i, #1} y + y^{\symbf{\beta}_{\mid i, #1}} \symbf{\mu}_{\mid i, #1}}
+% \newcommand{\mvcov}[1]{\left(y^{\beta_{\mid i}(#1)}\right)^{\mathrm{T}} \Sigma_{\mid i}(#1) y^{\beta_{\mid i}(#1)}}
+\newcommand{\mvcov}[1]{\left(y^{\beta_{\mid i, #1}}\right)^{\mathrm{T}} \Sigma_{\mid i, #1} y^{\beta_{\mid i, #1}}}
 
 % \symbf{\alpha}_{\mid i}(s) y + y^{\symbf{\beta}_{\mid i}(s)} \symbf{\mu}_{\mid i}(s)
 
@@ -886,7 +887,8 @@ Note that we make no assumptions about spatial smoothness in the regression mode
 % The residual vector $\symbf{Z}_{\mid i}$ in Equation~\eqref{eq:ce_model} is assumed to follow a multivariate Gaussian distribution with mean vector $\symbf{\mu}_{\mid i}\in\mathbb{R}^{d-1}$ and covariance matrix $\Sigma_{\mid i}\in\mathbb{R}^{(d-1)\times(d-1)}$. 
 % \todo{Use spatial index here, or first explain without and then add in at the end?}
 % The residual vector $\symbf{Z}_{\mid i}(s)$ in Equation~\eqref{eq:ce_model_spat} is assumed to follow a multivariate Gaussian distribution with mean vector $\symbf{\mu}_{\mid i}(s)\in\mathbb{R}^{d-1}$ and covariance matrix $\Sigma_{\mid i}(s)\in\mathbb{R}^{(d-1)\times(d-1)}$. 
-As a working assumption that permits inference on $\symbf{\alpha}_{\mid i}(s)$ and $\symbf{\beta}_{\mid i}(s)$, the residual vector $\symbf{Z}_{\mid i}(s)$ in Equation~\eqref{eq:ce_model_spat} is assumed to be multivariate normally distributed with mean vector $\symbf{\mu}_{\mid i}(s)\in\mathbb{R}^{d-1}$ and covariance matrix $\Sigma_{\mid i}(s)\in\mathbb{R}^{(d-1)\times(d-1)}$.
+% As a working assumption that permits inference on $\symbf{\alpha}_{\mid i}(s)$ and $\symbf{\beta}_{\mid i}(s)$, the residual vector $\symbf{Z}_{\mid i}(s)$ in Equation~\eqref{eq:ce_model_spat} is assumed to be multivariate normally distributed with mean vector $\symbf{\mu}_{\mid i}(s)\in\mathbb{R}^{d-1}$ and covariance matrix $\Sigma_{\mid i}(s)\in\mathbb{R}^{(d-1)\times(d-1)}$.
+As a working assumption that permits inference on $\symbf{\alpha}_{\mid i, s}$ and $\symbf{\beta}_{\mid i, s}$, the residual vector $\symbf{Z}_{\mid i, s}$ in Equation~\eqref{eq:ce_model_spat} is assumed to be multivariate normally distributed with mean vector $\symbf{\mu}_{\mid i, s} \in\mathbb{R}^{d-1}$ and covariance matrix $\Sigma_{\mid i, s}\in\mathbb{R}^{(d-1)\times(d-1)}$.
 % \todo{Use (CE) superscript for mu and Sigma to distinguish from clustering}
 % The residual vector $\symbf{Z}_{\mid i}$ in Equation~\eqref{eq:ce_model} is assumed to follow a multivariate Gaussian distribution with mean vector $\symbf{\mu}_{\mid i}^{(\CE{})}\in\mathbb{R}^{d-1}$ and covariance matrix $\Sigma_{\mid i}^{(\CE{})} \in\mathbb{R}^{(d-1)\times(d-1)}$. 
 % \todo{Heff04 assumes diagonal sigma, should we say we use full covariance?}
@@ -896,26 +898,27 @@ As a working assumption that permits inference on $\symbf{\alpha}_{\mid i}(s)$ a
 % This Gaussian working assumption, proposed in \citet{Heffernan2004} after testing several candidate distributions, is the key property we exploit when deriving a closed-form divergence measure for computationally efficient clustering.
 This Gaussian working assumption, proposed in \citet{Heffernan2004}, is the key property we exploit when deriving a closed-form divergence measure for computationally efficient clustering; see Section~\ref{subsec:div}.
 
+% Inference
 % \citet{Heffernan2004} shows that inference can be made about the extremal dependence of a random vector $\symbf{Y}_{-i} = \symbf{Y} \backslash Y_i$ on $Y_i$ by conditioning on the exceedance of a high threshold $u$ by $Y_i$, and assuming that this conditional distribution is a diagonal multivariate Gaussian distribution: % with vector mean and standard deviation:
 % An important consequence following from this assumption is that inference can be made about the extremal dependence of a random vector $\symbf{Y}_{-i} = \symbf{Y} \setminus \{Y_i\}$ on $Y_i$ by conditioning on the exceedance of a high threshold $u_i$ by $Y_i$, and assuming that this conditional distribution is a multivariate Gaussian distribution, i.e.\ 
 % Consequently, inference can be made about the extremal dependence of a random vector $\symbf{Y}(s)$ at site $s$ by conditioning on the exceedance of a high threshold $u_i$ by $Y_i(s)$, and assuming that this conditional distribution is multivariate Gaussian, i.e.,\@
-Consequently, inference on $\alpha$ and $\beta$ by conditioning on the exceedance of a high threshold $u_i$ by $Y_i(s)$, and assuming that this conditional distribution is multivariate Gaussian, i.e.,\@
-
+Consequently, inference on $\alpha$ and $\beta$ by conditioning on the exceedance of a high threshold $u_i$ by $Y_{i, s}$, and assuming that this conditional distribution is multivariate Gaussian, i.e.,\@
 \begin{equation}~\label{eq:ce_norm}
   % \bigl( \symbf{Y}_{-i} \mid Y_i  = y_i \bigr) \sim N\left(\symbf{\alpha}_{\mid i}^{(\CE{})} y_i + y_i^{\symbf{\beta}_{\mid i}^{(\CE{})}} \symbf{\mu}_{\mid i}^{(\CE{})}, y_i^{\symbf{\beta}_{\mid i}^{(\CE{})}} \Sigma_{\mid i}^{(\CE{})}\right), Y_i > u_i,
   % \bigl( \symbf{Y}_{-i} \mid Y_i  = y_i \bigr) \sim N\left(\symbf{\alpha}_{\mid i} y_i + y_i^{\symbf{\beta}_{\mid i}} \symbf{\mu}_{\mid i}, y_i^{\symbf{\beta}_{\mid i}} \symbf{\Sigma_{\mid i}}\right), Y_i > u_i,
   % \bigl( \symbf{Y}_{-i}(s) \mid Y_i(s)  = y) \sim \mbox{MVN}_{d-1}\left(\symbf{\alpha}_{\mid i}(s) y + y^{\symbf{\beta}_{\mid i}(s)} \symbf{\mu}_{\mid i}(s), y^{\symbf{\beta}_{\mid i}(s)} \Sigma_{\mid i}(s)\right), y > u_i(s),
   % \bigl( \symbf{Y}_{-i}(s) \mid Y_i(s)  = y) \sim \mbox{MVN}_{d-1}\left(\symbf{\alpha}_{\mid i}(s) y + y^{\symbf{\beta}_{\mid i}(s)} \symbf{\mu}_{\mid i}(s), \left(y^{\beta_{\mid i}(s)}\right)^{\mathrm{T}} \Sigma_{\mid i}(s) y^{\beta_{\mid i}(s)} \right), y > u_i(s),
-  \bigl( \symbf{Y}_{-i}(s) \mid Y_i(s)  = y) \sim \mbox{MVN}_{d-1}\left(\mvmean{s}, \mvcov{s}\right), y > u_i,
+  % \bigl( \symbf{Y}_{-i}(s) \mid Y_i(s)  = y) \sim \mbox{MVN}_{d-1}\left(\mvmean{s}, \mvcov{s}\right), y > u_i,
+  \bigl(\symbf{Y}_{-i, s} \mid Y_{i, s} = y\bigr) \sim \mbox{MVN}_{d-1}\left(\mvmean{s}, \mvcov{s}\right), y > u_i,
 \end{equation}
-where $\symbf{\alpha}_{\mid i}(s), \symbf{\beta}_{\mid i}(s), \symbf{\mu}_{\mid i}(s), \Sigma_{\mid i}(s)$ are the site-specific parameters of the CE model for the $i^{\text{th}}$ conditioning variable, $i = 1, \ldots, d$.
+where $\symbf{\alpha}_{\mid i, s}, \symbf{\beta}_{\mid i, s}, \symbf{\mu}_{\mid i, s}, \Sigma_{\mid i, s}$ are the site-specific parameters of the CE model for the $i^{\text{th}}$ conditioning variable, $i = 1, \ldots, d$. \todo{Already defined alpha, beta, i above?}
 % where $\symbf{\alpha}_{\mid i}^{(\CE{})}, \symbf{\beta}_{\mid i}^{(\CE{})}, \symbf{\mu}_{\mid i}^{(\CE{})}, \Sigma_{\mid i}^{(\CE{})} \in \mathbb{R}^{(d-1)}$ are the parameters of the CE model. 
 % Therefore, when seeking to compare the extremal dependence structure of two locations, a sensible approach is to compare the conditional distributions given by Equation~\ref{eq:ce_norm} for each variable at both sites. 
 % Therefore, under this model, when comparing the extremal dependence structure between variables at any given sites, we are effectively comparing the conditional distributions given by Equation~\eqref{eq:ce_norm}.
 % Therefore, under this model, when comparing the multivariate tail dependence structure at different sites, we are effectively comparing the conditional distributions given by Equation~\eqref{eq:ce_norm}.
 % Therefore, to compare tail dependence at different sites, we can compare the conditional distributions in \eqref{eq:ce_norm}, i.e.\ the induced multivariate Gaussian distributions parameterised by $(\symbf{\alpha}_{\mid i}^{(\CE{})},\symbf{\beta}_{\mid i}^{(\CE{})},\symbf{\mu}_{\mid i}^{(\CE{})},\Sigma_{\mid i}^{(\CE{})})$ (or a chosen subset thereof).
 % Therefore, to compare tail dependence at different sites, we can compare the conditional distributions in \eqref{eq:ce_norm}, i.e.\ the induced multivariate Gaussian distributions parameterised by $(\symbf{\alpha}_{\mid i},\symbf{\beta}_{\mid i},\symbf{\mu}_{\mid i},\Sigma_{\mid i})$ (or a chosen subset thereof).
-Therefore, to compare tail dependence at different sites, we can compare the conditional distributions in Equation~\eqref{eq:ce_norm}, i.e.\ the assumed multivariate Gaussian distributions parameterised by $(\symbf{\alpha}_{\mid i}(s),\symbf{\beta}_{\mid i}(s),\symbf{\mu}_{\mid i}(s),\Sigma_{\mid i}(s))$. %(or a chosen subset thereof).
+Therefore, to compare tail dependence at different sites, we can compare the conditional distributions in Equation~\eqref{eq:ce_norm}, i.e.\ the assumed multivariate Gaussian distributions parameterised by $(\symbf{\alpha}_{\mid i, s},\symbf{\beta}_{\mid i, s},\symbf{\mu}_{\mid i, s},\Sigma_{\mid i, s})$. %(or a chosen subset thereof).
 
 % Estimation
 The model parameters $\symbf{\alpha}_{\mid i}(s), \symbf{\beta}_{\mid i}(s), \symbf{\mu}_{\mid i}(s), \Sigma_{\mid i}(s)$ in Equation~\eqref{eq:ce_norm} are estimated at each site $s$ and for each conditioning variable, $Y_i, i = 1, \ldots, d$, using maximum likelihood estimation.

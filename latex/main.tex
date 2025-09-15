@@ -1183,7 +1183,7 @@ Therefore, to obtain a single measure of dissimilarity between the two sites $s$
   %                             &= \int_{u_i}^{\infty} \cJSGa{(y; s || s^*)} f(y \mid Y_i(s) > u_i) dy, \numberthis~\label{eq:jsga_integral}
   \eJSGa{s, s^*} &= \mathbb{E}\left(\cJSGa{s, s^*}(Y_{i,s}) \mid Y_{i,s} > u_{i}\right) \\
                               &= \int_{u_{i,s}}^{\infty} \cJSGa{s, s^*}(y) h(y \mid Y_{i,s} > u_{i}) dy, \numberthis~\label{eq:jsga_integral}
-\end{align*} \todo{u i or u i s?}
+\end{align*} \todo{u i or u i s?} \todo{No need to be function of y like cJSGa?}
 where $h(y \mid Y_{i, s} > u_i)$ is the conditional density of $Y_{i, s}$ given exceedance of the threshold. 
 This integral gives us our dissimilarity measure or ``distance'' between the two CE models, averaged over the distribution of $Y_{i, s} \mid Y_{i, s} > u_i$.
 % We can estimate this integral using Monte Carlo (MC) methods, noting that the distribution of $Y_i$ is given by the standard Laplace distribution. 
@@ -1198,14 +1198,14 @@ Hence, we truncate the integral in Equation~\eqref{eq:jsga_integral} at the 99th
 \todo{If so, could have M j mid i here?}
 \todo{Discuss with Christian}
 We can repeat this procedure for each pair of sites $(s, s^*)$ and for each conditioning variable $Y_i$, to obtain a matrix of pairwise dissimilarities between all sites for each conditioning variable, given by
-\begin{align} \label{eq:distance_matrix}
+\begin{align*} % \label{eq:distance_matrix}
 %   % M_i=\left( eJS^{G_\lambda}_i(s || s^*)\right)_{s, s^* \in \{s_1,\dots,s_D\}},
   % M_i=\left(\eJSGa{}(y; s\Vert s^*)\right)_{s, s^* \in \{s_1,\dots,s_D\}},
   % M_i=\left[ M_{i, s, s*} \right]_{s, s^* = \{1, \ldots, D\}}, \\
-  M^{(i)}&=\left[ M^{(i)}_{s, s*} \right]_{s, s^* = \{1, \ldots, D\}}, \\
+  M^{(i)}&=\left[ M^{(i)}_{s, s*} \right]_{s, s^* = \{1, \ldots, D\}}, \numberthis~\label{eq:distance_matrix} \\
   % \text{where } M_{i, s, s^*} = \eJSGa{s, s^*},
   M^{(i)}_{s, s^*} &= \eJSGa{s, s^*},
-\end{align}
+\end{align*}
 % where $D$ is the total number of sites.
 where $D$ is the total number of sites, and $M^{(i)}_{s, s^*}$ is the dissimilarity between sites $s$ and $s^*$ for conditioning variable $Y_i$. \todo{Should I say cond var Yi or just i? Throughout}
 % If we have $d$ conditioning variables, we can also aggregate the $d$ distance matrices $M_1, \ldots, M_d$ into a single matrix $M$, by taking the element-wise average across all matrices, i.e. \todo{Do we like this representation of the elementwise average?}

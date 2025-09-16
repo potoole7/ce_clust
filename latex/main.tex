@@ -1182,7 +1182,6 @@ This aggregated matrix $\bar{M}$, or the individual matrices $M_i$, can then be 
 Optionally, other forms of aggregation, such as a weighted average or median, could be used here instead. 
 % Aggregating across multiple conditioning variables allows us to pool information across multiple comparisons and forms of information, and has some precedence in the extremal clustering literature \citep{Mornet2017-js}.
 Aggregating allows us to pool information across multiple comparisons and forms of information, and is supported in the extremal clustering literature \citep{Mornet2017-is}.
-
 % % Summary
 % % In summary, we define a dissimilarity measure between any two CE models based on the $\JSGa{}$ divergence, which is symmetric, non-negative, and computationally efficient. 
 % \todo{Rewrite}
@@ -1332,7 +1331,6 @@ Section~\ref{subsec:sim_mixture} extends the study to more complex scenarios, us
 % We evaluate clustering accuracy using the adjusted Rand index (ARI), and in Section~\ref{subsubsec:boot} examine improvements in parameter estimation through a bootstrap resampling scheme \citet{Hubert1985-ys}.
 
 \subsection{Gaussian copula}~\label{subsec:sim_gauss}
-
 % Single location
 % We first consider a simple simulation design based on the Gaussian copula.  
 % % Our Gaussian copula simulation design for a single ``location'', nomenclature chosen to match the spatial nature of our applications, is as follows:
@@ -1657,7 +1655,7 @@ These gains should be interpreted cautiously, since the simulations increase the
 Nevertheless, the results demonstrate that the proposed method scales effectively to higher dimensions and performs well in multivariate settings. 
 
 % \todo{Look into this, is this correct?? Shouldn't the clustering performance be much worse for 0.4 and 0.5?}
-\begin{figure}[H]
+\begin{figure}[t]
     \centering
     % \includegraphics[width = 0.9\linewidth]{plots/sim_01c_js_sens_3_var_dqu_0.9.png}
     \includegraphics[width = 0.9\linewidth]{plots/sim_01d_js_sens_3_var_dqu_0.9mult_var_man.png}
@@ -1901,7 +1899,7 @@ Several $\beta$ estimates are negative, which is unexpected and may reflect non-
 % We will cluster the locations based on their CE parameters, to help improve the interpretation of CE results.
 To mitigate this uncertainty and aid interpretation, we next cluster the locations based on their estimated CE parameters.  
 
-\begin{figure}[H]
+\begin{figure}[t]
     \centering
     \includegraphics[width = 0.9\linewidth]{plots/ire_ce_new.png}
     % \caption{\emph{Map of conditional extremes model parameters $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$ for precipitation conditional on wind speed (left) and wind speed conditional on precipitation (right), estimated at the 88th quantile. The $\alpha^{(\CE{})}$ parameter is shown in the top row, and $\beta^{(\CE{})}$ in the bottom row. The colour scale is the same for both variables, with darker red indicating larger positive values of $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$, and darker blue indicating larger negative values.}}

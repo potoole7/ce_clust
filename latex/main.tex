@@ -1501,7 +1501,8 @@ Figure~\ref{fig:00_gauss_cop} shows that our approach is able to reduce the unce
 Bias, as defined as the difference between the finite-sample estimate and the asymptotic parameter, and variance also decrease with increasing $\rho_{\text{Gauss}}$, indicating faster convergence under stronger dependence. 
 We observe a bias-variance tradeoff in the choice of quantile for the CE model, with the higher quantile ($q=0.99$) yielding less biased estimates, as expected due to improved convergence to the asymptotic parameters further into the tail, but with greater variance due to data scarcity.
 
-\begin{figure}[H]
+% \begin{figure}[H]
+\begin{figure}[h]
     \centering
     % \includegraphics[width = 0.9\linewidth]{plots/sim_01_gauss_cop.png}
     \includegraphics[width = 0.9\linewidth]{plots/sim_01_gauss_cop_man.png}
@@ -1636,7 +1637,8 @@ Also, both performed better when the Gaussian and t-copula correlations were hig
 This may be because the data from the Gaussian copula becoming more similar to that of the t-copula for higher correlation, thus allowing the clustering approach to focus on differences in the t-copula.
 
 % \todo{Come up with better acronym than CE}
-\begin{figure}[H]
+% \begin{figure}[H]
+\begin{figure}[h]
     \centering
     \includegraphics[width = 0.9\linewidth]{plots/sim_01b_ce_vs_vi_dqu_0.9_man.png}
     % \caption{\emph{Comparison of \citep{Vignotto2021} clustering with our proposed method (labelled ``Cond. Extremes''), for two variables and two equally sized clusters for simulations of 12 ``locations'', each with 1000 observations of each variable, from a mixture of Normal and Gaussian copulas. A grid search was performed, with the x-axis representing the Gaussian correlation parameter used for both clusters, and the facet labels showing the t-copula correlation parameters for each ``known'' cluster. This grid search was repeated 500 times. The smoothed lines show the smoothed median of the Adjusted Rand Index for both clustering methods, with smoothing performing using a generalised additive model.}} % The lines show the median of the Adjusted Rand Index for both clustering methods, with uncertainty coming from the 90\% credible interval.}} % The proposed method is shown to be superior to the leading competitor in the bivariate case, that of \cite{Vignotto2021}. Both models perform better when the difference in the t-copula correlation parameters between the two clusters is larger, and when Gaussian correlation is higher.
@@ -1667,7 +1669,7 @@ In fact, performance is markedly stronger in three dimensions than in two.
 % This improvement comes with the caveat that, in these simulations, all variables have the same margins. 
 % Thus, including three variables naturally increases the amount of data available to estimate the same dependence structure as in the bivariate case, without introducing the additional noise that might arise in real multivariate applications. 
 However, this is not surprising, as the CE models in this setup are the same in both two and three dimensions, and the $\JSGa{}$ divergence and its integral from Equation~\eqref{eq:jsga_integral} are computed in the same way, just averaged over more models with more data.
-\begin{figure}[H]
+\begin{figure}[h]
     \centering
     % \includegraphics[width = 0.9\linewidth]{plots/sim_01c_js_sens_3_var_dqu_0.9.png}
     % \includegraphics[width = 0.9\linewidth]{plots/sim_01d_js_sens_3_var_dqu_0.9_man.png}
@@ -1697,7 +1699,7 @@ These gains should be interpreted cautiously, since the simulations increase the
 Nevertheless, the results demonstrate that the proposed method scales effectively to higher dimensions and performs well in multivariate settings. 
 
 % \todo{Look into this, is this correct?? Shouldn't the clustering performance be much worse for 0.4 and 0.5?}
-\begin{figure}[H]
+\begin{figure}[h]
     \centering
     % \includegraphics[width = 0.9\linewidth]{plots/sim_01c_js_sens_3_var_dqu_0.9.png}
     \includegraphics[width = 0.9\linewidth]{plots/sim_01d_js_sens_3_var_dqu_0.9mult_var_man.png}
@@ -1731,7 +1733,7 @@ Moreover, variability in ARI across simulations is low, indicating that the clus
 % \todo{Have x-axis ticks match unique values in grid search}
 \todo{Remove points}
 \todo{Add rho t3 to top of plot as well!}
-\begin{figure}[H]
+\begin{figure}[h]
     \centering
     % \includegraphics[width = 0.9\linewidth]{plots/sim_01d_js_sens_3_var_dqu_0.9.png}
     \includegraphics[width = 0.9\linewidth]{plots/01c2_js_sens_sim_60_locs_dqu_0.9_smooth_man_no_points.png}
@@ -1790,7 +1792,7 @@ The results, shown in Figure~\ref{fig:04_bootstrap}, demonstrate a clear reducti
 In addition, the conditional expectation is consistently higher for the cluster with larger t-copula correlation, reflecting stronger extremal dependence. 
 These findings confirm that clustering reduces parameter uncertainty while preserving meaningful differences between clusters. 
 
-\begin{figure}[H]
+\begin{figure}[h]
     \centering
     \includegraphics[width = 0.9\linewidth]{plots/sim_01e_bootstrap_box_man.png}
     \caption{\emph{Boxplots of 500 bootstrapped conditional expectations of one variable given the other is at the $98\%$ marginal quantile $u$, pre- and post-clustering for a simulation of 12 ``locations'', each with 1000 observations for each variable, from a mixture of Normal and Gaussian copulas, with the Gaussian correlation set to 0.5. The t-copula correlation parameters for the two clusters were set to 0.1 and 0.9, as shown on the x-axis.}}
@@ -1817,7 +1819,7 @@ In Section~\ref{subsec:app_ce}, we fit the CE model to the data, and in Section~
 % % Image of locations and precipitation vs wind speed for two sites
 % \todo{Move elevation legend onto plot}
 % \todo{If keeping this plot, need to comment on heterogeneity motivating analysis!}
-% \begin{figure}[H]
+% \begin{figure}[h]
 %     \centering
 %     % \includegraphics[width = 0.9\linewidth]{plots/02_mot_ex_plot.png}
 %     \includegraphics[width = 0.9\linewidth]{plots/02_mot_ex_plot_elev.png}
@@ -1826,7 +1828,7 @@ In Section~\ref{subsec:app_ce}, we fit the CE model to the data, and in Section~
 %    ~\label{fig:02_locs}
 % \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[h]
     \centering
     % \includegraphics[width = 0.9\linewidth]{plots/041_chi_plots_man.png}
     \includegraphics[width = 0.9\linewidth]{plots/043_chi_elevation_man_crop.png}
@@ -1942,7 +1944,7 @@ Several $\beta$ estimates are negative, which is unexpected and may reflect non-
 % We will cluster the locations based on their CE parameters, to help improve the interpretation of CE results.
 To mitigate this uncertainty and aid interpretation, we next cluster the locations based on their estimated CE parameters.  
 
-\begin{figure}[H]
+\begin{figure}[h]
     \centering
     \includegraphics[width = 0.9\linewidth]{plots/ire_ce_new.png}
     % \caption{\emph{Map of conditional extremes model parameters $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$ for precipitation conditional on wind speed (left) and wind speed conditional on precipitation (right), estimated at the 88th quantile. The $\alpha^{(\CE{})}$ parameter is shown in the top row, and $\beta^{(\CE{})}$ in the bottom row. The colour scale is the same for both variables, with darker red indicating larger positive values of $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$, and darker blue indicating larger negative values.}}
@@ -1980,7 +1982,7 @@ It could also reflect the use of ERA5 reanalysis data for wind speed, which is k
 
 \todo{Combine with post-clustering parameter estimates (legend)}
 \todo{Highlight Malahide Castle as outlier? Also Kilcar?}
-\begin{figure}[H]
+\begin{figure}[h]
     \centering
     \includegraphics[width = 0.9\linewidth]{plots/cluster_dqu_sep_new_crop.png}
     \caption{\emph{Clustering solutions for the conditional extremes model parameters estimated at the 88th quantile across all 59 sites, using the $\JSGa{}$ dissimilarity matrix for wind speed conditional on precipitation (centre), precipitation conditional on wind speed (right), and the combined dissimilarity matrix (left). The clusters are shown in different colours.}}
@@ -1988,7 +1990,7 @@ It could also reflect the use of ERA5 reanalysis data for wind speed, which is k
 \end{figure}
 
 \todo{Add back in site names to x-axis}
-\begin{figure}[H]
+\begin{figure}[h]
     \centering
     % \includegraphics[width = 0.9\linewidth]{plots/ire_dist_heatmap.png}
     \includegraphics[width = 0.9\linewidth]{plots/ire_dist_heatmap_man.png}
@@ -2013,7 +2015,7 @@ Furthermore, if we go to having four clusters, Malahide Castle becomes the only 
 Malahide Castle has the lowest mean weekly precipitation of any site, with the second lowest being in Ringsend, which is closest in terms of $\JSGa{}$ to Malahide, which may explain its outlying behaviour, even amongst the eastern cluster, in that rainfall extremes and consequently concomitant extremes are less likely to occur, as shown by its low $\chi$ and $\alpha$ estimates.
 We also see that Kilcar in county Donegal, which had a low $\chi$ value relative to other sites on the west coast as shown in Figure \ref{fig:chi}, is the member of the eastern cluster with the lowest dissimilarity to the members of the western cluster, reflecting its geographical location in the northwest of Ireland, despite its low $\chi$ value.
 
-\begin{figure}[H]
+\begin{figure}[h]
     \centering
     \includegraphics[width = 0.9\linewidth]{plots/cluster_dqu_crop.png}
     % \caption{\emph{ Clustering solutions for the conditional extremes model parameters estimated at the 88th quantile across all 59 sites, using the $\JSGa{}$ dissimilarity matrix for precipitation conditional on wind speed (centre), wind speed conditional on precipitation (right), and the combined dissimilarity matrix (left). The clusters are shown in different colours.}}
@@ -2053,7 +2055,7 @@ This is likely because weather patterns are more consistent inland than along th
 Interpreting these results is much easier post-clustering. \todo{More detail here!}
 
 \todo{Switch to using hat for estimates?}
-\begin{figure}[H]
+\begin{figure}[h]
     \centering
     % \includegraphics[width = 0.9\linewidth]{plots/ab_map_post_clust.png}
     \includegraphics[width = 0.9\linewidth]{plots/ab_map_post_clust_new.png}

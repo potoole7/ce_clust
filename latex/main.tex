@@ -210,9 +210,10 @@
 % \newcommand{\JSGa}{\mathop{\mathrm{JS}^{\mathrm{G}_{k}}}\nolimits}
 \newcommand{\JSGa}{\mathop{\mathrm{JS}^{\mathrm{G}_{\lambda}}}\nolimits}
 % \newcommand{\cJSGa}{\mathop{\mathrm{cJS}^{\mathrm{G}_{\lambda}}}\nolimits}
-\newcommand{\cJSGa}{\mathop{\mathrm{cJS}_{i}^{\mathrm{G}_{\lambda}}}\nolimits}
+% \newcommand{\cJSGa}{\mathop{\mathrm{cJS}_{i}^{\mathrm{G}_{\lambda}}}\nolimits}
+\newcommand{\cJSGa}[1]{\mathop{\mathrm{cJS}_{i, #1}^{\mathrm{G}_{\lambda}}}\nolimits}
 % \newcommand{\eJSGa}{\mathop{\mathrm{eJS}^{\mathrm{G}_{\lambda}}}\nolimits}
-\newcommand{\eJSGa}{\mathop{\mathrm{eJS}_{i}^{\mathrm{G}_{\lambda}}}\nolimits}
+\newcommand{\eJSGa}[1]{\mathop{\mathrm{eJS}_{i, #1}^{\mathrm{G}_{\lambda}}}\nolimits}
 % \newcommand{\GJS}[1]{\mathrm{JS}^{\mathrm{G}}}
 \DeclareMathOperator{\GJS}{\mathrm{JS}^{\mathrm{G}}}
 \DeclareMathOperator{\CE}{\mathrm{CE}}
@@ -220,9 +221,10 @@
 \newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
 
 
-\newcommand{\mvmean}[1]{\symbf{\alpha}_{\mid i}(#1) y + y^{\symbf{\beta}_{\mid i}(s)} \symbf{\mu}_{\mid i}(#1)}
-% \newcommand{\mvcov}[1]{\diag\big(y^{2\symbf{\beta}_{\mid i}(#1)} \symbf{\Sigma}_{\mid i}(#1)\big)}
-\newcommand{\mvcov}[1]{\left(y^{\beta_{\mid i}(#1)}\right)^{\mathrm{T}} \Sigma_{\mid i}(#1) y^{\beta_{\mid i}(#1)}}
+% \newcommand{\mvmean}[1]{\symbf{\alpha}_{\mid i}(#1) y + y^{\symbf{\beta}_{\mid i}(s)} \symbf{\mu}_{\mid i}(#1)}
+\newcommand{\mvmean}[1]{\symbf{\alpha}_{\mid i, #1} y + y^{\symbf{\beta}_{\mid i, #1}} \symbf{\mu}_{\mid i, #1}}
+% \newcommand{\mvcov}[1]{\left(y^{\beta_{\mid i}(#1)}\right)^{\mathrm{T}} \Sigma_{\mid i}(#1) y^{\beta_{\mid i}(#1)}}
+\newcommand{\mvcov}[1]{\left(y^{\beta_{\mid i, #1}}\right)^{\mathrm{T}} \Sigma_{\mid i, #1} y^{\beta_{\mid i, #1}}}
 
 % \symbf{\alpha}_{\mid i}(s) y + y^{\symbf{\beta}_{\mid i}(s)} \symbf{\mu}_{\mid i}(s)
 
@@ -258,9 +260,10 @@
   % \title{\bf Title}
   \title{\bf Clustering of multivariate tail dependence using conditional methods}
   \author{Patrick O'Toole\thanks{
-    The authors gratefully acknowledge \textit{please remember to list all relevant funding sources in the version that gives all author information}}\hspace{.2cm}\\
+    % The authors gratefully acknowledge \textit{please remember to list all relevant funding sources in the version that gives all author information}}\hspace{.2cm}\\
+  Patrick O'Toole is supported by a scholarship from the EPSRC Centre for Doctoral Training in Statistical Applied Mathematics at Bath (SAMBa), under the project EP/S022945/1.}\hspace{.2cm}\\
     % Patrick O'Toole is supported by a scholarship from the EPSRC Centre for Doctoral Training in Statistical Applied Mathematics at Bath (SAMBa), under the project EP/S022945/1.}\\
-    Department of Mathematical Sciences, University of Bath
+    Department of Mathematical Sciences, University of Bath \\
     and \\
     Jordan Richards \\
     School of Mathematics, University of Edinburgh \\
@@ -281,7 +284,7 @@
   \medskip
 } \fi
 
-\todo{Order references by year or alphabetically}
+\todo{Check with Lou that project number is correct}
 
 \bigskip
 \todo{Rewrite abstract with Christian}
@@ -328,7 +331,7 @@ Environmental applications are one area where EVT methods are used to estimate t
 % % Extreme rainfall contributes to storms and flooding, which can cause major damage and trigger large insurance claims \citep{Rohrbeck_flooding, osei2021estimation}.
 % Extreme rainfall and high wind speeds can cause major damage and large insurance claims, and thus it is important to understand their likelihood \citep{Rohrbeck_flooding, osei2021estimation, soukissian2015effect, steinkohl2013extreme}. 
 % % High wind speeds can lead to significantly damaging events such as tropical cyclones, and have also seen much focus in the field of EVT \citep{soukissian2015effect, steinkohl2013extreme}.
-Examples include the analysis of heatwaves \citep{tanarhte2015heat, french2019quantifying}, extreme rainfall \citep{osei2021estimation}, and wind speeds \citep{soukissian2015effect, steinkohl2013extreme}, as well as the modelling of wildfire risks \citep{Koh2024} and the impact of environmental extremes on insurance claims \citep{Rohrbeck_flooding, Miralles2024}. 
+Examples include the analysis of heatwaves \citep{tanarhte2015heat, french2019quantifying}, extreme rainfall \citep{osei2021estimation}, and wind speeds \citep{steinkohl2013extreme, soukissian2015effect}, as well as the modelling of wildfire risks \citep{Koh2024} and the impact of environmental extremes on insurance claims \citep{Rohrbeck_flooding, Miralles2024}. 
 
 % Dependence modelling 
 % \todo{C: Shorten this paragraph}
@@ -377,11 +380,13 @@ Multivariate extremes frequently arise in spatial applications, where one or mor
 % Consequently, these joint risks are liable to be underestimated unless tail \emph{dependence} is explicitly modelled \citep{Zhang2024}. 
 Consequently, joint risks may be underestimated unless tail \emph{dependence} is explicitly modelled \citep{Zhang2024}. 
 % Tail dependence can be described using the coefficient of asymptotic dependence \(\chi\in[0,1]\) (see e.g.\ \citet{Coles1999}), which for two random variables \(X_1,X_2\) with corresponding marginal distribution functions \(F_1,F_2\) is defined as 
-Tail dependence is commonly summarised by the coefficient of asymptotic dependence \(\chi\in[0,1]\) (see e.g.\ \citealt{Coles1999}), defined for two random variables $X_1$ and $X_2$ with marginal distribution functions $F_1$ and $F_2$ respectively as
+Tail dependence is commonly summarised by the coefficient of asymptotic dependence \(\chi\in[0,1]\) (see e.g.\ \citet{Coles1999}), defined for two random variables $X_1$ and $X_2$ with marginal distribution functions $F_1$ and $F_2$ respectively as
 \[
   % \chi \;=\; \lim_{u\to 1}\Pr\big(F_1(X_1)>u \mid F_2(X_2)>u\big).
-  \chi \;=\; \lim_{u\to 1}\Pr\left[F_1(X_1)>u \mid F_2(X_2)>u\right].
+  % \chi \;=\; \lim_{u\to 1}\Pr\left[F_1(X_1)>u \mid F_2(X_2)>u\right].
+  \chi \;=\; \lim_{u\to 1}\Pr\left\{F_1(X_1)>u \mid F_2(X_2)>u\right\}.
 \]
+% \todo{Should this be curly brackets?}
 % The values \(\chi>0\) indicate asymptotic dependence (AD) and \(\chi=0\) asymptotic independence (AI) for the random vector $\left(X_1, X_2\right)$. 
 When $\chi$ > 0, the variables $X_1$ and $X_2$ are termed asymptotically dependent (AD), while $\chi=0$ corresponds to asymptotic independence (AI).
 Although \(\chi\) is a useful pairwise summary, it does not fully characterise multivariate tail structure or support inference on joint exceedance probabilities, for which a full probabilistic model is required. 
@@ -419,7 +424,7 @@ Many classical models and clustering frameworks assume AD \citep{Vignotto2021,Bo
 The Conditional extremes (CE) model of \citet{Heffernan2004} describes the tail behaviour of a random vector \emph{conditional} on one of its components exceeding a suitably high threshold.
 It provides a flexible framework which can capture both AD and AI patterns. % , and other complex extremal dependence patterns. 
 This flexibility, along with its conceptual simplicity and computational efficiency, have made it a popular choice for modelling multivariate extremes. 
-Spatio-temporal extensions and single-site conditioning methods have been developed to handle high-dimensional settings \citep{Wadsworth2022, Simpson2021}, and adaptations that incorporate covariates, hierarchical structure, and mixture or random-scale constructions further increase the models flexibility \citep{Tawn2018, Richards2023, Tendijck2023}. 
+Spatio-temporal extensions and single-site conditioning methods have been developed to handle high-dimensional settings \citep{Simpson2021, Wadsworth2022}, and adaptations that incorporate covariates, hierarchical structure, and mixture or random-scale constructions further increase the models flexibility \citep{Tawn2018, Richards2023, Tendijck2023}. 
 As a result, CE models have been applied across a broad range of environmental problems, where AI as well as AD may be prevalent, including modelling river flow and flood risk \citep{Gilleland2013, Jane2020}, rainfall extremes \citep{Richards2022}, sea-surface temperature extremes \citep{Simpson2023,Kakampakou2024}, and heatwaves \citep{Winter2016}.
 % Despite these strengths, sparsity of joint extremes, particularly in high dimensions, can make pattern discovery and interpretation difficult.
 However, the sparsity of joint extreme observations, particularly in high dimensions, can make pattern discovery and interpretation using the CE model difficult.
@@ -577,7 +582,7 @@ A leading nonparametric example was provided by \citet{Vignotto2021}.
 They estimated empirical pairwise Kullback--Leibler ($\KL{}$) divergences for bivariate precipitation and wind extremes and then applied $k$-medoids.% \citet{Kullback1951}. \todo{Jordan wants ``extreme value distributions fitted to'' added here, but I thought they didn't fit any?}
 % Finally, \emph{spatial} methods target regions or processes with similar spatial tail dependence and often build pairwise tail dissimilarities such as the F-madogram before clustering \citep{Cooley2006variograms, Bernard2013, Rohrbeck2021}.
 Finally, \emph{spatial} methods cluster over entire spatial fields or process realizations.
-They may build pairwise tail dissimilarities such as the F-madogram before clustering \citep{Cooley2006variograms, Bernard2013}, or fit spatially non-stationary extreme value models \citep{Rohrbeck2021, Carreau2017, Dupuis2023}. \todo{are these really spatial, or just expanded univariate?}
+They may build pairwise tail dissimilarities such as the F-madogram before clustering \citep{Cooley2006variograms, Bernard2013}, or fit spatially non-stationary extreme value models \citep{Carreau2017, Rohrbeck2021, Dupuis2023}. \todo{are these really spatial, or just expanded univariate?}
 
 \todo{Discuss paragraph with Christian}
 The problem considered herein involves clustering bivariate extremes of precipitation and wind at sites across Ireland.
@@ -856,16 +861,26 @@ and $Y_i$, with dependence weakening as $Y_i\to\infty$, equivalent to $\chi<1$.
 \todo{Discuss with Christian}
 We fit the CE model at different spatial sites. 
 % To allow for spatial variation, we may index by site $s \in \mathcal{S}$, and allow regression parameters to vary by site. 
-To denote spatial variation, we index the random vectors by spatial location $\mathcal{s} \in \left(s_1, \ldots, s_D\right)$, where $s_i \in \mathbb{R}^2, i = 1, \ldots, D$, and $D$ is the number of spatial locations. 
-This leads to the spatially indexed extension of Equation~\eqref{eq:ce_model}, where we have the site-specific random vector $\symbf{Y}(s) \in \mathbb{R}^d$ for $\mathcal{s} \in (s_1, \ldots, s_d)$, and
+% To denote spatial variation, we index the random vectors by spatial location $\mathcal{s} \in \left(s_1, \ldots, s_D\right)$, where $s_i \in \mathbb{R}^2, i = 1, \ldots, D$, and $D$ is the number of spatial locations. 
+To describe spatial variation, we add the additional subscript $s \in [1, \ldots, D]$, where $D$ is the number of spatial locations, so that $Y_{i,s}$ denotes the variable $Y_i$ at site $s$.
+% This leads to the spatially indexed extension of Equation~\eqref{eq:ce_model}, where we have the site-specific random vector $\symbf{Y}(s) \in \mathbb{R}^d$ for $\mathcal{s} \in (s_1, \ldots, s_d)$, and
+% \begin{equation} \label{eq:ce_model_spat}
+%   \bigl(\symbf{Y}_{-i}(s) \mid Y_i(s) = y\bigr) 
+%     = \symbf{\alpha}_{\mid i}(s) \, y 
+%       + y^{\symbf{\beta}_{\mid i}(s)} \, \symbf{Z}_{\mid i}(s), 
+%       \quad y > u_i,
+% \end{equation}
+% This leads to a spatial extension of Equation~\eqref{eq:ce_model}, where we have the site-specific random vector $\symbf{Y}_{s} \in \mathbb{R}^d$ for $s \in \mathcal{S}$, and
+This leads to a spatial extension of Equation~\eqref{eq:ce_model}, which we have the site-specific random vector $\symbf{Y}_{s} \in \mathbb{R}^d$, and 
 \begin{equation} \label{eq:ce_model_spat}
-  \bigl(\symbf{Y}_{-i}(s) \mid Y_i(s) = y\bigr) 
-    = \symbf{\alpha}_{\mid i}(s) \, y 
-      + y^{\symbf{\beta}_{\mid i}(s)} \, \symbf{Z}_{\mid i}(s), 
-      \quad y > u_i,
+  \bigl(\symbf{Y}_{-i, s} = \mid Y_{i, s} = y\bigr) 
+    = \symbf{\alpha}_{\mid i, s} \, y 
+      + y^{\symbf{\beta}_{\mid i, s}} \, \symbf{Z}_{\mid i, s}, 
+      \quad y > u_i, 
 \end{equation}
 % with location-specific residuals $\symbf{Z}_{\mid i}(s) \sim \symbf{G}_{\mid i}(s)$. \todo{Do I need to define alpha(s), beta(s), ui(s) again?}
-where $\symbf{Y}_{-i}(s) \coloneqq \symbf{Y}(s) \setminus Y_i(s), \symbf{\alpha}_{\mid i}(s), \symbf{\beta}_{\mid i}(s)$ and $\symbf{Z}_{\mid i}(s) \sim \symbf{G}_{\mid i}(\cdot ; s)$ are the site-specific counterparts of the regression parameters and residuals introduced above.  
+% where $\symbf{Y}_{-i}(s) \coloneqq \symbf{Y}(s) \setminus Y_i(s), \symbf{\alpha}_{\mid i}(s), \symbf{\beta}_{\mid i}(s)$ and $\symbf{Z}_{\mid i}(s) \sim \symbf{G}_{\mid i}(\cdot ; s)$ are the site-specific counterparts of the regression parameters and residuals introduced above.  
+where $\symbf{Y}_{-i, s} \coloneqq \symbf{Y}_{s} \setminus Y_{i, s}$, and $\symbf{\alpha}_{\mid i, s}$, $\symbf{\beta}_{\mid i, s}$ and $\symbf{Z}_{\mid i, s} \sim \symbf{G}_{\mid i, s}$ are the site-specific counterparts of the regression parameters and residuals introduced above.
 Note that we make no assumptions about spatial smoothness in the regression model. 
 
 % Intro: CE gives distributions, which need to be compared
@@ -876,7 +891,8 @@ Note that we make no assumptions about spatial smoothness in the regression mode
 % The residual vector $\symbf{Z}_{\mid i}$ in Equation~\eqref{eq:ce_model} is assumed to follow a multivariate Gaussian distribution with mean vector $\symbf{\mu}_{\mid i}\in\mathbb{R}^{d-1}$ and covariance matrix $\Sigma_{\mid i}\in\mathbb{R}^{(d-1)\times(d-1)}$. 
 % \todo{Use spatial index here, or first explain without and then add in at the end?}
 % The residual vector $\symbf{Z}_{\mid i}(s)$ in Equation~\eqref{eq:ce_model_spat} is assumed to follow a multivariate Gaussian distribution with mean vector $\symbf{\mu}_{\mid i}(s)\in\mathbb{R}^{d-1}$ and covariance matrix $\Sigma_{\mid i}(s)\in\mathbb{R}^{(d-1)\times(d-1)}$. 
-As a working assumption that permits inference on $\symbf{\alpha}_{\mid i}(s)$ and $\symbf{\beta}_{\mid i}(s)$, the residual vector $\symbf{Z}_{\mid i}(s)$ in Equation~\eqref{eq:ce_model_spat} is assumed to be multivariate normally distributed with mean vector $\symbf{\mu}_{\mid i}(s)\in\mathbb{R}^{d-1}$ and covariance matrix $\Sigma_{\mid i}(s)\in\mathbb{R}^{(d-1)\times(d-1)}$.
+% As a working assumption that permits inference on $\symbf{\alpha}_{\mid i}(s)$ and $\symbf{\beta}_{\mid i}(s)$, the residual vector $\symbf{Z}_{\mid i}(s)$ in Equation~\eqref{eq:ce_model_spat} is assumed to be multivariate normally distributed with mean vector $\symbf{\mu}_{\mid i}(s)\in\mathbb{R}^{d-1}$ and covariance matrix $\Sigma_{\mid i}(s)\in\mathbb{R}^{(d-1)\times(d-1)}$.
+As a working assumption that permits inference on $\symbf{\alpha}_{\mid i, s}$ and $\symbf{\beta}_{\mid i, s}$, the residual vector $\symbf{Z}_{\mid i, s}$ in Equation~\eqref{eq:ce_model_spat} is assumed to be multivariate normally distributed with mean vector $\symbf{\mu}_{\mid i, s} \in\mathbb{R}^{d-1}$ and covariance matrix $\Sigma_{\mid i, s}\in\mathbb{R}^{(d-1)\times(d-1)}$.
 % \todo{Use (CE) superscript for mu and Sigma to distinguish from clustering}
 % The residual vector $\symbf{Z}_{\mid i}$ in Equation~\eqref{eq:ce_model} is assumed to follow a multivariate Gaussian distribution with mean vector $\symbf{\mu}_{\mid i}^{(\CE{})}\in\mathbb{R}^{d-1}$ and covariance matrix $\Sigma_{\mid i}^{(\CE{})} \in\mathbb{R}^{(d-1)\times(d-1)}$. 
 % \todo{Heff04 assumes diagonal sigma, should we say we use full covariance?}
@@ -886,31 +902,35 @@ As a working assumption that permits inference on $\symbf{\alpha}_{\mid i}(s)$ a
 % This Gaussian working assumption, proposed in \citet{Heffernan2004} after testing several candidate distributions, is the key property we exploit when deriving a closed-form divergence measure for computationally efficient clustering.
 This Gaussian working assumption, proposed in \citet{Heffernan2004}, is the key property we exploit when deriving a closed-form divergence measure for computationally efficient clustering; see Section~\ref{subsec:div}.
 
+% Inference
 % \citet{Heffernan2004} shows that inference can be made about the extremal dependence of a random vector $\symbf{Y}_{-i} = \symbf{Y} \backslash Y_i$ on $Y_i$ by conditioning on the exceedance of a high threshold $u$ by $Y_i$, and assuming that this conditional distribution is a diagonal multivariate Gaussian distribution: % with vector mean and standard deviation:
 % An important consequence following from this assumption is that inference can be made about the extremal dependence of a random vector $\symbf{Y}_{-i} = \symbf{Y} \setminus \{Y_i\}$ on $Y_i$ by conditioning on the exceedance of a high threshold $u_i$ by $Y_i$, and assuming that this conditional distribution is a multivariate Gaussian distribution, i.e.\ 
 % Consequently, inference can be made about the extremal dependence of a random vector $\symbf{Y}(s)$ at site $s$ by conditioning on the exceedance of a high threshold $u_i$ by $Y_i(s)$, and assuming that this conditional distribution is multivariate Gaussian, i.e.,\@
-Consequently, inference on $\alpha$ and $\beta$ by conditioning on the exceedance of a high threshold $u_i$ by $Y_i(s)$, and assuming that this conditional distribution is multivariate Gaussian, i.e.,\@
-
+Consequently, inference on $\alpha_{\mid i}$ and $\beta_{\mid i}$ by conditioning on the exceedance of a high threshold $u_i$ by $Y_{i, s}$, and assuming that this conditional distribution is multivariate Gaussian, i.e.,\@
 \begin{equation}~\label{eq:ce_norm}
   % \bigl( \symbf{Y}_{-i} \mid Y_i  = y_i \bigr) \sim N\left(\symbf{\alpha}_{\mid i}^{(\CE{})} y_i + y_i^{\symbf{\beta}_{\mid i}^{(\CE{})}} \symbf{\mu}_{\mid i}^{(\CE{})}, y_i^{\symbf{\beta}_{\mid i}^{(\CE{})}} \Sigma_{\mid i}^{(\CE{})}\right), Y_i > u_i,
   % \bigl( \symbf{Y}_{-i} \mid Y_i  = y_i \bigr) \sim N\left(\symbf{\alpha}_{\mid i} y_i + y_i^{\symbf{\beta}_{\mid i}} \symbf{\mu}_{\mid i}, y_i^{\symbf{\beta}_{\mid i}} \symbf{\Sigma_{\mid i}}\right), Y_i > u_i,
   % \bigl( \symbf{Y}_{-i}(s) \mid Y_i(s)  = y) \sim \mbox{MVN}_{d-1}\left(\symbf{\alpha}_{\mid i}(s) y + y^{\symbf{\beta}_{\mid i}(s)} \symbf{\mu}_{\mid i}(s), y^{\symbf{\beta}_{\mid i}(s)} \Sigma_{\mid i}(s)\right), y > u_i(s),
   % \bigl( \symbf{Y}_{-i}(s) \mid Y_i(s)  = y) \sim \mbox{MVN}_{d-1}\left(\symbf{\alpha}_{\mid i}(s) y + y^{\symbf{\beta}_{\mid i}(s)} \symbf{\mu}_{\mid i}(s), \left(y^{\beta_{\mid i}(s)}\right)^{\mathrm{T}} \Sigma_{\mid i}(s) y^{\beta_{\mid i}(s)} \right), y > u_i(s),
-  \bigl( \symbf{Y}_{-i}(s) \mid Y_i(s)  = y) \sim \mbox{MVN}_{d-1}\left(\mvmean{s}, \mvcov{s}\right), y > u_i,
+  % \bigl( \symbf{Y}_{-i}(s) \mid Y_i(s)  = y) \sim \mbox{MVN}_{d-1}\left(\mvmean{s}, \mvcov{s}\right), y > u_i,
+  \bigl(\symbf{Y}_{-i, s} \mid Y_{i, s} = y\bigr) \sim \mbox{MVN}_{d-1}\left(\mvmean{s}, \mvcov{s}\right), y > u_i,
 \end{equation}
-where $\symbf{\alpha}_{\mid i}(s), \symbf{\beta}_{\mid i}(s), \symbf{\mu}_{\mid i}(s), \Sigma_{\mid i}(s)$ are the site-specific parameters of the CE model for the $i^{\text{th}}$ conditioning variable, $i = 1, \ldots, d$.
+where $\symbf{\alpha}_{\mid i, s}, \symbf{\beta}_{\mid i, s}, \symbf{\mu}_{\mid i, s}, \Sigma_{\mid i, s}$ are the site-specific parameters of the CE model for the $i^{\text{th}}$ conditioning variable, $i = 1, \ldots, d$. \todo{Already defined alpha, beta, i above?} \todo{is u i correct? Should it be u i s?}
 % where $\symbf{\alpha}_{\mid i}^{(\CE{})}, \symbf{\beta}_{\mid i}^{(\CE{})}, \symbf{\mu}_{\mid i}^{(\CE{})}, \Sigma_{\mid i}^{(\CE{})} \in \mathbb{R}^{(d-1)}$ are the parameters of the CE model. 
 % Therefore, when seeking to compare the extremal dependence structure of two locations, a sensible approach is to compare the conditional distributions given by Equation~\ref{eq:ce_norm} for each variable at both sites. 
 % Therefore, under this model, when comparing the extremal dependence structure between variables at any given sites, we are effectively comparing the conditional distributions given by Equation~\eqref{eq:ce_norm}.
 % Therefore, under this model, when comparing the multivariate tail dependence structure at different sites, we are effectively comparing the conditional distributions given by Equation~\eqref{eq:ce_norm}.
 % Therefore, to compare tail dependence at different sites, we can compare the conditional distributions in \eqref{eq:ce_norm}, i.e.\ the induced multivariate Gaussian distributions parameterised by $(\symbf{\alpha}_{\mid i}^{(\CE{})},\symbf{\beta}_{\mid i}^{(\CE{})},\symbf{\mu}_{\mid i}^{(\CE{})},\Sigma_{\mid i}^{(\CE{})})$ (or a chosen subset thereof).
 % Therefore, to compare tail dependence at different sites, we can compare the conditional distributions in \eqref{eq:ce_norm}, i.e.\ the induced multivariate Gaussian distributions parameterised by $(\symbf{\alpha}_{\mid i},\symbf{\beta}_{\mid i},\symbf{\mu}_{\mid i},\Sigma_{\mid i})$ (or a chosen subset thereof).
-Therefore, to compare tail dependence at different sites, we can compare the conditional distributions in Equation~\eqref{eq:ce_norm}, i.e.\ the assumed multivariate Gaussian distributions parameterised by $(\symbf{\alpha}_{\mid i}(s),\symbf{\beta}_{\mid i}(s),\symbf{\mu}_{\mid i}(s),\Sigma_{\mid i}(s))$. %(or a chosen subset thereof).
+Therefore, to compare tail dependence at different sites, we can compare the conditional distributions in Equation~\eqref{eq:ce_norm}, i.e.\ the assumed multivariate Gaussian distributions parameterised by $(\symbf{\alpha}_{\mid i, s},\symbf{\beta}_{\mid i, s},\symbf{\mu}_{\mid i, s},\Sigma_{\mid i, s})$. %(or a chosen subset thereof).
 
 % Estimation
-The model parameters $\symbf{\alpha}_{\mid i}(s), \symbf{\beta}_{\mid i}(s), \symbf{\mu}_{\mid i}(s), \Sigma_{\mid i}(s)$ in Equation~\eqref{eq:ce_norm} are estimated at each site $s$ and for each conditioning variable, $Y_i, i = 1, \ldots, d$, using maximum likelihood estimation.
-In practice, for each $i = 1, \ldots, d$ and $s \in (s_1, \ldots, s_D)$, we set the threshold $u_i(s)$ to the $q^{\text{th}}$ Laplace quantile.  
-We choose $q$ such that there are a sufficient number of exceedances above $u_i(s)$ to fit the CE model, while keeping $q$ high enough so that the limiting assumption in Equation~\eqref{eq:ce_limiting_dist} is reasonable.
+% The model parameters $\symbf{\alpha}_{\mid i, s}, \symbf{\beta}_{\mid i, s}, \symbf{\mu}_{\mid i, s}, \Sigma_{\mid i, s}$ in Equation~\eqref{eq:ce_norm} are estimated at each site $s$ and for each conditioning variable, $Y_i, i = 1, \ldots, d$, using maximum likelihood estimation. \todo{Again, i already defined above?}
+The model parameters $\symbf{\alpha}_{\mid i, s}, \symbf{\beta}_{\mid i, s}, \symbf{\mu}_{\mid i, s}, \Sigma_{\mid i, s}$ in Equation~\eqref{eq:ce_norm} are estimated at each site-specific conditioning variable, $Y_{i, s}, i = 1, \ldots, d, s = 1, \ldots, D$, using maximum likelihood estimation. \todo{Again, i and s already defined above?}
+% In practice, for each $i = 1, \ldots, d$ and $s \in (s_1, \ldots, s_D)$, we set the threshold $u_i(s)$ to the $q^{\text{th}}$ Laplace quantile.  
+In practice, for each $i$ and $s$, we set the threshold $u_{i, s}$ to the $q^{\text{th}}$ Laplace quantile of $Y_{i, s}$. \todo{Need to use th superscript throughout if keeping}
+We choose $q$ such that there are a sufficient number of exceedances above $u_{i, s}$ to fit the CE model, while keeping $q$ high enough so that the limiting assumption in Equation~\eqref{eq:ce_limiting_dist} is reasonable.
+\todo{Need to say that for inference use u = max over all sites?}
 The bootstrapping procedure of \citet{Heffernan2004} is used to obtain standard errors for the parameter estimates, and we choose the highest value of $q$ such that the parameter estimates are stable, and the bootstrap standard errors are reasonably small.
 
 \subsection{Divergence measure for conditional extremes models}~\label{subsec:div}
@@ -1021,13 +1041,19 @@ For two multivariate Gaussian distributions $H_1 \sim \mbox{MVN}(\symbf{m}_1, \O
 % where $\sigma_{\alpha, i}^2 = \frac{\sigma_{1, i}^2 \sigma_{2, i}^2}{\alpha\sigma_{1, i}^2 + (1 - \alpha)\sigma_{2, i}^2}$, and $\mu_{\alpha, i} = \sigma_{\alpha, i}^2 \left( \frac{\alpha\mu_{1, i}}{\sigma_{1, i}^2} + \frac{(1 - \alpha) \mu_{2, i}}{\sigma_{2, i}^2} \right)$, respectively.
 
 % Paragraph defining conditional JSGa for sites (s, s*) in cond variable
-Now suppose we have fitted the CE model at two different sites, say $s$ and $s^*$, and we want to compare the extremal dependence structure of the random vector $\symbf{Y}(s)$ at site $s$ with that of $\symbf{Y}(s^*)$ at site $s^*$, for a given conditioning variable $Y_i(s)$ and $Y_i(s^*)$, respectively, where $i \in \{1, \ldots, d\}$.
-Using the $\JSGa{}$ divergence in Equation~\eqref{eq:js_norm_mvn1}, we define the \textit{conditional skew-geometric Jensen--Shannon divergence} ($\cJSGa{}$) between the two sites $s$ and $s^*$ for the conditioning variable $Y_i$ as
+% Now suppose we have fitted the CE model at two different sites $s$ and $s^*$, and we want to compare the extremal dependence structure of the random vector $\symbf{Y}_{s}$ at site $s$ with that of $\symbf{Y}_{s^*}$ at site $s^*$, for a given conditioning variable $Y_{i, s}$ and $Y_{i, s^*}$, respectively. %, where $i \in \{1, \ldots, d\}, s, s^* \in \{1, \ldots, D\}$.
+% Now suppose we have fitted the CE model at two different sites $s$ and $s^*$, and we want to compare the extremal dependence structure of the random vector $\symbf{Y}_{s}$ at site $s$ with that of $\symbf{Y}_{s^*}$ at site $s^*$, for conditioning variable $i$ (i.e.\ $Y_{i, s}$ and $Y_{i, s^*}$).%, where $i \in \{1, \ldots, d\}, s, s^* \in \{1, \ldots, D\}$.
+Now suppose we have fitted the CE model at two different sites $s$ and $s^*$, and we want to compare the extremal dependence structure for the conditioning variable $i$ (i.e.\ $Y_{i, s}$ and $Y_{i, s^*}$).%, where $i \in \{1, \ldots, d\}, s, s^* \in \{1, \ldots, D\}$.
+% Using the $\JSGa{}$ divergence in Equation~\eqref{eq:js_norm_mvn1}, we define the \textit{conditional skew-geometric Jensen--Shannon divergence} ($\cJSGa{s, s^*}$) between the two sites $s$ and $s^*$ for the conditioning variable $Y_i$ as
+Using the $\JSGa{}$ divergence in Equation~\eqref{eq:js_norm_mvn1}, we define the \textit{conditional skew-geometric Jensen--Shannon divergence} ($\cJSGa{s, s^*}$) between the two sites $s$ and $s^*$ for the conditioning variable $Y_i$ as
 \todo{Define for j mid i? or just mid i? Would lead to better M definition below}
+\todo{Is it a function of y?}
 \begin{equation} \label{eq:cjsga}
-  \cJSGa{}\bigl(y; s \Vert s^*\bigr) = \JSGa{}\left(H_{\mathbf{Y}_{-i}(s)|Y_i(s)=y} \Vert H_{\mathbf{Y}_{-i}(s^*)|Y_i(s^*)=y}\right),
+  % \cJSGa{}\bigl(y; s \Vert s^*\bigr) = \JSGa{}\left(H_{\mathbf{Y}_{-i}(s)|Y_i(s)=y} \Vert H_{\mathbf{Y}_{-i}(s^*)|Y_i(s^*)=y}\right),
+  \cJSGa{s, s^*}(y) = \JSGa{}\left(H_{i, s}(y) \Vert H_{i, s^*}(y)\right),
 \end{equation}
-where $H_{\mathbf{Y}_{-i}(s)|Y_i(s)=y}$ and $H_{\mathbf{Y}_{-i}(s^*)|Y_i(s^*)=y}$ are the conditional multivariate Gaussian distributions induced by the CE model at sites $s$ and $s^*$, respectively, for a given value of $y > \max(u_i(s), u_i(s^*))$. \todo{Is this max correct?}
+% where $H_{\mathbf{Y}_{-i}(s)|Y_i(s)=y}$ and $H_{\mathbf{Y}_{-i}(s^*)|Y_i(s^*)=y}$ are the conditional multivariate Gaussian distributions induced by the CE model at sites $s$ and $s^*$, respectively, for a given value of $y > \max(u_i(s), u_i(s^*))$. \todo{Is this max correct?}
+where $H_{i, s}(y)$ and $H_{i, s^*}(y)$ are the conditional multivariate Gaussian distributions for variable $i$ induced by the CE model at sites $s$ and $s^*$, respectively, for a given value of $y > \max(u_{i, s}, u_{i, s^*})$. \todo{Is this max correct? Has it been talked about enough before?} \todo{Should this be mid i? What does Heff2004 do?}
 % Substituting the means and covariances of these conditional distributions from Equation\eqref{eq:ce_norm} into Equation~\eqref{eq:js_norm_mvn1} gives the closed form expression
 % \todo{Need help tidying up}
 % \todo{move equation number to right}
@@ -1071,7 +1097,7 @@ $\Omega_2 = \mvcov{s^*}$,
 % \end{align*}
 and 
 \todo{Define with m and Omega or explicitly, as here?}
-\begin{align}
+\begin{align*}
 \Omega_{\lambda}
   &= \left[\,\lambda\,\left\{\mvcov{s}\right\}^{-1}
            +(1-\lambda)\,\left\{\mvcov{s^{*}}\right\}^{-1}\right]^{-1},\\[6pt]
@@ -1081,7 +1107,7 @@ and
        \Biggl[&\lambda\,\left\{\mvcov{s}\right\}^{-1}\mvmean{s}\\
             &\quad +(1-\lambda)\,\left\{\mvcov{s^{*}}\right\}^{-1}\mvmean{s^{*}}\Biggr]
      \end{aligned}.
-\end{align}
+\end{align*}
 
 % % Introduce KL divergence 
 % One common measure of dissimilarity between two distributions $P$ and $Q$ is the Kullback-Leibler (KL) divergence, defined as
@@ -1152,33 +1178,41 @@ and
 % \end{equation}
 
 % Since the conditional $\JSGa{}$ divergence, $\cJSGa{}$, depends on the value of the conditioning variable $Y_i(s)$, we obtain a single measure of dissimilarity, by defining the expected divergence 
-The conditional $\JSGa{}$ divergence, $\cJSGa{}$, depends on the value of the conditioning variable $Y_i(s)$.
+The conditional $\JSGa{}$ divergence, $\cJSGa{}$, depends on the value of the conditioning variable $Y_{i,s}$.
 Therefore, to obtain a single measure of dissimilarity between the two sites $s$ and $s^*$ for the conditioning variable $Y_i$, we define the expected divergence
 \begin{align*}%~\label{eq:jsga_integral}
   % eJS^{G_\lambda}_i(s || s^*) &= \mathbb{E}(cJS^{G_\lambda}_i(Y_i(s); s || s^*)| Y_i(s) > u_i) \\
-  \eJSGa{}(s || s^*) &= \mathbb{E}(cJS^{G_\lambda}_i(Y_i(s); s || s^*)| Y_i(s) > u_i) \\
-                              &= \int_{u_i}^{\infty} \cJSGa{(y; s || s^*)} f(y \mid Y_i(s) > u_i) dy, \numberthis~\label{eq:jsga_integral}
-\end{align*}
-where $f(y \mid Y_i(s) > u_i)$ is the conditional density of $Y_i(s)$ given exceedance of the threshold. 
-This integral gives us our dissimilarity measure or ``distance'' between the two CE models, averaged over the distribution of $Y_i(s) \mid Y_i(s) > u_i$.
+  % \eJSGa{}(s || s^*) &= \mathbb{E}(cJS^{G_\lambda}_i(Y_i(s); s || s^*)| Y_i(s) > u_i) \\
+  %                             &= \int_{u_i}^{\infty} \cJSGa{(y; s || s^*)} f(y \mid Y_i(s) > u_i) dy, \numberthis~\label{eq:jsga_integral}
+  \eJSGa{s, s^*} &= \mathbb{E}\left(\cJSGa{s, s^*}(Y_{i,s}) \mid Y_{i,s} > u_{i}\right) \\
+                              &= \int_{u_{i,s}}^{\infty} \cJSGa{s, s^*}(y) h(y \mid Y_{i,s} > u_{i}) dy, \numberthis~\label{eq:jsga_integral}
+\end{align*} \todo{u i or u i s?} \todo{No need to be function of y like cJSGa?}
+where $h(y \mid Y_{i, s} > u_i)$ is the conditional density of $Y_{i, s}$ given exceedance of the threshold. 
+This integral gives us our dissimilarity measure or ``distance'' between the two CE models, averaged over the distribution of $Y_{i, s} \mid Y_{i, s} > u_i$.
 % We can estimate this integral using Monte Carlo (MC) methods, noting that the distribution of $Y_i$ is given by the standard Laplace distribution. 
-We estimate this integral using Monte Carlo methods, noting that $Y_i(s)$ follows a standard Laplace distribution.
+We estimate this integral using Monte Carlo methods, noting that $Y_{i, s}$ follows a standard Laplace distribution.
 % We average across the individual scores for each individual realisation of $Y_i(s)$ to derive the divergence for a pair of sites, weighted by the distribution of $Y_i(s)$.
-In practice, very large values of $Y_i(s)$ can lead to unstable estimates, and we also want to avoid extrapolating beyond the range of observed $Y_i(s)$ used to fit the CE model. 
+In practice, very large values of $Y_{i, s}$ can lead to unstable estimates, and we also want to avoid extrapolating beyond the range of observed $Y_{i, s}$ used to fit the CE model. 
 % Hence, we truncate the expectation at the 99th percentile of the empirical distribution of $Y_i(s)$ across all sites.
-Hence, we truncate the integral in Equation~\eqref{eq:jsga_integral} at the 99th percentile of the empirical distribution of $Y_i(s)$ across all sites.
+Hence, we truncate the integral in Equation~\eqref{eq:jsga_integral} at the 99th percentile of the empirical distribution of $Y_{i, s}$ across all sites.
 
 % Matrix
 \todo{Problem: Don't I have d(d-1) models here, not d?}
 \todo{If so, could have M j mid i here?}
 \todo{Discuss with Christian}
 We can repeat this procedure for each pair of sites $(s, s^*)$ and for each conditioning variable $Y_i$, to obtain a matrix of pairwise dissimilarities between all sites for each conditioning variable, given by
-\begin{equation} \label{eq:distance_matrix}
+\begin{align*} %\label{eq:distance_matrix}
 %   % M_i=\left( eJS^{G_\lambda}_i(s || s^*)\right)_{s, s^* \in \{s_1,\dots,s_D\}},
-  M_i=\left(\eJSGa{}(y; s\Vert s^*)\right)_{s, s^* \in \{s_1,\dots,s_D\}},
-\end{equation}
-where $D$ is the total number of sites.
-If we have $d$ conditioning variables, we can also aggregate the $d$ distance matrices $M_1, \ldots, M_d$ into a single matrix $M$, by taking the element-wise average across all matrices, i.e. \todo{Do we like this representation of the elementwise average?}
+  % M_i=\left(\eJSGa{}(y; s\Vert s^*)\right)_{s, s^* \in \{s_1,\dots,s_D\}},
+  % M_i=\left[ M_{i, s, s*} \right]_{s, s^* = \{1, \ldots, D\}}, \\
+  M^{(i)}&=\left[ M^{(i)}_{s, s*} \right]_{s, s^* = \{1, \ldots, D\}}, \numberthis~\label{eq:distance_matrix} \\
+  % \text{where } M_{i, s, s^*} = \eJSGa{s, s^*},
+  M^{(i)}_{s, s^*} &= \eJSGa{s, s^*},
+\end{align*}
+% where $D$ is the total number of sites.
+where $D$ is the total number of sites, and $M^{(i)}_{s, s^*}$ is the dissimilarity between sites $s$ and $s^*$ for conditioning variable $Y_i$. \todo{Should I say cond var Yi or just i? Throughout}
+% If we have $d$ conditioning variables, we can also aggregate the $d$ distance matrices $M_1, \ldots, M_d$ into a single matrix $M$, by taking the element-wise average across all matrices, i.e. \todo{Do we like this representation of the elementwise average?}
+If we have $d$ conditioning variables, we can also aggregate the $d$ distance matrices $M^{(1)}, \ldots, M^{(d)}$ into a single matrix $M$, by taking the element-wise average across all matrices, i.e. \todo{Do we like this representation of the elementwise average?}
 \begin{equation} \label{eq:aggregate_matrix}
   \bar{M} = \frac{1}{d} \sum_{i=1}^d M_i.
 \end{equation}
@@ -1313,9 +1347,11 @@ Specifically, the TWGSS is defined as
 % \end{equation}
 % where $\delta_{ij}$ is the dissimilarity between site $j$ and the centroid of cluster $i$, which we measure using the $\JSGa{}$ divergence defined in section \ref{subsec:div}, and $n_i$ is the number of observations in cluster $i$.
 \begin{equation}~\label{eq:twgss}
-  \mathrm{TWGSS}(k) = \sum_{c=1}^{k} \sum_{s \in S} \eJSGa{}(s \Vert m_c),
+  % \mathrm{TWGSS}(k) = \sum_{c=1}^{k} \sum_{s \in S} \eJSGa{}(s \Vert m_c),
+  \mathrm{TWGSS}(k) = \sum_{c=1}^{k} \sum_{s =1}^{D} \eJSGa{s, s_c},
 \end{equation}
-where $\eJSGa{}(s \Vert m_c)$ is the dissimilarity between site $s$ and the medoid of cluster $c$, measured using the $\eJSGa{}$ divergence defined in Section \ref{subsec:div}, and $S$ is the set of sites in cluster $c$. \todo{Is this right?}
+% where $\eJSGa{}(s \Vert m_c)$ is the dissimilarity between site $s$ and the medoid of cluster $c$, measured using the $\eJSGa{}$ divergence defined in Section \ref{subsec:div}, and $S$ is the set of sites in cluster $c$. \todo{Is this right?}
+where $\eJSGa{s, s_c}$ is the dissimilarity between site $s$ and the medoid site $s_c$ of cluster $c$, and $D$ is the total number of sites. \todo{Is this right?}
 We then plot $\mathrm{TWGSS}(k)$ vs.\ $k$, and choose $k^*$, the optimal number of clusters, as the value of $k$ at which the TWGSS reduction sharply slows, or equivalently, the point at which the curve has an ``elbow''.
 
 \section{Simulation study}~\label{sec:sim}
@@ -1806,7 +1842,7 @@ In Section~\ref{subsec:app_ce}, we fit the CE model to the data, and in Section~
 We analyse the joint extremal behaviour of precipitation and wind speed at 59 sites across the Republic of Ireland from 1990 to 2020. 
 % The data we have performed our clustering on is precipitation data for the Republic of Ireland, collected from the Met Éireann website at \citet{metHistoricalData}, and wind speed data from the ERA5 Reanalysis dataset at \citet{Hersbach2020}, corresponding to the closest grid point to each location.
 % Precipitation data were collected from the Met Éireann website (accessed 2024-09-01), and wind speed data from the gridded ERA5 Reanalysis dataset \citep{metHistoricalData, Hersbach2020}.
-Precipitation data were obtained from the Met Éireann archive (accessed 2024-09-01), and wind speed data from the ERA5 Reanalysis dataset \citep{metHistoricalData, Hersbach2020}. 
+Precipitation data were obtained from the Met Éireann archive (accessed 2024-09-01), and wind speed data from the ERA5 Reanalysis dataset \citep{Hersbach2020, metHistoricalData}. 
 % ERA5 provides averages over a gridded box of $0.25^{\circ} \times 0.25^{\circ}$, so each site will lie within a grid cell, to which the wind speed data corresponds.
 ERA5 provides spatial averages on a $0.25^{\circ} \times 0.25^{\circ}$ grid, and each site was matched to the grid cell in which it lies. 
 Both datasets are available at daily resolution.
@@ -1847,7 +1883,8 @@ Weeks with no precipitation were excluded, resulting in 5,022 weekly observation
 % chi + chi-bar plots as quick exploratory analysis
 % As a brief exploration of the dependence profile in our data, we looked at the $\chi$ and $\bar{\chi}$ statistics introduced in Section~\ref{subsec:asym_dep}.
 % As a brief exploration of the dependence profile of our data, we looked at the $\chi$ statistic introduced in Section~\ref{subsec:asym_dep}.
-We begin exploring the dependence structure of the data using the $\chi$ statistic introduced in Section~\ref{subsec:asym_dep}. 
+% We begin exploring the dependence structure of the data using the $\chi$ statistic introduced in Section~\ref{subsec:asym_dep}. 
+We begin exploring the dependence structure of the data using the $\chi$ statistic introduced in Section~\ref{sec:intro}. 
 % Specifically, we estimated $\chi$ at the 95th quantile for each of our 59 sites, to determine the extent of asymptotic dependence between our variables, and whether any spatial patterns in this dependence emerge. 
 % Specifically, as shown in Figure \ref{fig:chi}, we estimated $\chi(0.95)$ at all 59 sites, to determine the extent of asymptotic dependence between precipitation and wind speed at each, and whether any discernible spatial patterns in this dependence emerge.
 % These values are shown in Figure \ref{fig:chi}.

@@ -1242,7 +1242,7 @@ Aggregating allows us to pool information across multiple comparisons and forms 
 
 % Using Equation~\eqref{eq:jsga_integral}, we can now contruct a dissimilarity measure to compare two conditional distributions, representing our pairwise ``distances'' between sites. 
 % Using Equation~\eqref{eq:jsga_integral}, we can now construct a dissimilarity matrix $M_i$ (Equation~\eqref{eq:distance_matrix}) or an aggregated dissimilarity matrix $\bar{M}$ (Equation~\eqref{eq:aggregate_matrix}), to compare the conditional distributions at each pair of sites, representing our pairwise ``distances'' between sites for a given conditioning variable $Y_i$ or aggregated across multiple conditioning variables, respectively.
-We peform clustering using the matrix $M_i$, or the aggregated matrix $\bar{M}$, defined in Equations~\eqref{eq:distance_matrix} and \eqref{eq:aggregate_matrix}, respectively.
+We perform clustering using the matrix $M_i$, or the aggregated matrix $\bar{M}$, defined in Equations~\eqref{eq:distance_matrix} and \eqref{eq:aggregate_matrix}, respectively.
 % We can also aggregate these distances across multiple conditioning variables to pool information across multiple comparisons. 
 % PAM (K-means not suitable as clusters cannot be assumed to be spherical) (see
 % Vignotto)
@@ -1838,8 +1838,6 @@ In Section~\ref{subsec:app_ce}, we fit the CE model to the data, and in Section~
    ~\label{fig:chi}
 \end{figure}
 
-
-
 % We consider the joint extremal behaviour of precipitation and wind speeds at 59 sites across the Republic of Ireland from 1990 to 2020, inclusive.
 We analyse the joint extremal behaviour of precipitation and wind speed at 59 sites across the Republic of Ireland from 1990 to 2020. 
 % The data we have performed our clustering on is precipitation data for the Republic of Ireland, collected from the Met Éireann website at \citet{metHistoricalData}, and wind speed data from the ERA5 Reanalysis dataset at \citet{Hersbach2020}, corresponding to the closest grid point to each location.
@@ -1847,7 +1845,7 @@ We analyse the joint extremal behaviour of precipitation and wind speed at 59 si
 Precipitation data were obtained from the Met Éireann archive (accessed 2024-09-01), and wind speed data from the ERA5 Reanalysis dataset \citep{Hersbach2020, metHistoricalData}. 
 % ERA5 provides averages over a gridded box of $0.25^{\circ} \times 0.25^{\circ}$, so each site will lie within a grid cell, to which the wind speed data corresponds.
 ERA5 provides spatial averages on a $0.25^{\circ} \times 0.25^{\circ}$ grid, and each site was matched to the grid cell in which it lies. 
-Both datasets are available at daily resolution.
+Both datasets are available at daily resolution. \todo{Check about ERA5, available at hourly resolution right?} \todo{Also elevation data comes from ERA5}
 % These data span the dates 1990-01-01 to 2020-12-31, totalling 11,323 days of consecutive precipitation readings. 
 The dataset spans 11,323 consecutive days of observations between 1990-01-01 and 2020-12-31. 
 % , taking the closest grid cell corresponding to each precipitation measurement location.
@@ -1911,7 +1909,6 @@ Kilcar in Donegal has a relatively low $\chi$ value despite its west-coast locat
 The latter may be related to the influence of the Wicklow Mountains, as reflected in the elevation profile. 
 It may be of interest to investigate if these outliers in $\chi$ are reflected in the CE model parameters, and whether clustering can help identify them.
 
-
 \subsection{Conditional extremes model}~\label{subsec:app_ce}
 
 % Procedure and results pre-clustering (choice of quantile)
@@ -1921,11 +1918,12 @@ We transform precipitation and wind speed data at each location to Laplace margi
 % % Using the bootstrapping scheme of \citet{Heffernan2004}, we estimated the CE model parameters $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$ at various quantiles. \todo{Sufficient reference to bootstrapping scheme?}
 % Using the bootstrapping scheme of \citet{Heffernan2004}, we estimated the CE model parameters $\alpha$ and $\beta$ at various quantiles. \todo{Sufficient reference to bootstrapping scheme?}
 % The CE model was then fitted to the transformed data, and parameter estimates $(\alpha, \beta)$ were obtained at various quantiles using the bootstrap procedure of \citet{Heffernan2004}.  
-In order to select an appropriate quantile for fitting the CE model, we estimated the parameters $(\alpha, \beta)$ at various quantiles using the bootstrap procedure of \citet{Heffernan2004}.
+\todo{Christian: Check that brief description of bootstrapping for choosing quantile is sufficient}
+In order to select an appropriate quantile for fitting the CE model, we estimated the parameters $(\alpha, \beta)$ at various quantile levels using the bootstrap procedure of \citet{Heffernan2004}. 
 The idea was to identify the highest quantile at which parameter estimates remained stable, balancing extremity and stability.
 % This revealed that estimates in general were quite stable up to the 88th quantile.  \todo{Need to expand with more details, could include plots in Appendix?}
-Estimates were generally stable up to the 85th quantile, with similar maximum likelihood estimates for $(\alpha, \beta)$. % and clustering solutions obtained when using the 85th quantile were quite similar to higher quantiles.
-Therefore, we chose to fit the CE model at the 85th quantile.
+Estimates were generally stable for both models, i.e.\ precipitation conditional on wind speed and vice versa, up to the 85th quantile, with similar maximum likelihood estimates across bootstrap samples for $(\alpha, \beta)$. % and clustering solutions obtained when using the 85th quantile were quite similar to higher quantiles.
+Therefore, the 85th quantile was used for subsequent analysis for both models.
 In Section~\ref{app_clust} and Figure~\ref{fig:clust_sens}, we show that clustering solutions are also quite robust to the choice of quantile between the 85th, 88th and 90th quantiles, and so this choice does not have a major impact on results.
 % Clustering sensitivity to the choice of quantile is discussed further in Section~\ref{subsec:app_clust}, surrounding Figure~\ref{fig:clust_sens}.
 
@@ -1939,7 +1937,7 @@ The estimated CE parameters at the 85th quantile for both variables are displaye
 Although interpretation is challenging due to variability in the estimates, we observe some evidence of increasing $\alpha$ values for both variables towards the West and particularly in the South.  
 % Several $\beta^{(\CE{})}$ values are negative, which is unexpected, and perhaps suggests non-identifiability in the CE regression model. 
 % Several $\beta$ values are negative, which is unexpected, and perhaps suggests non-identifiability in the CE regression model. 
-Several $\beta$ estimates are negative, which is unexpected and may reflect non-identifiability in the CE regression model, or problems with data. \todo{Need to comment on more, in subsequent analyses should these be constrained to be non-negative?}
+Several $\beta$ estimates are negative, which is unexpected and may reflect non-identifiability in the CE regression model, or problems with data. 
 % \item It appears that high uncertainty is making interpretation difficult, and so we will cluster the locations based on their CE parameters, to aid in interpretation.
 % We will cluster the locations based on their CE parameters, to help improve the interpretation of CE results.
 To mitigate this uncertainty and aid interpretation, we next cluster the locations based on their estimated CE parameters.  
@@ -1957,14 +1955,16 @@ To mitigate this uncertainty and aid interpretation, we next cluster the locatio
 % Clustering (including choice of k for each measure)
 % We clustered the locations using the $\JSGa{}$ dissimilarity matrix for their CE parameters, as described in Section~\ref{subsec:div}, for the CE models fit to precipitation conditional on extreme wind speed and vice versa, separately. 
 % We clustered the locations using the $\JSGa{}$ dissimilarity matrix of their CE parameter estimates, as described in Section~\ref{subsec:div}, for the CE models fitted to precipitation conditional on extreme wind speed and vice versa, separately.
-We clustered the locations using the integral form of the $\JSGa{}$ dissimilarity matrix, as described in Equation~\ref{eq:jsga_integral} in Section~\ref{subsec:div}, for the CE models fitted to precipitation conditional on extreme wind speed and vice versa, separately.
+% We clustered the locations using the integral form of the $\JSGa{}$ dissimilarity matrix, as described in Equation~\ref{eq:jsga_integral} in Section~\ref{subsec:div}, for the CE models fitted to precipitation conditional on extreme wind speed and vice versa, separately.
+\todo{Could be worded better}
+We clustered the locations using the $\eJSGa{}$ dissimilarity matrix, as defined in Equation~\ref{eq:jsga_integral} and Equation~\ref{eq:distance_matrix} for the CE models fitted to precipitation conditional on extreme wind speed and vice versa, separately.
 % We also combine information from both models to cluster by summing their dissimilarity matrices.
 We also considered a combined solution by averaging over the two dissimilarity matrices.
 The number of clusters $k$ was chosen via the method described in Section~\ref{subsubsec:choose_k}, using the elbow plot of the TWGSS. 
 For all three clustering solutions, clear elbows were observed at $k = 3$, so this was the number of clusters chosen \todo{Include plots in Appendix?}.
 
 % Our clustering solutions for each of the three dissimilarity matrices at the 85th quantile are shown in Figure \ref{fig:clust_sol}.
-The resulting clustering solutions for the 88th quantile are displayed in Figure~\ref{fig:clust_sol}.  
+The resulting clustering solutions for the 85th quantile are displayed in Figure~\ref{fig:clust_sol}.  
 % Clustering appears to be quite similar across dissimilarity matrices, and the three clusters appear to be quite spatially distinct. 
 Across all three dissimilarity matrices, the clusterings are broadly consistent, with three spatially distinct groups emerging.  
 % This is interesting given no spatial information was used in the clustering, and suggests that the CE model parameters are indeed capturing some spatial structure in the data.
@@ -1985,7 +1985,7 @@ It could also reflect the use of ERA5 reanalysis data for wind speed, which is k
 \begin{figure}[h]
     \centering
     \includegraphics[width = 0.9\linewidth]{plots/cluster_dqu_sep_new_crop.png}
-    \caption{\emph{Clustering solutions for the conditional extremes model parameters estimated at the 88th quantile across all 59 sites, using the $\JSGa{}$ dissimilarity matrix for wind speed conditional on precipitation (centre), precipitation conditional on wind speed (right), and the combined dissimilarity matrix (left). The clusters are shown in different colours.}}
+    \caption{\emph{Clustering solutions for the conditional extremes model parameters estimated at the 85th quantile across all 59 sites, using the $\JSGa{}$ dissimilarity matrix for wind speed conditional on precipitation (centre), precipitation conditional on wind speed (right), and the combined dissimilarity matrix (left). The clusters are shown in different colours.}}
    ~\label{fig:clust_sol}
 \end{figure}
 
@@ -2008,7 +2008,8 @@ In constrast, the western and central clusters seem to be quite close, in that w
 This indicates that allocation between the two is not always clear-cut and for several sites is nearly interchangeable, as observed in  the variable-specific clustering solutions in Figure~\ref{fig:clust_sol} and in the quantile sensitivity analysis in Figure~\ref{fig:clust_sens}, where membership between the two often switches. \todo{Mention specific sites}
 Also, if we only fit two clusters, we find that most of the central cluster members are assigned to the ``western'' cluster, reflecting this less obvious separation between the two compared to the more markedly different eastern cluster. 
 A noticeable outlier in the dissimilarity matrix is the site at Malahide Castle, which is located in Dublin, which even amongst its own cluster has a relatively high dissimilarity to the other sites.
-Furthermore, if we go to having four clusters, Malahide Castle becomes the only member of the new cluster, and so it is quite distinct from the other sites.
+% Furthermore, we go to having four clusters, Malahide Castle becomes the only member of the new cluster, and so it is quite distinct from the other sites.
+Furthermore, if we set $k=4$, Malahide Castle becomes its own cluster, and so it is quite distinct from the other sites.
 % This site also has the distinction of having the lowest mean weekly precipitation, and the second lowest maximum wind speed, of all sites in our dataset, which may explain its outlying behaviour, even amongst the eastern cluster, which is generally characterised by lower $\alpha^{(\CE{})}$ estimates and $\chi$ values. 
 \todo{Mention Ringsend is next driest area }
 % Malahide Castle has the lowest mean weekly precipitation of any site, with the second lowest being in Ringsend, which is closest in terms of $\JSGa{}$ to Malahide, which may explain its outlying behaviour, even amongst the eastern cluster, in that rainfall extremes and consequently concomitant extremes are less likely to occur, as shown by its low $\chi$ and $\alpha^{(\CE{})}$ estimates.
@@ -2026,7 +2027,7 @@ We also see that Kilcar in county Donegal, which had a low $\chi$ value relative
 % Sensitivity Analysis (to choice of DQU)
 Another interesting aspect of our clustering method is its robustness to the choice of quantile.
 We performed a sensitivity analysis of the clustering solution to the choice of quantile, using the 85th, 88th and 90th quantiles, the results of which are shown in Figure~\ref{fig:clust_sens}.
-The clustering solutions are clearly quite similar across the three quantiles.
+The clustering solutions are quite similar across the three quantiles.
 There are some small differences, however. 
 Noticeably, Kilcar in county Donegal is assigned to the eastern cluster for the 85th and 90th quantile, but to the central cluster for the 88th quantile.
 % Also, Costelloe Fishery in county Galway is assigned to the wester cluster for the 85th quantile, but to the central cluster for the 88th and 90th quantiles.
@@ -2073,6 +2074,7 @@ Interpreting these results is much easier post-clustering. \todo{More detail her
 \section{Discussion}~\label{sec:discuss}
 
 % Points to consider
+\todo{Talk about how subsequent analyses should constrain parameters to be non-negative?}
 \todo{Say something about $\alpha$!}
 \todo{Laplace truncation: how truncation point may lead to errors in severly unbalanced data (empirical quantile > sitewise maxima)}
 \todo{Mention mim(maxima) approach as alternative if extrapolation occurs at any site}

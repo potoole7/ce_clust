@@ -1,21 +1,399 @@
 \begin{thebibliography}{xx}
 
-\harvarditem[Bishop et~al.]{Bishop, Fienberg \harvardand\
-  Holland}{1975}{bish:fien:1975}
-Bishop, Y. M.~M., Fienberg, S.~E. \harvardand\ Holland, P.~W.  \harvardyearleft
-  1975\harvardyearright , {\em Discrete Multivariate Analyses: Theory and
-  Practice}, MIT Press.
+\harvarditem[Alonso et~al.]{Alonso, de~Zea~Bermudez \harvardand\
+  Scotto}{2014}{Alonso2014-rr}
+Alonso, A.~M., de~Zea~Bermudez, P. \harvardand\ Scotto, M.~G.  \harvardyearleft
+  2014\harvardyearright , `Comparing generalized pareto models fitted to
+  extreme observations: an application to the largest temperatures in spain',
+  {\em Stoch. Environ. Res. Risk Assess.} {\bf 28}(5),~1221--1233.
 
-\harvarditem{Broman \harvardand\ Woo}{2018}{brom:woo:2018}
-Broman, K.~W. \harvardand\ Woo, K.~H.  \harvardyearleft 2018\harvardyearright ,
-  `{Data Organization in Spreadsheets}', {\em The American Statistician} {\bf
-  72}(1),~2--10.
-\newline\harvardurl{https://doi.org/10.1080/00031305.2017.1375989}
+\harvarditem[Bengtsson et~al.]{Bengtsson, Hodges \harvardand\
+  Keenlyside}{2009}{Bengtsson2009}
+Bengtsson, L., Hodges, K.~I. \harvardand\ Keenlyside, N.  \harvardyearleft
+  2009\harvardyearright , `Will extratropical storms intensify in a warmer
+  climate?', {\em Journal of Climate} {\bf 22}(9),~2276--2301.
 
-\harvarditem{Gelman \harvardand\ Vehtari}{2021}{gelm:veht:2021}
-Gelman, A. \harvardand\ Vehtari, A.  \harvardyearleft 2021\harvardyearright ,
-  `{What are the Most Important Statistical Ideas of the Past 50 Years?}', {\em
-  Journal of the American Statistical Association} {\bf 116}(536),~2087--2097.
-\newline\harvardurl{https://doi.org/10.1080/01621459.2021.1938081}
+\harvarditem[Bernard et~al.]{Bernard, Naveau, Vrac \harvardand\
+  Mestre}{2013}{Bernard2013}
+Bernard, E., Naveau, P., Vrac, M. \harvardand\ Mestre, O.  \harvardyearleft
+  2013\harvardyearright , `Clustering of maxima: Spatial dependencies among
+  heavy rainfall in france', {\em Journal of climate} {\bf 26}(20),~7929--7937.
+
+\harvarditem[Bevacqua et~al.]{Bevacqua, De~Michele, Manning, Couasnon, Ribeiro,
+  Ramos, Vignotto, Bastos, Blesi{\'c}, Durante
+  et~al.}{2021}{bevacqua2021guidelines}
+Bevacqua, E., De~Michele, C., Manning, C., Couasnon, A., Ribeiro, A.~F., Ramos,
+  A.~M., Vignotto, E., Bastos, A., Blesi{\'c}, S., Durante, F. et~al.
+  \harvardyearleft 2021\harvardyearright , `Guidelines for studying diverse
+  types of compound weather and climate events', {\em Earth's Future} {\bf
+  9}(11),~e2021EF002340.
+
+\harvarditem[Boulin et~al.]{Boulin, Di~Bernardino, Lalo{\"e} \harvardand\
+  Toulemonde}{2025}{Boulin2025}
+Boulin, A., Di~Bernardino, E., Lalo{\"e}, T. \harvardand\ Toulemonde, G.
+  \harvardyearleft 2025\harvardyearright , `Identifying regions of concomitant
+  compound precipitation and wind speed extremes over europe', {\em Journal of
+  the Royal Statistical Society Series C: Applied Statistics} p.~qlaf014.
+
+\harvarditem[Carreau et~al.]{Carreau, Naveau \harvardand\
+  Neppel}{2017}{Carreau2017}
+Carreau, J., Naveau, P. \harvardand\ Neppel, L.  \harvardyearleft
+  2017\harvardyearright , `Partitioning into hazard subregions for regional
+  peaks-over-threshold modeling of heavy precipitation', {\em Water Resources
+  Research} {\bf 53}(5),~4407--4426.
+
+\harvarditem{Coles}{2001}{Coles2001}
+Coles, S.  \harvardyearleft 2001\harvardyearright , {\em An introduction to
+  statistical modeling of extreme values}, Springer series in statistics, 2001
+  edn, Springer, Guildford, England.
+
+\harvarditem[Coles et~al.]{Coles, Heffernan \harvardand\ Tawn}{1999}{Coles1999}
+Coles, S., Heffernan, J. \harvardand\ Tawn, J.  \harvardyearleft
+  1999\harvardyearright , `Dependence measures for extreme value analyses',
+  {\em Extremes (Boston)} {\bf 2}(4),~339--365.
+
+\harvarditem[Cooley et~al.]{Cooley, Naveau \harvardand\
+  Poncet}{2006}{Cooley2006variograms}
+Cooley, D., Naveau, P. \harvardand\ Poncet, P.  \harvardyearleft
+  2006\harvardyearright , Variograms for spatial max-stable random fields, {\em
+  in} `Dependence in Probability and Statistics', Springer, New York,
+  pp.~373--390.
+
+\harvarditem{Dawkins \harvardand\ Stephenson}{2018}{Dawkins2018}
+Dawkins, L.~C. \harvardand\ Stephenson, D.~B.  \harvardyearleft
+  2018\harvardyearright , `Quantification of extremal dependence in spatial
+  natural hazard footprints: independence of windstorm gust speeds and its
+  impact on aggregate losses', {\em Natural Hazards and Earth System Sciences}
+  {\bf 18}(11),~2933--2949.
+\newline\harvardurl{https://nhess.copernicus.org/articles/18/2933/2018/}
+
+\harvarditem[de~Carvalho et~al.]{de~Carvalho, Huser \harvardand\
+  Rubio}{2023}{deCarvalho2023}
+de~Carvalho, M., Huser, R. \harvardand\ Rubio, R.  \harvardyearleft
+  2023\harvardyearright , `Similarity-based clustering for patterns of extreme
+  values', {\em Stat} {\bf 12}(1),~e560.
+\newline\harvardurl{https://onlinelibrary.wiley.com/doi/abs/10.1002/sta4.560}
+
+\harvarditem[Deasy et~al.]{Deasy, Simidjievski \harvardand\
+  Li{\`{o}}}{2020}{Deasy2020}
+Deasy, J., Simidjievski, N. \harvardand\ Li{\`{o}}, P.  \harvardyearleft
+  2020\harvardyearright , `Constraining variational inference with geometric
+  jensen-shannon divergence', {\em CoRR} {\bf abs/2006.10599}.
+\newline\harvardurl{https://arxiv.org/abs/2006.10599}
+
+\harvarditem{Demarta \harvardand\ McNeil}{2007}{Demarta2007-ap}
+Demarta, S. \harvardand\ McNeil, A.~J.  \harvardyearleft 2007\harvardyearright
+  , `The t copula and related copulas', {\em Int. Stat. Rev.} {\bf
+  73}(1),~111--129.
+
+\harvarditem{Duchi}{2007}{Duchi2007}
+Duchi, J.  \harvardyearleft 2007\harvardyearright , `Derivations for linear
+  algebra and optimization', {\em Berkeley, California} {\bf 3}(1),~2325--5870.
+
+\harvarditem[Dupuis et~al.]{Dupuis, Engelke \harvardand\
+  Trapin}{2023}{Dupuis2023}
+Dupuis, D.~J., Engelke, S. \harvardand\ Trapin, L.  \harvardyearleft
+  2023\harvardyearright , `Modeling panels of extremes', {\em The Annals of
+  Applied Statistics} {\bf 17}(1),~498--517.
+
+\harvarditem[Farrell et~al.]{Farrell, Eastoe \harvardand\
+  Lee}{2025}{Farrell2025}
+Farrell, A., Eastoe, E.~F. \harvardand\ Lee, C.  \harvardyearleft
+  2025\harvardyearright , `Conditional extremes with graphical models'.
+\newline\harvardurl{https://arxiv.org/abs/2411.17013}
+
+\harvarditem[French et~al.]{French, Kokoszka, Stoev \harvardand\
+  Hall}{2019}{french2019quantifying}
+French, J., Kokoszka, P., Stoev, S. \harvardand\ Hall, L.  \harvardyearleft
+  2019\harvardyearright , `Quantifying the risk of heat waves using extreme
+  value theory and spatio-temporal functional data', {\em Computational
+  Statistics \& Data Analysis} {\bf 131},~176--193.
+
+\harvarditem[Gilleland et~al.]{Gilleland, Brown \harvardand\
+  Ammann}{2013}{Gilleland2013}
+Gilleland, E., Brown, B.~G. \harvardand\ Ammann, C.~M.  \harvardyearleft
+  2013\harvardyearright , `Spatial extreme value analysis to project extremes
+  of large-scale indicators for severe weather', {\em Environmetrics} {\bf
+  24}(6),~418--432.
+
+\harvarditem[Hastie et~al.]{Hastie, Tibshirani \harvardand\
+  Friedman}{2009}{Hastie2009}
+Hastie, T., Tibshirani, R. \harvardand\ Friedman, J.  \harvardyearleft
+  2009\harvardyearright , {\em The elements of statistical learning}, Springer
+  series in statistics, 2 edn, Springer, New York, NY.
+
+\harvarditem{Heffernan \harvardand\ Tawn}{2004}{Heffernan2004}
+Heffernan, J.~E. \harvardand\ Tawn, J.~A.  \harvardyearleft
+  2004\harvardyearright , `A conditional approach for multivariate extreme
+  values (with discussion)', {\em Journal of the Royal Statistical Society
+  Series B: Statistical Methodology} {\bf 66}(3),~497–546.
+\newline\harvardurl{http://dx.doi.org/10.1111/j.1467-9868.2004.02050.x}
+
+\harvarditem[Hersbach et~al.]{Hersbach, Bell, Berrisford, Biavati, Horányi,
+  Muñoz~Sabater, Nicolas, Peubey, Radu, Rozum, Schepers, Simmons, Soci, Dee
+  \harvardand\ Thépaut}{2018}{Hersbach2020}
+Hersbach, H., Bell, B., Berrisford, P., Biavati, G., Horányi, A.,
+  Muñoz~Sabater, J., Nicolas, J., Peubey, C., Radu, R., Rozum, I., Schepers,
+  D., Simmons, A., Soci, C., Dee, D. \harvardand\ Thépaut, J.-N.
+  \harvardyearleft 2018\harvardyearright , `{ERA5} hourly data on single levels
+  from 1940 to present'.
+
+\harvarditem{Hubert \harvardand\ Arabie}{1985}{Hubert1985-ys}
+Hubert, L. \harvardand\ Arabie, P.  \harvardyearleft 1985\harvardyearright ,
+  `Comparing partitions', {\em J. Classif.} {\bf 2}(1),~193--218.
+
+\harvarditem[Huser et~al.]{Huser, Opitz \harvardand\
+  Wadsworth}{2024}{Huser2024}
+Huser, R., Opitz, T. \harvardand\ Wadsworth, J.  \harvardyearleft
+  2024\harvardyearright , `Modeling of spatial extremes in environmental data
+  science: Time to move away from max-stable processes'.
+\newline\harvardurl{https://arxiv.org/abs/2401.17430}
+
+\harvarditem[Jane et~al.]{Jane, Cadavid, Obeysekera \harvardand\
+  Wahl}{2020}{Jane2020}
+Jane, R., Cadavid, L., Obeysekera, J. \harvardand\ Wahl, T.  \harvardyearleft
+  2020\harvardyearright , `Multivariate statistical modelling of the drivers of
+  compound flood events in south florida', {\em Nat. Hazards Earth Syst. Sci.}
+  {\bf 20}(10),~2681--2699.
+
+\harvarditem[Kakampakou et~al.]{Kakampakou, Simpson \harvardand\
+  Wadsworth}{2024}{Kakampakou2024}
+Kakampakou, L., Simpson, E. \harvardand\ Wadsworth, J.  \harvardyearleft
+  2024\harvardyearright , `Spatial extremal modelling: A case study on the
+  interplay between margins and dependence', {\em Stat} {\bf 13}(4).
+\newline\harvardurl{http://dx.doi.org/10.1002/sta4.70021}
+
+\harvarditem{Kaufman \harvardand\ Rousseeuw}{1987}{Kaufman1987}
+Kaufman, L. \harvardand\ Rousseeuw, P.~J.  \harvardyearleft
+  1987\harvardyearright , Clustering by means of medoids, {\em in} Y.~Dodge,
+  ed., `Statistical Data Analysis Based on the L₁ Norm and Related Methods',
+  North-Holland, Amsterdam, pp.~405--416.
+
+\harvarditem[Keef et~al.]{Keef, Papastathopoulos \harvardand\
+  Tawn}{2013}{Keef2013}
+Keef, C., Papastathopoulos, I. \harvardand\ Tawn, J.~A.  \harvardyearleft
+  2013\harvardyearright , `Estimation of the conditional distribution of a
+  multivariate variable given that one of its components is large: Additional
+  constraints for the heffernan and tawn model', {\em Journal of Multivariate
+  Analysis} {\bf 115},~396–404.
+\newline\harvardurl{http://dx.doi.org/10.1016/j.jmva.2012.10.012}
+
+\harvarditem{Koh \harvardand\ Opitz}{2024}{Koh2024}
+Koh, J. \harvardand\ Opitz, T.  \harvardyearleft 2024\harvardyearright ,
+  `Extreme-value modelling of migratory bird arrival dates: Insights from
+  citizen science data'.
+\newline\harvardurl{https://arxiv.org/abs/2312.01870}
+
+\harvarditem{Kullback \harvardand\ Leibler}{1951}{Kullback1951}
+Kullback, S. \harvardand\ Leibler, R.~A.  \harvardyearleft
+  1951\harvardyearright , `On information and sufficiency', {\em Ann. Math.
+  Stat.} {\bf 22}(1),~79--86.
+
+\harvarditem{Lin}{1991}{Lin1991}
+Lin, J.  \harvardyearleft 1991\harvardyearright , `Divergence measures based on
+  the shannon entropy', {\em IEEE Transactions on Information Theory} {\bf
+  37}(1),~145--151.
+\newline\harvardurl{https://ieeexplore.ieee.org/document/61115}
+
+\harvarditem{Miralles \harvardand\ Davison}{2024}{Miralles2024}
+Miralles, O. \harvardand\ Davison, A.~C.  \harvardyearleft
+  2024\harvardyearright , `Bayesian modeling of insurance claims for hail
+  damage', {\em The Annals of Applied Statistics} {\bf 18}(4).
+\newline\harvardurl{http://dx.doi.org/10.1214/24-AOAS1925}
+
+\harvarditem[Mornet et~al.]{Mornet, Opitz, Luzi, Loisel \harvardand\
+  Bailleul}{2017}{Mornet2017-is}
+Mornet, A., Opitz, T., Luzi, M., Loisel, S. \harvardand\ Bailleul, B.
+  \harvardyearleft 2017\harvardyearright , `Wind storm risk management:
+  sensitivity of return period calculations and spread on the territory', {\em
+  Stoch. Environ. Res. Risk Assess.} {\bf 31}(8),~1977--1995.
+
+\harvarditem[Ni et~al.]{Ni, Lin, Wang, Li, Liao \harvardand\
+  Li}{2023}{Ni2023-cd}
+Ni, S., Lin, C., Wang, H., Li, Y., Liao, Y. \harvardand\ Li, N.
+  \harvardyearleft 2023\harvardyearright , `Learning geometric {Jensen-Shannon}
+  divergence for tiny object detection in remote sensing images', {\em Front.
+  Neurorobot.} {\bf 17},~1273251.
+
+\harvarditem{Nielsen}{2019}{Nielsen2019}
+Nielsen, F.  \harvardyearleft 2019\harvardyearright , `On the jensen–shannon
+  symmetrization of distances relying on abstract means', {\em Entropy} {\bf
+  21}(5),~485.
+\newline\harvardurl{http://dx.doi.org/10.3390/e21050485}
+
+\harvarditem{Nielsen}{2025}{Nielsen2025}
+Nielsen, F.  \harvardyearleft 2025\harvardyearright , `Two tales for a
+  geometric jensen--shannon divergence'.
+\newline\harvardurl{https://arxiv.org/abs/2508.05066}
+
+\harvarditem{Opitz}{2016}{Opitz2016}
+Opitz, T.  \harvardyearleft 2016\harvardyearright , `Modeling asymptotically
+  independent spatial extremes based on laplace random fields', {\em Spatial
+  Statistics} {\bf 16},~1--18.
+\newline\harvardurl{https://www.sciencedirect.com/science/article/pii/S2211675316000038}
+
+\harvarditem[Osei et~al.]{Osei, Amekudzi, Omari-Sasu, Yamba, Quansah, Aryee
+  \harvardand\ Preko}{2021}{osei2021estimation}
+Osei, M.~A., Amekudzi, L.~K., Omari-Sasu, A.~Y., Yamba, E.~I., Quansah, E.,
+  Aryee, J.~N. \harvardand\ Preko, K.  \harvardyearleft 2021\harvardyearright ,
+  `Estimation of the return periods of maxima rainfall and floods at the pra
+  river catchment, ghana, west africa using the gumbel extreme value theory',
+  {\em Heliyon} {\bf 7}(5).
+
+\harvarditem[Richards et~al.]{Richards, Alotaibi, Cisneros, Gong, Guerrero,
+  Redondo \harvardand\ Shao}{2024}{Richards2023}
+Richards, J., Alotaibi, N., Cisneros, D., Gong, Y., Guerrero, M.~B., Redondo,
+  P. \harvardand\ Shao, X.  \harvardyearleft 2024\harvardyearright , `Modern
+  extreme value statistics for utopian extremes'.
+\newline\harvardurl{https://arxiv.org/abs/2311.11054}
+
+\harvarditem[Richards et~al.]{Richards, Tawn \harvardand\
+  Brown}{2022}{Richards2022}
+Richards, J., Tawn, J.~A. \harvardand\ Brown, S.  \harvardyearleft
+  2022\harvardyearright , `Modelling extremes of spatial aggregates of
+  precipitation using conditional methods'.
+\newline\harvardurl{https://arxiv.org/abs/2102.10906}
+
+\harvarditem{Richards \harvardand\ Wadsworth}{2021}{Richards2021-qm}
+Richards, J. \harvardand\ Wadsworth, J.~L.  \harvardyearleft
+  2021\harvardyearright , `Spatial deformation for nonstationary extremal
+  dependence', {\em Environmetrics} {\bf 32}(5).
+
+\harvarditem[Rohrbeck et~al.]{Rohrbeck, Eastoe, Frigessi \harvardand\
+  Tawn}{2018}{Rohrbeck_flooding}
+Rohrbeck, C., Eastoe, E.~F., Frigessi, A. \harvardand\ Tawn, J.~A.
+  \harvardyearleft 2018\harvardyearright , `Extreme value moodelling of
+  water-related insurance claims', {\em The Annals of Applied Statistics} {\bf
+  12}(1),~246--282.
+\newline\harvardurl{https://www.jstor.org/stable/26542528}
+
+\harvarditem{Rohrbeck \harvardand\ Tawn}{2021}{Rohrbeck2021}
+Rohrbeck, C. \harvardand\ Tawn, J.~A.  \harvardyearleft 2021\harvardyearright ,
+  `Bayesian spatial clustering of extremal behavior for hydrological
+  variables', {\em Journal of Computational and Graphical Statistics} {\bf
+  30}(1),~91--105.
+
+\harvarditem[Sando et~al.]{Sando, Wada, Rohmer, Lecacheux \harvardand\
+  Jonathan}{2022}{Sando2022}
+Sando, K., Wada, R., Rohmer, J., Lecacheux, S. \harvardand\ Jonathan, P.
+  \harvardyearleft 2022\harvardyearright , Estimating joint extremes of
+  significant wave height and wind speed for tropical cyclones, {\em in}
+  `Volume 5B: Ocean Engineering; Honoring Symposium for Professor G\"{u}nther
+  F. Clauss on Hydrodynamics and Ocean Engineering', OMAE2022, American Society
+  of Mechanical Engineers.
+\newline\harvardurl{http://dx.doi.org/10.1115/OMAE2022-79888}
+
+\harvarditem[Simpson et~al.]{Simpson, Opitz \harvardand\
+  Wadsworth}{2023}{Simpson2023}
+Simpson, E.~S., Opitz, T. \harvardand\ Wadsworth, J.~L.  \harvardyearleft
+  2023\harvardyearright , `High-dimensional modeling of spatial and
+  spatio-temporal conditional extremes using inla and gaussian markov random
+  fields', {\em Extremes} {\bf 26}(4),~669–713.
+\newline\harvardurl{http://dx.doi.org/10.1007/s10687-023-00468-8}
+
+\harvarditem{Simpson \harvardand\ Wadsworth}{2021}{Simpson2021}
+Simpson, E.~S. \harvardand\ Wadsworth, J.~L.  \harvardyearleft
+  2021\harvardyearright , `Conditional modelling of spatio-temporal extremes
+  for red sea surface temperatures', {\em Spatial Statistics} {\bf 41},~100482.
+\newline\harvardurl{http://dx.doi.org/10.1016/j.spasta.2020.100482}
+
+\harvarditem{Soukissian \harvardand\ Tsalis}{2015}{soukissian2015effect}
+Soukissian, T.~H. \harvardand\ Tsalis, C.  \harvardyearleft
+  2015\harvardyearright , `The effect of the generalized extreme value
+  distribution parameter estimation methods in extreme wind speed prediction',
+  {\em Natural Hazards} {\bf 78},~1777--1809.
+
+\harvarditem[Steinkohl et~al.]{Steinkohl, Davis \harvardand\
+  Kl{\"u}ppelberg}{2013}{steinkohl2013extreme}
+Steinkohl, C., Davis, R.~A. \harvardand\ Kl{\"u}ppelberg, C.  \harvardyearleft
+  2013\harvardyearright , `Extreme value analysis of multivariate
+  high-frequency wind speed data', {\em Journal of Statistical Theory and
+  Practice} {\bf 7},~73--94.
+
+\harvarditem[Tanarhte et~al.]{Tanarhte, Hadjinicolaou \harvardand\
+  Lelieveld}{2015}{tanarhte2015heat}
+Tanarhte, M., Hadjinicolaou, P. \harvardand\ Lelieveld, J.  \harvardyearleft
+  2015\harvardyearright , `Heat wave characteristics in the eastern
+  mediterranean and middle east using extreme value theory', {\em Climate
+  Research} {\bf 63}(2),~99--113.
+
+\harvarditem[Tawn et~al.]{Tawn, Shooter, Towe \harvardand\
+  Lamb}{2018}{Tawn2018}
+Tawn, J., Shooter, R., Towe, R. \harvardand\ Lamb, R.  \harvardyearleft
+  2018\harvardyearright , `Modelling spatial extreme events with environmental
+  applications', {\em Spatial Statistics} {\bf 28},~39--58.
+\newblock One world, one health.
+\newline\harvardurl{https://www.sciencedirect.com/science/article/pii/S2211675317302786}
+
+\harvarditem[Tendijck et~al.]{Tendijck, Eastoe, Tawn, Randell \harvardand\
+  Jonathan}{2023}{Tendijck2023}
+Tendijck, S., Eastoe, E., Tawn, J., Randell, D. \harvardand\ Jonathan, P.
+  \harvardyearleft 2023\harvardyearright , `Modeling the extremes of bivariate
+  mixture distributions with application to oceanographic data', {\em Journal
+  of the American Statistical Association} {\bf 118}(542),~1373--1384.
+\newline\harvardurl{https://doi.org/10.1080/01621459.2021.1996379}
+
+\harvarditem{Thiagarajan \harvardand\ Ghosh}{2025}{Thiagarajan2025}
+Thiagarajan, P. \harvardand\ Ghosh, S.  \harvardyearleft 2025\harvardyearright
+  , `{Jensen--Shannon} divergence based novel loss functions for bayesian
+  neural networks', {\em Neurocomputing} {\bf 618}(129115),~129115.
+
+\harvarditem{Thorndike}{1953}{Thorndike1953-ie}
+Thorndike, R.~L.  \harvardyearleft 1953\harvardyearright , `Who belongs in the
+  family?', {\em Psychometrika} {\bf 18}(4),~267--276.
+
+\harvarditem[Vettori et~al.]{Vettori, Huser, Segers \harvardand\
+  Genton}{2020}{Vettori2020}
+Vettori, S., Huser, R., Segers, J. \harvardand\ Genton, M.~G.  \harvardyearleft
+  2020\harvardyearright , `Bayesian model averaging over tree-based dependence
+  structures for multivariate extremes', {\em J. Comput. Graph. Stat.} {\bf
+  29}(1),~174--190.
+
+\harvarditem[Vignotto et~al.]{Vignotto, Engelke \harvardand\
+  Zscheischler}{2021}{Vignotto2021}
+Vignotto, E., Engelke, S. \harvardand\ Zscheischler, J.  \harvardyearleft
+  2021\harvardyearright , `Clustering bivariate dependencies of compound
+  precipitation and wind extremes over great britain and ireland', {\em Weather
+  and Climate Extremes} {\bf 32},~100318.
+
+\harvarditem{Wadsworth \harvardand\ Tawn}{2022}{Wadsworth2022}
+Wadsworth, J. \harvardand\ Tawn, J.  \harvardyearleft 2022\harvardyearright ,
+  `Higher-dimensional spatial extremes via single-site conditioning', {\em
+  Spatial Statistics} {\bf 51},~100677.
+\newline\harvardurl{https://www.sciencedirect.com/science/article/pii/S2211675322000471}
+
+\harvarditem[Winter et~al.]{Winter, Tawn \harvardand\ Brown}{2016}{Winter2016}
+Winter, H.~C., Tawn, J.~A. \harvardand\ Brown, S.~J.  \harvardyearleft
+  2016\harvardyearright , `{Modelling the effect of the El Niño-Southern
+  Oscillation on extreme spatial temperature events over Australia}', {\em The
+  Annals of Applied Statistics} {\bf 10}(4),~2075 -- 2101.
+\newline\harvardurl{https://doi.org/10.1214/16-AOAS965}
+
+\harvarditem[Zhang et~al.]{Zhang, Risser, Wehner \harvardand\
+  O’Brien}{2024}{Zhang2024}
+Zhang, L., Risser, M.~D., Wehner, M.~F. \harvardand\ O’Brien, T.~A.
+  \harvardyearleft 2024\harvardyearright , `Leveraging extremal dependence to
+  better characterize the 2021 pacific northwest heatwave', {\em Journal of
+  Agricultural, Biological and Environmental Statistics} pp.~1--22.
+
+\harvarditem[Zheng et~al.]{Zheng, Fan, Hou, Feng \harvardand\
+  Fu}{2023}{Zheng2023-jf}
+Zheng, S., Fan, K., Hou, Y., Feng, J. \harvardand\ Fu, Y.  \harvardyearleft
+  2023\harvardyearright , `Clustering by the probability distributions from
+  extreme value theory', {\em IEEE Trans. Artif. Intell.} {\bf 4}(2),~292--303.
+
+\harvarditem[Zscheischler et~al.]{Zscheischler, Westra, Van Den~Hurk,
+  Seneviratne, Ward, Pitman, AghaKouchak, Bresch, Leonard, Wahl
+  et~al.}{2018}{zscheischler2018future}
+Zscheischler, J., Westra, S., Van Den~Hurk, B.~J., Seneviratne, S.~I., Ward,
+  P.~J., Pitman, A., AghaKouchak, A., Bresch, D.~N., Leonard, M., Wahl, T.
+  et~al.  \harvardyearleft 2018\harvardyearright , `Future climate risk from
+  compound events', {\em Nature climate change} {\bf 8}(6),~469--477.
+
+\harvarditem{Éireann}{2025}{metHistoricalData}
+Éireann, M.  \harvardyearleft 2025\harvardyearright , `{H}istorical {D}ata -
+  {M}et Éireann - {T}he {I}rish {M}eteorological {S}ervice --- met.ie',
+  \url{https://www.met.ie/climate/available-data/historical-data}.
+\newblock [Accessed 01-08-2025].
 
 \end{thebibliography}

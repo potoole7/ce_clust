@@ -284,8 +284,6 @@
   \medskip
 } \fi
 
-\todo{Check with Lou that project number is correct}
-
 \bigskip
 \todo{Rewrite abstract with Christian}
 \begin{abstract}
@@ -307,17 +305,12 @@ Conditional extremes (CE) models have proven useful for analysing the joint tail
 \newpage
 \spacingset{1.8} % DON'T change the spacing!
 
-\todo{Check equation numbering, especially for 10?}
-\todo{Replace mid mid with Vert}
-\todo{Are all equation numbers for align environments correct?}
+% \todo{Check equation numbering, especially for 10?}
+% \todo{Are all equation numbers for align environments correct?}
 
 \section{Introduction}
 \label{sec:intro}
-% \todo{Will have to mention that other paper that does bivariate clustering as well in background, right?}
-% \todo{For methods paper, good to have more emphasis on setting (spatial random vector of random vectors)?}
-
 % Introduction to EVT
-\todo{Rewrite, kinda crap (look at Jordan's book chapter)}
 % Extreme Value Theory (EVT) provides an asymptotically justified framework for projecting beyond the magnitude of observed data into the extreme tails of distributions \citep{Coles2001}.
 Extreme Value Theory (EVT) provides asymptotically justified models for estimating the probability of events outside the range of observed values \citep{Coles2001}.
 % EVT implicitly assumes that there is an underlying stochastic process generating the data, which is sufficiently smooth to allow extrapolation to unseen levels \citep{Coles2001}.
@@ -326,7 +319,7 @@ Extreme Value Theory (EVT) provides asymptotically justified models for estimati
 % EVT modelling can be used to assess the risk of extreme events, such as floods, droughts, heatwaves and storms, which can have significant impacts on society and the environment.
 % Environmental applications are one area where EVT methods are used frequently, because interest lies in estimating the severity of future extreme events. % , such as heatwaves or storms. 
 % Environmental applications are one area where EVT methods are used frequently, because interest lies in estimating the severity of future extreme events, to develop risk management strategies and to assess the impacts of climate change. \todo{Keep reference to climate change?}
-Environmental applications are one area where EVT methods are used to estimate the severity of future extreme events in order to aid the development of risk management strategies and to assess the impact of climate change. 
+Environmental applications are one area where EVT methods are used to estimate the severity of future extreme events in order to aid the development of risk management strategies. % and to assess the impact of climate change. 
 % For instance, heatwaves can lead to droughts and wild fires \citep{tanarhte2015heat, french2019quantifying, koh2023gradient}.
 % % Extreme rainfall contributes to storms and flooding, which can cause major damage and trigger large insurance claims \citep{Rohrbeck_flooding, osei2021estimation}.
 % Extreme rainfall and high wind speeds can cause major damage and large insurance claims, and thus it is important to understand their likelihood \citep{Rohrbeck_flooding, osei2021estimation, soukissian2015effect, steinkohl2013extreme}. 
@@ -376,7 +369,8 @@ In the multivariate EVT setting, one is interested in the \emph{joint} tail beha
 % Multivariate extremes frequently arise in spatial applications, where one or more variables are observed at a number of fixed locations, such that each location is associated with a random vector. 
 Multivariate extremes frequently arise in spatial applications, where one or more variables are recorded at each site. 
 % In environmental applications, extreme events rarely occur in isolation, and the compounded impact of simultaneous or ``concomitant'' extremes can produce substantially more severe outcomes \citep{zscheischler2018future, bevacqua2021guidelines, Rohrbeck2021, Sando2022}.
-``Concomitant'' extremes, where multiple variables or locations simultaneously exhibit extreme behaviour, can produce substantially more severe outcomes than single-variable extremes \citep{zscheischler2018future, bevacqua2021guidelines, Rohrbeck2021, Sando2022}.
+% ``Concomitant'' extremes, where multiple variables or locations simultaneously exhibit extreme behaviour, can produce substantially more severe outcomes than single-variable extremes \citep{zscheischler2018future, bevacqua2021guidelines, Rohrbeck2021, Sando2022}.
+Within such settings, simultaneous or ``concomitant'' extremes, where multiple variables or locations exhibit extreme behaviour together, can produce substantially more severe outcomes than single-variable extremes \citep{zscheischler2018future, bevacqua2021guidelines, Rohrbeck2021, Sando2022}.
 % Consequently, these joint risks are liable to be underestimated unless tail \emph{dependence} is explicitly modelled \citep{Zhang2024}. 
 Consequently, joint risks may be underestimated unless tail \emph{dependence} is explicitly modelled \citep{Zhang2024}. 
 % Tail dependence can be described using the coefficient of asymptotic dependence \(\chi\in[0,1]\) (see e.g.\ \citet{Coles1999}), which for two random variables \(X_1,X_2\) with corresponding marginal distribution functions \(F_1,F_2\) is defined as 
@@ -386,12 +380,46 @@ Tail dependence is commonly summarised by the coefficient of asymptotic dependen
   % \chi \;=\; \lim_{u\to 1}\Pr\left[F_1(X_1)>u \mid F_2(X_2)>u\right].
   \chi \;=\; \lim_{u\to 1}\Pr\left\{F_1(X_1)>u \mid F_2(X_2)>u\right\}.
 \]
-% \todo{Should this be curly brackets?}
 % The values \(\chi>0\) indicate asymptotic dependence (AD) and \(\chi=0\) asymptotic independence (AI) for the random vector $\left(X_1, X_2\right)$. 
 When $\chi$ > 0, the variables $X_1$ and $X_2$ are termed asymptotically dependent (AD), while $\chi=0$ corresponds to asymptotic independence (AI).
 Although \(\chi\) is a useful pairwise summary, it does not fully characterise multivariate tail structure or support inference on joint exceedance probabilities, for which a full probabilistic model is required. 
-\todo{Make reference to Gaussian/max-stable process models?}
 Many classical models and clustering frameworks assume AD \citep{Vignotto2021,Boulin2025}, but a growing literature argues that environmental data often exhibit AI and that AD models can be inappropriate in such contexts \citep{Opitz2016,Dawkins2018,Huser2024}. 
+
+% Introduction to motivating example
+% Link to previous paragraph
+% To illustrate the problem of multivariate observations indexed in space, we consider the motivating example of bivariate precipitation and wind-speed data from a network of meteorological stations in Ireland \citep{Hersbach2020, metHistoricalData}. 
+% To illustrate the setting of multivariate observations indexed in space, we consider the motivating example of bivariate precipitation and wind-speed data from a network of meteorological stations in Ireland \citep{Hersbach2020, metHistoricalData}. 
+As a practical motivating example of multivariate observations indexed in space, we consider bivariate precipitation and wind-speed data from a network of 59 meteorological stations in the Republic of Ireland, recorded over the period 1990-2020 \citep{Hersbach2020, metHistoricalData}.
+% To illustrate this setting, we consider a motivating example of bivariate precipitation and wind-speed data from a network of meteorological stations in Ireland \citep{Hersbach2020, metHistoricalData}.
+% We consider a motivating example of bivariate precipitation and wind-speed data from a network of meteorological stations in Ireland, to illustrate the setting of multivariate observations indexed by space \citep{Hersbach2020, metHistoricalData}.
+% Why setting is important:
+% Capturing concomitant extreme precipitation and wind speed events is crucial for assessing the compounding risk of flood and wind-damage risk and for informing infrastructure planning and insurance pricing \citep{Martius2016}. % and emergency services
+% We want to understand how the joint tail behaviour of precipitation and wind speed varies spatially. 
+% \citet{Vignotto2021} identified spatial variation in the tail dependence structure of extreme precipitation and wind speed between the western and eastern regions of Ireland. 
+% In modelling tail dependence between precipitation and wind speed, capturing spatial variation and identifying regions or groups of sites with similar characteristics is of particular interest
+% Capturing spatial variation and identifying regions or groups of sites with similar tail dependence characteristics is crucial for assessing compounding localised flood and wind damage risk, and for informing infrastructure planning, emergency services allocation and insurance pricing \citep{Martius2016}. % and emergency services
+Particular interest lies in how the joint tail behaviour of precipitation and wind speed varies spatially, and in identifying regions or groups of sites with similar tail characteristics.
+Capturing these patterns is crucial for assessing the compounding risks of localised flood and wind damage, for example during Atlantic storms. 
+This can inform infrastructure planning, emergency services allocation and insurance pricing \citep{Martius2016}. % and emergency services
+% \citet{Vignotto2021} identified spatial heterogeneity in the tail dependence structure of extreme precipitation and wind speed between the western and eastern regions of Ireland, but theirs and other approaches assume AD \citep{Boulin2025}, which 
+% \citet{Vignotto2021} suggests that the western and eastern regions of Ireland exhibit notably different tail dependence between precipitation and wind speed.
+\citet{Vignotto2021} report notable east-west differences in tail dependence between precipitation and wind in Ireland.
+% However, their approach and other existing methods (e.g. \citet{Boulin2025}) assume AD, which may be restrictive here.
+% However, theirs and other approaches (e.g. \citet{Boulin2025}) assume AD, which may be restrictive in the case of precipitation and wind speed,  are known to exhibit both AD and AI characteristics, \citep{Dawkins2018, Huser2024}.
+However, theirs and other approaches (e.g.\ \citet{Boulin2025}) may be too restrictive in assuming AD, as both precipitation and wind speed are known to exhibit AD and AI characteristics \citep{Dawkins2018, Huser2024}.
+Hence, there is need for a more flexible modelling approach to reveal additional insights.
+% However, theirs and other approaches assume AD \citep{Boulin2025}, which may be limiting in this context. 
+% However, theirs and other approaches to this problem such as \citet{Boulin2025} assume AD, which may be limiting in this context, and so a more flexible modelling approach is desired. 
+% Precipitation and wind speed are known to exhibit both AD and AI characteristics, and so a flexible modelling approach is required \citep{Dawkins2018, Huser2024}.
+% Modelling tail dependence flexibly and capturing spatial variation is crucial for assessing the compounding risk of flood and wind damage, and for informing infrastructure planning and insurance pricing \citep{Martius2016}. % and emergency services
+% The spatial variation in the joint tail behaviour of precipitation and wind speed is of particular interest. % , as their concomitant extremal occurrence can substantially increase risks to infrastructure, flooding and insurance losses \citep{Martius2016}.
+% Identifying regions or groups of sites with similar tail dependence characteristics can help to understand meteorological patterns and to inform infrastructure planning, emergency service allocation and insurance pricing \citep{Martius2016}. 
+% We want to identify regions or groups of sites with similar tail dependence characteristics, which can help to understand meteorological patterns and to inform infrastructure planning, emergency service allocation and insurance pricing \citep{Martius2016}.
+% \citet{Vignotto2021} identified spatial variation in the tail dependence structure of extreme precipitation and wind speed between the western and eastern regions of Ireland. 
+% To capture and understand the complex 
+% Heavy rainfall and strong winds frequently co-occur during Atlantic storms, and their joint occurrence can substantially increase risks to infrastructure, flooding and insurance losses; consequently, an accurate description of the joint tail behaviour is crucial for reliable risk assessment. 
+% The Ireland dataset therefore provides a natural testbed for methods that must distinguish asymptotic dependence from independence and that must flexibly model spatially and directionally varying tail structure. 
+% In the sections that follow we use this motivating example to compare clustering approaches and to demonstrate how our proposed conditional-extremes (CE) clustering method improves inference on joint exceedance probabilities and on interpretable groups of sites/variables.
 
 % % Conditional extremes
 % % \item One such model is the CE model, which combines a univariate Generalised Pareto Distribution (GPD) and a semiparametric regression dependence model \cite{Heffernan2004}. \todo{Don't emphasise GPD, not used below}
@@ -420,14 +448,17 @@ Many classical models and clustering frameworks assume AD \citep{Vignotto2021,Bo
 % However, like many other models for multivariate extremes, the CE model can be difficult to use for identifying patterns in tail dependence due to the sparsity of joint extreme observations, particularly in high dimensions.
 
 % Conditional Extremes
-\todo{Check if references are relevant and correct}
-The Conditional extremes (CE) model of \citet{Heffernan2004} describes the tail behaviour of a random vector \emph{conditional} on one of its components exceeding a suitably high threshold.
-It provides a flexible framework which can capture both AD and AI patterns. % , and other complex extremal dependence patterns. 
-This flexibility, along with its conceptual simplicity and computational efficiency, have made it a popular choice for modelling multivariate extremes. 
+A popular model for multivariate extremes which fulfils this criterion is the Conditional Extremes (CE) model of \citet{Heffernan2004}. %, which can flexibly capture both AD and AI regimes and is conceptually simple and computationally efficient.
+% The Conditional extremes (CE) model of \citet{Heffernan2004} describes the tail behaviour of a random vector \emph{conditional} on one of its components exceeding a suitably high threshold.
+The CE model describes the tail behaviour of a random vector \emph{conditional} on one of its components exceeding a suitably high threshold.
+% It provides a flexible framework which can capture both AD and AI patterns. % , and other complex extremal dependence patterns. 
+% A key advantage is that the CE model provides a flexible framework which can capture both AD and AI patterns. % , and other complex extremal dependence patterns.
+% This flexibility, along with its conceptual simplicity and computational efficiency, have made it a popular choice for modelling multivariate extremes. 
+This framework can flexibly capture both AD and AI patterns, and is both conceptually simple and computationally efficient.
 Spatio-temporal extensions and single-site conditioning methods have been developed to handle high-dimensional settings \citep{Simpson2021, Wadsworth2022}, and adaptations that incorporate covariates, hierarchical structure, and mixture or random-scale constructions further increase the models flexibility \citep{Tawn2018, Richards2023, Tendijck2023}. 
-As a result, CE models have been applied across a broad range of environmental problems, where AI as well as AD may be prevalent, including modelling river flow and flood risk \citep{Gilleland2013, Jane2020}, rainfall extremes \citep{Richards2022}, sea-surface temperature extremes \citep{Simpson2023,Kakampakou2024}, and heatwaves \citep{Winter2016}.
+As a result, CE models have been applied across a broad range of environmental problems, where AI as well as AD may be prevalent, including modelling river flow and flood risk \citep{Gilleland2013, Jane2020}, rainfall extremes \citep{Richards2022}, sea-surface temperature extremes \citep{Simpson2023,Kakampakou2024}, and heatwaves \citep{Winter2016}, and so are well suited to this class of problems and our motivating example.
 % Despite these strengths, sparsity of joint extremes, particularly in high dimensions, can make pattern discovery and interpretation difficult.
-However, the sparsity of joint extreme observations, particularly in high dimensions, can make pattern discovery and interpretation using the CE model difficult.
+However, the sparsity of joint extreme observations, particularly in high dimensions, can make pattern discovery and interpretation using the CE model difficult, which requires further addressing to fully exploit its potential.
 
 % % Clustering: introduction + motivation
 % \todo{Combine with next paragraph}
@@ -574,23 +605,27 @@ However, the sparsity of joint extreme observations, particularly in high dimens
 % In this context \citet{Vignotto2021} is our main competitor.
 % The method they employ has some weaknesses, namely in that it is restricted to the bivariate case, and, being non-parametric, lacks a generative model for tail dependence inference, and may perform poorly without a large dataset due to reliance on sufficient empirical occurrences of joint and marginal extremes to characterize tail dependence.
 % Also, it is undefined where no jointly extreme events are observed, which can occur frequently in practice, and so is unsuitable for applications where AI may be prevalent.
-A popular approach to improve interpretability in extremal dependence modelling is clustering, which is an unsupervised learning technique that groups data with similar statistical characteristics \citep{Hastie2009}.
-We distinguish three types of clustering for extremes across spatial locations. 
-\emph{Univariate} methods group sites by marginal tail summaries, such as return levels or parameter estimates \citep{Coles2001}, and have been used in environmental and financial applications \citep{Alonso2014-rr, deCarvalho2023, Zheng2023-jf}.
-\emph{Multivariate} methods compare joint tail summaries or fitted multivariate tail models at each site.
-A leading nonparametric example was provided by \citet{Vignotto2021}.
-They estimated empirical pairwise Kullback--Leibler ($\KL{}$) divergences for bivariate precipitation and wind extremes and then applied $k$-medoids.% \citet{Kullback1951}. \todo{Jordan wants ``extreme value distributions fitted to'' added here, but I thought they didn't fit any?}
-% Finally, \emph{spatial} methods target regions or processes with similar spatial tail dependence and often build pairwise tail dissimilarities such as the F-madogram before clustering \citep{Cooley2006variograms, Bernard2013, Rohrbeck2021}.
-Finally, \emph{spatial} methods cluster over entire spatial fields or process realizations.
-They may build pairwise tail dissimilarities such as the F-madogram before clustering \citep{Cooley2006variograms, Bernard2013}, or fit spatially non-stationary extreme value models \citep{Carreau2017, Rohrbeck2021, Dupuis2023}. \todo{are these really spatial, or just expanded univariate?}
 
-\todo{Discuss paragraph with Christian}
-The problem considered herein involves clustering bivariate extremes of precipitation and wind at sites across Ireland.
-We fit a multivariate tail model at each site and then cluster sites by the fitted multivariate tail characteristics, so our method is fundamentally multivariate at each site while remaining applicable to spatial questions.
-In this context, \citet{Vignotto2021} is our main competitor.
+% Clustering (final) 
+% A popular approach to improve interpretability in extremal dependence modelling is clustering, which is an unsupervised learning technique that groups data with similar statistical characteristics \citep{Hastie2009}.
+One widespread approach to improve interpretability for extremal dependence models is clustering, which is an unsupervised learning technique that groups observations by similarity without prior labels \citep{Hastie2009}.
+% We distinguish three types of clustering for extremes across spatial locations. 
+% Clustering has seen widespread use in the extremes literature, where we distinguish three types of clustering for extremes across spatial locations. 
+Clustering is a popular tool in the extremes literature, where data sparsity provides a natural motivation, and we distinguish three types of extremal clustering across spatial locations.
+\emph{Univariate} methods group sites by marginal tail summaries, such as return levels or parameter estimates \citep{Coles2001}, and have been used in environmental and financial applications \citep{Alonso2014-rr, deCarvalho2023, Zheng2023-jf}.
+\emph{Spatial} methods cluster over entire spatial fields or process realizations.
+They may build pairwise tail dissimilarities such as the F-madogram before clustering \citep{Cooley2006variograms, Bernard2013}, or fit spatially non-stationary extreme value models \citep{Carreau2017, Rohrbeck2021, Dupuis2023}. 
+% \emph{Multivariate} methods compare joint tail summaries or fitted multivariate tail models at each site.
+Finally, \emph{multivariate} methods compare joint tail summaries or fitted multivariate tail models at each site, which exactly matches our setting. 
+% A leading nonparametric example was provided by \citet{Vignotto2021}.
+\citet{Vignotto2021} is our main competitor here, also considering bivariate extremes of precipitation and wind speeds at locations in Great Britain and Ireland.
+Their nonparametric approach estimated empirical pairwise Kullback--Leibler ($\KL{}$) divergences for bivariate precipitation and wind extremes and then applied $k$-medoids  \citet{Kullback1951}. % \todo{Jordan wants ``extreme value distributions fitted to'' added here, but I thought they didn't fit any?}
+% Finally, \emph{spatial} methods target regions or processes with similar spatial tail dependence and often build pairwise tail dissimilarities such as the F-madogram before clustering \citep{Cooley2006variograms, Bernard2013, Rohrbeck2021}.
 However, their method has some notable limitations, in that it is restricted to the bivariate case.
+% However, their method is restricted to the bivariate case and the AD regime, which may be limiting both in our application and in applying the method more generally to this class of multivariate clustering problem. 
 Furthermore, being non-parametric, it lacks a generative model for tail dependence inference, and may perform poorly without a large sample size. 
-Also, it is undefined where no joint extreme events are observed, which can occur frequently in practice, and so is unsuitable for applications where AI may be prevalent.
+Also, it is undefined where no joint extreme events are observed, which can occur frequently in practice, and so is unsuitable for applications where AI may be prevalent, which we expect in our motivating example.
+Therefore, this approach may be limiting for our motivating example and across this class of problems, indicating the need for a more flexible and general clustering framework within multivariate extremes.
 
 % Clustering: Motivating our clustering algorithm
 % % While clustering is evidently not novel within extremes, we hope to identify some opportunities to adapt some of the existing methods in the field to the CE model, which has not yet been explored in the content of clustering.
@@ -604,8 +639,11 @@ Also, it is undefined where no joint extreme events are observed, which can occu
 
 % Clustering: Motivating our clustering algorithm
 % Our method performs clustering of multivariate extremes using the CE model.
-In this paper we perform clustering using the CE model. 
-This enables parametric exploration of tail dependence structures in arbitrary dimensions, in contrast to the existing non-parametric approach of \citet{Vignotto2021}.
+% In this paper we perform clustering using the CE model. 
+% To improve on existing approaches, we develop a novel clustering framework based on the CE model, which has hitherto not been explored. 
+In this paper, we seek to address the limitations of existing methods by developing a clustering framework based on the CE model, which has hitherto not been explored.
+% This will allow us to flexibly capture tail dependence in arbitrary dimensions, while overcoming 
+This enables flexible, parametric exploration of tail dependence structures in arbitrary dimension, in contrast to the existing non-parametric approach of \citet{Vignotto2021}, while also overcoming the data sparsity issues often associated with drawing interpretations from the CE model.
 % The Gaussian working assumption in the CE model allows for a simple, closed form divergence measure upon which to base our clustering framework.
 % Using the working conditional Gaussianity assumption of \citet{Heffernan2004} for estimating the CE model, we define a simple, closed-form divergence measure for multivariate extremes which permits clustering.
 Using the working conditional Gaussian assumption of \citet{Heffernan2004} for estimating the CE model, we define a closed-form divergence measure for CE models which permits clustering.
@@ -1242,7 +1280,7 @@ Aggregating allows us to pool information across multiple comparisons and forms 
 
 % Using Equation~\eqref{eq:jsga_integral}, we can now contruct a dissimilarity measure to compare two conditional distributions, representing our pairwise ``distances'' between sites. 
 % Using Equation~\eqref{eq:jsga_integral}, we can now construct a dissimilarity matrix $M_i$ (Equation~\eqref{eq:distance_matrix}) or an aggregated dissimilarity matrix $\bar{M}$ (Equation~\eqref{eq:aggregate_matrix}), to compare the conditional distributions at each pair of sites, representing our pairwise ``distances'' between sites for a given conditioning variable $Y_i$ or aggregated across multiple conditioning variables, respectively.
-We peform clustering using the matrix $M_i$, or the aggregated matrix $\bar{M}$, defined in Equations~\eqref{eq:distance_matrix} and \eqref{eq:aggregate_matrix}, respectively.
+We perform clustering using the matrix $M_i$, or the aggregated matrix $\bar{M}$, defined in Equations~\eqref{eq:distance_matrix} and \eqref{eq:aggregate_matrix}, respectively.
 % We can also aggregate these distances across multiple conditioning variables to pool information across multiple comparisons. 
 % PAM (K-means not suitable as clusters cannot be assumed to be spherical) (see
 % Vignotto)
@@ -1838,8 +1876,6 @@ In Section~\ref{subsec:app_ce}, we fit the CE model to the data, and in Section~
    ~\label{fig:chi}
 \end{figure}
 
-
-
 % We consider the joint extremal behaviour of precipitation and wind speeds at 59 sites across the Republic of Ireland from 1990 to 2020, inclusive.
 We analyse the joint extremal behaviour of precipitation and wind speed at 59 sites across the Republic of Ireland from 1990 to 2020. 
 % The data we have performed our clustering on is precipitation data for the Republic of Ireland, collected from the Met Éireann website at \citet{metHistoricalData}, and wind speed data from the ERA5 Reanalysis dataset at \citet{Hersbach2020}, corresponding to the closest grid point to each location.
@@ -1847,7 +1883,7 @@ We analyse the joint extremal behaviour of precipitation and wind speed at 59 si
 Precipitation data were obtained from the Met Éireann archive (accessed 2024-09-01), and wind speed data from the ERA5 Reanalysis dataset \citep{Hersbach2020, metHistoricalData}. 
 % ERA5 provides averages over a gridded box of $0.25^{\circ} \times 0.25^{\circ}$, so each site will lie within a grid cell, to which the wind speed data corresponds.
 ERA5 provides spatial averages on a $0.25^{\circ} \times 0.25^{\circ}$ grid, and each site was matched to the grid cell in which it lies. 
-Both datasets are available at daily resolution.
+Both datasets are available at daily resolution. \todo{Check about ERA5, available at hourly resolution right?} \todo{Also elevation data comes from ERA5}
 % These data span the dates 1990-01-01 to 2020-12-31, totalling 11,323 days of consecutive precipitation readings. 
 The dataset spans 11,323 consecutive days of observations between 1990-01-01 and 2020-12-31. 
 % , taking the closest grid cell corresponding to each precipitation measurement location.
@@ -1911,7 +1947,6 @@ Kilcar in Donegal has a relatively low $\chi$ value despite its west-coast locat
 The latter may be related to the influence of the Wicklow Mountains, as reflected in the elevation profile. 
 It may be of interest to investigate if these outliers in $\chi$ are reflected in the CE model parameters, and whether clustering can help identify them.
 
-
 \subsection{Conditional extremes model}~\label{subsec:app_ce}
 
 % Procedure and results pre-clustering (choice of quantile)
@@ -1921,11 +1956,12 @@ We transform precipitation and wind speed data at each location to Laplace margi
 % % Using the bootstrapping scheme of \citet{Heffernan2004}, we estimated the CE model parameters $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$ at various quantiles. \todo{Sufficient reference to bootstrapping scheme?}
 % Using the bootstrapping scheme of \citet{Heffernan2004}, we estimated the CE model parameters $\alpha$ and $\beta$ at various quantiles. \todo{Sufficient reference to bootstrapping scheme?}
 % The CE model was then fitted to the transformed data, and parameter estimates $(\alpha, \beta)$ were obtained at various quantiles using the bootstrap procedure of \citet{Heffernan2004}.  
-In order to select an appropriate quantile for fitting the CE model, we estimated the parameters $(\alpha, \beta)$ at various quantiles using the bootstrap procedure of \citet{Heffernan2004}.
+\todo{Christian: Check that brief description of bootstrapping for choosing quantile is sufficient}
+In order to select an appropriate quantile for fitting the CE model, we estimated the parameters $(\alpha, \beta)$ at various quantile levels using the bootstrap procedure of \citet{Heffernan2004}. 
 The idea was to identify the highest quantile at which parameter estimates remained stable, balancing extremity and stability.
 % This revealed that estimates in general were quite stable up to the 88th quantile.  \todo{Need to expand with more details, could include plots in Appendix?}
-Estimates were generally stable up to the 85th quantile, with similar maximum likelihood estimates for $(\alpha, \beta)$. % and clustering solutions obtained when using the 85th quantile were quite similar to higher quantiles.
-Therefore, we chose to fit the CE model at the 85th quantile.
+Estimates were generally stable for both models, i.e.\ precipitation conditional on wind speed and vice versa, up to the 85th quantile, with similar maximum likelihood estimates across bootstrap samples for $(\alpha, \beta)$. % and clustering solutions obtained when using the 85th quantile were quite similar to higher quantiles.
+Therefore, the 85th quantile was used for subsequent analysis for both models.
 In Section~\ref{app_clust} and Figure~\ref{fig:clust_sens}, we show that clustering solutions are also quite robust to the choice of quantile between the 85th, 88th and 90th quantiles, and so this choice does not have a major impact on results.
 % Clustering sensitivity to the choice of quantile is discussed further in Section~\ref{subsec:app_clust}, surrounding Figure~\ref{fig:clust_sens}.
 
@@ -1939,7 +1975,7 @@ The estimated CE parameters at the 85th quantile for both variables are displaye
 Although interpretation is challenging due to variability in the estimates, we observe some evidence of increasing $\alpha$ values for both variables towards the West and particularly in the South.  
 % Several $\beta^{(\CE{})}$ values are negative, which is unexpected, and perhaps suggests non-identifiability in the CE regression model. 
 % Several $\beta$ values are negative, which is unexpected, and perhaps suggests non-identifiability in the CE regression model. 
-Several $\beta$ estimates are negative, which is unexpected and may reflect non-identifiability in the CE regression model, or problems with data. \todo{Need to comment on more, in subsequent analyses should these be constrained to be non-negative?}
+Several $\beta$ estimates are negative, which is unexpected and may reflect non-identifiability in the CE regression model, or problems with data. 
 % \item It appears that high uncertainty is making interpretation difficult, and so we will cluster the locations based on their CE parameters, to aid in interpretation.
 % We will cluster the locations based on their CE parameters, to help improve the interpretation of CE results.
 To mitigate this uncertainty and aid interpretation, we next cluster the locations based on their estimated CE parameters.  
@@ -1957,14 +1993,16 @@ To mitigate this uncertainty and aid interpretation, we next cluster the locatio
 % Clustering (including choice of k for each measure)
 % We clustered the locations using the $\JSGa{}$ dissimilarity matrix for their CE parameters, as described in Section~\ref{subsec:div}, for the CE models fit to precipitation conditional on extreme wind speed and vice versa, separately. 
 % We clustered the locations using the $\JSGa{}$ dissimilarity matrix of their CE parameter estimates, as described in Section~\ref{subsec:div}, for the CE models fitted to precipitation conditional on extreme wind speed and vice versa, separately.
-We clustered the locations using the integral form of the $\JSGa{}$ dissimilarity matrix, as described in Equation~\ref{eq:jsga_integral} in Section~\ref{subsec:div}, for the CE models fitted to precipitation conditional on extreme wind speed and vice versa, separately.
+% We clustered the locations using the integral form of the $\JSGa{}$ dissimilarity matrix, as described in Equation~\ref{eq:jsga_integral} in Section~\ref{subsec:div}, for the CE models fitted to precipitation conditional on extreme wind speed and vice versa, separately.
+\todo{Could be worded better}
+We clustered the locations using the $\eJSGa{}$ dissimilarity matrix, as defined in Equation~\ref{eq:jsga_integral} and Equation~\ref{eq:distance_matrix} for the CE models fitted to precipitation conditional on extreme wind speed and vice versa, separately.
 % We also combine information from both models to cluster by summing their dissimilarity matrices.
 We also considered a combined solution by averaging over the two dissimilarity matrices.
 The number of clusters $k$ was chosen via the method described in Section~\ref{subsubsec:choose_k}, using the elbow plot of the TWGSS. 
 For all three clustering solutions, clear elbows were observed at $k = 3$, so this was the number of clusters chosen \todo{Include plots in Appendix?}.
 
 % Our clustering solutions for each of the three dissimilarity matrices at the 85th quantile are shown in Figure \ref{fig:clust_sol}.
-The resulting clustering solutions for the 88th quantile are displayed in Figure~\ref{fig:clust_sol}.  
+The resulting clustering solutions for the 85th quantile are displayed in Figure~\ref{fig:clust_sol}.  
 % Clustering appears to be quite similar across dissimilarity matrices, and the three clusters appear to be quite spatially distinct. 
 Across all three dissimilarity matrices, the clusterings are broadly consistent, with three spatially distinct groups emerging.  
 % This is interesting given no spatial information was used in the clustering, and suggests that the CE model parameters are indeed capturing some spatial structure in the data.
@@ -1985,7 +2023,7 @@ It could also reflect the use of ERA5 reanalysis data for wind speed, which is k
 \begin{figure}[h]
     \centering
     \includegraphics[width = 0.9\linewidth]{plots/cluster_dqu_sep_new_crop.png}
-    \caption{\emph{Clustering solutions for the conditional extremes model parameters estimated at the 88th quantile across all 59 sites, using the $\JSGa{}$ dissimilarity matrix for wind speed conditional on precipitation (centre), precipitation conditional on wind speed (right), and the combined dissimilarity matrix (left). The clusters are shown in different colours.}}
+    \caption{\emph{Clustering solutions for the conditional extremes model parameters estimated at the 85th quantile across all 59 sites, using the $\JSGa{}$ dissimilarity matrix for wind speed conditional on precipitation (centre), precipitation conditional on wind speed (right), and the combined dissimilarity matrix (left). The clusters are shown in different colours.}}
    ~\label{fig:clust_sol}
 \end{figure}
 
@@ -2008,7 +2046,8 @@ In constrast, the western and central clusters seem to be quite close, in that w
 This indicates that allocation between the two is not always clear-cut and for several sites is nearly interchangeable, as observed in  the variable-specific clustering solutions in Figure~\ref{fig:clust_sol} and in the quantile sensitivity analysis in Figure~\ref{fig:clust_sens}, where membership between the two often switches. \todo{Mention specific sites}
 Also, if we only fit two clusters, we find that most of the central cluster members are assigned to the ``western'' cluster, reflecting this less obvious separation between the two compared to the more markedly different eastern cluster. 
 A noticeable outlier in the dissimilarity matrix is the site at Malahide Castle, which is located in Dublin, which even amongst its own cluster has a relatively high dissimilarity to the other sites.
-Furthermore, if we go to having four clusters, Malahide Castle becomes the only member of the new cluster, and so it is quite distinct from the other sites.
+% Furthermore, we go to having four clusters, Malahide Castle becomes the only member of the new cluster, and so it is quite distinct from the other sites.
+Furthermore, if we set $k=4$, Malahide Castle becomes its own cluster, and so it is quite distinct from the other sites.
 % This site also has the distinction of having the lowest mean weekly precipitation, and the second lowest maximum wind speed, of all sites in our dataset, which may explain its outlying behaviour, even amongst the eastern cluster, which is generally characterised by lower $\alpha^{(\CE{})}$ estimates and $\chi$ values. 
 \todo{Mention Ringsend is next driest area }
 % Malahide Castle has the lowest mean weekly precipitation of any site, with the second lowest being in Ringsend, which is closest in terms of $\JSGa{}$ to Malahide, which may explain its outlying behaviour, even amongst the eastern cluster, in that rainfall extremes and consequently concomitant extremes are less likely to occur, as shown by its low $\chi$ and $\alpha^{(\CE{})}$ estimates.
@@ -2026,7 +2065,7 @@ We also see that Kilcar in county Donegal, which had a low $\chi$ value relative
 % Sensitivity Analysis (to choice of DQU)
 Another interesting aspect of our clustering method is its robustness to the choice of quantile.
 We performed a sensitivity analysis of the clustering solution to the choice of quantile, using the 85th, 88th and 90th quantiles, the results of which are shown in Figure~\ref{fig:clust_sens}.
-The clustering solutions are clearly quite similar across the three quantiles.
+The clustering solutions are quite similar across the three quantiles.
 There are some small differences, however. 
 Noticeably, Kilcar in county Donegal is assigned to the eastern cluster for the 85th and 90th quantile, but to the central cluster for the 88th quantile.
 % Also, Costelloe Fishery in county Galway is assigned to the wester cluster for the 85th quantile, but to the central cluster for the 88th and 90th quantiles.
@@ -2073,6 +2112,7 @@ Interpreting these results is much easier post-clustering. \todo{More detail her
 \section{Discussion}~\label{sec:discuss}
 
 % Points to consider
+\todo{Talk about how subsequent analyses should constrain parameters to be non-negative?}
 \todo{Say something about $\alpha$!}
 \todo{Laplace truncation: how truncation point may lead to errors in severly unbalanced data (empirical quantile > sitewise maxima)}
 \todo{Mention mim(maxima) approach as alternative if extrapolation occurs at any site}

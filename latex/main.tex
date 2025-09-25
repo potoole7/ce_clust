@@ -398,7 +398,7 @@ Many classical models and clustering frameworks assume AD \citep{Vignotto2021,Bo
 We consider a setting with $D$ random vectors of the same dimension, but with potentially different joint tail behaviours. 
 For instance, we may observe a set of environmental variables (e.g.\ rainfall and wind speed) at a fixed number of spatial sites; see Section~\ref{sec:application}.
 Interest then lies in understanding the variation in tail behaviour across the $D$ vectors, and, where feasible, to pool information to reduce model uncertainty. 
-However, we often have limited knowledge on which random vectors exhibit a similar tail behaviour.
+However, we often have limited knowledge on which random vectors exhibit similar tail behaviour.
 In this paper, we present a new method for identifying groups of random vectors with similar tail behaviour based on the conditional extremes (CE) approach by \citet{Heffernan2004}, which is a popular model for multivariate extremes.
 
 % % Conditional extremes
@@ -2059,33 +2059,33 @@ Interestingly, some of these sites are then moved back to the western cluster fo
 Apart from these observations, the clustering solutions are generally quite similar across the three quantiles, and so we can conclude that our clustering method is relatively robust to the choice of quantile, as desired. 
 
 % Results and interpretation post-clustering
-\todo{Write again to make clearer/tighter}
-\todo{Use hat(alpha) rather than alpha (and beta)?}
-Taking the clustering results for the combined dissimilarity matrices, we can combine the data from the three clusters to estimate the CE model parameters for each cluster.
-Specifically, across each cluster, we take the weekly sum of precipitation and weekly maxima of wind speeds across all locations, and assign these to the cluster centroids/medoids.
-We then refit the CE model to these cluster centroids, again at the 88th quantile, although results for other quantile levels are similar. 
-Goodness-of-fit plots, exploring the assumption of independence between the residuals and variable conditioned on, were much improved post-clustering. \todo{Include? Appendix?}
-The estimated CE parameters for each cluster are shown in figure \ref{fig:ce_post_clust}.
-% For precipitation conditional on wind speed, $\alpha^{(\CE{})}$ gets progressively larger as we move from the eastern to western clusters, indicating that the dependence structure is stronger in the west, as expected.
-% For precipitation conditional on wind speed, $\alpha^{(\CE{})}$ gets progressively larger as we move from the eastern to western clusters, indicating that the dependence structure is stronger in the west, as expected.
-For precipitation conditional on wind speed, $\alpha$ gets progressively larger as we move from the eastern to western clusters, indicating that the dependence structure is stronger in the west, as expected.
-% Interestingly, the opposite is true for wind speed conditional on precipitation, whereby $\alpha^{(\CE{})}$ gets larger moving from west to east. \todo{Insert a good interpretation here!}
-Interestingly, the opposite is true for wind speed conditional on precipitation, whereby $\alpha$ gets larger moving from west to east. \todo{Insert a good interpretation here!}
-% For both models, $\beta^{(\CE{})}$ is much larger for the coastal clusters than the central cluster.
-For both models, $\beta$ is much larger for the coastal clusters than the central cluster.
-This suggests that the ``spread'' of the conditional distribution is larger for the coastal clusters, and greater homoskedasticity is present in the central cluster.
-This is likely because weather patterns are more consistent inland than along the coasts, where the weather is more variable.
-Interpreting these results is much easier post-clustering. \todo{More detail here!}
-
-\todo{Switch to using hat for estimates?}
-\begin{figure}[h]
-    \centering
-    % \includegraphics[width = 0.9\linewidth]{plots/ab_map_post_clust.png}
-    \includegraphics[width = 0.9\linewidth]{plots/ab_map_post_clust_new.png}
-    % \caption{\emph{Estimated conditional extremes model parameters $\alpha^{(\CE{})}$ and $\beta{(\CE{})}$ for precipitation conditional on wind speed (left) and wind speed conditional on precipitation (right), estimated at the 88th quantile, post-clustering. The $\alpha^{(\CE{})}$ parameter is shown in the top row, and $\beta^{(\CE{})}$ in the bottom row. The colour scale is the same for both variables, with darker red indicating larger positive values of $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$, and darker blue indicating larger negative values.}}
-    \caption{\emph{Estimated conditional extremes model parameters $\alpha$ and $\beta{(\CE{})}$ for precipitation conditional on wind speed (left) and wind speed conditional on precipitation (right), estimated at the 88th quantile, post-clustering. The $\alpha$ parameter is shown in the top row, and $\beta$ in the bottom row. The colour scale is the same for both variables, with darker red indicating larger positive values of $\alpha$ and $\beta$, and darker blue indicating larger negative values.}}
-   ~\label{fig:ce_post_clust}
-\end{figure}
+% \todo{Write again to make clearer/tighter}
+% \todo{Use hat(alpha) rather than alpha (and beta)?}
+% Taking the clustering results for the combined dissimilarity matrices, we can combine the data from the three clusters to estimate the CE model parameters for each cluster.
+% Specifically, across each cluster, we take the weekly sum of precipitation and weekly maxima of wind speeds across all locations, and assign these to the cluster centroids/medoids.
+% We then refit the CE model to these cluster centroids, again at the 88th quantile, although results for other quantile levels are similar. 
+% Goodness-of-fit plots, exploring the assumption of independence between the residuals and variable conditioned on, were much improved post-clustering. \todo{Include? Appendix?}
+% The estimated CE parameters for each cluster are shown in Figure \ref{fig:ce_post_clust}.
+% % For precipitation conditional on wind speed, $\alpha^{(\CE{})}$ gets progressively larger as we move from the eastern to western clusters, indicating that the dependence structure is stronger in the west, as expected.
+% % For precipitation conditional on wind speed, $\alpha^{(\CE{})}$ gets progressively larger as we move from the eastern to western clusters, indicating that the dependence structure is stronger in the west, as expected.
+% For precipitation conditional on wind speed, $\alpha$ gets progressively larger as we move from the eastern to western clusters, indicating that the dependence structure is stronger in the west, as expected.
+% % Interestingly, the opposite is true for wind speed conditional on precipitation, whereby $\alpha^{(\CE{})}$ gets larger moving from west to east. \todo{Insert a good interpretation here!}
+% Interestingly, the opposite is true for wind speed conditional on precipitation, whereby $\alpha$ gets larger moving from west to east. \todo{Insert a good interpretation here!}
+% % For both models, $\beta^{(\CE{})}$ is much larger for the coastal clusters than the central cluster.
+% For both models, $\beta$ is much larger for the coastal clusters than the central cluster.
+% This suggests that the ``spread'' of the conditional distribution is larger for the coastal clusters, and greater homoskedasticity is present in the central cluster.
+% This is likely because weather patterns are more consistent inland than along the coasts, where the weather is more variable.
+% Interpreting these results is much easier post-clustering. \todo{More detail here!}
+% 
+% \todo{Switch to using hat for estimates?}
+% \begin{figure}[h]
+%     \centering
+%     % \includegraphics[width = 0.9\linewidth]{plots/ab_map_post_clust.png}
+%     \includegraphics[width = 0.9\linewidth]{plots/ab_map_post_clust_new.png}
+%     % \caption{\emph{Estimated conditional extremes model parameters $\alpha^{(\CE{})}$ and $\beta{(\CE{})}$ for precipitation conditional on wind speed (left) and wind speed conditional on precipitation (right), estimated at the 88th quantile, post-clustering. The $\alpha^{(\CE{})}$ parameter is shown in the top row, and $\beta^{(\CE{})}$ in the bottom row. The colour scale is the same for both variables, with darker red indicating larger positive values of $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$, and darker blue indicating larger negative values.}}
+%     \caption{\emph{Estimated conditional extremes model parameters $\alpha$ and $\beta{(\CE{})}$ for precipitation conditional on wind speed (left) and wind speed conditional on precipitation (right), estimated at the 88th quantile, post-clustering. The $\alpha$ parameter is shown in the top row, and $\beta$ in the bottom row. The colour scale is the same for both variables, with darker red indicating larger positive values of $\alpha$ and $\beta$, and darker blue indicating larger negative values.}}
+%    ~\label{fig:ce_post_clust}
+% \end{figure}
 
 % \subsection{US urban air pollution data}~\label{subsec:app_us}
 % 

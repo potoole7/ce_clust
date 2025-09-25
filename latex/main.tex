@@ -386,40 +386,20 @@ Although \(\chi\) is a useful pairwise summary, it does not fully characterise m
 Many classical models and clustering frameworks assume AD \citep{Vignotto2021,Boulin2025}, but a growing literature argues that environmental data often exhibit AI and that AD models can be inappropriate in such contexts \citep{Opitz2016,Dawkins2018,Huser2024}. 
 
 % Introduction to motivating example
-% Link to previous paragraph
-% To illustrate the problem of multivariate observations indexed in space, we consider the motivating example of bivariate precipitation and wind-speed data from a network of meteorological stations in Ireland \citep{Hersbach2020, metHistoricalData}. 
-% To illustrate the setting of multivariate observations indexed in space, we consider the motivating example of bivariate precipitation and wind-speed data from a network of meteorological stations in Ireland \citep{Hersbach2020, metHistoricalData}. 
-As a practical motivating example of multivariate observations indexed in space, we consider bivariate precipitation and wind-speed data from a network of 59 meteorological stations in the Republic of Ireland, recorded over the period 1990-2020 \citep{Hersbach2020, metHistoricalData}.
-% To illustrate this setting, we consider a motivating example of bivariate precipitation and wind-speed data from a network of meteorological stations in Ireland \citep{Hersbach2020, metHistoricalData}.
-% We consider a motivating example of bivariate precipitation and wind-speed data from a network of meteorological stations in Ireland, to illustrate the setting of multivariate observations indexed by space \citep{Hersbach2020, metHistoricalData}.
-% Why setting is important:
-% Capturing concomitant extreme precipitation and wind speed events is crucial for assessing the compounding risk of flood and wind-damage risk and for informing infrastructure planning and insurance pricing \citep{Martius2016}. % and emergency services
-% We want to understand how the joint tail behaviour of precipitation and wind speed varies spatially. 
-% \citet{Vignotto2021} identified spatial variation in the tail dependence structure of extreme precipitation and wind speed between the western and eastern regions of Ireland. 
-% In modelling tail dependence between precipitation and wind speed, capturing spatial variation and identifying regions or groups of sites with similar characteristics is of particular interest
-% Capturing spatial variation and identifying regions or groups of sites with similar tail dependence characteristics is crucial for assessing compounding localised flood and wind damage risk, and for informing infrastructure planning, emergency services allocation and insurance pricing \citep{Martius2016}. % and emergency services
-Particular interest lies in how the joint tail behaviour of precipitation and wind speed varies spatially, and in identifying regions or groups of sites with similar tail characteristics.
-Capturing these patterns is crucial for assessing the compounding risks of localised flood and wind damage, for example during Atlantic storms. 
-This can inform infrastructure planning, emergency services allocation and insurance pricing \citep{Martius2016}. % and emergency services
-% \citet{Vignotto2021} identified spatial heterogeneity in the tail dependence structure of extreme precipitation and wind speed between the western and eastern regions of Ireland, but theirs and other approaches assume AD \citep{Boulin2025}, which 
-% \citet{Vignotto2021} suggests that the western and eastern regions of Ireland exhibit notably different tail dependence between precipitation and wind speed.
-\citet{Vignotto2021} report notable east-west differences in tail dependence between precipitation and wind in Ireland.
-% However, their approach and other existing methods (e.g. \citet{Boulin2025}) assume AD, which may be restrictive here.
-% However, theirs and other approaches (e.g. \citet{Boulin2025}) assume AD, which may be restrictive in the case of precipitation and wind speed,  are known to exhibit both AD and AI characteristics, \citep{Dawkins2018, Huser2024}.
-However, theirs and other approaches (e.g.\ \citet{Boulin2025}) may be too restrictive in assuming AD, as both precipitation and wind speed are known to exhibit AD and AI characteristics \citep{Dawkins2018, Huser2024}.
-Hence, there is need for a more flexible modelling approach to reveal additional insights.
-% However, theirs and other approaches assume AD \citep{Boulin2025}, which may be limiting in this context. 
-% However, theirs and other approaches to this problem such as \citet{Boulin2025} assume AD, which may be limiting in this context, and so a more flexible modelling approach is desired. 
-% Precipitation and wind speed are known to exhibit both AD and AI characteristics, and so a flexible modelling approach is required \citep{Dawkins2018, Huser2024}.
-% Modelling tail dependence flexibly and capturing spatial variation is crucial for assessing the compounding risk of flood and wind damage, and for informing infrastructure planning and insurance pricing \citep{Martius2016}. % and emergency services
-% The spatial variation in the joint tail behaviour of precipitation and wind speed is of particular interest. % , as their concomitant extremal occurrence can substantially increase risks to infrastructure, flooding and insurance losses \citep{Martius2016}.
-% Identifying regions or groups of sites with similar tail dependence characteristics can help to understand meteorological patterns and to inform infrastructure planning, emergency service allocation and insurance pricing \citep{Martius2016}. 
-% We want to identify regions or groups of sites with similar tail dependence characteristics, which can help to understand meteorological patterns and to inform infrastructure planning, emergency service allocation and insurance pricing \citep{Martius2016}.
-% \citet{Vignotto2021} identified spatial variation in the tail dependence structure of extreme precipitation and wind speed between the western and eastern regions of Ireland. 
-% To capture and understand the complex 
-% Heavy rainfall and strong winds frequently co-occur during Atlantic storms, and their joint occurrence can substantially increase risks to infrastructure, flooding and insurance losses; consequently, an accurate description of the joint tail behaviour is crucial for reliable risk assessment. 
-% The Ireland dataset therefore provides a natural testbed for methods that must distinguish asymptotic dependence from independence and that must flexibly model spatially and directionally varying tail structure. 
-% In the sections that follow we use this motivating example to compare clustering approaches and to demonstrate how our proposed conditional-extremes (CE) clustering method improves inference on joint exceedance probabilities and on interpretable groups of sites/variables.
+% % Link to previous paragraph
+% As a practical motivating example of multivariate observations indexed in space, we consider bivariate precipitation and wind-speed data from a network of 59 meteorological stations in the Republic of Ireland, recorded over the period 1990-2020 \citep{Hersbach2020, metHistoricalData}.
+% % Why setting is important:
+% Particular interest lies in how the joint tail behaviour of precipitation and wind speed varies spatially, and in identifying regions or groups of sites with similar tail characteristics.
+% Capturing these patterns is crucial for assessing the compounding risks of localised flood and wind damage, for example during Atlantic storms. 
+% This can inform infrastructure planning, emergency services allocation and insurance pricing \citep{Martius2016}. % and emergency services
+% \citet{Vignotto2021} report notable east-west differences in tail dependence between precipitation and wind in Ireland.
+% However, theirs and other approaches (e.g.\ \citet{Boulin2025}) may be too restrictive in assuming AD, as both precipitation and wind speed are known to exhibit AD and AI characteristics \citep{Dawkins2018, Huser2024}.
+% Hence, there is need for a more flexible modelling approach to reveal additional insights.
+We consider a setting with $D$ random vectors of the same dimension, but with potentially different joint tail behaviours. 
+For instance, we may observe a set of environmental variables (e.g.\ rainfall and wind speed) at a fixed number of spatial sites; see Section~\ref{sec:application}.
+Interest then lies in understanding the variation in tail behaviour across the $D$ vectors, and, where feasible, to pool information to reduce model uncertainty. 
+However, we often have limited knowledge on which random vectors exhibit a similar tail behaviour.
+In this paper, we present a new method for identifying groups of random vectors with similar tail behaviour based on the conditional extremes (CE) approach by \citet{Heffernan2004}, which is a popular model for multivariate extremes.
 
 % % Conditional extremes
 % % \item One such model is the CE model, which combines a univariate Generalised Pareto Distribution (GPD) and a semiparametric regression dependence model \cite{Heffernan2004}. \todo{Don't emphasise GPD, not used below}
@@ -448,7 +428,7 @@ Hence, there is need for a more flexible modelling approach to reveal additional
 % However, like many other models for multivariate extremes, the CE model can be difficult to use for identifying patterns in tail dependence due to the sparsity of joint extreme observations, particularly in high dimensions.
 
 % Conditional Extremes
-A popular model for multivariate extremes which fulfils this criterion is the Conditional Extremes (CE) model of \citet{Heffernan2004}. %, which can flexibly capture both AD and AI regimes and is conceptually simple and computationally efficient.
+% A popular model for multivariate extremes which fulfils this criterion is the Conditional Extremes (CE) model of \citet{Heffernan2004}. %, which can flexibly capture both AD and AI regimes and is conceptually simple and computationally efficient.
 % The Conditional extremes (CE) model of \citet{Heffernan2004} describes the tail behaviour of a random vector \emph{conditional} on one of its components exceeding a suitably high threshold.
 The CE model describes the tail behaviour of a random vector \emph{conditional} on one of its components exceeding a suitably high threshold.
 % It provides a flexible framework which can capture both AD and AI patterns. % , and other complex extremal dependence patterns. 
@@ -458,7 +438,9 @@ This framework can flexibly capture both AD and AI patterns, and is both concept
 Spatio-temporal extensions and single-site conditioning methods have been developed to handle high-dimensional settings \citep{Simpson2021, Wadsworth2022}, and adaptations that incorporate covariates, hierarchical structure, and mixture or random-scale constructions further increase the models flexibility \citep{Tawn2018, Richards2023, Tendijck2023}. 
 As a result, CE models have been applied across a broad range of environmental problems, where AI as well as AD may be prevalent, including modelling river flow and flood risk \citep{Gilleland2013, Jane2020}, rainfall extremes \citep{Richards2022}, sea-surface temperature extremes \citep{Simpson2023,Kakampakou2024}, and heatwaves \citep{Winter2016}, and so are well suited to this class of problems and our motivating example.
 % Despite these strengths, sparsity of joint extremes, particularly in high dimensions, can make pattern discovery and interpretation difficult.
-However, the sparsity of joint extreme observations, particularly in high dimensions, can make pattern discovery and interpretation using the CE model difficult, which requires further addressing to fully exploit its potential.
+% However, the sparsity of joint extreme observations, particularly in high dimensions, can make pattern discovery and interpretation using the CE model difficult, which requires further addressing to fully exploit its potential.
+However, the sparsity of joint extreme observations, particularly in high dimensions, and the number of model parameters often results in CE model estimates being highly uncertain. 
+As such, it is difficult to visually compare CE models.
 
 % % Clustering: introduction + motivation
 % \todo{Combine with next paragraph}
@@ -608,7 +590,9 @@ However, the sparsity of joint extreme observations, particularly in high dimens
 
 % Clustering (final) 
 % A popular approach to improve interpretability in extremal dependence modelling is clustering, which is an unsupervised learning technique that groups data with similar statistical characteristics \citep{Hastie2009}.
-One widespread approach to improve interpretability for extremal dependence models is clustering, which is an unsupervised learning technique that groups observations by similarity without prior labels \citep{Hastie2009}.
+% One widespread approach to improve interpretability for extremal dependence models is clustering, which is an unsupervised learning technique that groups observations by similarity without prior labels \citep{Hastie2009}. \todo{C: Not sure if this is best start. ``Interpretability'' does not really capture the essence}
+% Clustering is an unsupervised learning technique that groups data with similar statistical characteristics \citep{Hastie2009}, reducing data sparsity and model complexity, often leading to more robust inference, reduced parameter uncertainty and simplified interpretation.
+One widespread approach to reduce complexity in extremal dependence models is clustering, which is an unsupervised learning technique that groups observations by similarity without prior labels \citep{Hastie2009}.
 % We distinguish three types of clustering for extremes across spatial locations. 
 % Clustering has seen widespread use in the extremes literature, where we distinguish three types of clustering for extremes across spatial locations. 
 Clustering is a popular tool in the extremes literature, where data sparsity provides a natural motivation, and we distinguish three types of extremal clustering across spatial locations.

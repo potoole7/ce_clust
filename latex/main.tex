@@ -714,7 +714,7 @@ Finally, in Section~\ref{subsec:clustering}, we outline how to perform clusterin
 % One such model which provides a flexible framework for describing tail dependence is the CE model of \citet{Heffernan2004}.
 
 % \subsection{Multivariate conditional extremes}~\label{subsec:ce_model}
-\subsection{The conditional extremes model}~\label{subsec:ce_model}
+\subsection{Multivariate conditional extremes}~\label{subsec:ce_model}
 
 % See Jordan's paper for quick summary (TFR a bit long winded) (and Keef)
 % Need to talk about marginals, transformations and then model itself
@@ -728,9 +728,10 @@ Finally, in Section~\ref{subsec:clustering}, we outline how to perform clusterin
 % Transformation
 % The CE model, like many other models for multivariate extremes, requires a marginal transformation.
 % Standardising to common margins is a widespread technique to ensure differences in variable scale do not affect estimation of the dependence structure. 
-Like many other models for multivariate extremes, the conditional extremes model of \citet{Heffernan2004} is defined on standardised margins, to ensure that differences in variable scale do not affect estimation of the dependence structure.
+% Like many other models for multivariate extremes, the conditional extremes model of \citet{Heffernan2004} is defined on standardised margins, to ensure that differences in variable scale do not affect estimation of the dependence structure.
+Like many other models for extremal dependence (see, e.g.\,~\citet{Davison2015}), the conditional extremes framework of \citet{Heffernan2004} is defined for data on standardised margins, which ensures that differences in marginal scale do not affect estimation of the dependence structure.
 % A popular choice for CE models is Laplace margins, as introduced in \citet{Keef2013}.
-As introduced in \citet{Keef2013}, a popular choice for CE models is transformation to Laplace margins, as it allows for both positive and negative dependence to be modelled.
+As introduced in \citet{Keef2013}, a useful choice of margins for CE models is standard Laplace, as it allows for modelling of both positive and negative dependence.
 % Each marginal random variable $X_i, i = 1, \ldots, d, (X_1, \ldots, X_d) \in \mathbb{R}^d$ is transformed to Laplace margins, as outlined in equation~\eqref{eq:laplace} in Section \ref{subsec:estimation}, and thereafter denoted by $Y_i, \(Y_1, \ldots Y_d\) \in \mathbb{R}^d$. 
 % To transform each marginal random variable $X_i$ to Laplace margins, denoted by $Y_i$, we let:
 % Each marginal random variable $X_i, i = 1, \ldots, d, (X_1, \ldots, X_d) \in \mathbb{R}^d$ is transformed to Laplace margins, thereafter denoted as $Y_i$, using the probability integral transform:
@@ -743,9 +744,10 @@ As introduced in \citet{Keef2013}, a popular choice for CE models is transformat
 %    \end{cases}
 %  \end{equation}
 % \todo{trying to be brief, but would like to have quick line about why we use Laplace!}
-Let $\symbf{X} = (X_1, \ldots, X_d) \in \mathbb{R}^d$ be a $d$-dimensional random vector.
-We apply the probability intergral transformation to obtain a random vector with Laplace margins, denoted by $\symbf{Y} = (Y_1, \ldots, Y_d) \in \mathbb{R}^d$.
-Formally, 
+Let $\symbf{X} \coloneqq (X_1, \ldots, X_d) \in \mathbb{R}^d$ be a $d$-dimensional random vector representing observed data with arbitrary margins. 
+% We apply the probability intergral transformation to obtain a random vector with Laplace margins, denoted by $\symbf{Y} = (Y_1, \ldots, Y_d) \in \mathbb{R}^d$.
+We apply the probability integral transformation to transform $\symbf{X}$ to a random vector with standard Laplace margins, denoted by $\symbf{Y} \coloneqq (Y_1, \ldots, Y_d) \in \mathbb{R}^d$.
+Formally, for $i = 1, \ldots, d$, 
 \begin{equation}~\label{eq:laplace}
   Y_i \coloneqq \begin{cases}
     \log\left\{2F_{X_i}(X_i)\right\}, &\text{ for } X_i < F_{X_i}^{-1}(0.5), \\

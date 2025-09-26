@@ -946,7 +946,7 @@ It follows that
   % \bigl( \symbf{Y}_{-i}(s) \mid Y_i(s)  = y) \sim \mbox{MVN}_{d-1}\left(\symbf{\alpha}_{\mid i}(s) y + y^{\symbf{\beta}_{\mid i}(s)} \symbf{\mu}_{\mid i}(s), y^{\symbf{\beta}_{\mid i}(s)} \Sigma_{\mid i}(s)\right), y > u_i(s),
   % \bigl( \symbf{Y}_{-i}(s) \mid Y_i(s)  = y) \sim \mbox{MVN}_{d-1}\left(\symbf{\alpha}_{\mid i}(s) y + y^{\symbf{\beta}_{\mid i}(s)} \symbf{\mu}_{\mid i}(s), \left(y^{\beta_{\mid i}(s)}\right)^{\mathrm{T}} \Sigma_{\mid i}(s) y^{\beta_{\mid i}(s)} \right), y > u_i(s),
   % \bigl( \symbf{Y}_{-i}(s) \mid Y_i(s)  = y) \sim \mbox{MVN}_{d-1}\left(\mvmean{s}, \mvcov{s}\right), y > u_i,
-  \bigl(\symbf{Y}_{-i, s} \mid Y_{i, s} = y\bigr) \sim \mbox{MVN}_{d-1}\left(\mvmean{s}, \mvcov{s}\right), y > u_{i, s},
+  \bigl(\symbf{Y}_{-i, s} \mid Y_{i, s} = y\bigr) \sim \mbox{MVN}_{d-1}\left(\mvmean{s}, \mvcov{s}\right),\quad y > u_{i, s},
 \end{equation}
 % where $\symbf{\alpha}_{\mid i, s}, \symbf{\beta}_{\mid i, s}, \symbf{\mu}_{\mid i, s}, \Sigma_{\mid i, s}$ are the site-specific parameters of the CE model for the $i^{\text{th}}$ conditioning variable, $i = 1, \ldots, d$. \todo{Already defined alpha, beta, i above?} \todo{is u i correct? Should it be u i s?}
 where $\symbf{\alpha}_{\mid i, s}, \symbf{\beta}_{\mid i, s}, \symbf{\mu}_{\mid i, s}, \Sigma_{\mid i, s}$ are the site-specific parameters for the $i^{\text{th}}$ conditioning variable, $i = 1, \ldots, d$. % \todo{Already defined alpha, beta, i above?} \todo{is u i correct? Should it be u i s?}
@@ -1247,7 +1247,7 @@ Hence, we truncate the limits in integral~\eqref{eq:jsga_integral}, so that the 
 % Matrix
 % We can repeat this procedure for each pair of sites $(s, s^*)$ and for each conditioning variable $Y_i$, to obtain a matrix of pairwise dissimilarities between all sites for each conditioning variable, given by
 We evaluate the pairwise $\eJSGa{s, s^*}$ for all pairs of sites $(s, s^*)$ and for each conditioning variable $i \in \{1, \ldots, d\}$. 
-These are then collected in a dsimmilarity matrix
+These are then collected in a dissimilarity matrix
 % \begin{align*} %\label{eq:distance_matrix}
 % %   % M_i=\left( eJS^{G_\lambda}_i(s || s^*)\right)_{s, s^* \in \{s_1,\dots,s_D\}},
 %   % M_i=\left(\eJSGa{}(y; s\Vert s^*)\right)_{s, s^* \in \{s_1,\dots,s_D\}},
@@ -1257,7 +1257,7 @@ These are then collected in a dsimmilarity matrix
 %   M^{(i)}_{s, s^*} &= \eJSGa{s, s^*},
 % \end{align*}
 \begin{equation} %\label{eq:distance_matrix}
-  M^{(i)} \coloneq \left( eJSGa{s, s^*} \right)_{s, s^* = \{1, \ldots, D\}},
+  M^{(i)} \coloneq \left(\eJSGa{s, s^*} \right)_{s, s^* = \{1, \ldots, D\}},
 \end{equation}
 % where $D$ is the total number of sites.
 % where $D$ is the total number of sites, and $M^{(i)}_{s, s^*}$ is the dissimilarity between sites $s$ and $s^*$ for conditioning variable $Y_i$. \todo{Should I say cond var Yi or just i? Throughout}
@@ -1313,6 +1313,27 @@ Assuming we use the dissimilarity matrix $M^{(i)}$, a brief description of the a
 % \end{itemize}
 \todo{Need to replace j?}
 \todo{fix argmin}
+% \begin{algorithm}[H]
+%   \caption{k-medoids (PAM)}
+%   \label{alg:kmedoids_kappa}
+%   \begin{algorithmic}[1]
+%     \State \textbf{Input:} dissimilarity matrix $M^{(i)}\in\mathbb{R}^{D\times D}$, number of clusters $k$
+%     \State \textbf{Output:} Cluster assignments $C_1,\dots,C_k$ and medoid indices $\boldsymbol{\kappa}=(\kappa_1,\dots,\kappa_k)$
+%     \State \textbf{Initialise:} choose $k$ distinct medoid indices $\{\kappa_1,\dots,\kappa_k\}\subseteq\{1,\dots,D\}$ uniformly at random.
+%     \Repeat
+%       \State \textbf{Assignment:} \parbox[t]{.82\linewidth}{\raggedright Assign each observation $s\in\{1,\dots,D\}$ to its closest medoid, i.e.\
+%       $j \coloneq \argmin_{\ell\in\{1,\dots,k\}} \eJSGa{s,\kappa_\ell}$ and assign $s$ to $C_j$.}
+%       \For{$j=1,\dots,k$}
+%         \State \textbf{Update:} \parbox[t]{.82\linewidth}{\raggedright Update medoid index to minimise intracluster dissimilarity 
+%       \[
+%         \kappa_j \coloneq \argmin_{p\in C_j}\sum_{q\in C_j} \eJSGa{p,q}$.
+%       \]
+%         \State \Comment{Break ties by choosing the smallest index.}
+%       \EndFor
+%     \Until{no observation changes cluster assignment}
+%     \State \Return $C_1,\dots,C_k,\ \boldsymbol{\kappa}$
+%   \end{algorithmic}
+% \end{algorithm}
 \begin{algorithm}[H]
   \caption{k-medoids (PAM)}
   \label{alg:kmedoids_kappa}
@@ -1321,83 +1342,15 @@ Assuming we use the dissimilarity matrix $M^{(i)}$, a brief description of the a
     \State \textbf{Output:} Cluster assignments $C_1,\dots,C_k$ and medoid indices $\boldsymbol{\kappa}=(\kappa_1,\dots,\kappa_k)$
     \State \textbf{Initialise:} choose $k$ distinct medoid indices $\{\kappa_1,\dots,\kappa_k\}\subseteq\{1,\dots,D\}$ uniformly at random.
     \Repeat
-      \State \textbf{Assignment:} \parbox[t]{.82\linewidth}{\raggedright Assign each observation $s\in\{1,\dots,D\}$ to its closest medoid, i.e.\
-      $j \coloneq \argmin_{\ell\in\{1,\dots,k\}} \eJSGa{s,\kappa_\ell}$ and assign $s$ to $C_j$.}
+    \State \textbf{Assignment:} \parbox[t]{.82\linewidth}{\raggedright Assign each observation $s\in\{1,\dots,D\}$ to its closest medoid in terms of $\eJSGa{}$ (see Equation~\eqref{eq:jsga_integral}), i.e.\ $j \coloneq \argmin_{\ell\in\{1,\dots,k\}} \eJSGa{s,\kappa_\ell}$ and assign $s$ to $C_j$.}
       \For{$j=1,\dots,k$}
-        \State \textbf{Update:} \parbox[t]{.82\linewidth}{\raggedright Update medoid index to minimise intracluster dissimilarity 
-      \[
-        \kappa_j \coloneq \argmin_{p\in C_j}\sum_{q\in C_j} \eJSGa{p,q}$.
-      \]
+        \State \textbf{Update:} \parbox[t]{.82\linewidth}{\raggedright Update medoid index to minimise intracluster dissimilarity, i.e.\ $\kappa_j \coloneq \argmin_{p\in C_j}\sum_{q\in C_j} \eJSGa{p,q}$.}
         \State \Comment{Break ties by choosing the smallest index.}
       \EndFor
     \Until{no observation changes cluster assignment}
     \State \Return $C_1,\dots,C_k,\ \boldsymbol{\kappa}$
   \end{algorithmic}
 \end{algorithm}
-
-% \begin{algorithm}
-%   \caption{K-medoids (using \(\eJSGa{}\))} \label{alg:kmedoids_ejsg_op}
-%   \begin{algorithmic}[1]
-%     \Require dataset $D=\{x_1,\dots,x_n\}$, number of clusters $k$, dissimilarity $\eJSGa(\cdot,\cdot)$ (see Sec.~\ref{subsec:div})
-%     \Ensure medoids $M=\{m_1,\dots,m_k\}$ and clusters $\{C_1,\dots,C_k\}$
-%     %
-%     \State \textbf{Initialize:} randomly choose $k$ distinct medoids $M \subset D$
-%     \Repeat
-%       \For{each observation $x \in D$}
-%         \State assign $x$ to cluster $C_j$ where
-%         \[
-%           j = \arg\min_{i\in\{1,\dots,k\}} \eJSGa{}\big(x, m_i\big)
-%         \]
-%       \EndFor
-%       %
-%       \For{each cluster $C_j,\, j=1,\dots,k$}
-%         \State update medoid
-%         \[
-%           m_j \gets \arg\min_{y \in C_j} \sum_{x \in C_j} \eJSGa{}(x,y)
-%         \]
-%       \EndFor
-%     \Until{no observation changes cluster assignment}
-%   \end{algorithmic}
-% \end{algorithm}
-% \begin{algorithm}
-%   \caption{K-medoids using the $\eJSGa{}$ dissimilarity} \label{alg:kmedoids_ejsg_integral}
-%   \begin{algorithmic}[1]
-%     \Require spatial locations $S=\{s_1,\dots,s_D\}$ (with associated observations), number of clusters $k$, threshold $u_i$
-%     \Ensure medoids indices $M=\{m_1,\dots,m_k\}$ (indices into $S$) and clusters $\{C_1,\dots,C_k\}$
-%     %
-%     \State \textbf{Precompute pairwise dissimilarities:}
-%     \For{each pair $(p,q)$ with $p,q=1,\dots,n$}
-%       \State compute
-%       \[
-%         D_{pq} \;:=\; \eJSGa\big(s_p \,\|\, s_q\big)
-%         \quad\text{(see Eq.~\eqref{eq:jsga_integral})}
-%       \]
-%       \Statex where, using your definition,
-%       \[
-%         \eJSGa(s \,\|\, s^*) \;=\; \int_{u_i}^{\infty} \cJSGa\big(y; s \,\|\, s^*\big)\, f\big(y \mid Y_i(s)>u_i\big)\, dy.
-%       \]
-%       \Comment{If the integral has no closed-form, approximate numerically (quadrature) or by Monte Carlo:}
-%       \Statex \(\;D_{pq}\approx \dfrac{1}{T}\sum_{t=1}^{T} \cJSGa\big(y^{(t)}; s_p \,\|\, s_q\big),\quad y^{(t)}\stackrel{\text{iid}}{\sim} f(\cdot\mid Y_i(s_p)>u_i).\)
-%     \EndFor
-%     %
-%     \State \textbf{Initialize:} randomly choose $k$ distinct medoid indices $M \subset \{1,\dots,n\}$
-%     \Repeat
-%       \For{each observation / location index $p=1,\dots,n$}
-%         \State assign $p$ to cluster $C_j$ where
-%         \[
-%           j = \arg\min_{i\in\{1,\dots,k\}} D_{p,m_i}
-%         \]
-%       \EndFor
-%       %
-%       \For{each cluster $C_j,\, j=1,\dots,k$}
-%         \State update medoid index
-%         \[
-%           m_j \gets \arg\min_{q \in C_j} \sum_{p \in C_j} D_{p q}
-%         \]
-%       \EndFor
-%     \Until{no location changes cluster assignment}
-%   \end{algorithmic}
-% \end{algorithm}
 
 % We choose this algorithm over alternatives such as k-means for several reasons. 
 % Firstly, since our clustering is designed to be performed in a spatial setting, it is preferable to have actual locations rather than summaries as cluster centres, for visualisation.

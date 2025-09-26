@@ -976,17 +976,15 @@ With the bootstrap procedure of \citet{Heffernan2004}, we obtain standard errors
 \subsection{A Divergence measure for multivariate conditional extremes}~\label{subsec:div}
 
 % \todo{Need some references for applications of this metric! In intro, or here?}
-\todo{Include some references to backup desirable properties of divergence measure}
-
 We now define our divergence measure for multivariate conditional extremes models. 
 There are several qualities we desire from a divergence measure based on the conditional distribution in Equation~\eqref{eq:ce_norm}.
 % We would like to exploit the fact that the CE model is a multivariate Gaussian distribution to provide some gains in computational efficiency, and for our divergence to more generally be cheap to compute.
 % We particularly want to exploit the multivariate Gaussian nature of the CE model, to provide computational efficiency through a closed-form solution, and for our divergence to be generally cheap to compute.
 % The measure must be non-negative and symmetric, as the ``distance'' between two sites as defined by the divergence between their CE models should be the same regardless of the order in which they are compared.
-The measure should be symmetric, as the ``distance'' between the tails of random vectors, as defined by the divergence between their corresponding CE models, should be the same regardless of the order in which they are compared.
+The measure should be non-negative and symmetric, as the ``distance'' between the tails of random vectors, as defined by the divergence between their corresponding CE models, so that it can be interpreted as a distance and be the same regardless of the order in which they are compared \citep{Vijendra2015}.
 % Ideally, our measure should also be bounded above by a finite value, as smaller divergences lead to more well-defined clusters, and very large divergences can lead to numerical instability.
 % Ideally, our measure should also have some form of upper bound, as smaller divergences lead to more well-defined clusters, and very large divergences can lead to numerical instability. \todo{Citation!}
-Ideally, our measure should also be non-negative and have an upper bound, as large divergences can lead to numerical instability during clustering, and less stable and well-defined clusters.
+Ideally, our measure should also have an upper bound, as large divergences can lead to numerical instability during clustering \citep{Thiagarajan2025}. % , and less stable and well-defined clusters \citep{Thiagarajan2025}. 
 % Finally, we would like our measure to be a true metric, so that it satisfies the triangle inequality and is non-negative, and this is known to improve the performance of clustering algorithms \todo{Again, citation?}.
 We also desire provide computational efficiency through a closed-form solution our divergence, which is cheap to compute. 
 We achieve this using the Gaussian assumption in Equation~\eqref{eq:ce_norm}.

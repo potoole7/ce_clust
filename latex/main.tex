@@ -1295,15 +1295,16 @@ Aggregating allows us to pool information across multiple comparisons and forms 
 
 % Using Equation~\eqref{eq:jsga_integral}, we can now contruct a dissimilarity measure to compare two conditional distributions, representing our pairwise ``distances'' between sites. 
 % Using Equation~\eqref{eq:jsga_integral}, we can now construct a dissimilarity matrix $M_i$ (Equation~\eqref{eq:distance_matrix}) or an aggregated dissimilarity matrix $M$ (Equation~\eqref{eq:aggregate_matrix}), to compare the conditional distributions at each pair of sites, representing our pairwise ``distances'' between sites for a given conditioning variable $Y_i$ or aggregated across multiple conditioning variables, respectively.
-We perform clustering using the matrix $M_i$, or the aggregated matrix $M$, defined in Equations~\eqref{eq:distance_matrix} and \eqref{eq:aggregate_matrix}, respectively.
+% We perform clustering using the matrix $M_i$, or the aggregated matrix $M$, defined in Equations~\eqref{eq:distance_matrix} and \eqref{eq:aggregate_matrix}, respectively.
+We perform clustering on the dissimilarity matrices $M_i$, $i = 1, \ldots, d$, or on the aggregated matrix $M$, defined in Equations~\eqref{eq:distance_matrix} and \eqref{eq:aggregate_matrix}, respectively.
 % We can also aggregate these distances across multiple conditioning variables to pool information across multiple comparisons. 
 % PAM (K-means not suitable as clusters cannot be assumed to be spherical) (see
 % Vignotto)
 % Now we have a distance measure over which to compute the dissimilarity matrix of pairwise ``distances'' between sites.
-The choice remains as to which algorithm to use to perform clustering. 
-As in \citet{Vignotto2021}, we use the Partitioning Around Medoids (PAM) algorithm, which is a variant of the popular k-medoids algorithm of \citet{Kaufman1987}.
+% The choice remains as to which algorithm to use to perform clustering. 
+As in \citet{Bernard2013} and \citet{Vignotto2021}, we use the Partitioning Around Medoids (PAM) algorithm, which is a variant of the popular k-medoids algorithm of \citet{Kaufman1987}.
 A brief description of the algorithm is as follows:
-\todo{Have as algorithm/pseudocode block? Dicuss with Christian}
+\todo{Replace with algorithm block}
 \begin{itemize} 
   \item The algorithm begins by randomly selecting $k$ medoids from the dataset as our cluster centroids. 
   \item Each observation is then assigned to the cluster of the nearest medoid, using the dissimilarity measure defined in Section \ref{subsec:div}.
@@ -1374,15 +1375,15 @@ A brief description of the algorithm is as follows:
 %   \end{algorithmic}
 % \end{algorithm}
 
-We choose this algorithm over alternatives such as k-means for several reasons. 
-Firstly, since our clustering is designed to be performed in a spatial setting, it is preferable to have actual locations rather than summaries as cluster centres, for visualisation.
-Secondly, as we are clustering over a dissimilarity matrix defined over a functional space, we cannot assume that the clusters are spherical or equally sized, as k-means does. \todo{cite}
-Furthermore, using the median instead of the mean to define the cluster centre is more robust to outliers, which is important in an extremal setting where data for some or many sites may be scarce. 
+% We choose this algorithm over alternatives such as k-means for several reasons. 
+% Firstly, since our clustering is designed to be performed in a spatial setting, it is preferable to have actual locations rather than summaries as cluster centres, for visualisation.
+% Secondly, as we are clustering over a dissimilarity matrix defined over a functional space, we cannot assume that the clusters are spherical or equally sized, as k-means does. \todo{cite}
+% Furthermore, using the median instead of the mean to define the cluster centre is more robust to outliers, which is important in an extremal setting where data for some or many sites may be scarce. 
 
-\subsubsection{Choice of k}~\label{subsubsec:choose_k}
+% \subsubsection{Choice of k}~\label{subsubsec:choose_k}
 
 % Describe methods for choosing k (AIC, TWGSS) (silhouette not suitable)
-The PAM algorithm takes a single hyperparameter, namely the number of clusters, $k$.
+The PAM algorithm takes a single hyperparameter, the number of clusters, $k$.
 % There is a rich body of literature on methods for selecting $k$, including the silhouette method of \citet{Rousseeuw1987} and the Akaike Information Criterion (AIC) introduced in \citet{Akaike1974}.
 % However, the silhouette method is not suitable for our application, as it is designed for spherical clusters. \todo{Cite, have reference for this somewhere?}
 % The AIC is also unsuitable and has been found to perform poorly for our algorithm.
@@ -1390,10 +1391,11 @@ The PAM algorithm takes a single hyperparameter, namely the number of clusters, 
 % However, this assumption is often violated in spatial applications.
 % We revert, therefore, to the simple method of \citet{Thorndike1953-ie}, which uses the total within-cluster sum of squares (TWGSS) to select $k$. \todo{Fix citation?}
 % This method has been found to perform well in both our simulation study in Section~\ref{sec:sim} and our Irish meterological application in Section~\ref{sec:application}, making clear suggestions as to the value of $k$ to use. 
-We find that the method of \citet{Thorndike1953-ie}, which uses the total within-cluster sum of squares (TWGSS) to select $k$, performs well in our setting.
-Namely, in both our simulation study in Section~\ref{sec:sim} and our Irish meteorological application in Section~\ref{sec:application}, this method provides clear suggestions for the value of $k$ to use.
-Specifically, the TWGSS is defined as
-\todo{Change notation here, i and j clash with earlier notation}
+We use the method of \citet{Thorndike1953-ie} to select $k$.
+This uses the total within-cluster sum of squares ($\mathrm{TWGSS}$).
+% We find in in our simulation study (Section~\ref{sec:sim}) and our Irish meteorological application in Section~\ref{sec:application}, this method provides clear suggestions for the value of $k$ to use.
+We find in in our simulation study (Section~\ref{sec:sim}) that this method correctly identifies $k$. 
+Specifically, we define the $\mathrm{TWGSS}$ as
 % \begin{equation}~\label{eq:twgss}
 %   % \mathrm{TWGSS}(k) = \sum_{i=1}^{k} \sum_{j=1}^{n_i} d_{ij}^2,
 %   \mathrm{TWGSS}(k) = \sum_{i=1}^{k} \sum_{j=1}^{n_i} \delta_{ij}^2,
@@ -1404,8 +1406,10 @@ Specifically, the TWGSS is defined as
   \mathrm{TWGSS}(k) = \sum_{c=1}^{k} \sum_{s =1}^{D} \eJSGa{s, s_c},
 \end{equation}
 % where $\eJSGa{}(s \Vert m_c)$ is the dissimilarity between site $s$ and the medoid of cluster $c$, measured using the $\eJSGa{}$ divergence defined in Section \ref{subsec:div}, and $S$ is the set of sites in cluster $c$. \todo{Is this right?}
-where $\eJSGa{s, s_c}$ is the dissimilarity between site $s$ and the medoid site $s_c$ of cluster $c$, and $D$ is the total number of sites. \todo{Is this right?}
-We then plot $\mathrm{TWGSS}(k)$ vs.\ $k$, and choose $k^*$, the optimal number of clusters, as the value of $k$ at which the TWGSS reduction sharply slows, or equivalently, the point at which the curve has an ``elbow''.
+% where $\eJSGa{s, s_c}$ is the dissimilarity between site $s$ and the medoid site $s_c$ of cluster $c$, and $D$ is the total number of sites. \todo{Is this right?}
+where $\eJSGa{s, s_c}$ is the dissimilarity in Equation \eqref{eq:jsga_integral} evaluated for 
+site $s$ and the medoid site $s_c$ of cluster $c$, $c = 1, \ldots, k$. 
+We plot $\mathrm{TWGSS}(k)$ against $k$ and choose the optimal number of clusters as the value of $k$ at which the TWGSS reduction sharply slows, or equivalently, the point at which the curve has an ``elbow'' \citet{Hastie2009}. 
 
 \section{Simulation study}~\label{sec:sim}
 % Introduce section
@@ -2013,7 +2017,8 @@ To mitigate this uncertainty and aid interpretation, we next cluster the locatio
 We clustered the locations using the $\eJSGa{}$ dissimilarity matrix, as defined in Equation~\ref{eq:jsga_integral} and Equation~\ref{eq:distance_matrix} for the CE models fitted to precipitation conditional on extreme wind speed and vice versa, separately.
 % We also combine information from both models to cluster by summing their dissimilarity matrices.
 We also considered a combined solution by averaging over the two dissimilarity matrices.
-The number of clusters $k$ was chosen via the method described in Section~\ref{subsubsec:choose_k}, using the elbow plot of the TWGSS. 
+% The number of clusters $k$ was chosen via the method described in Section~\ref{subsubsec:choose_k}, using the elbow plot of the TWGSS. 
+The number of clusters $k$ was chosen via the method described in Section~\ref{subsec:clustering}, using the elbow plot of the TWGSS. 
 For all three clustering solutions, clear elbows were observed at $k = 3$, so this was the number of clusters chosen \todo{Include plots in Appendix?}.
 
 % Our clustering solutions for each of the three dissimilarity matrices at the 85th quantile are shown in Figure \ref{fig:clust_sol}.

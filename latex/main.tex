@@ -958,12 +958,17 @@ To compare tail dependence across different sites $s$, we compare the conditiona
 
 % Estimation
 % The model parameters $\symbf{\alpha}_{\mid i, s}, \symbf{\beta}_{\mid i, s}, \symbf{\mu}_{\mid i, s}, \Sigma_{\mid i, s}$ in Equation~\eqref{eq:ce_norm} are estimated at each site $s$ and for each conditioning variable, $Y_i, i = 1, \ldots, d$, using maximum likelihood estimation. \todo{Again, i already defined above?}
-The model parameters $\symbf{\alpha}_{\mid i, s}, \symbf{\beta}_{\mid i, s}, \symbf{\mu}_{\mid i, s}, \Sigma_{\mid i, s}$ in Equation~\eqref{eq:ce_norm} are estimated at each site-specific conditioning variable, $Y_{i, s}, i = 1, \ldots, d, s = 1, \ldots, D$, using maximum likelihood estimation. \todo{Again, i and s already defined above?}
+% The model parameters $\symbf{\alpha}_{\mid i, s}, \symbf{\beta}_{\mid i, s}, \symbf{\mu}_{\mid i, s}, \Sigma_{\mid i, s}$ in Equation~\eqref{eq:ce_norm} are estimated at each site-specific conditioning variable, $Y_{i, s}, i = 1, \ldots, d, s = 1, \ldots, D$, using maximum likelihood estimation. \todo{Again, i and s already defined above?}
+We estimate parameters $\symbf{\alpha}_{\mid i, s}, \symbf{\beta}_{\mid i, s}, \symbf{\mu}_{\mid i, s}, \Sigma_{\mid i, s}$ for each site $s = 1, \ldots, D$ and conditioning 
+variable $i = 1, \ldots, d$, using maximum likelihood estimation. \todo{Again, i and s already defined above?}
 % In practice, for each $i = 1, \ldots, d$ and $s \in (s_1, \ldots, s_D)$, we set the threshold $u_i(s)$ to the $q^{\text{th}}$ Laplace quantile.  
-In practice, for each $i$ and $s$, we set the threshold $u_{i, s}$ to the $q^{\text{th}}$ Laplace quantile of $Y_{i, s}$. \todo{Need to use th superscript throughout if keeping}
-We choose $q$ such that there are a sufficient number of exceedances above $u_{i, s}$ to fit the CE model, while keeping $q$ high enough so that the limiting assumption in Equation~\eqref{eq:ce_limiting_dist} is reasonable.
-\todo{Need to say that for inference use u = max over all sites?}
-The bootstrapping procedure of \citet{Heffernan2004} is used to obtain standard errors for the parameter estimates, and we choose the highest value of $q$ such that the parameter estimates are stable, and the bootstrap standard errors are reasonably small.
+% In practice, for each $i$ and $s$, we set the threshold $u_{i, s}$ to the $q^{\text{th}}$ Laplace quantile of $Y_{i, s}$. \todo{Need to use th superscript throughout if keeping}
+In practice, we set the threshold $u_{i, s} \coloneqq u$ for all $i$ and $s$, to the $q^{\text{th}}$ standard Laplace quantile. \todo{Need to use th superscript throughout if keeping}
+% We choose $q$ such that there are a sufficient number of exceedances above $u_{i, s}$ to fit the CE model, while keeping $q$ high enough so that the limiting assumption in Equation~\eqref{eq:ce_limiting_dist} is reasonable.
+Choosing $q$ involves the classical bias-variance tradeoff: $q$ must be sufficiently low as to leave enough excesses above $u$ for reliable estimation, but high enough to reduce bias induced when the asymptotic arguments in Equation~\ref{eq:ce_limiting_dist} are not satisfied. 
+To pick $q$, we use threshold stability plots \citep{Scarrott2012}. 
+% The bootstrapping procedure of \citet{Heffernan2004} is used to obtain standard errors for the parameter estimates, and we choose the highest value of $q$ such that the parameter estimates are stable, and the bootstrap standard errors are reasonably small.
+With the bootstrap procedure of \citet{Heffernan2004}, we obtain standard errors for parameter estimates and choose the highest value of $q$ such that the parameter estimates are stable and the bootstrap standard errors are reasonably small. \todo{Briefly describe this bootstrap method?}
 
 \subsection{Divergence measure for conditional extremes models}~\label{subsec:div}
 

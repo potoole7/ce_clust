@@ -419,7 +419,7 @@ In this paper, we present a new method for identifying groups of random vectors 
 % The CE model describes the tail behaviour of a random vector \emph{conditional} on one of its components exceeding a suitably high threshold.
 % It achieves this via a semiparametric heteroscedastic regression model conditioned on threshold exceedances, which can be used to ascertain the joint tail dependence structure of the random vector.
 % % The CE model provides many advantages over other competing methods. 
-% % It involves a robust Gaussian working assumption which facilitates efficient inference, and allows for a closed form expression for the KL divergence, between two sites, allowing for a rather simple clustering framework to be derived, as we will see in Section~\ref{subsec:div} \citep{Kullback1951}.
+% % It involves a robust Gaussian working assumption which facilitates efficient inference, and allows for a closed-form expression for the KL divergence, between two sites, allowing for a rather simple clustering framework to be derived, as we will see in Section~\ref{subsec:div} \citep{Kullback1951}.
 % % However, as with many models for extremes, which suffer from the natural
 % % rarity of extreme data, the CE model is susceptible to high uncertainty in its
 % % parameter estimates. \todo{de-emphasise parameter estimation}
@@ -569,7 +569,7 @@ As such, it is difficult to visually compare CE models.
 % A further strand clusters entire spatial fields or process realizations 
 % and recent work develops divergence based spatial clustering for compound precipitation and wind extremes \citep{Boulin2025}. \todo{Check!}
 % Our method belongs to the second, multivariate site-wise strand.
-% We fit a bivariate conditional extremes model at each site compute a closed form model based dissimilarity between the fitted conditional tail distributions using the skew geometric Jensen Shannon divergence \(\JSGa{}\) and cluster sites according to that dissimilarity.
+% We fit a bivariate conditional extremes model at each site compute a closed-form model based dissimilarity between the fitted conditional tail distributions using the skew geometric Jensen Shannon divergence \(\JSGa{}\) and cluster sites according to that dissimilarity.
 % This approach accommodates both asymptotic dependence and asymptotic independence provides parametric models for direct tail inference and offers computationally efficient pairwise comparisons compared with purely empirical methods such as the KL based approach of \citet{Vignotto2021}.
 
 % Clustering: introduction + motivation
@@ -615,7 +615,7 @@ Therefore, this approach may be limiting for our motivating example and across t
 % Clustering: Motivating our clustering algorithm
 % % While clustering is evidently not novel within extremes, we hope to identify some opportunities to adapt some of the existing methods in the field to the CE model, which has not yet been explored in the content of clustering.
 % % One advantage of focusing on the CE model is that it can be applied to any dimension, which contrasts with existing clustering methods such as \citet{Vignotto2021} for multivariate extremes, which are limited to the bivariate case.
-% % Also, as mentioned, the Gaussian assumption in the CE model allows for a simple, closed form divergence metric upon which to base our clustering framework.
+% % Also, as mentioned, the Gaussian assumption in the CE model allows for a simple, closed-form divergence metric upon which to base our clustering framework.
 % % As opposed to \citet{Vignotto2021}, our method is parametric, and so we hope that our method will provide a more powerful and principled framework for performing exploratory analysis on multivariate extremes and identifying locations with similar tail dependence structure.
 % % Clustering has evidently been widely utilised in EVT. 
 % Clustering has evidently seen widespread use in the analysis of multivariate extremes. 
@@ -629,7 +629,7 @@ Therefore, this approach may be limiting for our motivating example and across t
 In this paper, we seek to address the limitations of existing methods by developing a clustering framework based on the CE model, which has hitherto not been explored.
 % This will allow us to flexibly capture tail dependence in arbitrary dimensions, while overcoming 
 This enables flexible, parametric exploration of tail dependence structures in arbitrary dimension, in contrast to the existing non-parametric approach of \citet{Vignotto2021}, while also overcoming the data sparsity issues often associated with drawing interpretations from the CE model.
-% The Gaussian working assumption in the CE model allows for a simple, closed form divergence measure upon which to base our clustering framework.
+% The Gaussian working assumption in the CE model allows for a simple, closed-form divergence measure upon which to base our clustering framework.
 % Using the working conditional Gaussianity assumption of \citet{Heffernan2004} for estimating the CE model, we define a simple, closed-form divergence measure for multivariate extremes which permits clustering.
 Using the working conditional Gaussian assumption of \citet{Heffernan2004} for estimating the CE model, we define a closed-form divergence measure for CE models which permits clustering.
 Our parametric approach delivers a unified and statistically principled tool for exploratory analysis of multivariate extremes, facilitating the identification of spatial locations with similar tail dependence characteristics.  
@@ -1031,28 +1031,28 @@ In this paper, we set $\lambda = 0.5$ throughout, as all sites have equal number
 % The $\JSGa{}$ divergence is derived from the popular Kullback--Leibler ($KL$) divergence \citep{Killback1951}. 
 
 % Explain why it is a good dissimilarity metric to use
-\todo{Discuss with Christian}
-For two multivariate Gaussian distributions, the $\KL{}$ divergence has a closed form, analytical solution \citep{Duchi2007}.
+For two multivariate Gaussian distributions, the $\KL{}$ divergence in Equation~\eqref{eq:kl} has a closed-form solution \citep{Duchi2007}.
 The $\JSGa{}$ divergence exploits the property that the (weighted) product of two members of the same exponential family is itself a member of the same exponential family distribution. 
-It then follows that $G_{\lambda}(H_1, H_2)$ is multivariate Gaussian, and so the $\KL{}$ divergences in Equation~\eqref{eq:jsga} are between multivariate Gaussian distributions and can be computed in closed form.
-Hence, the principle advantage of the $\JSGa{}$ here follows, as it also has a closed form solution for two multivariate Gaussian distributions, and so is computationally efficient to compute \citep{Nielsen2019}.
-The $\JSGa{}$ divergence between two multivariate Gaussian distributions has been used in several applications, including clustering, deep learning, variational inference and remote sensing \citep{Nielsen2019, Deasy2020, Ni2023-cd, Thiagarajan2025}. \todo{Add more references?}
+% It then follows that $G_{\lambda}(H_1, H_2)$ is multivariate Gaussian, and so the $\KL{}$ divergences in Equation~\eqref{eq:jsga} are between multivariate Gaussian distributions and can be computed in closed-form.
+It then follows that $G_{\lambda}(H_1, H_2)$ is multivariate Gaussian, and so the $\KL{}$ divergences in Equation~\eqref{eq:jsga} are evaluated on multivariate Gaussian distributions and can thus have in closed-form.
+Hence, the principle advantage of the $\JSGa{}$ is that it has a closed-form solution for two multivariate Gaussian distributions, and so is computationally efficient to compute \citep{Nielsen2019}, which has led to its use in several applications, including clustering, deep learning, variational inference, and remote sensing \citep{Nielsen2019, Deasy2020, Ni2023-cd, Thiagarajan2025}.
 % Furthermore, it is clearly symmetric and non-negative, as the sum of two $KL$ divergences, which is also important for clustering.
 % Furthermore, as the average of two $\KL{}$ divergences, it is clearly symmetric and non-negative.
-Finally, when $\lambda = 0.5$, $\JSGa{}$ is bounded above by $\JSGa{(H_1 \Vert H_2)} \leq \frac{1}{4} \mathrm{J}(H_1 \Vert H_2)$,
+% Finally, when $\lambda = 0.5$, $\JSGa{}$ is bounded above by $\JSGa{(H_1 \Vert H_2)} \leq \frac{1}{4} \mathrm{J}(H_1 \Vert H_2)$,
+Finally, the $\JSGa{}$ is bounded above by $\JSGa{(H_1 \Vert H_2)} \leq \frac{1}{2}\max\{\lambda,\,1-\lambda\}\mathrm{J}(H_1 \Vert H_2)$, 
 % \begin{equation}~\label{eq:jsga_bound}
 %   \JSGa{(F_1 \Vert F_2)} \leq \frac{1}{4} \mathrm{J}(F_1 \Vert F_2),
 % \end{equation}
-where the Jeffreys' divergence $\mathrm{J}(H_1 \Vert H_2) = \KL{(H_1 \Vert H_2)} + \KL{(H_2 \Vert H_1)}$ is simply the sum of the forward and backward $\KL{}$ divergences \citep{Nielsen2025}.
+where the Jeffreys' divergence $\mathrm{J}(H_1 \Vert H_2) = \KL{(H_1 \Vert H_2)} + \KL{(H_2 \Vert H_1)}$ is simply the sum of the forward and backward $\KL{}$ divergences \citep{Nielsen2025}. \todo{this follows short derivation from this paper, include in appendix?}
 % Therefore, $\JSGa{}$ provides more well-defined clusters than the Jeffreys' divergence, motivating the higher conceptual complexity by comparison. 
-Therefore, the $\JSGa{}$ divergence is less susceptible to numerical instability than this simple summation. %, and also provides more tightly defined clusters.
-Hence, we identify the $\JSGa{}$ divergence as a suitable measure of dissimilarity for clustering CE model fits.
+% Therefore, the $\JSGa{}$ divergence is less susceptible to numerical instability than this simple summation. %, and also provides more tightly defined clusters.
+% Hence, we identify the $\JSGa{}$ divergence as a suitable measure of dissimilarity for clustering CE model fits.
 
 % JSGa form
-% For two multivariate normals, \citet{Nielsen2019} shows that the $\JSGa{}$ divergence introduced in Equation~\eqref{eq:js_norm} has the closed form solution
+% For two multivariate normals, \citet{Nielsen2019} shows that the $\JSGa{}$ divergence introduced in Equation~\eqref{eq:js_norm} has the closed-form solution
 % \todo{eq:js_norm can't be found}
 \todo{Use star instead of 2, to match below?}
-For two multivariate Gaussian distributions $H_1 \sim \mbox{MVN}(\symbf{m}_1, \Omega_1)$ and $H_2 \sim \mbox{MVN}(\symbf{m}_2, \Omega_2)$ in $\mathbb{R}^d$, \citet{Nielsen2019} shows that the dual $\JSGa{}$ divergence introduced in Equation~\eqref{eq:jsga} has the closed form solution 
+For two multivariate Gaussian distributions $H_1 \sim \mbox{MVN}(\symbf{m}_1, \Omega_1)$ and $H_2 \sim \mbox{MVN}(\symbf{m}_2, \Omega_2)$ in $\mathbb{R}^d$, \citet{Nielsen2019} shows that the dual $\JSGa{}$ divergence introduced in Equation~\eqref{eq:jsga} has the closed-form solution 
 \begin{align*}%~\label{eq:js_norm_mvn}
   % JS^{G_{\lambda}}(F_1 \Vert F_2) &= \frac{1}{2} \left( (1 - k) m_1^T \Omega_1^{-1} m_1 + k m_2^T \Omega_2^{-1} m_2 - m_{\lambda}^T \Omega_{\lambda}^{-1} m_{\lambda} + \log{\left( \frac{\abs{\Omega_1}^{1-k} \abs{\Omega_2}^{\lambda}}{\abs{\Omega_{\lambda}}} \right)} \right), \\
   \JSGa{}(H_1 \Vert H_2) &= \frac{1}{2} \left\{ (1-\lambda) \symbf{m}_1^T \Omega_1^{-1} \symbf{m}_1 + \lambda \symbf{m}_2^T \Omega_2^{-1} \symbf{m}_2 - \symbf{m}_{\lambda}^T \Omega_{\lambda}^{-1} \symbf{m}_{\lambda} + \log{\left( \frac{\abs{\Omega_1}^{1-\lambda} \abs{\Omega_2}^{\lambda}}{\abs{\Omega_{\lambda}}} \right)} \right\}, \\
@@ -1101,7 +1101,7 @@ Using the $\JSGa{}$ divergence in Equation~\eqref{eq:js_norm_mvn1}, we define th
 \end{equation}
 % where $H_{\mathbf{Y}_{-i}(s)|Y_i(s)=y}$ and $H_{\mathbf{Y}_{-i}(s^*)|Y_i(s^*)=y}$ are the conditional multivariate Gaussian distributions induced by the CE model at sites $s$ and $s^*$, respectively, for a given value of $y > \max(u_i(s), u_i(s^*))$. \todo{Is this max correct?}
 where $H_{i, s}(y)$ and $H_{i, s^*}(y)$ are the conditional multivariate Gaussian distributions for variable $i$ induced by the CE model at sites $s$ and $s^*$, respectively, for a given value of $y > \max(u_{i, s}, u_{i, s^*})$. \todo{Is this max correct? Has it been talked about enough before?} \todo{Should this be mid i? What does Heff2004 do?}
-% Substituting the means and covariances of these conditional distributions from Equation\eqref{eq:ce_norm} into Equation~\eqref{eq:js_norm_mvn1} gives the closed form expression
+% Substituting the means and covariances of these conditional distributions from Equation\eqref{eq:ce_norm} into Equation~\eqref{eq:js_norm_mvn1} gives the closed-form expression
 % \todo{Need help tidying up}
 % \todo{move equation number to right}
 % \todo{What is random word at very end of last line?}
@@ -1165,11 +1165,11 @@ and
 % where $p(y)$ and $q(y)$ are the densities of $P$ and $Q$, respectively \citep{Kullback1951}.
 % % \item The KL divergence is always non-negative and zero if and only if $P =
 % % Q$, and for two multivariate normal distributions $P \sim N(\mu_1,
-% % \Sigma_1)$, Q \sim N(\mu_2, \Sigma_2)$ in $\mathbb{R}^n$ has closed form
+% % \Sigma_1)$, Q \sim N(\mu_2, \Sigma_2)$ in $\mathbb{R}^n$ has closed-form
 % % solution.
 % The KL divergence is always non-negative and zero if and only if $P = Q$.
-% % For two multivariate normal distributions $P \sim N(\mu_1, \Sigma_1), Q \sim N(\mu_2, \Sigma_2) \in \mathbb{R}^n$ with diagonal covariance matrices, $KL(F_1 \Vert F_2)$ has closed form.
-% A well known result is that the KL divergence between two multivariate normal distributions $P \sim N(\mu_1, \Sigma_1)$ and $Q \sim N(\mu_2, \Sigma_2)$ in $\mathbb{R}^n$ has a closed form solution.
+% % For two multivariate normal distributions $P \sim N(\mu_1, \Sigma_1), Q \sim N(\mu_2, \Sigma_2) \in \mathbb{R}^n$ with diagonal covariance matrices, $KL(F_1 \Vert F_2)$ has closed-form.
+% A well known result is that the KL divergence between two multivariate normal distributions $P \sim N(\mu_1, \Sigma_1)$ and $Q \sim N(\mu_2, \Sigma_2)$ in $\mathbb{R}^n$ has a closed-form solution.
 %   % \item In the case where both covariance matrices are diagonal, this simplifies to
 %     % \begin{equation}~\label{eq:kl_mvn_diag}
 %     %   KL(F_1 \Vert F_2) = \frac{1}{2} \sum_{i=1}^{n} \left( \frac{\sigma_{1,i}^2}{\sigma_{2,i}^2} + \frac{(\mu_{1,i} - \mu_{2,i})^2}{\sigma_{2,i}^2} - 1 - \log\left(\frac{\sigma_{1,i}^2}{\sigma_{2,i}^2}\right) \right),
@@ -1194,8 +1194,8 @@ and
 %   % \item The JS divergence is a true metric bounded by $[0, \log{(2)}]$, unlike the simple sum of the forward and backward KL divergences $KL(F_1 \Vert F_2) + KL(Q \Vert P)$.
 % The JS divergence is a true metric unlike the simple sum of the forward and backward KL divergences $KL(F_1 \Vert F_2) + KL(Q \Vert P)$. % don't reference bounds, as JS-G doesn't have any
 %   % \item A problem arises from the fact that the mixture distribution $M$ of two normals is not itself normal.
-%   % \item In fact, $M$ becomes increasingly bimodal as $P$ and $Q$ become more dissimilar, and so the JS divergence does not have a closed form solution for multivariate normals.
-% A problem arises from the fact that the mixture distribution $M$ of two normals is not itself normal, and so the KL divergence does not have a closed form solution for multivariate normals.
+%   % \item In fact, $M$ becomes increasingly bimodal as $P$ and $Q$ become more dissimilar, and so the JS divergence does not have a closed-form solution for multivariate normals.
+% A problem arises from the fact that the mixture distribution $M$ of two normals is not itself normal, and so the KL divergence does not have a closed-form solution for multivariate normals.
 % \citet{Nielsen2019} overcomes this problem by using the weighted geometric mean $G_{\alpha}(P, Q) = P^{\alpha} Q^{1 - \alpha}, \alpha \in [0, 1]$, instead of the arithmetic mean. 
 % This allows us to exploit the property that the weighted product of exponential family distributions is itself a member of the same family, and so $G_{\alpha}(P, Q)$ will also be a multivariate normal distribution.
 % \todo{Need to use backward version instead?}
@@ -1207,8 +1207,8 @@ and
 % The parameter $\alpha$ is called a skew parameter, and controls the divergence skew between P and Q. 
 % For our purposes, we will set $\alpha = 0.5$, which corresponds to giving equal weight to both distributions. \todo{Need to explore this further!}
 % The exact form of this divergence for two multivariate normals is given in Equation~\eqref{eq:js_norm_mvn1}, and the simplified form for the case of diagonal covariance matrices is given in Equation~\eqref{eq:js_norm_mvn_diag}. 
-%   % \item Thus we have a closed form, computationally efficient and symmetric measure of dissimilarity between any two conditional distributions as given by Equation~\ref{eq:ce_norm} for two sites, with which we can cluster locations based on their extremal dependence structure. 
-%   % \item Thus we have a closed form, computationally efficient and symmetric measure of dissimilarity between any conditional multivariate normal distributions as given by \eqref{eq:ce_norm}, representing the extremal dependence structure at each site. 
+%   % \item Thus we have a closed-form, computationally efficient and symmetric measure of dissimilarity between any two conditional distributions as given by Equation~\ref{eq:ce_norm} for two sites, with which we can cluster locations based on their extremal dependence structure. 
+%   % \item Thus we have a closed-form, computationally efficient and symmetric measure of dissimilarity between any conditional multivariate normal distributions as given by \eqref{eq:ce_norm}, representing the extremal dependence structure at each site. 
 
 % Expectation definition
 % \todo{Hard/confusing to describe using Yi, switch to another notation?}
@@ -1279,7 +1279,7 @@ Aggregating allows us to pool information across multiple comparisons and forms 
 % \todo{Revisit this!}
 % \begin{itemize}
 %   % \item However, this version of the $JS^{G_{\alpha}}$ is also unbounded! I need to use the version derived in \citet{Deasy2020} and \citet{Thiagarajan2025}, which does have a finite upper bound! Work in progress!
-% However, $JS^{G_{\alpha}}$ is also unbounded. The generalized JS divergence from \citet{Thiagarajan2025} is bounded, but must be estimated using MC, as it has no closed form solution. Should I use/try it out?
+% However, $JS^{G_{\alpha}}$ is also unbounded. The generalized JS divergence from \citet{Thiagarajan2025} is bounded, but must be estimated using MC, as it has no closed-form solution. Should I use/try it out?
 % \end{itemize}
 
 \subsection{Clustering of multivariate extremes}~\label{subsec:clustering}
@@ -1345,7 +1345,7 @@ A brief description of the algorithm is as follows:
 %       \[
 %         \eJSGa(s \,\|\, s^*) \;=\; \int_{u_i}^{\infty} \cJSGa\big(y; s \,\|\, s^*\big)\, f\big(y \mid Y_i(s)>u_i\big)\, dy.
 %       \]
-%       \Comment{If the integral has no closed form, approximate numerically (quadrature) or by Monte Carlo:}
+%       \Comment{If the integral has no closed-form, approximate numerically (quadrature) or by Monte Carlo:}
 %       \Statex \(\;D_{pq}\approx \dfrac{1}{T}\sum_{t=1}^{T} \cJSGa\big(y^{(t)}; s_p \,\|\, s_q\big),\quad y^{(t)}\stackrel{\text{iid}}{\sim} f(\cdot\mid Y_i(s_p)>u_i).\)
 %     \EndFor
 %     %
@@ -1410,7 +1410,7 @@ Clustering accuracy is evaluated using the adjusted Rand index (ARI) of \citet{H
 % In Section~\ref{subsec:sim_gauss}, a simple simulation design using a Gaussian copula to generate data is described. 
 % This data has the advantage of having theoretical asymptotic values for the CE parameters, to which we can directly compare our finite simulation estimates, as a test to ensure that our clustering is working as desired, reducing uncertainty in parameter estimates. 
 % Section~\ref{subsec:sim_gauss} introduces a simple design based on the Gaussian copula, which provides known asymptotic values for the CE parameters. 
-In Section~\ref{subsec:sim_gauss}, we generate data from a Gaussian copula for which the parameters of the CE model are available in closed form \citep{Keef2013}.
+In Section~\ref{subsec:sim_gauss}, we generate data from a Gaussian copula for which the parameters of the CE model are available in closed-form \citep{Keef2013}.
 % These allow us to benchmark our finite-sample estimates and verify that clustering reduces estimation uncertainty. 
 This allows us to verify that our clustering approach reduces the estimation uncertainty and to investigate the sensitivity to the threshold.
 % In Section~\ref{subsec:sim_mixture}, we extend this study to a more complex simulation design using a mixture of Gaussian and t-copulas, for a variety of simple and more complex dependence structures and scenarios. 
@@ -2136,7 +2136,7 @@ In this paper, we introduced a novel method for clustering spatial locations bas
 % The $\JSGa{}$ divergence measure of \citet{Nielsen2019} is proposed as a dissimilarity measure to compare locations based on their estimated CE parameters, $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$, which together describe the strength and ``stochasticity'' of each set of bivariate extremal relationships. 
 The $\JSGa{}$ divergence measure of \citet{Nielsen2019} is proposed as a dissimilarity measure to compare locations based on their estimated CE parameters, $\alpha$ and $\beta$, which together describe the strength and ``stochasticity'' of each set of bivariate extremal relationships. 
 This method exploits the fact that inference based on the CE model follows a multivariate Gaussian distribution, following from the Gaussian assumption for the residual process.
-This allows us to derive a closed form for the $\JSGa{}$ divergence, making it computationally efficient to use in clustering.
+This allows us to derive a closed-form for the $\JSGa{}$ divergence, making it computationally efficient to use in clustering.
 K-medoids clustering is performed on the dissimilarity matrix derived from this measure.
 This preserves the spatial nature of the data and ensures that actual spatial locations with fitted CE models, as opposed to some aggregation, serve as cluster centroids. 
 We can also choose to cluster on some or all of the bivariate extremal relationships in our data, and can aggregate information from multiple CE models to improve clustering performance.
@@ -2158,10 +2158,10 @@ This was pleasing as no spatial information was used in fitting the CE model or 
 
 % Limitations: Gaussian assumption
 There are several limitations to our method as currently implemented.
-Our method relies heavily on the Gaussian assumption for residual process of CE model to provide a closed form for the $\JSGa{}$ divergence.
+Our method relies heavily on the Gaussian assumption for residual process of CE model to provide a closed-form for the $\JSGa{}$ divergence.
 This may not hold in all cases, particularly for more complex dependence structures, and so the method may not be appropriate for all datasets.
 For example, in \citet{Farrell2025}, the authors use the generalised and asymmetric generalised Gaussian distributions to model their residuals. 
-While our closed form would not hold in this case, the $\JSGa{}$ divergence could still be used, but would require computationally expensive Monte Carlo sampling to estimate the dissimilarity matrix.
+While our closed-form would not hold in this case, the $\JSGa{}$ divergence could still be used, but would require computationally expensive Monte Carlo sampling to estimate the dissimilarity matrix.
 Indeed, it may be preferable to use the standard $\JS{}$ divergence if choosing to forgo this Gaussian assumption, since it is bounded between 0 and $\log{(2)}$, while the $\JSGa{}$ is unbounded, as described in \citet{Thiagarajan2025}.
 
 \todo{Address use of empirical residuals? How would that affect the method?}

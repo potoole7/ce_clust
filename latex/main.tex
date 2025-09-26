@@ -791,7 +791,8 @@ Let $\symbf{Y}_{-i} \coloneq \symbf{Y} \setminus Y_i \in \mathbb{R}^{d-1}$ denot
 % \item The CE model of \citet{Heffernan2004} assumes that there exists vector normalising parameters $\alpha_{\mid i} := \symbf{a}_{\mid i}(y_i), \beta_{\mid i} := \symbf{b}_{\mid i}(y_i) \in \mathbb{R} \rightarrow \mathbb{R}^{(d-1)}$ such that for fixed $\symbf{z}_{\mid i} \in \mathbb{R}^{(d-1)}$,
 % The CE model of \citet{Heffernan2004} assumes that there exist parameter vectors $\symbf{\alpha}_{\mid i}^{(\CE{})} := \left\{\alpha_{j \mid i}^{(\CE{})} : j\in\{1,\dots,d\}\setminus\{i\}\right\} \in [-1, 1]^{(d-1)}$ and $\symbf{\beta}_{\mid i}^{(\CE{})} := \left\{\beta_{j \mid i}^{(\CE{})} : j\in\{1,\dots,d\}\setminus\{i\} \right\} \in [-\infty, 1]^{(d-1)}$ such that for fixed $\symbf{z}_{\mid i} \in \mathbb{R}^{(d-1)}$, $y_i > 0$,
 % The CE model of \citet{Heffernan2004} assumes that for each $i = 1, \ldots, d$ there exist parameter vectors $\symbf{\alpha}_{\mid i} := \left\{\alpha_{j \mid i} : j\in\{1,\dots,d\}\setminus i \right\} \in [-1, 1]^{d-1}$ and $\symbf{\beta}_{\mid i} := \left\{\beta_{j \mid i} : j\in\{1,\dots,d\}\setminus i \right\} \in [-\infty, 1]^{d-1}$ such that for fixed $\symbf{z}_{\mid i} \in \mathbb{R}^{d-1}$ and $y_i > 0$,
-With all operations below taken component-wise, the CE model assumes that there exist parameter vectors $\symbf{\alpha}_{\mid i} \coloneqq \left\{\alpha_{j \mid i} : j\in\{1,\dots,d\}\setminus i \right\} \in [-1, 1]^{d-1}$ and $\symbf{\beta}_{\mid i} \coloneqq \left\{\beta_{j \mid i} : j\in\{1,\dots,d\}\setminus i \right\} \in [-\infty, 1]^{d-1}$ such that for fixed $\symbf{z} \in \mathbb{R}^{d-1}$ and % $y_i > 0$, such that for fixed $\symbf{z} \in \mathbb{R}^{(d-1)}$ and $y > 0$,
+% With all operations below taken component-wise, the CE model assumes that there exist parameter vectors $\symbf{\alpha}_{\mid i} \coloneqq \left\{\alpha_{j \mid i} : j\in\{1,\dots,d\}\setminus i \right\} \in [-1, 1]^{d-1}$ and $\symbf{\beta}_{\mid i} \coloneqq \left\{\beta_{j \mid i} : j\in\{1,\dots,d\}\setminus i \right\} \in [-\infty, 1]^{d-1}$ such that for fixed $\symbf{z} \in \mathbb{R}^{d-1}$ and % $y_i > 0$, such that for fixed $\symbf{z} \in \mathbb{R}^{(d-1)}$ and $y > 0$,
+With all operations below taken component-wise, \citet{Heffernan2004} assume that there exist parameter vectors $\symbf{\alpha}_{\mid i} \coloneqq \left\{\alpha_{j \mid i} : j\in\{1,\dots,d\}\setminus i \right\} \in [-1, 1]^{d-1}$ and $\symbf{\beta}_{\mid i} \coloneqq \left\{\beta_{j \mid i} : j\in\{1,\dots,d\}\setminus i \right\} \in (-\infty, 1]^{d-1}$ such that, for fixed $\symbf{z} \in \mathbb{R}^{d-1}$, % $y_i > 0$, such that for fixed $\symbf{z} \in \mathbb{R}^{(d-1)}$ and $y > 0$,
 % \todo{Check if probably is for equal to yi or greater than yi}
 \begin{equation}~\label{eq:ce_limiting_dist}
   % \mathbb{P}\left(\frac{\symbf{Y}_{-i} - \symbf{\alpha}_{\mid i}^{(\CE{})} Y_{i}}{Y_{i}^{\symbf{\beta}_{\mid i}^{(\CE{})}} \le \symbf{z}_{\mid i}, Y_i - u_i > y_i \mid Y_i > u_i \right) \longrightarrow \symbf{G}_{\mid i}(\symbf{z}_{\mid i}) \exp(-y_i) \text{ as } u_i \rightarrow \infty,
@@ -814,9 +815,9 @@ With all operations below taken component-wise, the CE model assumes that there 
   % \symbf{G}_{\mid i}(\symbf{z})\,\exp{(-y_i)}
   \symbf{G}_{\mid i}(\symbf{z})\,\exp{(-y)}
   % \quad\text{as } u_i \to \infty.
-  \quad\text{as } u \to \infty.
+  \quad\text{as } u \to \infty,
 \end{equation}
-\todo{i subscript removed from LHS, but not on RHS, is this ok?}
+% \todo{i subscript removed from LHS, but not on RHS, is this ok?}
 % where $u_i$ is a suitably high threshold for $Y_i$, and $\symbf{G}_{j \mid i}$ is non-degenerate for all $j \ne i$. 
 % \todo{below points needed, or can some of this be removed?}
 % To ensure $\symbf{G}_{\mid i}$ is well-defined, we have the constraint that 
@@ -825,33 +826,38 @@ With all operations below taken component-wise, the CE model assumes that there 
 % \]
 % ensuring that there is no mass at $+\infty$ for any margin, but allowing for some mass to be at $-\infty$, in order to ensure uniqueness of the solution \citep{Keef2013}.
 % where $u_i$ is a suitably high threshold. 
-The distribution function $\symbf{G}_{\mid i}$ is non-degenerate on $\mathbb{R}^{d-1}$ and, for each margin $j\neq i$, $\lim\limits_{z\to\infty}\symbf{G}_{j\mid i}(z)=1$, so that there is no mass at $+\infty$, while mass at $-\infty$ is permitted to ensure uniqueness \citep{Keef2013}. 
+% where the distribution function $\symbf{G}_{\mid i}$ is non-degenerate on $\mathbb{R}^{d-1}$ and, for each margin $j\neq i$, $\lim\limits_{z\to\infty}\symbf{G}_{j\mid i}(z)=1$, so that there is no mass at $+\infty$, while mass at $-\infty$ is permitted to ensure uniqueness \citep{Keef2013}. 
+where the distribution function $\symbf{G}_{\mid i}\left(\symbf{z}\right)$ is non-degenerate on $\symbf{z} \in \mathbb{R}^{d-1}$ and, for each margin $j\neq i$, $\lim\limits_{z\to\infty}\symbf{G}_{j\mid i}(z)=1$, so that there is no mass at $+\infty$, while mass at $-\infty$ is permitted to ensure uniqueness \citep{Keef2013}. 
 % An important consequence of this formulation is the weak assumption that
 % \begin{equation}~\label{eq:limit_independence}
 %   \mathbb{P}(\symbf{Z}_{\mid i} \le \symbf{z}_{\mid i}, Y_i - u_i = y_i \mid Y_i > u_i) \rightarrow \symbf{G}_{\mid i}(\symbf{z}_{\mid i}) \exp(-y_i) \text{ as } u_i \rightarrow \infty,
 % \end{equation}
 % so that in the limit as $u_i \to \infty$, the extremal exceedances $Y_i - u_i$ and the standardised residuals $\symbf{Z}_{\mid i} = \frac{\symbf{Y}_{-i} - \symbf{\alpha}_{\mid i} Y_{i}}{Y_{i}^{\symbf{\beta}_{\mid i}}}, \symbf{Z}_{\mid i} \sim \symbf{G}_{\mid i}$ are independent.
-Equation~\eqref{eq:ce_limiting_dist} implies that, in the limit $u\to\infty$, the excesses $Y_i-u$ and the standardised residuals $\symbf{Z}_{\mid i} \coloneqq \frac{\symbf{Y}_{-i} - \symbf{\alpha}_{\mid i} Y_{i}}{Y_{i}^{\symbf{\beta}_{\mid i}}} \sim \symbf{G}_{\mid i}$ are independent. 
+% Equation~\eqref{eq:ce_limiting_dist} implies that, in the limit as $u\to\infty$, the excesses $Y_i-u$ and the standardised residuals $\symbf{Z}_{\mid i} \coloneqq \frac{\symbf{Y}_{-i} - \symbf{\alpha}_{\mid i} Y_{i}}{Y_{i}^{\symbf{\beta}_{\mid i}}} \sim \symbf{G}_{\mid i}$ are independent. 
+Equation~\eqref{eq:ce_limiting_dist} implies that, in the limit as $u\to\infty$, the excesses $Y_i-u$ and the standardised residuals 
+% $\symbf{Z}_{\mid i} \coloneqq \frac{\symbf{Y}_{-i} - \symbf{\alpha}_{\mid i} Y_{i}}{Y_{i}^{\symbf{\beta}_{\mid i}}} \sim \symbf{G}_{\mid i}$ are independent. 
+$\symbf{Z}_{\mid i} \coloneqq Y_i^{-\symbf{\beta}_{\mid i}}\left(\symbf{Y}_{-i} - \symbf{\alpha}_{\mid i} Y_{i}\right)$ are independent
 % Equation~\eqref{eq:ce_limiting_dist} implies that, in the limit $u_i\to\infty$, the exceedances $Y_i-u_i$ and the standardised residuals $\symbf{Z}_{\mid i} = \frac{\symbf{Y}_{-i} - \symbf{\alpha}_{\mid i}^{(\CE{})} Y_{i}}{Y_{i}^{\symbf{\beta}_{\mid i}^{(\CE{})}}}$, where $\symbf{Z}_{\mid i} \sim \symbf{G}_{\mid i}$, are asymptotically independent.
 
 % heteroscedastic regression
 % The limiting distribution in equation~\eqref{eq:ce_limiting_dist} can be written as a heteroscedastic regression equation defined by
-Assuming that the limiting distribution in Equation~\eqref{eq:ce_limiting_dist} holds exactly for a large threshold $u_i > 0$ gives the heteroscedastic regression model
+Assuming that the limit in Equation~\eqref{eq:ce_limiting_dist} holds exactly for a large threshold $u_i > 0$ gives the heteroscedastic regression model
 % \todo{Should we be explicit that the equals here really should be an equality in distribution?}
 \begin{align}~\label{eq:ce_model}
   % \bigl(\symbf{Y}_{-i} \mid Y_i = y_i \bigr) = \symbf{\alpha}_{\mid i}^{(\CE{})}\symbf{y}_i + \symbf{y}_i^{\symbf{\beta}_{\mid i}^{(\CE{})}}\symbf{Z}_{\mid i}, \text{ for } y_i > u_{_i},
   % \bigl(\symbf{Y}_{-i} \mid Y_i = y_i \bigr) = \symbf{\alpha}_{\mid i}\symbf{y}_i + \symbf{y}_i^{\symbf{\beta}_{\mid i}}\symbf{Z}_{\mid i}, \text{ for } y_i > u_{_i},
   % \bigl(\symbf{Y}_{-i} \mid Y_i = y \bigr) &= \symbf{\alpha}_{\mid i}y + y^{\symbf{\beta}_{\mid i}}\symbf{Z}_{\mid i}, \text{ for } y > u_i, \\
-  \bigl(\symbf{Y}_{-i} \mid Y_i = y \bigr) &= \symbf{\alpha}_{\mid i}y + y^{\symbf{\beta}_{\mid i}}\symbf{Z}_{\mid i}\qquad \text{ for } y > u_i,
+  \bigl(\symbf{Y}_{-i} \mid Y_i = y \bigr) &= \symbf{\alpha}_{\mid i}y + y^{\symbf{\beta}_{\mid i}}\symbf{Z}_{\mid i},\qquad \text{ for } y > u_i,
 \end{align}
 with residual vector $\symbf{Z}_{\mid i} \sim \symbf{G}_{\mid i}$.
 % The slope or linear regression coefficient $\symbf{\alpha}_{\mid i}^{(\CE{})} \in [-1, 1]$ describes the strength of association between $Y_{-i}$ and large $Y_i$ above the threshold $u_i$.
 % The vector $\symbf{\alpha}_{\mid i} \in [-1, 1]^{d-1}$ describes the strength of extremal association between components of $\symbf{Y}_{-i}$ and the conditioning variable $Y_i$. 
-The vector $\symbf{\alpha}_{\mid i}$ describes the strength of extremal association between components of $\symbf{Y}_{-i}$ and the conditioning variable $Y_i$. 
+The parameter vector $\symbf{\alpha}_{\mid i}$ describes the strength of extremal association between components of $\symbf{Y}_{-i}$ and the conditioning variable $Y_i$. 
 % \item $\symbf{\beta}_{\mid i} \in [-\infty, 1]$ can be interpretated as a ``spread'' parameter, controlling the levels of heteroscedasticity in the model.
 % The levels of heteroscedasticity in the model is controlled by $\symbf{\beta}_{\mid i}^{(\CE{})} \in [-\infty, 1]$, and can be loosely interpreted as a ``spread'' parameter.
 % The degree of heteroscedasticity in the model is controlled by entries to $\symbf{\beta}_{\mid i} \in [-\infty, 1]^{d - 1}$, and can be loosely interpreted as a ``spread'' parameter.
-The degree of heteroscedasticity in the model is controlled by entries to $\symbf{\beta}_{\mid i}$, and can be loosely interpreted as a ``spread'' parameter.
+% The degree of heteroscedasticity in the model is controlled by entries to $\symbf{\beta}_{\mid i}$, and can be loosely interpreted as a ``spread'' parameter.
+The degree of heteroscedasticity in the model is controlled by entries to $\symbf{\beta}_{\mid i}$, and can be loosely interpreted as a parameter that determines the degree of spread induced by large values of $Y_i$.
   % \item Several choices for $\symbf{G}_{\mid i}$, the distribution of
 % $\symbf{Z}_{\mid i}$, were proposed in \citet{Heffernan2004}, before ultimately
 % settling on a multivariate normal distribution with vector nuisance parameters
@@ -874,12 +880,11 @@ Some special cases (for $j\in\{1,\ldots,d\}\setminus i$) of the CE model are:
 %   \item $\symbf{\alpha}_{j \mid i} = 1(-1)$ and $\symbf{\beta}_{j \mid i} = 0$, which corresponds to positive (negative) asymptotic dependence, equivalent to having $\chi = 1 (\chi = 0)$, and 
 %   \item $-1 < \symbf{\alpha}_{j \mid i} < 1$, which suggests asymptotic independence between $Y_j$ and $Y_i$, with dependence weakening as $Y_i \to \infty$, equivalent to $\chi < 1$. 
 % \end{itemize}
-$\symbf{\alpha}_{j\mid i}=0$ and $\symbf{\beta}_{j\mid i}=0$, for which we have perfect
-independence between $Y_j$ and $Y_i\mid Y_i>u_i$, corresponding to $\chi=0$;
-$\symbf{\alpha}_{j\mid i}=1\ ( -1)$ and $\symbf{\beta}_{j\mid i}=0$, which corresponds to
-positive (negative) asymptotic dependence, equivalent to $\chi=1$ ($\chi=0$); and
-$-1<\symbf{\alpha}_{j\mid i}<1$, which suggests asymptotic independence between $Y_j$
-and $Y_i$, with dependence weakening as $Y_i\to\infty$, equivalent to $\chi<1$.
+% $\alpha_{j\mid i}=0$ and $\beta_{j\mid i}=0$, for which we have perfect independence between $Y_j$ and $Y_i\mid Y_i>u_i$, corresponding to $\chi=0$;
+$\alpha_{j\mid i}=0$ and $\beta_{j\mid i}=0$, which implies perfect independence between $Y_j$ and $Y_i\mid Y_i>u_i$, corresponding to $\chi=0$;
+$\alpha_{j\mid i}=1\ ( -1)$ and $\beta_{j\mid i}=0$, which corresponds to positive (negative) asymptotic dependence, equivalent to $\chi=1$ ($\chi=0$); and
+% $-1<\alpha_{j\mid i}<1$, which suggests asymptotic independence between $Y_j$ and $Y_i$, with dependence weakening as $Y_i\to\infty$, equivalent to $\chi<1$.
+$-1<\alpha_{j\mid i}<1$, which suggests asymptotic independence between $Y_j$ and $Y_i$, with the strength of extremal dependence weakening with $\alpha_{j \mid i}$, equivalent to $\chi<1$.
 
 \todo{Discuss with Christian}
 We fit the CE model at different spatial sites. 

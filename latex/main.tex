@@ -965,10 +965,10 @@ We estimate parameters $\symbf{\alpha}_{\mid i, s}, \symbf{\beta}_{\mid i, s}, \
 variable $i = 1, \ldots, d$, using maximum likelihood estimation. \todo{Again, i and s already defined above?}
 % In practice, for each $i = 1, \ldots, d$ and $s \in (s_1, \ldots, s_D)$, we set the threshold $u_i(s)$ to the $q^{\text{th}}$ Laplace quantile.  
 % In practice, for each $i$ and $s$, we set the threshold $u_{i, s}$ to the $q^{\text{th}}$ Laplace quantile of $Y_{i, s}$. \todo{Need to use th superscript throughout if keeping}
-In practice, we set the threshold $u_{i, s} \coloneqq u$ for all $i$ and $s$, to the $q^{\text{th}}$ standard Laplace quantile. \todo{Need to use th superscript throughout if keeping}
-This is required to build a symmetric divergence measure (see Section~\ref{subsec:div}). \todo{Required to be the same across all s, but not all i?}
+% In practice, we set the threshold $u_{i, s} \coloneqq u$ for all $i$ and $s$, to the $q^{\text{th}}$ standard Laplace quantile. \todo{Need to use th superscript throughout if keeping}
+In practice, we set the threshold $u_{i, s} \coloneqq u_i$ to the $q^{\text{th}}$ standard Laplace quantile for all $s$, as this is required to build a symmetric divergence measure for clustering (see Section~\ref{subsec:div}).
 % We choose $q$ such that there are a sufficient number of exceedances above $u_{i, s}$ to fit the CE model, while keeping $q$ high enough so that the limiting assumption in Equation~\eqref{eq:ce_limiting_dist} is reasonable.
-Choosing $q$ involves the classical bias-variance tradeoff: $q$ must be sufficiently low as to leave enough excesses above $u$ for reliable estimation, but high enough to reduce bias induced when the asymptotic arguments in Equation~\ref{eq:ce_limiting_dist} are not satisfied. 
+Choosing $q$ involves the classical bias-variance tradeoff: $q$ must be sufficiently low as to leave enough excesses above $u_i$ for reliable estimation, but high enough to reduce bias induced when the asymptotic arguments in Equation~\ref{eq:ce_limiting_dist} are not satisfied. 
 To pick $q$, we use threshold stability plots \citep{Scarrott2012}. 
 % The bootstrapping procedure of \citet{Heffernan2004} is used to obtain standard errors for the parameter estimates, and we choose the highest value of $q$ such that the parameter estimates are stable, and the bootstrap standard errors are reasonably small.
 With the bootstrap procedure of \citet{Heffernan2004}, we obtain standard errors for parameter estimates and choose the highest value of $q$ such that the parameter estimates are stable and the bootstrap standard errors are reasonably small. \todo{Briefly describe this bootstrap method?}
@@ -1094,7 +1094,7 @@ Now, suppose that, for a specified conditioning variable $i \in \{1, \ldots, d\}
 Using the $\JSGa{}$ divergence in Equation~\eqref{eq:js_norm_mvn1}, we define the \textit{conditional skew-geometric Jensen--Shannon divergence} ($\cJSGa{s, s^*}$) between the two sites $s$ and $s^*$, conditional on the $i$-th variable being extreme, defined as
 \begin{equation} \label{eq:cjsga}
   % \cJSGa{}\bigl(y; s \Vert s^*\bigr) = \JSGa{}\left(H_{\mathbf{Y}_{-i}(s)|Y_i(s)=y} \Vert H_{\mathbf{Y}_{-i}(s^*)|Y_i(s^*)=y}\right),
-  \cJSGa{s, s^*}(y) = \JSGa{}\left(H_{i, s}(y) \Vert H_{i, s^*}(y)\right),\qquad y > u,
+  \cJSGa{s, s^*}(y) = \JSGa{}\left(H_{i, s}(y) \Vert H_{i, s^*}(y)\right),\qquad y > u_i,
 \end{equation}
 % where $H_{\mathbf{Y}_{-i}(s)|Y_i(s)=y}$ and $H_{\mathbf{Y}_{-i}(s^*)|Y_i(s^*)=y}$ are the conditional multivariate Gaussian distributions induced by the CE model at sites $s$ and $s^*$, respectively, for a given value of $y > \max(u_i(s), u_i(s^*))$. \todo{Is this max correct?}
 % where $H_{i, s}(y)$ and $H_{i, s^*}(y)$ are the conditional multivariate Gaussian distributions for variable $i$ induced by the CE model at sites $s$ and $s^*$, respectively, for a given value of $y > \max(u_{i, s}, u_{i, s^*})$. \todo{Is this max correct? Has it been talked about enough before?} \todo{Should this be mid i? What does Heff2004 do?}
@@ -1124,10 +1124,7 @@ where $H_{i, s}(y)$ and $H_{i, s^*}(y)$ are the conditional $(d-1)$-variate Gaus
 %       \left(\mvcov{s^*}\right)^{-1}\left(\mvmean{s^*}\right)\right).
 % \end{align*}
 % We can substitute the multivariate Gaussian distribution in Equation~\eqref{eq:ce_norm} into the formula for the $\JSGa{}$ divergence in Equation~\eqref{eq:js_norm_mvn1} to compare the CE models fit at two sites $s$ and $s^*$, with 
-Equation \eqref{eq:cjsga} has a closed-form expression: from Equation~\eqref{eq:ce_norm}, this can be derived by substituting, into Equation~\eqref{eq:js_norm_mvn1}, the conditional parameters
-$\symbf{m_2} = \mvmean{s^*}$, 
-$\Omega_1 = \mvcov{s}$, and
-$\Omega_2 = \mvcov{s^*}$, 
+Equation \eqref{eq:cjsga} has a closed-form expression: from Equation~\eqref{eq:ce_norm}, this can be derived by substituting, into Equation~\eqref{eq:js_norm_mvn1}, the conditional parameters $\symbf{m_1} = \mvmean{s}$, $\symbf{m_2} = \mvmean{s^*}$,  $\Omega_1 = \mvcov{s}$, and $\Omega_2 = \mvcov{s^*}$, 
 % $\Omega_{\lambda} = \left(\lambda\,\left(\mvcov{s}\right)^{-1} + (1-\lambda)\,\left(\mvcov{s^*}\right)^{-1}\right)^{-1}$, and \\
 % $\symbf{m}_{\lambda} = \Omega_{\lambda}\left(\lambda\,
 % \left(\mvcov{s}\right)^{-1}\left(\mvmean{s}\right) + (1-\lambda)\,
@@ -1139,10 +1136,11 @@ $\Omega_2 = \mvcov{s^*}$,
 % \Omega_2    &=\mvcov{s^*},
 % \end{align*}
 and 
+\todo{Need to include?}
 \begin{align*}
-% \Omega_{\lambda}
-%   &= \left[\,\lambda\,\left\{\mvcov{s}\right\}^{-1}
-%            +(1-\lambda)\,\left\{\mvcov{s^{*}}\right\}^{-1}\right]^{-1},\\[6pt]
+\Omega_{\lambda}
+  &= \left[\,\lambda\,\left\{\mvcov{s}\right\}^{-1}
+           +(1-\lambda)\,\left\{\mvcov{s^{*}}\right\}^{-1}\right]^{-1},\\[6pt]
 \symbf{m}_{\lambda}
   &= \Omega_{\lambda}
      \begin{aligned}[t]
@@ -1228,14 +1226,14 @@ Therefore, to obtain a single measure of dissimilarity between the CE models fit
   % \eJSGa{}(s || s^*) &= \mathbb{E}(cJS^{G_\lambda}_i(Y_i(s); s || s^*)| Y_i(s) > u_i) \\
   %                             &= \int_{u_i}^{\infty} \cJSGa{(y; s || s^*)} f(y \mid Y_i(s) > u_i) dy, \numberthis~\label{eq:jsga_integral}
   % \eJSGa{s, s^*} &= \mathbb{E}\left(\cJSGa{s, s^*}(Y_{i,s}) \mid Y_{i,s} > u_{i}\right) \\
-  \eJSGa{s, s^*} &= \mathbb{E}\left(\cJSGa{s, s^*}(Y_{i,s}) \mid Y_{i,s} > u\right) \\
-                 &= \mathbb{E}\left[\cJSGa{s, s^*}(Y_{i,s^*}) \mid Y_{i,s^*} > u \right] \\
-                 &= \int_{u}^{\infty} \cJSGa{s, s^*}(y) h(y \mid Y_{i,s} > u) dy, \numberthis~\label{eq:jsga_integral}
+  \eJSGa{s, s^*} &= \mathbb{E}\left(\cJSGa{s, s^*}(Y_{i,s}) \mid Y_{i,s} > u_i\right) \\
+                 &= \mathbb{E}\left[\cJSGa{s, s^*}(Y_{i,s^*}) \mid Y_{i,s^*} > u_i\right] \\
+                 &= \int_{u_i}^{\infty} \cJSGa{s, s^*}(y) h(y \mid Y_{i,s} > u_i) dy, \numberthis~\label{eq:jsga_integral}
 \end{align*}
 % where $h(y \mid Y_{i, s} > u)$ is the conditional density of $Y_{i, s}$ given exceedance of the threshold. 
-where $h(y \mid Y_{i, s} > u)$ is the conditional density of $Y_{i, s} \mid Y_{i, s} > u$.
+where $h(y \mid Y_{i, s} > u_i)$ is the conditional density of $Y_{i, s} \mid Y_{i, s} > u_i$.
 % This integral gives us our dissimilarity measure or ``distance'' between the two CE models, averaged over the distribution of $Y_{i, s} \mid Y_{i, s} > u_i$.
-We here exploit our standardised Laplace margins and note that $h(y \mid Y_{i, s} > u) = h(y \mid Y_{i, s^*} > u)$, ensuring symmetry of our dissimilarity measure.
+We here exploit our standardised Laplace margins and note that $h(y \mid Y_{i, s} > u_i) = h(y \mid Y_{i, s^*} > u_i)$, ensuring symmetry of our dissimilarity measure.
 % We can estimate this integral using Monte Carlo (MC) methods, noting that the distribution of $Y_i$ is given by the standard Laplace distribution. 
 
 % Monte Carlo estimation

@@ -972,30 +972,31 @@ To pick $q$, we use threshold stability plots \citep{Scarrott2012}.
 % The bootstrapping procedure of \citet{Heffernan2004} is used to obtain standard errors for the parameter estimates, and we choose the highest value of $q$ such that the parameter estimates are stable, and the bootstrap standard errors are reasonably small.
 With the bootstrap procedure of \citet{Heffernan2004}, we obtain standard errors for parameter estimates and choose the highest value of $q$ such that the parameter estimates are stable and the bootstrap standard errors are reasonably small. \todo{Briefly describe this bootstrap method?}
 
-\subsection{Divergence measure for conditional extremes models}~\label{subsec:div}
+\subsection{A Divergence measure for multivariate conditional extremes}~\label{subsec:div}
 
-\todo{Should I use divergence interchangeably with more commonly used distance?}
-\todo{Need some references for applications of this metric! In intro, or here?}
+% \todo{Need some references for applications of this metric! In intro, or here?}
+\todo{Include some references to backup desirable properties of divergence measure}
 
-There are several qualities we desire from a divergence measure for clustering based on the conditional distribution in Equation~\eqref{eq:ce_norm}.
+We now define our divergence measure for multivariate conditional extremes models. 
+There are several qualities we desire from a divergence measure based on the conditional distribution in Equation~\eqref{eq:ce_norm}.
 % We would like to exploit the fact that the CE model is a multivariate Gaussian distribution to provide some gains in computational efficiency, and for our divergence to more generally be cheap to compute.
 % We particularly want to exploit the multivariate Gaussian nature of the CE model, to provide computational efficiency through a closed-form solution, and for our divergence to be generally cheap to compute.
-The measure must be non-negative and symmetric, as the ``distance'' between two sites as defined by the divergence between their CE models should be the same regardless of the order in which they are compared.
+% The measure must be non-negative and symmetric, as the ``distance'' between two sites as defined by the divergence between their CE models should be the same regardless of the order in which they are compared.
+The measure should be symmetric, as the ``distance'' between the tails of random vectors, as defined by the divergence between their corresponding CE models, should be the same regardless of the order in which they are compared.
 % Ideally, our measure should also be bounded above by a finite value, as smaller divergences lead to more well-defined clusters, and very large divergences can lead to numerical instability.
 % Ideally, our measure should also have some form of upper bound, as smaller divergences lead to more well-defined clusters, and very large divergences can lead to numerical instability. \todo{Citation!}
-Ideally, our measure should also have an upper bound, as large divergences can lead to numerical instability and less stable and well-defined clusters.
+Ideally, our measure should also be non-negative and have an upper bound, as large divergences can lead to numerical instability during clustering, and less stable and well-defined clusters.
 % Finally, we would like our measure to be a true metric, so that it satisfies the triangle inequality and is non-negative, and this is known to improve the performance of clustering algorithms \todo{Again, citation?}.
-We also want to provide computational efficiency through a closed-form solution, and for our divergence to be generally cheap to compute, which we achieve using the Gaussian assumption in Equation~\eqref{eq:ce_norm}.
-\todo{Any other properties? Convex (as KL is?) (which may be better?) (need citation)}
+We also desire provide computational efficiency through a closed-form solution our divergence, which is cheap to compute. 
+We achieve this using the Gaussian assumption in Equation~\eqref{eq:ce_norm}.
+% \todo{Any other properties? Convex (as KL is?) (which may be better?) (need citation)}
 
 % Introduce JSGa
-One divergence measure introduced in \citet{Nielsen2019} which satisfies these properties is the skew-geometric Jensen--Shannon divergence ($\JSGa{}$), which is a generalisation of the Jensen--Shannon ($\JS{}$) divergence \citep{Lin1991}. 
-% The $\JSGa{}$ divergence between two distribution functions $P$ and $Q$ is given by
+% One divergence measure introduced in \citet{Nielsen2019} which satisfies these properties is the skew-geometric Jensen--Shannon divergence ($\JSGa{}$), which is a generalisation of the Jensen--Shannon ($\JS{}$) divergence \citep{Lin1991}. 
+\citet{Nielsen2019} introduced the skew-geometric Jensen--Shannon divergence ($\JSGa{}$), which is a generalisation of the Jensen--Shannon ($\JS{}$) divergence \citep{Lin1991}. 
 \todo{Switch to F and F star to match below?}
-% The $\JSGa{}$ divergence between two continuous $d$-variate distribution functions, say $F_1$ and $F_2$, is given by
 \todo{Say why Deasy uses dual form?}
-% Specifically, we will use the dual form of the $\JSGa{}$ divergence, which in \citet{Deasy2020}, defined between two continuous $d$-variate distribution functions, say $F_1$ and $F_2$, as \todo{Discuss with Christian, change F to H?}
-Specifically, we will use the dual form of the $\JSGa{}$ divergence, which in \citet{Deasy2020}, defined between two continuous $d$-variate distribution functions, say $H_1$ and $H_2$, as \todo{Discuss with Christian, change F to H?}
+Specifically, we use the dual form of the $\JSGa{}$ divergence \citep{Deasy2020}, which is defined between two continuous $d$-variate distribution functions, say $H_1$ and $H_2$, as 
 \begin{equation}~\label{eq:jsga}
   % \JSGa{(P \Vert Q)} = \frac{1}{2} \left\{\KL{(P \Vert G_{\alpha}(P, Q))} + \KL{(Q \Vert G_{\alpha}(P, Q))} \right\},
   % \JSGa{(F_1 \Vert F_2)} = \frac{1}{2} \left\{\KL{(F_1 \Vert G_{\lambda}(F_1, F_2))} + \KL{(F_2 \Vert G_{\lambda}(F_1, F_2))} \right\},
@@ -1003,18 +1004,25 @@ Specifically, we will use the dual form of the $\JSGa{}$ divergence, which in \c
   \JSGa{(H_1 \Vert H_2)} = (1- \lambda) \KL{\left\{G_{\lambda}(H_1, H_2) \Vert H_1\right\}} + \lambda \KL{\left\{G_{\lambda}(H_1, H_2) \Vert H_2\right\}},
 \end{equation}
 % where $G_{\alpha}(P, Q) = P^{\alpha} Q^{1 - \alpha}, \alpha \in [0, 1]$ is the weighted geometric mean of $P$ and $Q$, with $\alpha$ controlling the weighting between them, and $\KL{(P \Vert Q)}$ is the Kullback--Leibler divergence between $P$ and $Q$ \citep{Kullback1951}. 
-where $G_{\lambda}(H_1, H_2) = H_{1}^{1-\lambda} H_{2}^{\lambda}, \lambda \in [0, 1]$, is the weighted geometric mean of $H_1$ and $H_2$, and $\KL{(H_1 \Vert H_2)}$ is the Kullback--Leibler divergence between $H_1$ and $H_2$ \citep{Kullback1951}, given by 
+% where $G_{\lambda}(H_1, H_2) = H_{1}^{1-\lambda} H_{2}^{\lambda}, \lambda \in [0, 1]$, is the weighted geometric mean of $H_1$ and $H_2$, and $\KL{(H_1 \Vert H_2)}$ is the Kullback--Leibler divergence between $H_1$ and $H_2$ \citep{Kullback1951}, given by 
+where $G_{\lambda}(H_1, H_2) = H_{1}^{1-\lambda} H_{2}^{\lambda}$ is the weighted geometric mean of $H_1$ and $H_2$, with $\lambda \in [0, 1]$, and $\KL{(H_1 \Vert H_2)}$ is the Kullback--Leibler divergence between $H_1$ and $H_2$ \citep{Kullback1951}, given by 
 \begin{equation}~\label{eq:kl}
   % KL(F_1 \Vert F_2) = \int_{-\infty}^{\infty} f_1(y) \log\left(\frac{f_1(y)}{f_2(y)}\right) dy,
   \KL{(H_1 \Vert H_2)} = \int_{\mathbb{R}^d} h_1(\symbf{y}) \log\left(\frac{h_1(\symbf{y})}{h_2(\symbf{y})}\right) d\symbf{y},
 \end{equation}
 where $h_1$ and $h_2$ are the continuous density functions of $H_1$ and $H_2$, respectively. 
 % Here, $P$ and $Q$ represent the conditional multivariate Gaussian distributions induced by the CE model at two different sites.
-In our context, $H_1$ and $H_2$ will represent the conditional multivariate Gaussian distributions induced by the CE model at two different sites, say $s_1$ and $s_2$. \todo{Change to s and s star to match below?}
-The parameter $\lambda$ skews the geometric mean $G_{\lambda}(H_1,H_2)\propto H_1^{1-\lambda}H_{2}^{\lambda}$ towards $H_1$ (when $\lambda$ is close to 0) or towards $H_2$ (when $\lambda$ is close to 1). 
+% In our context, $H_1$ and $H_2$ will represent the conditional multivariate Gaussian distributions induced by the CE model at two different sites, say $s_1$ and $s_2$. \todo{Change to s and s star to match below?}
+In our context, we replace $H_1$ and $H_2$ by the conditional multivariate Gaussian distributions induced by the CE framework at two different sites, say $s$ and $s^*$, see Equation~\eqref{eq:ce_norm}.
+% The parameter $\lambda$ skews the geometric mean $G_{\lambda}(H_1,H_2)\propto H_1^{1-\lambda}H_{2}^{\lambda}$ towards $H_1$ (when $\lambda$ is close to 0) or towards $H_2$ (when $\lambda$ is close to 1). 
+% The weight $\lambda$ skews the geometric mean $G_{\lambda}(H_1,H_2) = H_1^{1-\lambda}H_{2}^{\lambda}$ towards $H_1$ (when $\lambda$ is close to 0) or towards $H_2$ (when $\lambda$ is close to 1). 
+The weight $\lambda$ skews the geometric mean $G_{\lambda}(H_1,H_2) = H_1^{1-\lambda}H_{2}^{\lambda}$ towards $H_1$ as $\lambda$ goes to 0 (and conversely for $H_2$ as $\lambda \rightarrow 1$). 
 % When one site has a more reliable CE fit, we set $\alpha$ to a reliability weight $w\in[0,1]$ (e.g.\ proportional to effective sample size), and apply the symmetrised divergence so that the final dissimilarity remains symmetric.
-One possible advantage for having a skew parameter such as $\lambda$ is that in our divergence measure we can favour sites with a more reliable CE fit, as determined by, for example, the effective sample size.
-In this paper, we use $\lambda = 0.5$, because all sites have equal number of observations in both our simulation and case studies. 
+% One possible advantage for having a skew parameter such as $\lambda$ is that in our divergence measure we can favour sites with a more reliable CE fit, as determined by, for example, the effective sample size.
+One possible advantage of specifying $\lambda$ is that we can design our divergence measure to place more weight on the CE model at sites with more reliable fit, as determined by, for example, the effective sample size.
+In this paper, we set $\lambda = 0.5$ throughout, as all sites have equal number of observations in both our simulation and case studies.
+% As such, for the sake of brevity we refer to $\JSGa{}(H_1 \Vert H_2)$ as simply $
+\todo{Refer to JSGa as GJS from now on, since lambda is fixed?}
 % For our application, we set $\alpha = 0.5$, so that $G_{\alpha}(P, Q)$ is unweighted, but note that $\alpha$ 
 % The Kullback--Leibler (KL) divergence, $KL(P \Vert Q)$, is defined as
 % \begin{equation}~\label{eq:kl}

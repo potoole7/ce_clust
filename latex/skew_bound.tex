@@ -1,0 +1,59 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{url}
+\usepackage{hyperref}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdftitle={Overleaf Example},
+    pdfpagemode=FullScreen,
+    }
+
+\urlstyle{same}
+
+\begin{document}
+
+% \title{Notes}
+% \author{}
+% \date{\today}
+% \maketitle
+
+Page 11 of \textit{Frank Nielsen, Two tales for a geometric Jensen–Shannon divergence} defines the extended skew-geometric Jensen–Shannon divergence with parameters $(\alpha,\beta)$ as
+\[
+\mathrm{GJS}_{\alpha,\beta}(p,q)
+= (1-\beta)\alpha D_{\mathrm{KL}}(p\|q) + \beta(1-\alpha) D_{\mathrm{KL}}(q\|p) - B_{\alpha,\beta}(p,q),
+\]
+where $B_{\alpha,\beta}(p,q)=-\ln \int p^\alpha q^{1-\alpha}\ge 0$ is the Bhattacharyya-type term.
+
+We let $\beta = 1/2$ since we're only interested in $\alpha$ (which we have as $\lambda$), therefore:
+\[
+\mathrm{GJS}_{\alpha}(p,q)
+= \frac{1}{2}(1-\alpha)D_{\mathrm{KL}}(p\|q) +\frac{1}{2}\alpha D_{\mathrm{KL}}(q\|p)-B_\alpha(p,q).
+\]
+
+Since $B_\alpha(p,q)\ge 0$, it follows that
+\[
+\mathrm{GJS}_{\alpha}(p,q) \le \frac{1}{2}(1-\alpha)D_{\mathrm{KL}}(p\|q) + \frac{1}{2}\alpha\,D_{\mathrm{KL}}(q\|p).
+\]
+
+Both coefficients are nonnegative, hence
+\[
+\frac{1}{2}(1-\alpha)\,D_{\mathrm{KL}}(p\|q) + \frac{1}{2}\alpha\,D_{\mathrm{KL}}(q\|p)
+\le \frac{1}{2} \max\{\alpha,1-\alpha\}\big(D_{\mathrm{KL}}(p\|q)+D_{\mathrm{KL}}(q\|p)\big),
+\]
+after factorisation.
+
+By definition the Jeffrey's distance is $J(p,q)=D_{\mathrm{KL}}(p\|q)+D_{\mathrm{KL}}(q\|p)$, so we get
+\[
+\mathrm{GJS}_\alpha(p,q)\;\le\;\tfrac12\max\{\alpha,\,1-\alpha\}\,J(p,q).
+\]
+For $\alpha=\frac{1}{2}$ this gives $\mathrm{GJS}_{1/2}(p,q)\le \frac{1}{4} J(p,q)$ as before, while as $\alpha\to 0$ or $\alpha\to 1$ the factor tends to $\frac{1}{2}$.
+Hence, for $\alpha = \frac{1}{2}$ we get the smallest divergence relative to the Jeffrey's distance. 
+Intuitively, skewing increasingly causes the divergence to act more like the directional KL divergence that we weigh more, which is unbounded. 
+Therefore, skewing and it's associated higher divergence can increase cluster separation, but may lead to numerical instabilities and reduce robustness to outliers, relative to choosing $\alpha = \frac{1}{2}$.
+
+\end{document}

@@ -1313,27 +1313,6 @@ Assuming we use the dissimilarity matrix $M^{(i)}$, a brief description of the a
 % \end{itemize}
 \todo{Need to replace j?}
 \todo{fix argmin}
-% \begin{algorithm}[H]
-%   \caption{k-medoids (PAM)}
-%   \label{alg:kmedoids_kappa}
-%   \begin{algorithmic}[1]
-%     \State \textbf{Input:} dissimilarity matrix $M^{(i)}\in\mathbb{R}^{D\times D}$, number of clusters $k$
-%     \State \textbf{Output:} Cluster assignments $C_1,\dots,C_k$ and medoid indices $\boldsymbol{\kappa}=(\kappa_1,\dots,\kappa_k)$
-%     \State \textbf{Initialise:} choose $k$ distinct medoid indices $\{\kappa_1,\dots,\kappa_k\}\subseteq\{1,\dots,D\}$ uniformly at random.
-%     \Repeat
-%       \State \textbf{Assignment:} \parbox[t]{.82\linewidth}{\raggedright Assign each observation $s\in\{1,\dots,D\}$ to its closest medoid, i.e.\
-%       $j \coloneq \argmin_{\ell\in\{1,\dots,k\}} \eJSGa{s,\kappa_\ell}$ and assign $s$ to $C_j$.}
-%       \For{$j=1,\dots,k$}
-%         \State \textbf{Update:} \parbox[t]{.82\linewidth}{\raggedright Update medoid index to minimise intracluster dissimilarity 
-%       \[
-%         \kappa_j \coloneq \argmin_{p\in C_j}\sum_{q\in C_j} \eJSGa{p,q}$.
-%       \]
-%         \State \Comment{Break ties by choosing the smallest index.}
-%       \EndFor
-%     \Until{no observation changes cluster assignment}
-%     \State \Return $C_1,\dots,C_k,\ \boldsymbol{\kappa}$
-%   \end{algorithmic}
-% \end{algorithm}
 \begin{algorithm}[H]
   \caption{k-medoids (PAM)}
   \label{alg:kmedoids_kappa}
@@ -1342,7 +1321,7 @@ Assuming we use the dissimilarity matrix $M^{(i)}$, a brief description of the a
     \State \textbf{Output:} Cluster assignments $C_1,\dots,C_k$ and medoid indices $\boldsymbol{\kappa}=(\kappa_1,\dots,\kappa_k)$
     \State \textbf{Initialise:} choose $k$ distinct medoid indices $\{\kappa_1,\dots,\kappa_k\}\subseteq\{1,\dots,D\}$ uniformly at random.
     \Repeat
-    \State \textbf{Assignment:} \parbox[t]{.82\linewidth}{\raggedright Assign each observation $s\in\{1,\dots,D\}$ to its closest medoid in terms of $\eJSGa{}$ (see Equation~\eqref{eq:jsga_integral}), i.e.\ $j \coloneq \argmin_{\ell\in\{1,\dots,k\}} \eJSGa{s,\kappa_\ell}$ and assign $s$ to $C_j$.}
+    \State \textbf{Assignment:} \parbox[t]{.82\linewidth}{\raggedright Assign each observation $s\in\{1,\dots,D\}$ to its closest medoid in terms of $\eJSGa{}$ (see Equation~\eqref{eq:jsga_integral}), i.e.\ \\ $j \coloneq \argmin_{\ell\in\{1,\dots,k\}} \eJSGa{s,\kappa_\ell}$ and assign $s$ to $C_j$.}
       \For{$j=1,\dots,k$}
         \State \textbf{Update:} \parbox[t]{.82\linewidth}{\raggedright Update medoid index to minimise intracluster dissimilarity, i.e.\ $\kappa_j \coloneq \argmin_{p\in C_j}\sum_{q\in C_j} \eJSGa{p,q}$.}
         \State \Comment{Break ties by choosing the smallest index.}

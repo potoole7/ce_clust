@@ -1089,17 +1089,18 @@ where the Jeffreys' divergence $\mathrm{J}(H_1 \Vert H_2) = \KL{(H_1 \Vert H_2)}
 % Paragraph defining conditional JSGa for sites (s, s*) in cond variable
 % Now suppose we have fitted the CE model at two different sites $s$ and $s^*$, and we want to compare the extremal dependence structure of the random vector $\symbf{Y}_{s}$ at site $s$ with that of $\symbf{Y}_{s^*}$ at site $s^*$, for a given conditioning variable $Y_{i, s}$ and $Y_{i, s^*}$, respectively. %, where $i \in \{1, \ldots, d\}, s, s^* \in \{1, \ldots, D\}$.
 % Now suppose we have fitted the CE model at two different sites $s$ and $s^*$, and we want to compare the extremal dependence structure of the random vector $\symbf{Y}_{s}$ at site $s$ with that of $\symbf{Y}_{s^*}$ at site $s^*$, for conditioning variable $i$ (i.e.\ $Y_{i, s}$ and $Y_{i, s^*}$).%, where $i \in \{1, \ldots, d\}, s, s^* \in \{1, \ldots, D\}$.
-Now suppose we have fitted the CE model at two different sites $s$ and $s^*$, and we want to compare the extremal dependence structure for the conditioning variable $i$ (i.e.\ $Y_{i, s}$ and $Y_{i, s^*}$).%, where $i \in \{1, \ldots, d\}, s, s^* \in \{1, \ldots, D\}$.
+% Now suppose we have fitted the CE model at two different sites $s$ and $s^*$, and we want to compare the extremal dependence structure for the conditioning variable $i$ (i.e.\ $Y_{i, s}$ and $Y_{i, s^*}$).%, where $i \in \{1, \ldots, d\}, s, s^* \in \{1, \ldots, D\}$.
+Now, suppose that, for a specified conditioning variable $i \in \{1, \ldots, d\}$, we have fitted the CE model at two different sites, $s$ and $s^*$, and we want to compare their induced extremal dependence (i.e.\ the joint tails of $Y_{-i, s}$ and $Y_{-i, s^*}$; see Equation~\eqref{eq:ce_norm}). \todo{have bold Y here?}
 % Using the $\JSGa{}$ divergence in Equation~\eqref{eq:js_norm_mvn1}, we define the \textit{conditional skew-geometric Jensen--Shannon divergence} ($\cJSGa{s, s^*}$) between the two sites $s$ and $s^*$ for the conditioning variable $Y_i$ as
-Using the $\JSGa{}$ divergence in Equation~\eqref{eq:js_norm_mvn1}, we define the \textit{conditional skew-geometric Jensen--Shannon divergence} ($\cJSGa{s, s^*}$) between the two sites $s$ and $s^*$ for the conditioning variable $Y_i$ as
-\todo{Define for j mid i? or just mid i? Would lead to better M definition below}
-\todo{Is it a function of y?}
+% Using the $\JSGa{}$ divergence in Equation~\eqref{eq:js_norm_mvn1}, we define the \textit{conditional skew-geometric Jensen--Shannon divergence} ($\cJSGa{s, s^*}$) between the two sites $s$ and $s^*$ for the conditioning variable $Y_i$ as
+Using the $\JSGa{}$ divergence in Equation~\eqref{eq:js_norm_mvn1}, we define the \textit{conditional skew-geometric Jensen--Shannon divergence} ($\cJSGa{s, s^*}$) between the two sites $s$ and $s^*$, conditional on the $i$-th variable being extreme, defined as
 \begin{equation} \label{eq:cjsga}
   % \cJSGa{}\bigl(y; s \Vert s^*\bigr) = \JSGa{}\left(H_{\mathbf{Y}_{-i}(s)|Y_i(s)=y} \Vert H_{\mathbf{Y}_{-i}(s^*)|Y_i(s^*)=y}\right),
-  \cJSGa{s, s^*}(y) = \JSGa{}\left(H_{i, s}(y) \Vert H_{i, s^*}(y)\right),
+  \cJSGa{s, s^*}(y) = \JSGa{}\left(H_{i, s}(y) \Vert H_{i, s^*}(y)\right),\qquad y > u,
 \end{equation}
 % where $H_{\mathbf{Y}_{-i}(s)|Y_i(s)=y}$ and $H_{\mathbf{Y}_{-i}(s^*)|Y_i(s^*)=y}$ are the conditional multivariate Gaussian distributions induced by the CE model at sites $s$ and $s^*$, respectively, for a given value of $y > \max(u_i(s), u_i(s^*))$. \todo{Is this max correct?}
-where $H_{i, s}(y)$ and $H_{i, s^*}(y)$ are the conditional multivariate Gaussian distributions for variable $i$ induced by the CE model at sites $s$ and $s^*$, respectively, for a given value of $y > \max(u_{i, s}, u_{i, s^*})$. \todo{Is this max correct? Has it been talked about enough before?} \todo{Should this be mid i? What does Heff2004 do?}
+% where $H_{i, s}(y)$ and $H_{i, s^*}(y)$ are the conditional multivariate Gaussian distributions for variable $i$ induced by the CE model at sites $s$ and $s^*$, respectively, for a given value of $y > \max(u_{i, s}, u_{i, s^*})$. \todo{Is this max correct? Has it been talked about enough before?} \todo{Should this be mid i? What does Heff2004 do?}
+where $H_{i, s}(y)$ and $H_{i, s^*}(y)$ are the conditional $(d-1)$-variate Gaussian distributions at sites $s$ and $s^*$, respectively, see Equation~\eqref{eq:ce_norm}.
 % Substituting the means and covariances of these conditional distributions from Equation\eqref{eq:ce_norm} into Equation~\eqref{eq:js_norm_mvn1} gives the closed-form expression
 % \todo{Need help tidying up}
 % \todo{move equation number to right}
@@ -1124,10 +1125,8 @@ where $H_{i, s}(y)$ and $H_{i, s^*}(y)$ are the conditional multivariate Gaussia
 % &\qquad\quad + (1-\lambda)\,
 %       \left(\mvcov{s^*}\right)^{-1}\left(\mvmean{s^*}\right)\right).
 % \end{align*}
-We can substitute the multivariate Gaussian distribution in Equation~\eqref{eq:ce_norm} into the formula for the $\JSGa{}$ divergence in Equation~\eqref{eq:js_norm_mvn1} to compare the CE models fit at two sites $s$ and $s^*$, with 
-\todo{Should I switch 1 and 2 to s?}
-\todo{inline or not?}
-$\symbf{m}_1 = \mvmean{s}$, 
+% We can substitute the multivariate Gaussian distribution in Equation~\eqref{eq:ce_norm} into the formula for the $\JSGa{}$ divergence in Equation~\eqref{eq:js_norm_mvn1} to compare the CE models fit at two sites $s$ and $s^*$, with 
+Equation \eqref{eq:cjsga} has a closed-form expression: from Equation~\eqref{eq:ce_norm}, this can be derived by substituting, into Equation~\eqref{eq:js_norm_mvn1}, the conditional parameters
 $\symbf{m_2} = \mvmean{s^*}$, 
 $\Omega_1 = \mvcov{s}$, and
 $\Omega_2 = \mvcov{s^*}$, 
@@ -1142,17 +1141,16 @@ $\Omega_2 = \mvcov{s^*}$,
 % \Omega_2    &=\mvcov{s^*},
 % \end{align*}
 and 
-\todo{Define with m and Omega or explicitly, as here?}
 \begin{align*}
-\Omega_{\lambda}
-  &= \left[\,\lambda\,\left\{\mvcov{s}\right\}^{-1}
-           +(1-\lambda)\,\left\{\mvcov{s^{*}}\right\}^{-1}\right]^{-1},\\[6pt]
+% \Omega_{\lambda}
+%   &= \left[\,\lambda\,\left\{\mvcov{s}\right\}^{-1}
+%            +(1-\lambda)\,\left\{\mvcov{s^{*}}\right\}^{-1}\right]^{-1},\\[6pt]
 \symbf{m}_{\lambda}
   &= \Omega_{\lambda}
      \begin{aligned}[t]
        \Biggl[&\lambda\,\left\{\mvcov{s}\right\}^{-1}\mvmean{s}\\
-            &\quad +(1-\lambda)\,\left\{\mvcov{s^{*}}\right\}^{-1}\mvmean{s^{*}}\Biggr]
-     \end{aligned}.
+            &\quad +(1-\lambda)\,\left\{\mvcov{s^{*}}\right\}^{-1}\mvmean{s^{*}}\Biggr].
+     \end{aligned}
 \end{align*}
 
 % % Introduce KL divergence 
@@ -1224,45 +1222,58 @@ and
 % \end{equation}
 
 % Since the conditional $\JSGa{}$ divergence, $\cJSGa{}$, depends on the value of the conditioning variable $Y_i(s)$, we obtain a single measure of dissimilarity, by defining the expected divergence 
-The conditional $\JSGa{}$ divergence, $\cJSGa{}$, depends on the value of the conditioning variable $Y_{i,s}$.
-Therefore, to obtain a single measure of dissimilarity between the two sites $s$ and $s^*$ for the conditioning variable $Y_i$, we define the expected divergence
+Our conditional $\JSGa{}$ divergence, $\cJSGa{s, s^*}$, depends on the value of the corresponding conditioning variable. 
+% Therefore, to obtain a single measure of dissimilarity between the two sites $s$ and $s^*$ for the conditioning variable $Y_i$, we define the expected divergence
+Therefore, to obtain a single measure of dissimilarity between the CE models fitted at the two sites $s$ and $s^*$ for the $i$-th conditioning variable, we define the expected divergence
 \begin{align*}%~\label{eq:jsga_integral}
   % eJS^{G_\lambda}_i(s || s^*) &= \mathbb{E}(cJS^{G_\lambda}_i(Y_i(s); s || s^*)| Y_i(s) > u_i) \\
   % \eJSGa{}(s || s^*) &= \mathbb{E}(cJS^{G_\lambda}_i(Y_i(s); s || s^*)| Y_i(s) > u_i) \\
   %                             &= \int_{u_i}^{\infty} \cJSGa{(y; s || s^*)} f(y \mid Y_i(s) > u_i) dy, \numberthis~\label{eq:jsga_integral}
-  \eJSGa{s, s^*} &= \mathbb{E}\left(\cJSGa{s, s^*}(Y_{i,s}) \mid Y_{i,s} > u_{i}\right) \\
-                              &= \int_{u_{i,s}}^{\infty} \cJSGa{s, s^*}(y) h(y \mid Y_{i,s} > u_{i}) dy, \numberthis~\label{eq:jsga_integral}
-\end{align*} \todo{u i or u i s?} \todo{No need to be function of y like cJSGa?}
-where $h(y \mid Y_{i, s} > u_i)$ is the conditional density of $Y_{i, s}$ given exceedance of the threshold. 
-This integral gives us our dissimilarity measure or ``distance'' between the two CE models, averaged over the distribution of $Y_{i, s} \mid Y_{i, s} > u_i$.
+  % \eJSGa{s, s^*} &= \mathbb{E}\left(\cJSGa{s, s^*}(Y_{i,s}) \mid Y_{i,s} > u_{i}\right) \\
+  \eJSGa{s, s^*} &= \mathbb{E}\left(\cJSGa{s, s^*}(Y_{i,s}) \mid Y_{i,s} > u\right) \\
+                 &= \mathbb{E}\left[\cJSGa{s, s^*}(Y_{i,s^*}) \mid Y_{i,s^*} > u \right] \\
+                 &= \int_{u}^{\infty} \cJSGa{s, s^*}(y) h(y \mid Y_{i,s} > u) dy, \numberthis~\label{eq:jsga_integral}
+\end{align*}
+% where $h(y \mid Y_{i, s} > u)$ is the conditional density of $Y_{i, s}$ given exceedance of the threshold. 
+where $h(y \mid Y_{i, s} > u)$ is the conditional density of $Y_{i, s} \mid Y_{i, s} > u$.
+% This integral gives us our dissimilarity measure or ``distance'' between the two CE models, averaged over the distribution of $Y_{i, s} \mid Y_{i, s} > u_i$.
+We here exploit our standardised Laplace margins and note that $h(y \mid Y_{i, s} > u) = h(y \mid Y_{i, s^*} > u)$, ensuring symmetry of our dissimilarity measure.
 % We can estimate this integral using Monte Carlo (MC) methods, noting that the distribution of $Y_i$ is given by the standard Laplace distribution. 
-We estimate this integral using Monte Carlo methods, noting that $Y_{i, s}$ follows a standard Laplace distribution.
+
+% Monte Carlo estimation
+We estimate the integral in Equation~\eqref{eq:jsga_integral} using Monte Carlo methods, noting that $Y_{i, s}$ follows a standard Laplace distribution.
 % We average across the individual scores for each individual realisation of $Y_i(s)$ to derive the divergence for a pair of sites, weighted by the distribution of $Y_i(s)$.
-In practice, very large values of $Y_{i, s}$ can lead to unstable estimates, and we also want to avoid extrapolating beyond the range of observed $Y_{i, s}$ used to fit the CE model. 
+In practice, very large values of $Y_{i, s}$ can lead to unstable estimates, and we also want to avoid extrapolating beyond the range of the observed $Y_{i, s}$ used to fit the CE model. 
 % Hence, we truncate the expectation at the 99th percentile of the empirical distribution of $Y_i(s)$ across all sites.
-Hence, we truncate the integral in Equation~\eqref{eq:jsga_integral} at the 99th percentile of the empirical distribution of $Y_{i, s}$ across all sites.
+% Hence, we truncate the integral in Equation~\eqref{eq:jsga_integral} at the 99th percentile of the empirical distribution of $Y_{i, s}$ across all sites.
+Hence, we truncate the limits in integral~\eqref{eq:jsga_integral}, so that the upper limit is the 99th percentile of the empirical distribution of $Y_{i, s}$ pooled across all sites.
 
 % Matrix
-\todo{Problem: Don't I have d(d-1) models here, not d?}
-\todo{If so, could have M j mid i here?}
-\todo{Discuss with Christian}
-We can repeat this procedure for each pair of sites $(s, s^*)$ and for each conditioning variable $Y_i$, to obtain a matrix of pairwise dissimilarities between all sites for each conditioning variable, given by
-\begin{align*} %\label{eq:distance_matrix}
-%   % M_i=\left( eJS^{G_\lambda}_i(s || s^*)\right)_{s, s^* \in \{s_1,\dots,s_D\}},
-  % M_i=\left(\eJSGa{}(y; s\Vert s^*)\right)_{s, s^* \in \{s_1,\dots,s_D\}},
-  % M_i=\left[ M_{i, s, s*} \right]_{s, s^* = \{1, \ldots, D\}}, \\
-  M^{(i)}&=\left[ M^{(i)}_{s, s*} \right]_{s, s^* = \{1, \ldots, D\}}, \numberthis~\label{eq:distance_matrix} \\
-  % \text{where } M_{i, s, s^*} = \eJSGa{s, s^*},
-  M^{(i)}_{s, s^*} &= \eJSGa{s, s^*},
-\end{align*}
-% where $D$ is the total number of sites.
-where $D$ is the total number of sites, and $M^{(i)}_{s, s^*}$ is the dissimilarity between sites $s$ and $s^*$ for conditioning variable $Y_i$. \todo{Should I say cond var Yi or just i? Throughout}
-% If we have $d$ conditioning variables, we can also aggregate the $d$ distance matrices $M_1, \ldots, M_d$ into a single matrix $M$, by taking the element-wise average across all matrices, i.e. \todo{Do we like this representation of the elementwise average?}
-If we have $d$ conditioning variables, we can also aggregate the $d$ distance matrices $M^{(1)}, \ldots, M^{(d)}$ into a single matrix $M$, by taking the element-wise average across all matrices, i.e. \todo{Do we like this representation of the elementwise average?}
-\begin{equation} \label{eq:aggregate_matrix}
-  \bar{M} = \frac{1}{d} \sum_{i=1}^d M_i.
+% We can repeat this procedure for each pair of sites $(s, s^*)$ and for each conditioning variable $Y_i$, to obtain a matrix of pairwise dissimilarities between all sites for each conditioning variable, given by
+We evaluate the pairwise $\eJSGa{s, s^*}$ for all pairs of sites $(s, s^*)$ and for each conditioning variable $i \in \{1, \ldots, d\}$. 
+These are then collected in a dsimmilarity matrix
+% \begin{align*} %\label{eq:distance_matrix}
+% %   % M_i=\left( eJS^{G_\lambda}_i(s || s^*)\right)_{s, s^* \in \{s_1,\dots,s_D\}},
+%   % M_i=\left(\eJSGa{}(y; s\Vert s^*)\right)_{s, s^* \in \{s_1,\dots,s_D\}},
+%   % M_i=\left[ M_{i, s, s*} \right]_{s, s^* = \{1, \ldots, D\}}, \\
+%   M^{(i)}&=\left[ M^{(i)}_{s, s*} \right]_{s, s^* = \{1, \ldots, D\}}, \numberthis~\label{eq:distance_matrix} \\
+%   % \text{where } M_{i, s, s^*} = \eJSGa{s, s^*},
+%   M^{(i)}_{s, s^*} &= \eJSGa{s, s^*},
+% \end{align*}
+\begin{equation} %\label{eq:distance_matrix}
+  M^{(i)} \coloneq \left( eJSGa{s, s^*} \right)_{s, s^* = \{1, \ldots, D\}},
 \end{equation}
-This aggregated matrix $\bar{M}$, or the individual matrices $M_i$, can then be used as input to the clustering algorithm described in Section~\ref{subsec:clustering}.
+% where $D$ is the total number of sites.
+% where $D$ is the total number of sites, and $M^{(i)}_{s, s^*}$ is the dissimilarity between sites $s$ and $s^*$ for conditioning variable $Y_i$. \todo{Should I say cond var Yi or just i? Throughout}
+where $D$ is the total number of sites, and $i = 1, \ldots, d$.
+
+% If we have $d$ conditioning variables, we can also aggregate the $d$ distance matrices $M_1, \ldots, M_d$ into a single matrix $M$, by taking the element-wise average across all matrices, i.e. \todo{Do we like this representation of the elementwise average?}
+% If we have $d$ conditioning variables, we can also aggregate the $d$ distance matrices $M^{(1)}, \ldots, M^{(d)}$ into a single matrix $M$, by taking the element-wise average across all matrices, i.e. \todo{Do we like this representation of the elementwise average?}
+If desired, we can aggregate the $d$ dissimilarity matrices $M^{(1)}, \ldots, M^{(d)}$ into a single dissimilarity matrix $M$, by taking their element-wise average, i.e. 
+\begin{equation} \label{eq:aggregate_matrix}
+  M = \frac{1}{d} \sum_{i=1}^d M_i.
+\end{equation}
+This aggregated matrix $M$, or the individual matrices $M_i$, are then be used as input to a clustering algorithm, which we describe in Section~\ref{subsec:clustering}.
 Optionally, other forms of aggregation, such as a weighted average or median, could be used here instead. 
 % Aggregating across multiple conditioning variables allows us to pool information across multiple comparisons and forms of information, and has some precedence in the extremal clustering literature \citep{Mornet2017-js}.
 Aggregating allows us to pool information across multiple comparisons and forms of information, and is supported in the extremal clustering literature \citep{Mornet2017-is}.
@@ -1287,8 +1298,8 @@ Aggregating allows us to pool information across multiple comparisons and forms 
 % See Vignotto)
 
 % Using Equation~\eqref{eq:jsga_integral}, we can now contruct a dissimilarity measure to compare two conditional distributions, representing our pairwise ``distances'' between sites. 
-% Using Equation~\eqref{eq:jsga_integral}, we can now construct a dissimilarity matrix $M_i$ (Equation~\eqref{eq:distance_matrix}) or an aggregated dissimilarity matrix $\bar{M}$ (Equation~\eqref{eq:aggregate_matrix}), to compare the conditional distributions at each pair of sites, representing our pairwise ``distances'' between sites for a given conditioning variable $Y_i$ or aggregated across multiple conditioning variables, respectively.
-We perform clustering using the matrix $M_i$, or the aggregated matrix $\bar{M}$, defined in Equations~\eqref{eq:distance_matrix} and \eqref{eq:aggregate_matrix}, respectively.
+% Using Equation~\eqref{eq:jsga_integral}, we can now construct a dissimilarity matrix $M_i$ (Equation~\eqref{eq:distance_matrix}) or an aggregated dissimilarity matrix $M$ (Equation~\eqref{eq:aggregate_matrix}), to compare the conditional distributions at each pair of sites, representing our pairwise ``distances'' between sites for a given conditioning variable $Y_i$ or aggregated across multiple conditioning variables, respectively.
+We perform clustering using the matrix $M_i$, or the aggregated matrix $M$, defined in Equations~\eqref{eq:distance_matrix} and \eqref{eq:aggregate_matrix}, respectively.
 % We can also aggregate these distances across multiple conditioning variables to pool information across multiple comparisons. 
 % PAM (K-means not suitable as clusters cannot be assumed to be spherical) (see
 % Vignotto)

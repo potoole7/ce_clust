@@ -208,6 +208,7 @@
 % \DeclareMathOperator{\JSGa}{\mathrm{JS}^{\mathrm{G}_{\alpha}}}
 % \newcommand{\JSGa}{\mathop{\mathrm{JS}^{\mathrm{G}_{\alpha}}}\nolimits}
 % \newcommand{\JSGa}{\mathop{\mathrm{JS}^{\mathrm{G}_{k}}}\nolimits}
+\newcommand{\GJS}{\mathop{{\mathrm{GJS}}\nolimits}
 \newcommand{\JSGa}{\mathop{\mathrm{JS}^{\mathrm{G}_{\lambda}}}\nolimits}
 % \newcommand{\cJSGa}{\mathop{\mathrm{cJS}^{\mathrm{G}_{\lambda}}}\nolimits}
 % \newcommand{\cJSGa}{\mathop{\mathrm{cJS}_{i}^{\mathrm{G}_{\lambda}}}\nolimits}
@@ -937,7 +938,8 @@ This working assumption is the key to deriving a closed-form divergence measure 
 % An important consequence following from this assumption is that inference can be made about the extremal dependence of a random vector $\symbf{Y}_{-i} = \symbf{Y} \setminus \{Y_i\}$ on $Y_i$ by conditioning on the exceedance of a high threshold $u_i$ by $Y_i$, and assuming that this conditional distribution is a multivariate Gaussian distribution, i.e.\ 
 % Consequently, inference can be made about the extremal dependence of a random vector $\symbf{Y}(s)$ at site $s$ by conditioning on the exceedance of a high threshold $u_i$ by $Y_i(s)$, and assuming that this conditional distribution is multivariate Gaussian, i.e.,\@
 % Consequently, inference on $\alpha_{\mid i}$ and $\beta_{\mid i}$ by conditioning on the exceedance of a high threshold $u_i$ by $Y_{i, s}$, and assuming that this conditional distribution is multivariate Gaussian, i.e.,\@
-Consequently, inference on $\alpha_{\mid i}$ and $\beta_{\mid i}$ by conditioning on the exceedance of a high threshold $u_i$ by $Y_{i, s}$, it follows that 
+% Consequently, inference on $\alpha_{\mid i}$ and $\beta_{\mid i}$ by conditioning on the exceedance of a high threshold $u_i$ by $Y_{i, s}$.
+It follows that 
 \begin{equation}~\label{eq:ce_norm}
   % \bigl( \symbf{Y}_{-i} \mid Y_i  = y_i \bigr) \sim N\left(\symbf{\alpha}_{\mid i}^{(\CE{})} y_i + y_i^{\symbf{\beta}_{\mid i}^{(\CE{})}} \symbf{\mu}_{\mid i}^{(\CE{})}, y_i^{\symbf{\beta}_{\mid i}^{(\CE{})}} \Sigma_{\mid i}^{(\CE{})}\right), Y_i > u_i,
   % \bigl( \symbf{Y}_{-i} \mid Y_i  = y_i \bigr) \sim N\left(\symbf{\alpha}_{\mid i} y_i + y_i^{\symbf{\beta}_{\mid i}} \symbf{\mu}_{\mid i}, y_i^{\symbf{\beta}_{\mid i}} \symbf{\Sigma_{\mid i}}\right), Y_i > u_i,

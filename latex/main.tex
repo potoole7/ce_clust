@@ -1269,7 +1269,7 @@ Therefore, to obtain a single measure of dissimilarity between the CE models fit
   %                             &= \int_{u_i}^{\infty} \cJSGa{(y; s || s^*)} f(y \mid Y_i(s) > u_i) dy, \numberthis~\label{eq:jsga_integral}
   % \eJSGa{s, s^*} &= \mathbb{E}\left(\cJSGa{s, s^*}(Y_{i,s}) \mid Y_{i,s} > u_{i}\right) \\
   \eJSGa{s, s^*} &= \mathbb{E}\left(\cJSGa{s, s^*}(Y_{i,s}) \mid Y_{i,s} > u_i\right) \\
-                 &= \mathbb{E}\left(\cJSGa{s, s^*}(Y_{i,s^*}) \mid Y_{i,s^*} > u_i\right) \\
+                 &= \mathbb{E}\left(\cJSGa{s^*, s}(Y_{i,s^*}) \mid Y_{i,s^*} > u_i\right) \\
                  &= \int_{u_i}^{\infty} \cJSGa{s, s^*}(y) h(y \mid Y_{i,s} > u_i) dy, \numberthis~\label{eq:jsga_integral}
 \end{align*}
 % where $h(y \mid Y_{i, s} > u)$ is the conditional density of $Y_{i, s}$ given exceedance of the threshold. 
@@ -2134,7 +2134,7 @@ Apart from these observations, the clustering solutions are generally quite simi
 % Points to consider
 \todo{Talk about how subsequent analyses should constrain parameters to be non-negative?}
 \todo{Say something about $\alpha$!}
-\todo{Laplace truncation: how truncation point may lead to errors in severly unbalanced data (empirical quantile > sitewise maxima)}
+\todo{Laplace truncation: how truncation point may lead to errors in severely unbalanced data (empirical quantile > sitewise maxima)}
 \todo{Mention mim(maxima) approach as alternative if extrapolation occurs at any site}
 \todo{But min(maxima) approach for unbalanced data may also be lower than sitewise thresholds}
 \todo{Could also say Laplace truncation point could be tuned further to improve clustering performance?}

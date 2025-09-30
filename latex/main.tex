@@ -1428,7 +1428,7 @@ Section~\ref{subsec:sim_mixture} extends the study to more complex scenarios, us
 % We evaluate our clustering solution using the adjusted rand index (ARI), and in Section~\ref{subsubsec:boot} ascertain the improvement of parameter estimation post-clustering using a bootstrapping scheme. 
 % We evaluate clustering accuracy using the adjusted Rand index (ARI), and in Section~\ref{subsubsec:boot} examine improvements in parameter estimation through a bootstrap resampling scheme \citet{Hubert1985-ys}.
 
-\subsection{Gaussian copula}~\label{subsec:sim_gauss}
+\subsection{Gaussian copula setting}~\label{subsec:sim_gauss}
 
 % Single location
 % We first consider a simple simulation design based on the Gaussian copula.  
@@ -1498,32 +1498,39 @@ Section~\ref{subsec:sim_mixture} extends the study to more complex scenarios, us
 % Simulations were repeated 500 times, and the results are shown in Figure~\ref{fig:00_gauss_cop}.  
 
 % Sim design
-We first consider a simulation design based on the Gaussian copula.  
-We consider $S=12$ ``locations'', each associated with two variables. 
-Data are generated independently across sites, with $n=1000$ bivariate observations per location.  
+% We first consider a simulation design based on the Gaussian copula.  
+We consider $S=12$ ``locations'', each associated with $d = 2$ variables. 
+% Data are generated independently across sites, with $n=1000$ bivariate observations per location.  
+Data are generated independently across ``locations'' using a Gaussian copula. 
 % At site $s=1,\dots,S$, dependence is introduced through a Gaussian copula with correlation parameter $\rho_{\text{Gauss},s}$.
-At each site $s=1,\dots,S$, dependence is introduced through a Gaussian copula with correlation parameter $\rho_{\text{Gauss}}^s$.
+% At each site $s=1,\dots,S$, dependence is introduced through a Gaussian copula with correlation parameter $\rho_{\text{Gauss}}^s$.
+Formally, for each site $s \in {1, \ldots, 12}$, we first sample 1000 observations for $X_{1,s}$ and $X_{2,s}$ from 
+\[
+(X_{1,s}, X_{2,s})^T &\sim MVN(0, \rho^s_{\text{Gauss}}), \\
+\]
+\todo{Where does standard normal function come in here?}
+where $\rho^s_{\text{Gauss}}$ is the site-specific correlation parameter, and then apply the transformation in Equation~\eqref{eq:laplace}, with $F_X(\cdot)$ being the distribution function of the standard normal distribution, to obtain standard Laplace margins, whereupon we denote the resulting variables as $Y_{1,s}$ and $Y_{2,s}$.
 
 % Per-site sampling
-For each site, let
-\[
-\Sigma(\rho_{\text{Gauss}}^s)=
-\begin{pmatrix}
-1 & \rho_{\text{Gauss}}^s\\[4pt]
-\rho_{\text{Gauss}}^s & 1
-\end{pmatrix}.
-\]
-We draw
-\[
-  (Z_{1},Z_{2})^\top \sim \mbox{MVN}\big(0,\Sigma(\rho_{\text{Gauss}}^s)\big),
-\qquad
-U_i=\Phi(Z_i),\ i=1,2,
-\]
-where $\Phi$ is the standard normal CDF.  
-The uniforms $(U_1,U_2)$ are then transformed to standard Laplace margins as in Equation~\eqref{eq:laplace}, yielding the observed pair $(X_1,X_2)$ at site $s$.
+% For each site, let
+% \[
+% \Sigma(\rho_{\text{Gauss}}^s)=
+% \begin{pmatrix}
+% 1 & \rho_{\text{Gauss}}^s\\[4pt]
+% \rho_{\text{Gauss}}^s & 1
+% \end{pmatrix}.
+% \]
+% We draw
+% \[
+%   (Z_{1},Z_{2})^\top \sim \mbox{MVN}\big(0,\Sigma(\rho_{\text{Gauss}}^s)\big),
+% \qquad
+% U_i=\Phi(Z_i),\ i=1,2,
+% \]
+% where $\Phi$ is the standard normal CDF.  
+% The uniforms $(U_1,U_2)$ are then transformed to standard Laplace margins as in Equation~\eqref{eq:laplace}, yielding the observed pair $(X_1,X_2)$ at site $s$.
 
 % Parameter choices and true clustering
-The sites are arranged into three latent clusters of equal size, defined by their copula correlations. 
+The sites are arranged into three latent clusters of equal size, defined by $\rho_{\text{Gauss}}^s$. % their copula correlations. 
 As a proof of concept, we choose well-separated values to ensure clear clustering.
 Specifically, the first cluster, comprising sites 1 to 4, has $\rho_{\text{Gauss}}^s=0.1, s = 1, \ldots, 4$, the second cluster has $\rho_{\text{Gauss}}^s=0.5, s = 5, \ldots, 8$ 
 and the third cluster has $\rho_{\text{Gauss}}^s=0.9, s = 9, \ldots, 12$.

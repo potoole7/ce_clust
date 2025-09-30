@@ -1506,10 +1506,10 @@ Data are generated independently across ``locations'' using a Gaussian copula.
 % At each site $s=1,\dots,S$, dependence is introduced through a Gaussian copula with correlation parameter $\rho_{\text{Gauss}}^s$.
 Formally, for each site $s \in {1, \ldots, 12}$, we first sample 1000 observations for $X_{1,s}$ and $X_{2,s}$ from 
 \[
-(X_{1,s}, X_{2,s})^T &\sim MVN(0, \rho^s_{\text{Gauss}}), \\
+  (X_{1,s}, X_{2,s})^T &\sim \mbox{MVN}(0, \rho^s_{\text{Gauss}}), \\
 \]
 \todo{Where does standard normal function come in here?}
-where $\rho^s_{\text{Gauss}}$ is the site-specific correlation parameter, and then apply the transformation in Equation~\eqref{eq:laplace}, with $F_X(\cdot)$ being the distribution function of the standard normal distribution, to obtain standard Laplace margins, whereupon we denote the resulting variables as $Y_{1,s}$ and $Y_{2,s}$.
+where $\rho^s_{\text{Gauss}}$ is a site-specific correlation parameter, and then apply the transformation in Equation~\eqref{eq:laplace}, with $F_X(\cdot)$ being the distribution function of the standard normal distribution, to obtain standard Laplace margins, denoting the resulting vectors as $Y_{1,s}$ and $Y_{2,s}$.
 
 % Per-site sampling
 % For each site, let
@@ -1582,10 +1582,12 @@ We observe a bias-variance tradeoff in the choice of quantile for the CE model, 
 % The idea behind this design is that the Gaussian copula generates observations exhibiting extremal independence, whereas the t-copula induces extremal dependence, the strength of which is determined by their respective correlation parameters.
 % While there are no theoretical guarantees about our estimates, we can still evaluate our clustering solution for this more difficult setting using the ARI.
 
-We next extend our simulation design to mixtures of Gaussian and $t$-copulas \citep{Demarta2007-ap}.
+% We next extend our simulation design to mixtures of Gaussian and $t$-copulas \citep{Demarta2007-ap}.
 % The idea is that the Gaussian copula induces asymptotic independence, while the $t$-copula induces asymptotic dependence, with strength determined by $\rho^{t}$.  
-The idea is that the Gaussian copula will induce asymptotic independence, while the $t$-copula will induce asymptotic dependence, whose strength is determined by $\rho_{t}$, the correlation parameter of the $t$-copula.
-Although no theoretical CE parameter values are available in this setting, clustering performance can still be assessed via the ARI.  
+% The idea is that the Gaussian copula will induce asymptotic independence, while the $t$-copula will induce asymptotic dependence, whose strength is determined by $\rho_{t}$, the correlation parameter of the $t$-copula.
+We next extend our simulation design to mixtures of Gaussian and $t$-copulas \citep{Demarta2007-ap}, which induce asymptotic independence and dependence, respectively, whose strength is determined by their correlation parameters.
+% Although no theoretical CE parameter values are available in this setting, clustering performance can still be assessed via the ARI.  
+Although we are unaware of any theoretical CE parameter values in this setting, clustering performance can still be assessed via the ARI.  
 
 % We next extend our simulation design to mixtures of Gaussian and $t$-copulas.
 % More formally, the mixture copula is defined as
@@ -1631,28 +1633,29 @@ Although no theoretical CE parameter values are available in this setting, clust
 % We then apply the Laplace quantile map to every uniform:
 % Finally, we apply the Laplace transformation as described in~\eqref{eq:laplace} to obtain the Laplace-scale pairs \((Y_{1}^{(s)},Y_{2}^{(s)})\) at site \(s\).
 
-More formally, for site $s=1,\dots,S$ and dimension $J\ge2$, let $\RG{s},\RT{s}\in\mathbb{R}^{J\times J}$ be correlation matrices where $\RG{s}$ has all off-diagonal entries equal to $\rhou{Gauss}^s$ and $\RT{s}$ has all off-diagonal entries equal to $\rhou{t}^s$, and all diagonal entries equal to 1 for both.
-We define the $J$-variate mixture copula
-\begin{equation} ~\label{eq:mix_copula}
-  C_{\mathrm{mix}}^{(s)}(\mathbf{u})
-  \;=\; \tfrac{1}{2}\,C_{t,\nu=3}\!\big(\mathbf{u};\RT{s}\big)
-       \;+\; \tfrac{1}{2}\,C_{\mathrm{Gauss}}\!\big(\mathbf{u};\RG{s}\big),
-  \qquad \mathbf{u}\in[0,1]^J,
-\end{equation}
-i.e.\ an equal-weight combination of the $J$-variate $t$-copula (with $\nu=3$ degrees of freedom) and the $J$-variate Gaussian copula.
-
-At site $s$, we generate an exact half–half sample of size $n$ by drawing $m=n/2$ observations from each component. 
-Let $\mathbf{Z}_{i}^{(s)}\in\mathbb{R}^J$ denote latent vectors. We sample
-\todo{Check if each line is numbered}
-\begin{equation} ~\label{eq:mix_latent}
+% More formally, for site $s=1,\dots,S$ and dimension $d\ge2$, let $\RG{s},\RT{s}\in\mathbb{R}^{d\times d}$ be correlation matrices where $\RG{s}$ has all off-diagonal entries equal to $\rhou{Gauss}^s$ and $\RT{s}$ has all off-diagonal entries equal to $\rhou{t}^s$, and all diagonal entries equal to 1 for both.
+% We define the $d$-variate mixture copula
+% \begin{equation} ~\label{eq:mix_copula}
+%   C_{\mathrm{mix}}^{(s)}(\mathbf{u})
+%   \;=\; \tfrac{1}{2}\,C_{t,\nu=3}\!\big(\mathbf{u};\RT{s}\big)
+%        \;+\; \tfrac{1}{2}\,C_{\mathrm{Gauss}}\!\big(\mathbf{u};\RG{s}\big),
+%   \qquad \mathbf{u}\in[0,1]^J,
+% \end{equation}
+% i.e.\ an equal-weight combination of the $d$-variate $t$-copula (with $\nu=3$ degrees of freedom) and the $d$-variate Gaussian copula.
+At site $s$, we sample $m = 500$ observations using the Gaussian copula described in Section~\ref{subsec:sim_gauss} with correlation parameter $\rhou{Gauss}^s$, and $m = 500$ observations using a $t$-copula with 3 degrees of freedom and correlation parameter $\rhou{t}^s$, and pool these to obtain a sample of size $n=1000$ from the mixture copula. 
+% At site $s$, we generate an exact half–half sample of size $n$ by drawing $m=n/2$ observations from each component. 
+Formally, let $\mathbf{Z}_{i}^{(s)}\in\mathbb{R}^d$ denote latent vectors. We sample
+\begin{equation}~\label{eq:mix_latent}
 \begin{aligned}
-&\text{Gaussian half:}\quad &&\mathbf{Z}_{i}^{(s)} \sim \mbox{MVN}_J\!\big(\mathbf{0},\RG{s}\big),
+% &\text{Gaussian half:}\quad &&\mathbf{Z}_{i}^{(s)} \sim \mbox{MVN}_d\!\big(\mathbf{0},\RG{s}\big),
+  &\text{Gaussian half:}\quad &&\mathbf{Z}_{i}^{(s)} \sim \mbox{MVN}_d\!\big(\mathbf{0},\rhou{Gauss}^s\big),
 && i=1,\dots,m,\\[2pt]
-&\text{$t$ half:}\quad      &&\mathbf{Z}_{i}^{(s)} \sim \mbox{MVT}_{J,\nu=3}\!\big(\mathbf{0},\RT{s}\big),
+% &\text{$t$ half:}\quad      &&\mathbf{Z}_{i}^{(s)} \sim \mbox{MVT}_{J,\nu=3}\!\big(\mathbf{0},\RT{s}\big),
+  &\text{$t$ half:}\quad      &&\mathbf{Z}_{i}^{(s)} \sim \mbox{MVT}_{d,\nu=3}\!\big(\mathbf{0},\rhou{t}^s\big),
 && i=m+1,\dots,n,
 \end{aligned}
 \end{equation}
-where $\mbox{MVT}_{J, \nu = 3}$ denotes the $J$-variate $t$ distribution with $\nu=3$ degrees of freedom.
+where $\mbox{MVT}_{d, \nu = 3}$ denotes the $d$-variate $t$ distribution with $\nu=3$ degrees of freedom.
 We map these latent draws to uniforms componentwise using the appropriate univariate CDF:
 \[
 U_{ij}^{(s)} =
@@ -1663,8 +1666,9 @@ F_{t_3}\!\big(Z_{ij}^{(s)}\big), & i=m+1,\dots,n,
 \qquad j=1,\dots,J,
 \]
 where $\Phi$ and $F_{t_3}$ are the standard normal and univariate $t$ CDFs, respectively.
-Pooling the $n$ uniforms $\{\mathbf{U}_{i}^{(s)}\}_{i=1}^n$ yields a size-$n$ sample from the 50/50 mixture copula $C_{\mathrm{mix}}^{(s)}$, up to ordering. 
-Finally, we apply the Laplace transformation as described in Equation~\eqref{eq:laplace} to obtain the Laplace-scale pairs \((Y_{1}^{(s)},Y_{2}^{(s)})\) at site \(s\).
+% Pooling the $n$ uniforms $\{\mathbf{U}_{i}^{(s)}\}_{i=1}^n$ yields a size-$n$ sample from the 50/50 mixture copula $C_{\mathrm{mix}}^{(s)}$, up to ordering. 
+% Finally, we apply the Laplace transformation as described in Equation~\eqref{eq:laplace} to obtain the Laplace-scale pairs \((Y_{1}^{(s)},Y_{2}^{(s)})\) at site \(s\).
+We pool the $n$ uniforms \(\{\mathbf{U}_{i}^{(s)}\}_{i=1}^n\) to obtain a size-$n$ sample, before finally applying the Laplace transformation in Equation~\eqref{eq:laplace} to obtain the Laplace-scale pairs \((Y_{1}^{(s)},Y_{2}^{(s)})\) at site \(s\).
 
 % Below, we will describe the results of this simulation study in a variety of scenarios, as defined by a grid search over possible $\rhou{Gauss}$ and $\rhou{t}$ values. 
 We consider a range of scenarios defined by a grid search over $\rhou{Gauss}$ and $\rhou{t}$ values, and for different numbers of sites and variables. 

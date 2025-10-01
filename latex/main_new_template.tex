@@ -1,0 +1,409 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath}
+\usepackage{graphicx}
+%\usepackage{enumerate}
+\RequirePackage{amsthm,amsmath,multirow,amsfonts,bbm,amssymb,xcolor}
+\usepackage{natbib}
+\usepackage{url} % not crucial - just used below for the URL 
+
+%\pdfminorversion=4
+% NOTE: To produce blinded version, replace "0" with "1" below.
+\newcommand{\blind}{0}
+\usepackage{rotating}
+
+% DON'T change margins - should be 1 inch all around.
+\addtolength{\oddsidemargin}{-.5in}%
+\addtolength{\evensidemargin}{-1in}%
+\addtolength{\textwidth}{1in}%
+\addtolength{\textheight}{1.7in}%
+\addtolength{\topmargin}{-1in}%
+
+\newcommand{\red}{\textcolor{red}}
+
+\begin{document}
+
+%\bibliographystyle{natbib}
+
+\def\spacingset#1{\renewcommand{\baselinestretch}%
+{#1}\small\normalsize} \spacingset{1}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\if0\blind
+{
+  \title{\bf Regression modelling of spatiotemporal extreme U.S. wildfires via partially-interpretable neural networks}
+  \author{Jordan Richards\thanks{The authors gratefully acknowledge funding from King Abdullah University of Science and Technology (KAUST) Office of Sponsored Research (OSR) under Award No.\ OSR-CRG2020-4394.}\hspace{.2cm}\\
+    School of Mathematics \\ and Maxwell Institute for Mathematical Sciences, \\ University of Edinburgh, UK\\
+    and \\
+    Raphael Huser \\
+    Statistics Program, \\Computer, Electrical and Mathematical Sciences\\ and Engineering Division, \\King Abdullah University of Science and Technology, \\Thuwal, 23955-6900, Saudi Arabia}
+  \maketitle
+} \fi
+
+\if1\blind
+{
+  \bigskip
+  \bigskip
+  \bigskip
+  \begin{center}
+    {\LARGE\bf Title}
+\end{center}
+  \medskip
+} \fi
+
+\bigskip
+\begin{abstract}
+
+Risk management in many environmental settings requires an understanding of the mechanisms that drive extreme events. Useful metrics for quantifying such risk are extreme quantiles of response variables conditioned on predictor variables that describe, e.g., climate, biosphere, and environmental states. Typically these quantiles lie outside the range of observable data and so, for estimation, require specification of parametric extreme value models within a regression framework. Classical approaches in this context utilise linear or additive relationships between predictor and response variables and suffer in either their predictive capabilities or computational efficiency; moreover, their simplicity is unlikely to capture the truly complex structures that lead to the creation of extreme wildfires. In this paper, we propose a new methodological framework for performing extreme quantile regression using artificial neutral networks, which are able to capture complex non-linear relationships and scale well to high-dimensional data. The ``black box" nature of neural networks means that they lack the desirable trait of interpretability often favoured by practitioners; thus, we combine linear and additive regression methodology with deep learning to create partially-interpretable neural networks that can be used for statistical inference but retain high prediction accuracy. To complement this methodology, we further propose a novel point process model for extreme values which overcomes the finite lower-endpoint problem associated with the generalised extreme value class of distributions. Efficacy of our unified framework is illustrated on U.S. wildfire data with a high-dimensional predictor set and we illustrate vast improvements in predictive performance over linear and spline-based regression techniques. Our model is used to quantify the spatially-varying effect of temperature and drought on wildfire extremes and occurrences across the U.S., as well as identify high risk regions.
+\end{abstract}
+
+\noindent%
+{\it Keywords:}  deep learning; explainable AI; extreme quantile regression; neural networks; spatiotemporal extremes
+\vfill
+
+\newpage
+\spacingset{1.75} % DON'T change the spacing!
+\section{Introduction}
+\subsection{Context and motivation}
+\label{intro_sec}
+Uncontrolled wildfires are a significant cause of death and property damage across the world. Climate change is expected to increase both the severity and occurrence rate of wildfires with worrying trends predicted for the western United States (U.S.) \citep{smith2020sciencebrief}, due to an increase in the frequency and intensity of extreme meteorological events, including high temperatures, droughts, and  windspeeds. Some of the most devastating wildfires in U.S. history have occurred most recently in California, with fires occurring between 2017 and 2020 being responsible for hundreds of deaths and an excess of one million acres of burnt land \citep{keeley2021large}. Wildfires contribute to the accelerating rate of climate change through the emission of greenhouses gases; the year 2021 saw the release of an estimated 1760 megatonnes of carbon into the atmosphere as a direct consequence of wildfires \citep{2021copernicus}, with a large proportion being attributed to wildfires in the northern U.S. Clearly  risk mitigation of extreme wildfires, particularly events that lead to vast consumption of fuel and, hence, high carbon emissions, is of importance from both an economical and environmental perspective. In this paper, we develop new statistical methodology to quantify the effects of extreme wildfires through measures of burnt area, which are a useful proxy for both fuel consumption and emissions \citep{koh2021spatiotemporal}. \par
+Estimation of extreme quantiles for spatiotemporal processes is important for risk management in a number of environmental applications, e.g., extreme precipitation \citep{huser2014space,opitz2018inla}, heatwaves \citep{winter2016modelling, zhong2020modeling}, and wind gusts \citep{castro2019spliced,youngman2019generalized}. For processes observed over complex or large space-time domains, it is highly likely that the process will exhibit marginal non-stationarity, which can be handled by allowing the marginal distribution of the process to vary with both space and time. This can be achieved through a regression framework, i.e., with quantiles represented as functions of predictors. Let $\{Y(s,t):s \in \mathcal{S},t \in \mathcal{T}\}$ be a spatiotemporal process indexed by a spatial set $\mathcal{S}\subset\mathbb{R}^2$ and temporal domain $\mathcal{T} \subset \mathbb{R}_+$, and let $\{\mathbf{X}(s,t):s\in\mathcal{S},t\in\mathcal{T}\}$ denote a $d$-dimensional space-time process of predictor variables where $\mathbf{X}(s,t)=(X_1(s,t),\dots,X_d(s,t))$ for all $(s,t)\in \mathcal{S}\times\mathcal{T}$ and for $d\in\mathbb{N}$. We denote observations of $\mathbf{X}(s,t)$ by $\mathbf{x}({s,t})\in \mathbb{R}^d$ and note that the process need not be smooth spatially, nor temporally. Our interest lies in the upper-tail behaviour of $Y(s,t)\mid\{\mathbf{X}(s,t)=\mathbf{x}({s,t}):(s,t)\in\mathcal{S}\times\mathcal{T}\}$, which can be characterised through its quantile function; this can be estimated either non-parametrically or parametrically, with the latter approach typically relying on parametric extreme value distributions \citep[see, e.g.,][]{chavez2005generalized}. Although non-parametric approaches avoid making restrictive assumptions about the behaviour of $Y(s,t)$, they cannot provide reliable inference beyond the range of observations, i.e., estimation of quantiles larger than those previously observed; to that end, we turn to asymptotically-justified extreme value models. 
+\subsection{Classical extreme-value regression modelling}
+\label{intro_evmodel_sec}
+ \cite{coles2001introduction} details three main approaches to modelling univariate extreme values of a sequence of independent random variables $Y_1,\dots,Y_n$ with common distribution function $F$; see also the review by \cite{davison2015statistics}. The first concerns block-maxima $M_n=\max\{Y_1,\dots,Y_n\}$; if there exist sequences $\{a_n >0\}$ and $\{b_n\}$ such that 
+ \begin{equation}
+ \label{max_lim}
+ \Pr\{(M_n-b_n)/a_n \leq z \}\rightarrow G(z)\;\; \text{as}\;\; n\rightarrow \infty,
+ \end{equation} 
+ for non-degenerate $G$, then $F$ is in the max-domain of attraction (MDA) of $G$, the generalised extreme value GEV$(\mu,\sigma,\xi)$ distribution function, where
+ \begin{equation}
+ G(z\mid\mu,\sigma,\xi)= \begin{cases}\exp\left[-\left\{1+\xi\left(\frac{z-\mu}{\sigma}\right)\right\}_+^{-1/\xi}\right], \;\;&\xi\neq 0,\\
+ \exp\left\{-\exp\left(-\frac{z-\mu}{\sigma}\right)\right\},\;\;&\xi=0
+ ,\end{cases}
+ \label{GEVcdf}
+ \end{equation}
+ with $\{y\}_+=\max\{0,y\}$, location, scale, and shape parameters $\mu \in \mathbb{R},\sigma >0$, and $\xi \in \mathbb{R}$, respectively, and support $\{z \in \mathbb{R} : 1+\xi(z-\mu)/\sigma > 0\}$. Another approach, the so-called peaks-over-threshold method, utilises the generalised Pareto distribution (GPD), which can be used to model exceedances of $Y$ above some high threshold $u$. Given that $F$ is in the MDA of a GEV$(\mu,\sigma,\xi)$ distribution, then $(Y-u)\mid Y>u$ can be approximated by a GPD$(\sigma_u,\xi)$ random variable with distribution function $H(z)=1-(1+\xi z/\sigma_u)^{-1/\xi}$ and support $z\geq 0$ for $\xi \geq 0$ and $0 \leq z \leq -\sigma_u/\xi$ for $\xi < 0$, and where $\sigma_u=\sigma+\xi(u-\mu)>0$. For both the GEV and GPD models, the shape $\xi$ controls the lower and upper bounds of $H$ and $G$. If $\xi <0$, then $H$ and $G$ are bounded above; for $\xi >  0$, then $G$ is bounded below. Modelling with distributions that have finite bounds dependent on model parameters can lead to unstable inference \citep{smith1985maximum}, and so we constrain $\xi >0$ throughout; the assumption that wildfire burnt areas are heavy-tailed has been shown to hold in a number of studies \citep[see references in][]{pereira2019statistical}. \cite{castro2021practical} overcome the finite lower-bound problem for $G$ when $\xi > 0$, which we discuss and extend in Section~\ref{bGEV_sec}. {To capture non-stationarity in extremes, we can represent the GEV and GPD parameters as functions of $\mathbf{X}(s,t)$, and denote these distributions by GEV$(\mu(s,t),\sigma(s,t),\xi(s,t))$ and GPD$(\sigma_u(s,t),\xi(s,t))$, respectively, where $\sigma_u(s,t)$ is dependent on a spatiotemporal threshold $u(s,t)$. We term such an approach as an extreme value regression model.}\par
+Use of the GEV and GPD distributions for spatiotemporal regression is not practical in all applications. The GEV distribution is applicable to block-maxima and so transformation of covariates may be necessary to make modelling feasible, e.g., aggregating blocks of predictors. Whilst the GPD does not suffer from this issue, it requires two separate models for full inference on the distribution of $Y(s,t)$, i.e., models for $Y(s,t)\mid Y(s,t) > u(s,t)$ and $\Pr\{Y(s,t) > u(s,t)\}$; moreover, the scale parameter $\sigma_u(s,t)$ is dependent on the threshold $u(s,t)$, which makes interpretation of its drivers difficult. \cite{smith1989} details a third method for modelling extremes using point processes (PPs), which circumvents the issues associated with the GEV and GPD models. Assume limit \eqref{max_lim} holds and $G$ has lower- and upper-endpoints $z_-$ and $z_+$, respectively. Then for any $u>z_-$, the sequence of point processes $N_n=\{(i/(n+1),(Y_i-b_n)/a_n): i =1,\dots,n\}$ converges on regions $(0,1)\times(u,\infty)$ as $n\rightarrow \infty$ to a Poisson point process with intensity measure $\Lambda$ of the form $\Lambda(A)=-(t_2-t_1)\log G(z)$, where $A=[t_1,t_2]\times [z,z_+)$ for $ 0\leq t_1 \leq t_2 \leq 1$; with an abuse of notation, we write $Y\sim\mbox{PP}(\mu,\sigma,\xi; u)$ if $Y$ satisfies the limiting Poisson process conditions. Details for modelling using this approach and an extension thereof are given in Section~\ref{bgev_PP_sec}.\par
+{As with the GEV and GPD models, extreme value regression models can be built using PPs by letting the corresponding GEV parameters vary with covariates. Consider now a generic parameter set $\{\boldsymbol{\theta}(s,t):s \in \mathcal{S}, t \in \mathcal{T}\}$ which collects the parameter of an extreme value regression model and which is dependent on the predictors, i.e., for all $i=1,\dots,p,$ where $p$ is the number of model parameters in $\boldsymbol{\theta}(s,t)=(\theta_1(s,t),\dots,\theta_p(s,t))^T$, we have $\theta_i(s,t)=m_i(\mathbf{x}(s,t))$ for functions $m_i:\mathbb{R}^d\rightarrow \mathbb{R}$.} Similar extreme value regression models using linear functions for $m_i$ have been exploited in a number of spatial studies \citep{mannshardt2010downscaling,davison2012statistical,eastoe2019nonstationarity}. However, such models are incapable of capturing complex, non-linear relationships between the predictors and the response. Bayesian hierarchical modelling can be used to capture behaviour not explainable by linear models by assuming that the marginal parameters come from a latent process \citep{cooley2007bayesian,sang2010continuous,opitz2018inla, hrafnkelsson2021max}; these methods often require parametric assumptions for inference and scale poorly for large $d$ or for many observations. Semi-parametric regression has also been considered for spatial extremes modelling, where distribution parameters are represented as smooth, additive functions of predictors using splines or piece-wise linear functions \citep{chavez2005generalized,jonathan2014return,youngman2019generalized}. For example, \cite{youngman2019generalized} estimate extreme spatiotemporal quantiles by representing the parameters of the GPD and exceedance threshold using generalised additive models (GAMs). Whilst semi-parametric approaches provide a much more flexible class of models compared to linear models, they can be computationally expensive to fit, particularly if $d$ or the number of observations are large. 
+\subsection{Machine learning for extreme-value analysis}
+Recent literature has seen the development of machine learning approaches for extreme value analyses. These algorithms often lack interpretability, but can produce accurate and computationally fast predictions of extreme values for high-dimensional datasets; moreover, they are capable of capturing much more complex structures in data than linear models or GAMs. Such approaches applied in a regression context include the fitting of GPD models with trees \citep{farkas2020cyber}, random forests \citep{gnecco2022extremal}, and gradient boosting \citep{velthoen2021gradient}. Other machine learning algorithms have also been adapted for modelling extreme values, e.g., anomaly detection and classification \citep{clifton2014extending,rudd2017extreme,vignotto2020extreme},  sparse learning \citep[see the review by][]{engelke2021sparse}, principal component analysis \citep{cooley2019decompositions,drees2021principal}, and clustering \citep{chautru2015dimension,janssen2020k}. \par
+A somewhat untapped class of tools for modelling spatiotemporal extreme values are deep learning methods or neural networks (NNs). In the extreme value literature, \cite{cannon2018non} perform multiple-level extreme quantile regression for precipitation using a monotone quantile regression network. \cite{cannon2010flexible, cannon2011gevcdn}, \cite{vasiliades2015nonstationary}, \cite{bennett2015historical}, and \cite{shrestha2017projecting} use NNs to estimate GEV parameters, and \cite{rietsch2013network} apply a similar approach to fit GPD models. \cite{carreau2007hybrid} and \cite{carreau2011stochastic} use NNs to fit mixture models, with the upper-tails characterised using the GPD. A spatial extremes analysis is conducted by \cite{ceresetti2012evaluation}, who produce spatial maps of precipitation return levels by estimating non-stationary GEV and GPD parameters using a simple one-layer feed-foward network; this, and the above methods, all utilise multi-layered perceptron (MLP) neural networks. Here we use MLP to describe the class of feed-forward neural networks where all layers are densely-connected \citep[see Appendix~A.3.2 of][]{papersup} and which are not particularly well-suited for modelling spatial structure within predictors. A comprehensive review of MLPs and their extensions, to be discussed, is given by \cite{ketkar2017deep}. In the context of extreme value analysis, extensions of MLPs are utilised by \cite{allouche2021approximation}, who construct a generative adversial network (GAN) for estimating quantiles of heavy-tailed distributions, and \cite{boulaguiem2021modelling}, who use a GAN for modelling extreme spatial dependence and performing stochastic weather generation.\par For spatial problems, a better alternative to an MLP are those that include layers with convolutional filters, often referred to as convolutional NNs \citep[CNNs;][]{lecun1995convolutional}. CNNs were first advocated for image classification due to their ability to capture spatial structures within images; \cite{medina2017comparison} and \cite{driss2017comparison} find that CNNs perform much better than MLPs for spatial classification problems. CNNs have been used in a number of environmental applications: classification \citep{gebrehiwot2019deep,zhang2019forest}, regression \citep{rodrigues2020beyond,yu2020probabilistic}, and downscaling \citep{harilal2021augmented}. \cite{lenzi2021neural} and \cite{sainsbury2023likelihood} use CNNs to fit max-stable processes for modelling extreme spatial dependence. However, they are yet to be used for extreme value regression.
+\subsection{Towards interpretable deep learning for extremes}
+\label{intro-towards-sec}
+A potential drawback of using NNs for statistical modelling is their lack of interpretability, as they often contain a large number of estimable parameters; a trait shared by many other machine learning tools. Recent work has been done on interpreting the outputs of machine learning algorithms, see, e.g., \cite{bau2017network}, \cite{zhang2018visual}, and \cite{samek2021explaining}, but not in the context of performing regression. However, \cite{zhong2021neural} propose a framework for non-parametric quantile regression using neural networks which are partially linear, with the linear part of the model considered to be interpretable. For a univariate response variable $Y$, they represent its quantile at a pre-specified level by $\mathbf{x}^T\boldsymbol{\eta}+ m(\mathbf{z})+\epsilon$, where $(\mathbf{x},\mathbf{z}) \in \mathbb{R}^l \times \mathbb{R}^{d-l}$ are covariates, $\boldsymbol{\eta} \in \mathbb{R}^l$ is a set of parameters, and $m:\mathbb{R}^{d-l}\rightarrow\mathbb{R}$ is an unknown function, with heteroscedastic errors $\epsilon$. Here $\mathbf{x}$ and $\mathbf{z}$ are both covariates that affect the distribution of $Y$, but only the contribution from $\mathbf{x}$ is of interest. Inference on the effect of $\mathbf{x}$ on $Y$ is conducted by considering the estimated values of the regression coefficients $\boldsymbol{\eta}$, whilst the covariates $\mathbf{z}$ feed an MLP which is used to estimate the unknown function $m$; inference on $m$ is not necessary as their interest lies in the effect of $\mathbf{x}$ on $Y$ only. {\cite{ruegamer2024} extend this framework by constructing semi-structured additive regression models. They allow the distributional parameters of $Y\mid\mathbf{X}$ to be partially-linear and further incorporate an extra additive component alongside the linear one, which can be modelled using splines. By replacing the usual linear functions in generalised linear models with an additive representation of parametric/semi-parametric functions and neural networks, their approach balances interpretability with the high predictive accuracy of deep learning methods. In this paper, we extend their framework by constructing such models that are tailored to regression for spatiotemporal extremes; we refer to these as partially-interpretable neural networks (PINNs) for extreme values \cite[PINNEVs; see][]{pinnEV}. In particular, we construct a novel extreme value point process PINN model for U.S. wildfires, which exploits CNNs}.\par
+{Consider parameter set $\boldsymbol{\theta}(s,t)=(\theta_1(s,t),\dots,\theta_p(s,t))^T$ for an arbitrary spatiotemporal regression model, i.e., where we assume $Y(s,t)\sim\mathcal{F}(\boldsymbol{\theta}(s,t))$ for some well-defined statistical model $\mathcal{F}$. Consider a general component $\theta(s,t)$ of $\boldsymbol{\theta}(s,t)$; then, for all space-time locations $(s,t)\in\mathcal{S}\times\mathcal{T}$, we divide the predictor process $\mathbf{X}(s,t)$ into two complementary components. For $I \in \mathbb{N}$ with $I \leq d$, let $\mathbf{X}_{\mathcal{I}}(s,t)\in\mathbb{R}^{I}$ and $\mathbf{X}_{\mathcal{N}}(s,t)\in\mathbb{R}^{d-I}$ be distinct sub-vectors of $\mathbf{X}(s,t)$, with observations of each component denoted $\mathbf{x}_{\mathcal{I}}(s,t)$ and $\mathbf{x}_{\mathcal{N}}(s,t)$, respectively. Note that the indices mapping $\mathbf{x}(s,t)$ to $\mathbf{x}_{\mathcal{I}}(s,t)$ are consistent for all $(s,t)$, and similarly for $\mathbf{x}_{\mathcal{N}}(s,t)$. Then, we represent the general parameter $\theta(s,t)$ through the unified model 
+\begin{align}
+\theta(s,t)=h[\eta_{0}+m_{\mathcal{I}}\{\mathbf{x}_\mathcal{I}(s,t)\}+m_\mathcal{N}\{\mathbf{x}_\mathcal{N}(s,t)\}]
+\label{full_model}
+\end{align}
+for constant intercept $\eta_0 \in \mathbb{R}$, an ``interpretable'' function $m_{\mathcal{I}}:\mathbb{R}^{I}\rightarrow\mathbb{R},$ a (potentially) non-linear function $m_\mathcal{N}:\mathbb{R}^{d-I}\rightarrow\mathbb{R},$ and a link function $h:\mathbb{R}\rightarrow\mathbb{R}$ controlling the range of $\theta(s,t)$. The function $m_\mathcal{N}$ is approximated via a neural network with a suitable architecture, whilst $m_\mathcal{I}$ must be specified so that its estimates are interpretable, that is, practitioners can easily quantify the impact of ``interpreted'' predictors $\mathbf{X}_{\mathcal{I}}(s,t)$ on $\theta(s,t)$. Thus, we choose $\mathbf{x}_{\mathcal{I}}(s,t)$ as predictors of interest, for which we wish to infer their relationship on $\theta(s,t)$; all other predictors go into $\mathbf{x}_{\mathcal{N}}(s,t)$. \red{Hereafter, unless otherwise specified, all neural networks are CNNs which  exploit the spatial structure in the covariates for enhanced predictive performance. For details on their construction, see Appendix A.3 of the Supplementary Material \citep{papersup}} 
+
+Examples for $m_{\mathcal{I}}$ include parametric functions (e.g., linear or polynomial), semi-parametric functions (e.g., additive splines), or combinations thereof \citep[as in Appendix~B, ][]{papersup}. Note that $m_{\mathcal{I}}, m_{\mathcal{N}},$ and the indices mapping $\mathbf{x}(s,t)$ to $\mathbf{x}_{\mathcal{I}}(s,t)$ can differ amongst components of the parameter set $\boldsymbol{\theta}(s,t)$. We consider two cases below: i) $m_{\mathcal{I}}(\cdot)$ is linear, with $m_{\mathcal{I}}=\mathbf{x}^T\boldsymbol{\eta}$ for $\boldsymbol{\eta}\in\mathbb{R}^{I},$ and ii) $m_{\mathcal{I}}(\cdot)$ is modelled using splines. In both cases, for simplicity, we choose not to model interactions between covariates in $\mathbf{X}_\mathcal{I}(s,t)$. However, we note that these can be incorporated into the PINN modelling framework in the usual fashion as for classical regression methods, i.e., with product terms in a linear model or with a tensor product of splines in a GAM. We focus on the case where  $\mathcal{F}$ is an asymptotically-justified extreme value point process model (see Section~\ref{bgev_PP_sec}); hence, the strength and novelty of our proposed framework is that it unifies, for the first time, the {theoretical guarantees of parametric extreme value models for extrapolation into the tails}, the interpretability of generalised additive models, and the predictive power of artificial neural networks in a single model. Whilst our focus is on estimating an extreme value point process model, it is trivial to see how the PINN framework can be adapted to estimate other popular parametric statistical distributions, as well as perform more classical applications of NNs, e.g., classification and mean, median, or quantile regression; we perform logistic and quantile regression using a PINN model in Section~\ref{app_sec}.} \par
+\subsection{Paper outline}
+The rest of the paper is outlined as follows. Section~\ref{Wildfire_Data_sec} describes the data used in our analyses and the scientific questions we address. In Appendices~A.2 and A.3 of the Supplementary Material \citep{papersup}, we describe the additive functions and neural networks used to model $m_{\mathcal{I}}$ and $m_{\mathcal{N}}$, respectively.
+ The use of neural networks in our unified framework creates new challenges for fitting extreme value models where distributional lower bounds are dependent on model parameters; a discussion of these issues is provided in Appendix~A.3.4, with details of a new approach for modelling extreme values using point processes that solves these problems given in Section~\ref{bgev_PP_sec}.  To illustrate the efficacy of our modelling framework, we apply our approach to simulated data in Appendix~B (with a concise summary provided in Section~\ref{sim_mainpaper_sec}) and we perform an in-depth study of U.S. wildfires data in Section~\ref{app_sec}; many different candidate models are proposed and their individual predictive performances are thoroughly assessed.
+ \section{Wildfire data}
+\label{Wildfire_Data_sec}
+\begin{figure*}[t]
+\begin{minipage}{0.495\linewidth}
+\flushleft
+\hspace{-.2cm}
+\includegraphics[width=0.8\linewidth]{Images/obs_t103.pdf} 
+\end{minipage}
+\vspace{-0.2cm}
+\begin{minipage}{0.495\linewidth}
+\flushleft
+\includegraphics[width=0.8\linewidth]{Images/temp_t103.pdf} 
+\end{minipage}
+\vspace{-0.4cm}
+\begin{minipage}{0.495\linewidth}
+\flushleft
+\includegraphics[width=0.8\linewidth]{Images/spi_t103.pdf} 
+\end{minipage}
+\begin{minipage}{0.495\linewidth}
+\flushleft
+\includegraphics[width=0.8\linewidth]{Images/grass_t103.pdf} 
+\end{minipage}
+\caption{Maps of observed $\log\{1+\sqrt{Y}(s,t)\}$ (log-$\sqrt{\mbox{acres}}$; top-left), 2m air temperature (K; top-right), 3-month SPI (unitless; bottom-left), and proportion of grassland coverage (unitless; bottom-right) for July, 2007. }
+\label{obs_maps}
+\end{figure*}
+The response data $Y(s,t)$ we use in our analyses are observations of monthly aggregated burnt area (acres) of 3503 spatial grid-cells located across the contiguous United States\footnote{The states of Alaska and Hawaii are excluded.}; the spatial domain $\mathcal{S}$ is illustrated in Figure~\ref{obs_maps}.
+The observation period covers 1993 to 2015, using only months between March and September, inclusive, leaving 161 observed spatial fields. Grid-cells are arranged on a regular latitude/longitude grid with spatial resolution $0.5^{\circ} \times 0.5^{\circ}$. Observations are from the Fire Program Analysis fire-occurrence database \citep{short2017spatial} which collates U.S. wildfire records from the reporting systems of federal, state, and local organisations. A subset of these data are described by \cite{opitz2022editorial} and have been previously studied for the data prediction challenge of the Extreme Value Analysis (EVA) 2021 conference, see, e.g., \cite{cisneros2021combined}, \cite{d2021flexible}, \cite{koh2021gradient}, and \cite{zhang2022joint}, with \cite{ivek2022reconstruction} using deep learning methods.  Whilst the focus of this challenge was on predicting extreme quantiles for missing spatiotemporal locations, our focus is instead on inference of relationships between predictors and extreme quantiles of burnt area; hence, we utilise all of the available data for modelling.\par
+{We have $d=42$ predictors} of three classes: land coverage, orographical, and meteorological. The land cover variables describe the proportion of a grid-cell which is covered by one of {25 different types}, e.g., urban, grassland (illustrated in Figure~\ref{obs_maps}), water \citep[for full details, see][]{bontemps2015multi}. Land cover predictors are derived using a gridded land cover map, of spatial resolution $300$m and temporal resolution one year, produced by Copernicus and available through their Climate Data Service. For each $0.5^{\circ} \times 0.5^{\circ}$ grid-cell, the proportion of a cell consisting of a specific land cover type is derived from the high-resolution product. 
+{In addition, 13 meteorological variables are considered} and given as monthly means. These variables are provided by the ERA5-reanalysis on single levels, also available through the Copernicus Climate Data Service, which is given on a $0.1^{\circ} \times 0.1^{\circ}$ grid; the values are then aggregated to a $0.5^{\circ} \times 0.5^{\circ}$ resolution. {The variables are: eastern and northern components of wind velocity at 10m above ground level (m/s), temperature at 2m above ground level (K; see Figure~\ref{obs_maps}), potential evaporation (m), evaporation (m of water equivalent), surface pressure (Pa), surface net solar and thermal radiation (J/m$^2$), snowfall, snow-melt, and snow evaporation (m of water equivalent), surface run-off (m), and a three-month standardised precipitation index\footnote{ The 3-month SPI is derived under the assumption that observations of monthly total precipitation follow a gamma distribution.} (SPI, unitless; see Figure~\ref{obs_maps}).  The reanalysis also provides three variables relating to sub-gridscale orography: aspect (radians), anisotropy (unitless), slope (unitless), as well as the standard deviation of orography (unitless). }
+Note that, to utilise CNNs in our model, the spatial domain over which predictors are observed is slightly larger than that associated with the response, see Figure~\ref{obs_maps} and Section~\ref{sec:pre_process}. \par
+In Section~\ref{sec:interp_res}, we focus on quantifying the drivers of wildfire occurrence and the extremal behaviour of wildfire spread. {In particular, we interpret the effect of 2m air temperature and SPI on wildfire occurrence and spread, as these drivers are meteorological variables that will see their own extremal behaviour influenced by climate change. Note that, to reduce interactions (i.e., confounding) between the interpreted predictors and those in $\mathbf{x}_\mathcal{N}(s,t)$, we a priori estimated all pairwise correlations and removed any predictors in $\mathbf{x}_\mathcal{N}(s,t)$ that were highly correlated (correlation values $>0.5$ or $< -0.5$) with air temperature or SPI. The $d=42$ predictors described above are those that remained.} We also use our proposed methodology to map the monthly occurrence risk and extreme quantiles for wildfire spread; the former can be used to identify areas of high susceptibility to wildfire occurrence, whilst the latter illustrates locations where it is pertinent to prevent wildfires.
+\section{Extreme point process model}
+\label{bgev_PP_sec}
+\subsection{Modelling extremes with point processes}
+To model non-stationary extreme values with the PP approach, we first assume that limit $\eqref{max_lim}$ holds at each space-time location $(s,t)\in\mathcal{S}\times\mathcal{T}$. That is, for independent realisations $Y_i(s,t)$ of $Y(s,t)$ for $i=1,\dots,n$, a suitable normalisation of the $n_y$-block maxima, denoted $\max_{i=1,\dots,n_y}\{Y_i(s,t)\}$, follows a $\mbox{GEV}(\boldsymbol{\theta}(s,t))$ distribution with density $g$ and lower-endpoint $z_-(s,t)$; {note that, as we assume $\xi(s,t)>0$ for all $(s,t)$, the upper-endpoint of $Y(s,t)$, for all $(s,t)$, is infinite}. Then define a {1-dimensional} point process on the space $A_{s,t}=(u(s,t),\infty)$ for $u(s,t)>z_-(s,t)$ with corresponding intensity measure and density $\Lambda_{s,t}([z,\infty))=-(n/n_y) \log G(z)$ and $\lambda_{s,t}(z)=-\mathrm{d} \Lambda_{s,t}([z,\infty))/\mathrm{d}z \propto g(y)/G(z)$, respectively, for $z > u(s,t)$. Common practice is to take $n_y$ to be the number of observations in a year, e.g., for monthly observations $n_y=12$, so that the GEV parameters correspond to those for the associated annual maxima distribution. {We take $n_y=12$, but note that we have defined a 1-dimensional point process for $Y(s,t)$, instead of the customary 2-dimensional point process (see Section~\ref{intro_evmodel_sec}), as the model parameters vary with each space-time location $(s,t)$. Hence, it is misleading to refer to the annual maxima distribution, as we observe only a single realisation of the process $\{Y(s,t): s \in \mathcal{S}, t \in \mathcal{T}\}$, which is non-stationary in both space and time. It follows that $n=1$ }and the negative log-likelihood for a non-stationary point process model is 
+\begin{align}
+\label{PP_nll}
+l(\boldsymbol{\theta}(s,t))&=\sum_{t \in \mathcal{T}}\sum_{s \in \mathcal{S}}\bigg[(1/n_y)\Lambda_{s,t}([u(s,t),\infty))-\mathbbm{1}\{y(s,t)> u(s,t)\}\log\lambda_{s,t}(y(s,t))\bigg],
+\end{align} 
+where $\mathbbm{1}\{\cdot\}$ denotes the indicator function \citep[see, Ch. 7.,][]{coles2001introduction}. {In this way, $Y(s,t)\sim \mbox {PP}(\boldsymbol{\theta}(s,t))$, which implies that $\{F_{s,t}(y)\}^{n_y}=G(y \mid  \boldsymbol{\theta}(s,t))$, where $F_{s,t}$ denotes the distribution function of $Y(s,t)$ and $G$ in \eqref{GEVcdf} is the GEV distribution function.}\par
+As with GPD models, the threshold $u(s,t)$ must be estimated and fixed a priori. However, here the threshold is used in inference and the resulting parameters are not dependent on $u(s,t)$. If $y(s,t) < z_-(s,t)$, then \eqref{PP_nll} cannot be evaluated; for the reasons detailed in Appendix~A.3.4 of \cite{papersup}, this makes neural networks an unsuitable tool for fitting the classical point process model. To this end, we replace the GEV distribution $G$ with the blended-GEV (bGEV) distribution $G_b$, which has the same bulk and upper-tail but carries an infinite lower-bound, leading to a new extreme value point process model, described next, that can be fitted using deep learning methods.
+\subsection{Blended GEV point process model}
+\label{bGEV_sec}
+Following \cite{castro2021practical}, we first re-parameterise the GEV distribution in terms of a new location parameter $q_\alpha \in \mathbb{R}$, the $\alpha$-quantile ($0<\alpha<1$) of the GEV model, and a spread parameter $s_\beta >0$, defined as $s_\beta=q_{1-\beta/2}-q_{\beta/2}$ for $0<\beta<1$; we denote the newly parameterised GEV distribution by GEV($q_\alpha,s_\beta,\xi$). There exists a one-to-one mapping between ($\mu,\sigma)$ and ($q_\alpha,s_\beta$); for $\xi>0$, we have
+$\mu=q_\alpha-s_\beta( l_{\alpha,\xi}-1)/(l_{1-\beta/2,\xi}-l_{\beta/2,\xi})$ and $\sigma=\xi s_\beta/(l_{1-\beta/2,\xi}-l_{\beta/2,\xi})$, where $l_{x,\xi}=(-\log(x))^{-\xi}$; if $\xi=0$, we instead have $\mu=q_\alpha+s_\beta l_{\alpha}/(l_{\beta/2}-l_{1-\beta/2})$ and $\sigma= s_\beta/(l_{\beta/2}-l_{1-\beta/2})$, where $l_{x}= \log(-\log x)$.\par
+The bGEV($q_\alpha,s_\beta,\xi$) distribution combines the lower-tail of the Gumbel distribution, with distribution function $G_{G}= \mbox{GEV}(\tilde{q}_\alpha,\tilde{s}_\beta,0)$, with the bulk and upper-tail of the Fr\'echet distribution ($\xi>0$) by mixing the two distributions in a small interval $[b_1,b_2]$. Precisely, the bGEV distribution function is defined by
+\begin{align}
+\label{bGEV_cdf}
+G_{b}(z\mid q_\alpha,s_\beta,\xi,b_1,b_2)&=G_{G}(z\mid\tilde{q}_\alpha,\tilde{s}_\beta)^{1-p(z;b_1,b_2)}\times G(z\mid q_\alpha,s_\beta,\xi)^{p(z;b_1,b_2)},
+\end{align}
+where the weight function $p$ is defined by $p(z;b_1,b_2)=F_{beta}((z-b_1)/(b_2-b_1)\mid c_1,c_2)$, for $F_{beta}(x\mid c_1,c_2)$, the distribution function of a beta random variable with shape parameters $c_1>0,c_2>0$. Note that $p(z;b_1,b_2)=0$ for $z \leq b_1$ and $p(z;b_1,b_2)=1$ for $z \geq b_2$ and so the lower- and upper-tails of $G_{b}$ are completely determined by $G_{G}$ and $G$, respectively. For continuity of $G_{b}$, we require $G_{G}(b_1)=G(b_1)$ and $G_{G}(b_2)=G(b_2)$; for this we set $b_1=G^{-1}(p_{b_1})$ and $b_2=G^{-1}(p_{b_2})$ for small $0 < p_{b_1},p_{b_2} <1$ and let $\tilde{q}_\alpha=b_1-(b_2-b_1)(l_\alpha-l_{p_{b_1}})/(l_{p_{b_{1}}}-l_{p_{b_{2}}})$
+and $\tilde{s}_\beta=(b_2-b_1)(l_{\beta/2}-l_{1-\beta/2})/(l_{p_{b_1}}-l_{p_{b_2}})$.
+ To ensure the log-density of $G_{b}$ is continuous, the parameters $c_1$ and $c_2$ are restricted to $c_1>3, c_2>3$. Values of the hyper-parameters must be chosen a priori; we follow \cite{castro2021practical} and \cite{vandeskog2021modelling} and set $\alpha=\beta=0.5,p_{b_1}=0.05,p_{b_2}=0.2,$ and $c_1=c_2=5$. {Note that the latter four hyper-parameters determine the shape of the bGEV distribution function below the $p_b$-quantile, and so their choice does not impact the upper-tail; see \cite{castro2021practical}.}\par
+ As the $G_{b}$ distribution has the same lower-endpoint as $G_{G}$, i.e., negative infinity, the bGEV distribution can be used for modelling without the NN training issues associated with the GEV distribution. To utilise the bGEV model in a PP framework, we simply replace the mean measure $\Lambda_{s,t}$ in \eqref{PP_nll} with $\Lambda_{s,t}([z,\infty)):= -(1/n_y)\log G_{b}(z)$, which is a valid measure by construction; we denote this new model as the bGEV-PP approach and write $Y(s,t)\mid\mathbf{X}(s,t)\sim\mbox{bGEV-PP}(\boldsymbol{\theta}(s,t); u(s,t))$ where $\boldsymbol{\theta}(s,t) = (q_\alpha(s,t),s_\beta(s,t),\xi(s,t))^T$ when used within a spatiotemporal framework.
+Notice that maxima $M_n=\max(Z_1,\dots,Z_n)$ conditional on $n$, where $Z_1,\dots,Z_n\sim \mbox{bGEV-PP}$, follow the bGEV distribution, i.e., $M_n\sim \mbox{bGEV}$. This can be verified as \begin{align*}
+\Pr(M_n \leq z)&=\Pr(\mbox{No point in }[z,\infty))=\exp(-\Lambda_{s,t}(A_z))=G_b(z),
+\end{align*} which makes it clear that the bGEV-PP model extends the classical extreme value PP model for threshold exceedances in the same way that the bGEV distribution extends the GEV distribution for maxima. \par
+ We choose to use the proposed bGEV-PP model over the classic GPD for performing extreme value regression. Our reasoning is twofold: firstly, the focus of our analysis is to provide extreme quantile estimation whilst simultaneously identifying the drivers of extreme wildfire risk. As described in Section~\ref{intro_evmodel_sec}, it is difficult to do identify drivers with the GPD as $\sigma_u$ is dependent on $u(s,t)$, which is itself dependent on the predictors. {For the bGEV-PP model, the threshold $u(s,t)$ defines observations deemed as ``extreme'' for inference, but, given that it is sufficiently large, the parameters $q_\alpha(s,t),s_\beta(s,t),$ and $\xi(s,t)$, are independent of $u(s,t)$.}  Secondly, application of the GPD requires training of three networks; one for each of the $u(s,t)$, GPD, and $\Pr\{Y(s,t) \leq u(s,t)\}$ models \citep[see, e.g.,][]{opitz2018inla}, whilst the bGEV-PP approach requires only one for $u(s,t)$ and one for the bGEV-PP. The added computational demand and the potential for increased model uncertainty leads us to favour the bGEV-PP approach. We find in Section~\ref{app_sec} that the bGEV-PP approach provides good model fits to the data. {For details on inference with the bGEV-PP PINN model, see Appendix~A.3.4 \citep{papersup}.}
+  \subsection{Simulation study}
+ \label{sim_mainpaper_sec}
+{We illustrate the efficacy of the bGEV-PP PINN modelling approach by applying it to simulated data; the full details of our study are provided in Appendix~B of the Supplementary Material \citep{papersup}, but we summarise the salient findings here. Two simulation studies are conducted; the first investigates estimation of the interpretable function $m_\mathcal{I}(\cdot)$. Appendix~B.2 illustrates that our approach can accurately estimate linear and spline-based representations for $m_\mathcal{I}(\cdot)$, when the interpretable predictor set $\mathbf{x}_\mathcal{I}(s,t)$ is correctly specified; this is the case even when $m_\mathcal{I}(\cdot)$ is zero everywhere, i.e., the interpretable covariates have no effect on the response. The second study in Appendix~B.3 considers the scenario where the bGEV-PP response distribution is misspecified. In this case, we show that our approach is still able to accurately estimate extreme quantiles.  }
+\section{Data application}
+\label{app_sec}
+\subsection{Pre-processing and setup}
+\label{sec:pre_process}
+Exploratory analysis reveals that the response variable is very heavy-tailed, with a number of fitted stationary GPD models giving estimates $\hat{\xi} > 1$, and so we use the square root of the response for inference and rescale the predicted distributions accordingly; the response $\sqrt{Y}$ can be interpreted as the ``diameter" of an affected region. A $\log$ transformation was also considered instead of the square root but this led to negative shape parameter estimates, and hence the finite bound problem discussed in Section~\ref{bgev_PP_sec}. As we believe that the driving factors that lead to occurrence and spread of wildfires differ between the two components of the wildfire distribution, we propose separate PINN models for $p_0(s,t):=\Pr\{Y(s,t)>0\mid\mathbf{X}(s,t)=\mathbf{x}(s,t)\}$ and $\sqrt{Y}(s,t)\mid\{Y(s,t)>0,\mathbf{X}(s,t)\}\sim \mbox{bGEV-PP}(\boldsymbol{\theta}(s,t); u(s,t))$; there are $216713$ observations of $Y(s,t)\mid Y(s,t)>0$. Models for $p_0(s,t)$ are fitted by specifying $h$ in \eqref{full_model} as the logistic/sigmoid link function.  To fit the bGEV-PP model we require an exceedance threshold $u(s,t)$, which we estimate as the $\tau$-quantile of strictly positive $\sqrt{Y}(s,t) \mid \mathbf{X}(s,t)$ for some $\tau \in (0,1)$. {This is represented by a neural network of the form $\exp[m_\mathcal{N}\{\mathbf{x}(s,t)\}]$,  i.e., a PINN model with no interpretable aspects (a regular NN) that provides strictly positive quantile estimates, which is trained via minimisation of the tilted quantile loss function \citep{Koenker_2005}; see Appendix~A.3.4 for details. Note that the quantile-level $\tau$ is a tunable hyper-parameter; see Section~\ref{sec:arch}.}\par
+{
+Wildfire dynamics vary spatially across the contiguous U.S. \citep{gedalof2010climate} and so, although a common approach in many environmental applications, we choose not to fix the shape parameter $\xi(s,t)$ across $(s,t)$. However, estimation of $\xi(s,t)$ in a regression setting can be difficult, particularly in the presence of many predictor variables. Thus, we represent $q_\alpha(s,t)$ and $s_\beta(s,t)$ using the flexible PINN formulation given in \eqref{full_model}, but adopt a simpler model for $\xi(s,t)$: a MLP applied to the latitude and longitude coordinates at $s$, and with $h$ taken to be the sigmoid link function to ensure that $\xi(s,t)\in(0,1)$ for all $(s,t)$. Hence, $\xi(s,t)$ varies spatially but not temporally, and is not dependent on the $d=42$ predictors described in Section~\ref{Wildfire_Data_sec}; we hereafter drop the time $t$ from the notation (i.e., $\xi(s):=\xi(s,t)$). We find that this specification facilitates fantastic model fits and has the added benefit of allowing interpretation of spatial patterns in estimates of $\xi(s)$; see Section~\ref{sec:hazard_maps}. 
+}
+
+We assess parameter uncertainty by using a stationary bootstrap \citep{politis1994stationary} \citep[see Appendix~C of][]{papersup} with $200$ samples and expected block size of 2 months. The distribution of quantities of interest, e.g., quantiles and models parameters, are estimated by taking the empirical median and pointwise quantiles across all bootstrap samples. \red{To reduce computation time, we first train all models on one bootstrap sample, for 250 epochs each. Their trained weights and parameter estimates are then used as initial values for training of all subsequent models (for each bootstrap sample), for all bootstrap samples, with these models trained for another 250 epochs. } 
+
+\red{To derive more accurate out-of-sample predictions and perform unbiased testing of the different models, we use a training, validation, and testing scheme. The original data are partitioned into three complementary subsets with $20\%$ of observations used for validation, $20\%$ used for testing, and the remainder used for training.} As the goal is to predict spatiotemporal quantiles, we remove observations for \red{validation/testing} that are slightly clustered in space and time\red{; see, also, the discussion by \cite{sweet2023cross} for the benefits of such an approach}. To this end, for each seven month block of observed space-time locations, we simulate a standard space-time Gaussian process $\{Z(s,t)\}$ with separable correlation function $\rho((s_i,t_i),(s_j,t_j))={\exp\{-\|s_i-s_j\|^*/100\}\exp\{-| t_i-t_j|/5\}}$; here $\|\cdot\|^*$ denotes the (geodesic) great-Earth distance in miles. Observation $y(s,t)$ is then assigned to the validation if the realisation $z(s,t)$ falls below the $0.2$-quantile of the simulated $\{z(s,t):s \in \mathcal{S}, t\in\mathcal{T}\}$; \red{similarly, observations are assigned to the test set if $z(s,t)$ exceeds the $0.8$-quantile of the simulated $\{z(s,t):s \in \mathcal{S}, t\in\mathcal{T}\}$. In this way, random space-time clusters of observations are removed from the training data; an illustration of this approach is illustrated in Figure~S1 \citep{papersup}. Note that space-time clusters are generated independently of the observations, and no preferential sampling is performed when assigning data to training, validation, and testing sets.} 
+
+Models are fitted by applying mini-batch stochastic gradient descent over a finite number of epochs, via the adaptive moment estimation (Adam) algorithm \citep{kingma2014adam}, \red{with a mini-batch size corresponding to 16 temporal fields}. Whilst the model is optimised using the training data only, we evaluate the model loss on the validation data and save the current state of the model (i.e., the current parameter estimates) at each epoch. In order to obtain the model fit that provides the best out-of-sample predictions, we use only the ``best'' model fit, which is the state that minimises the validation loss over all epochs. We also employ early-stopping of the training; training ends prematurely if the validation loss has not decreased for 20 epochs \citep[see, e.g.,][]{prechelt2002early}. Note that \red{the test data are not at all used in model fitting and,} whilst a different partitioning of training data is used for each bootstrap sample, the same partition is used within a single bootstrap sample for the three model components: $u(s,t)$, $p_0(s,t)$, and the bGEV-PP model.
+ 
+{We consider two formulations of PINN models. Recall that the three parameters $p_0(s,t)$, $q_\alpha(s,t),$ and $s_\beta(s,t)$ are represented using the PINN formulation, given by \eqref{full_model}, with $I=2$ interpreted predictors comprising $\mathbf{x}_{\mathcal{I}}(s,t)$: 2m air temperature and SPI. The other $d-I=40$ predictors feed the neural network used to estimate $m_{\mathcal{N}}(\cdot)$. We consider two models for the interpretable function $m_I(\cdot)$ in \eqref{full_model}: a \textit{global} and \textit{local} effect model. For the first model, we use splines to model the global impact of $\mathbf{x}_{\mathcal{I}}(s,t)$ on $p_0(s,t),q_\alpha(s,t),$ and $s_\beta(s,t)$. This is global in the sense that the splines' basis coefficients do not vary with $(s,t)$, and so estimates of $m_I(\cdot)$ model the aggregated effect of $\mathbf{x}_{\mathcal{I}}(s,t)$ on the wildfire distribution. To explore spatial heterogeneity in the impact of the interpreted predictors, we also consider a local model: a spatially-varying coefficient model, whereby $m_I\{\mathbf{x}_{\mathcal{I}}(s,t)\}$ is represented as a linear function with coefficients varying by the state in which location $s$ lies\footnote{Due to their relatively small sizes, we merge the states of Rhode Island and Connecticut with Massachusetts, as well as Maryland with Delaware.}.}
+
+{For the global models, the interpretable function $m_\mathcal{I}$ is modelled using thin-plate splines \citep{wood2003thin}, represented via radial basis functions evaluated at ten fixed knots; see Appendix~A.2 of the Supplementary Material \citep{papersup}. Knots are taken to be marginal quantiles of the predictors $\{\mathbf{X}(s, t) : (s, t) \in \mathcal{S} \times \mathcal{T}\}$ with equally spaced probabilities.} For all models, we improve the numerical stability during model training by standardising all inputs; both linear and NN predictors, and the knot-wise radial basis function evaluations, are standardised by subtracting and dividing by their marginal means and standard deviations.  To use CNNs, the spatial locations must lie on a rectangular grid \citep[see Appendix~A.3.3,][]{papersup}. We map the observation locations to a rectangular grid and we then treat $Y(s,t)$ at locations sampled over water as missing by removing their influence on the loss function. {Note that the meteorological predictors that we consider in our analyses are available over sea and on a sufficiently large domain (encompassing the contiguous U.S.) as to avoid any edge effects related to the use of CNNs.}
+{\subsection{Architecture optimisation and measures of performance}
+\label{sec:arch}
+In order to determine the optimal model architecture (the NN depth, width, and layer type) and quantile-level $\tau$, we optimise the following measures of model performance. For the occurrence probability model $p_0(s,t)$, we measure the models' predictive capabilities using the out-of-sample (evaluated on the \red{test} data) area under the receiver operating characteristic curve (AUC). For the bGEV-PP PINN model, we propose two measures.} The first, a measure of goodness-of-fit, was proposed by \cite{richards2021joint}. We use the predicted distributions to transform all data onto standard exponential margins. Then for $\{0 < p_1 < \dots < p_m < 1\}$, i.e., a grid of $m\geq 2$ equally spaced values with $p_m=1-(p_2-p_1)$, we calculate the standardised mean absolute deviation (sMAD) $(1/m)\sum^m_{j=1}\mid\tilde{q}(p_j)-F_{E}^{-1}(p_j)\mid$, where $\tilde{q}(p_j)$ denotes the empirical $p_j$-quantile of the standardised data and $F_{E}$ denotes the standard exponential distribution function. That is, we estimate the expected deviation in the Q-Q plot for the standardised data against exponential quantiles from the line $y=x$, but only above the $p_1$-quantile. As our interest lies in the fit for extreme values only, we set $p_1=0.95$ and $m=10835$, i.e., $100(1-p_1)\%$ of the number of observations. We evaluate this metric on all data, not only the test data.\par
+To evaluate the out-of-sample predictive performance of the bGEV-PP model, we apply the threshold-weighted continuous ranked probability score (twCRPS) \citep{Gneiting2011} which is a proper scoring rule. Define $\mathcal{P}\subset \mathcal{S} \times \mathcal{T}$ as the set of out-of-sample space-time locations and let $\hat{p}(y; s,t)$ denote a model-based estimate of the probability $\Pr\{Y(s,t) < y\}$. Then for a sequence of increasing thresholds $\{v_1,\dots,v_{n_v}\}$ and weight function $w(x)=\tilde{w}(x)/\tilde{w}(v_{n_v}), \tilde{w}(x)=1-(1+(x+1)^2/1000)^{-1/4}$, we define
+$\mbox{twCRPS}=\sum_{(s,t)\in\mathcal{P}}\sum^{n_v}_{i=1}w(v_i)[\mathbbm{1}\{y(s,t)\leq v_i\}-\hat{p}(v_i; s,t)]^2$ where the function $w(x)$ puts more weight on extreme predictions. We use 24 irregularly spaced thresholds ranging between $v_1=\sqrt{30}$ and $v_{24}=\sqrt{100000}$.
+
+{The optimal architectures are found by minimising the twCRPS and sMAD, and maximising the AUC, using a coarse grid-search scheme. The optimal quantile level is found to be $\tau=0.8$. For $p_0(s,t)$, $u(s,t)$, $q_\alpha(s,t)$, and $s_\beta(s,t)$, the optimal choice of architecture for $m_\mathcal{N}$ in \eqref{full_model} uses three convolutional layers with $3\times3$ filters and widths of $(32,32,32), (12,12,12), (24,24,24)$, and $(10,10,10)$, respectively. The optimal model for $\xi(s)$ is a MLP with three dense layers, each with a width of eight. The optimal NN model for $u(s,t)$ comprises $7177$ estimable parameters; see Table~\ref{compareTab} for the number of estimable parameters in the $p_0(s,t)$ and bGEV-PP models. Note that the optimal $\tau$ and NN architecture for the $p_0(s,t)$ and bGEV-PP models is consistent across both the global and local model settings (see Section~\ref{sec:pre_process}). } 
+
+\subsection{Model comparison}
+\label{sec:model_compare}
+{We now perform a study to compare the effect of the functional form of $\theta(s,t)$ in \eqref{full_model} on the fitted models for $p_0(s,t)$ and $\sqrt{Y}(s,t)\mid \{Y(s,t)>0,\mathbf{X}(s,t)\}\sim \mbox{bGEV-PP}(\boldsymbol{\theta}(s,t);u(s,t))$. Three candidate PINN models are considered: the local and global PINN models, described in Section~\ref{sec:arch}, and a simplified local PINN model with homogeneous shape parameter, $\xi(s)=\xi>0$ for all $s\in\mathcal{S}$. We compare these PINN models against two classical statistical methods: a generalised linear model and a generalised additive model (GAM). These models can be considered special cases of the PINN framework, with $I=d$ and $m_\mathcal{N}(\mathbf{x})=0$ for all $\mathbf{x}$. The GAM model uses the same spline specification as the global PINN formulation (see Section~\ref{sec:pre_process}). We also consider a PINN model which permits no interpretable structure (i.e., simply a NN), with $I=0$ and $m_\mathcal{I}(\mathbf{x})=0$ for all $\mathbf{x}$; this model adopts the same neural network architecture as the local and global PINN models (see Section~\ref{sec:arch}). All models are fitted using the same training scheme, validation and test data, and estimates of $u(s,t)$ (with $\tau=0.8$; as described in Section~\ref{sec:pre_process}).} 
+
+{We fit each of the six candidate models across all bootstrap samples and calculate the performance metrics detailed in Section~\ref{sec:arch}. Table~\ref{compareTab} gives the average of the goodness-of-fit and prediction metrics, as well as the \red{test} loss for the bGEV-PP model, across all bootstrap samples; note that the twCRPS and AUC are evaluated on the \red{test} data, whilst the sMAD is evaluated on the original data. For both the $p_0(s,t)$ and bGEV-PP models, we observe vast improvements in performance and fit when including a NN in the formulation for $\theta(s,t)$. Both the linear and GAM models give much higher (lower) values of the sMAD, twCRPS, and \red{test} loss (AUC) compared to the NN and PINN models, suggesting that the flexibility afforded by a deep learning approach has drastically improved the model performance. We find that, for the bGEV-PP component, the local and global PINN models facilitate better model performance than the NN model, which may be because we did not optimise the architecture for the latter. \red{For the $p_0(s,t)$ model component, the NN model does provide the highest test AUC, but by only a small margin; the second best performing $p_0(s,t)$ model is the local PINN formulation.} Interestingly, the local PINN model with homogeneous $\xi(s)$ provides the best predictive power (by minimising twCRPS) for quantiles of the non-zero burnt area distribution, but at the cost of a poorer model fit (in terms of the sMAD).}
+
+{In Section~\ref{sec:interp_res}, we showcase estimates of the interpretable function, $m_\mathcal{I}(\cdot)$, from the local and global PINN models. In Sections~\ref{sec:hazard_maps} and \ref{sec:temp_trends}, we discuss spatial and temporal trends in estimates of $\theta(s,t)$ and extreme quantiles of the burnt area distribution. For brevity, we present there only model estimates and diagnostics for the local PINN model (with heterogeneous $\xi(s)$), as this model provides a good balance of interpretability, goodness-of-fit, and predictive performance. To further illustrate the goodness-of-fit and suitability of the local PINN model for the bGEV-PP component of our model, we illustrate a pooled {Q-Q} plot in \red{Figure~S2} of Appendix~D of the Supplementary Material \citep{papersup}, transforming all non-zero data onto standard Exponential margins using the bGEV-PP fits; this procedure is repeated for each bootstrap sample and we observe good fits in the upper-tails as the estimated tolerance bands include the diagonal.}
+\begin{sidewaystable}
+\caption{Comparison of functional forms for $\theta(s,t)$. Performance metrics are the median over 200 bootstrap samples and evaluated on the test data. The AUC is calculated for the occurrence probability, $p_0$, models. All other metrics are calculated for the bGEV-PP models and are given as the absolute difference to the lowest value across all models. The $p_0$ model is shared across the ``local'' model formulations.}
+\centering
+ {\color{red}\begin{tabular}{c|c|c| c| c|c} 
+\hline
+$\theta(s,t)$ &\shortstack{Number of parameters \\
+($\mbox{bGEV-PP}$/$p_0$)}  & \shortstack{Test\\ loss}  &  \shortstack{ sMAD \\ ($\times 10^{-2}$)}  & \shortstack{twCRPS} & \shortstack{AUC \\ ($\times 10^{-2}$)} \\
+\hline
+\hline
+linear & 263 / 43&3014.9&5.4&635.4&79.16\\
+GAM & 1019 / 421&3100.1&4.4&646.0& 80.83\\
+NN &25335 / 30657&19.1&2.5&42.9&91.34\\
+global PINN & 24763 / 30101&17.8&0&36.9&91.11\\
+local PINN &24903 / 30171&0&0.5&23.7&91.28\\
+local PINN (homogeneous $\xi$) & 24727 / 30171 &143.5&11.6&0&91.28\\
+\hline
+  \end{tabular}}
+\label{compareTab}
+  \end{sidewaystable}
+\subsection{Identifiable drivers of U.S. wildfires}
+\label{sec:interp_res}
+{Here, we present estimates of the interpretable function $m_\mathcal{I}(\cdot)$ for the local and global PINN models. For the global PINN model, we consider the individual contribution of each interpreted predictor to $m_\mathcal{I}$, denoted here $\hat{m}_{\mathcal{I},j}(x_j)$ for $j=1,2$, where $x_1$ and $x_2$ correspond to 2m air temperature and SPI, respectively. We centre estimates of each spline $\hat{m}_{\mathcal{I},j}(x_j)$ for each bootstrap sample, by subtracting evaluations of the spline at the median of the predictor values. We illustrate, in Figure~\ref{occur_GAM}, their estimates and uncertainty using functional box plots \citep{sun2011functional}; note that we determine if a predictor has a ``significant'' effect on a model parameter if the magenta 50\% central region does not encompass the horizontal line (corresponding to zero effect). We observe that increases in air temperature lead to an increase in both the log-odds of wildfire occurrence probability, $p_0$, and the log-scale, $\log(s_\beta)$, of extreme wildfire spread; the latter can be interpreted as a measure of severity for extreme wildfires, given an occurrence. Interestingly, there is no further significant increase in the effect of 2m air temperature on $p_0$ when the temperature exceeds roughly its median value of 290K; the same does not hold true for $s_\beta$. This suggests that, above a certain threshold, increasing temperatures exacerbate only the severity, not the frequency, of U.S. wildfires. Increasing temperatures above the median lead to an increase in the log-location parameter, $\log(q_\alpha)$, of extreme wildfire spread, but the converse holds true for temperatures below the median. This may be due to interactions between low temperature and fuel abundance or type, which have a significant impact on the spread of wildfires. For the drought index, we consistently observe across all parameters ($p_0$, $q_\alpha$, and $s_\beta$) that larger values (corresponding to relatively more monthly rainfall) lead to a reduction in the parameter value. }\par
+\begin{figure}[t!]
+\centering
+\begin{minipage}{0.32\linewidth}
+\centering
+\includegraphics[width=\linewidth]{Images/fbp_cov1_p0.pdf} 
+\end{minipage}
+\begin{minipage}{0.32\linewidth}
+\centering
+\includegraphics[width=\linewidth]{Images/fbp_cov1_q.pdf} 
+\end{minipage}
+\begin{minipage}{0.32\linewidth}
+\centering
+\includegraphics[width=\linewidth]{Images/fbp_cov1_s.pdf} 
+\end{minipage}
+\begin{minipage}{0.32\linewidth}
+\centering
+\includegraphics[width=\linewidth]{Images/fbp_cov2_p0.pdf} 
+\end{minipage}
+\begin{minipage}{0.32\linewidth}
+\centering
+\includegraphics[width=\linewidth]{Images/fbp_cov2_q.pdf} 
+\end{minipage}
+\begin{minipage}{0.32\linewidth}
+\centering
+\includegraphics[width=\linewidth]{Images/fbp_cov2_s.pdf} 
+\end{minipage}
+\caption{Functional boxplots of estimates of the additive function contributions of 2m air temperature (K; top row) and 3-month SPI (unitless; bottom row) to the log-odds of occurrence probability $p_0(s,t)$ (unitless; left column), log-location $\log \{q_\alpha(s,t)\}$ (log-$\sqrt{\mbox{acres}}$; centre column), and log-scale $\log \{s_\beta(s,t)\}$ (log-$\sqrt{\mbox{acres}}$; right column) of the {global} PINN model. Black curves gives the median function over all bootstrap samples, and are enclosed within the 50$\%$ central regions (magenta). Blue curves denote the maximum envelopes, and the red dashed curves represent outlier candidates that fall outside these envelopes. Red horizontal lines denote a zero effect, whilst the red triangles denote the placement of the splines' knots.}
+\label{occur_GAM}
+\end{figure}
+{Figure~\ref{fig:SVC} presents maps of the median estimates of $m_\mathcal{I}$ for the local PINN model, with uncertainty estimates provided in \red{Figure~S3} \citep{papersup}. We observe spatial variation in the state-varying effects of temperature and SPI on the model parameters. For 2m air temperature, we generally observe (for all three parameters) positive trends in the western U.S., but negative trends in the central and eastern regions. This could suggest that global warming will exacerbate wildfires in the western U.S., but lead to a reduction in extreme wildfire occurrences and severity in eastern regions of the U.S. We note that some states, e.g., Arizona, Florida, North Carolina, illustrate disagreement between the sign of the trends for the occurrence probability ($p_0$) and severity ($q_\alpha$/$s_
+\beta$) components of the model; here the model estimates suggest that increasing temperatures will lead to fewer but more severe wildfires, corresponding to lower $p_0$ and higher $q_\alpha$ or $s_\beta$ values. For the 3-month SPI index, we generally observe negative trends, in all parameters, across the entirety of the contiguous U.S., suggesting that increased drought mostly leads to increased U.S. wildfire frequency and severity. \red{Figure~S4} \citep{papersup} investigates the sensitivity of estimates for the local bGEV-PP PINN model to the choice of $\tau$; we find that taking $\tau=0.7$ or $\tau=0.9$ does not significantly alter the spatial patterns in estimates of $m_\mathcal{I}$.}
+
+\begin{figure}[t!]
+\centering
+\begin{minipage}{0.49\linewidth}
+\flushleft
+\includegraphics[width=0.8\linewidth]{Images/p0_SVC_temp_median.pdf} 
+\end{minipage}
+\vspace{-0.3cm}
+\begin{minipage}{0.49\linewidth}
+\flushleft
+\includegraphics[width=0.8\linewidth]{Images/p0_SVC_SPI_median.pdf} 
+\end{minipage}
+\begin{minipage}{0.49\linewidth}
+\flushleft
+\includegraphics[width=0.8\linewidth]{Images/bGEV_SVC_temp_loc_median.pdf} 
+\end{minipage}
+\vspace{-0.3cm}
+\begin{minipage}{0.49\linewidth}
+\flushleft
+\includegraphics[width=0.8\linewidth]{Images/bGEV_SVC_SPI_loc_median.pdf} 
+\end{minipage}
+\begin{minipage}{0.49\linewidth}
+\flushleft
+\includegraphics[width=0.8\linewidth]{Images/bGEV_SVC_temp_spread_median.pdf} \end{minipage}
+\begin{minipage}{0.49\linewidth}
+\flushleft
+\includegraphics[width=0.8\linewidth]{Images/bGEV_SVC_SPI_spread_median.pdf} 
+\end{minipage}
+\vspace{-0.5cm}
+\caption{Median estimated $m_\mathcal{I}(\cdot)$ for the local PINN model, where $m_\mathcal{I}(\cdot)$ is a linear model with state-varying coefficients. Values correspond to the contribution of 2m air temperature (K; left column) and 3-month SPI (unitless; right column) to the log-odds of occurrence probability $p_0(s,t)$ (unitless; top row), log-location $\log \{q_\alpha(s,t)\}$ (log-$\sqrt{\mbox{acres}}$; centre row), and log-scale $\log \{s_\beta(s,t)\}$ (log-$\sqrt{\mbox{acres}}$; bottom row). Shaded regions correspond to insignificant values, where the $95\%$ bootstrapped confidence interval includes zero. }
+\label{fig:SVC}
+\end{figure}
+\subsection{Hazard map estimates}
+\label{sec:hazard_maps}
+{Figure~\ref{fig:maps} provides maps of the median estimated $p_0(s,t)$, $q_\alpha(s,t)$, and $s_\beta(s,t)$, for a fixed time $t$; for brevity, we consider only the month July, 2007, as this month was the most devastating in terms of burnt area across the entire U.S. Uncertainty estimates for Figure~\ref{fig:maps} are provided in \red{Figure~S5}, and similar maps for other selected months are provided in \red{Figures~S6 and S7} of the Supplementary Material \citep{papersup}.
+The maps of predicted probabilities match well with the observed wildfires (see Figure~\ref{fig:maps}), suggesting that this component of the local PINN model fits well to the data. We observe relatively large values of $p_0(s,t)$ across the entirety of the spatial domain, but particularly in the north-east, south-east, and western regions. We generally observe that the magnitude and variability of wildfire spread are intrinsically linked; areas of large $q_\alpha$ typically occur with large $s_\beta$. For July 2007, large values of $q_\alpha$ tend to occur in the western areas of the U.S., particular Idaho and Oregon, whilst large values of $s_\beta$ occur over a larger region that stretches into the centre of the domain.}
+
+{Alongside estimates of temporally-varying parameters, Figure~\ref{fig:maps} provides a map of the median estimated shape parameter, $\xi(s)$. Values vary between 0.2 and 0.8, suggesting that U.S. wildfire spread is particularly heavy-tailed; an observation also made by \cite{d2021flexible} and \cite{koh2021gradient} for these data. Note that this is an estimate of the tail index for the square-root of the burnt area, i.e., the burnt area ``diameter", and so the area itself, $Y(s,t)$, will have even heavier tails and (potentially) non-finite first and second-order moments. We observe interesting spatial variation in $\xi(s)$, with significantly larger values observed in the western U.S. Wildfire spread is particularly heavy-tailed in these regions, with California experiencing the most extreme events.}
+
+{The bGEV-PP model is composed of a location, scale, and shape parameter; we combine these into a single metric to access the overall hazard of wildfire spread, conditional on an occurrence. Figure~\ref{fig:maps} provides estimates of the (log-transformed) $90\%$ quantile\footnote{As the bGEV-PP distribution has real support, but the response takes only positive values, we set negative quantile estimates to zero. {Across all bootstrap samples and spatiotemporal locations $(s,t)$, we found only 1.6$\%$ of estimates of the $90\%$ quantile of $ \sqrt{Y}(s,t)\mid\{Y(s,t)>0,\mathbf{X}(s,t)\}$ are negative.}} of $\sqrt{Y}(s,t)\mid\{Y(s,t)>0,\mathbf{X}(s,t)\}$, for July 2007. Although we do not observe large values of $q_\alpha$ in the east, we still observe high estimates of the $90\%$ quantile there, due to the effect of $s_\beta$ and $\xi$. Note that the presented quantiles are for strictly positive spread only, and so do not necessarily characterise the overall or compound risk of wildfire burnt areas. Instead, these maps can be used to identify areas where it is pertinent to prevent wildfires; here wildfires are unexpected, but, should they occur, they are particularly devastating. For example, there are regions where there is a low probability of wildfire occurrence $p_0$, whilst high estimates of the (conditional) quantile in these regions illustrate that the spread distribution there is particularly extreme, e.g., parts of California, Nevada, and northern Texas.}
+\par
+\begin{figure*}[t]
+\begin{minipage}{0.49\linewidth}
+\flushleft
+\hspace{-.22cm}
+\includegraphics[width=0.8\linewidth]{Images/obs_t103.pdf} 
+\end{minipage}
+\vspace{-0.3cm}
+\begin{minipage}{0.49\linewidth}
+\flushleft
+\includegraphics[width=0.8\linewidth]{Images/p0_median_t103.pdf} 
+\end{minipage}
+\begin{minipage}{0.49\linewidth}
+\flushleft
+\includegraphics[width=0.8\linewidth]{Images/bGEV_loc_median_t103.pdf} 
+\end{minipage}
+\vspace{-0.3cm}
+\begin{minipage}{0.49\linewidth}
+\flushleft
+\hspace{-.2cm}
+\includegraphics[width=0.8\linewidth]{Images/bGEV_spread_median_t103.pdf} 
+\end{minipage}
+\vspace{-0.3cm}
+\begin{minipage}{0.49\linewidth}
+\flushleft
+\includegraphics[width=0.8\linewidth]{Images/bGEV_xi_median.pdf} 
+\end{minipage}
+\begin{minipage}{0.49\linewidth}
+\flushleft
+\includegraphics[width=0.8\linewidth]{Images/bGEV_90q_med_t103.pdf} 
+\end{minipage}
+\vspace{-0.2cm}
+\caption{Maps of observed $\log\{1+\sqrt{Y}(s,t)\}$ (log-$\sqrt{\mbox{acres}}$; top-left) and median estimated $p_0(s,t):=\Pr\{Y(s,t)>0\mid\mathbf{X}(s,t)\}$ (unitless; top-right), $q_\alpha(s,t)$ ($\sqrt{\mbox{acres}}$; centre-left), $\log \{1+s_\beta(s,t)\}$ (log-$\sqrt{\mbox{acres}}$; centre-right), $\xi(s)$ (unitless; bottom-left), and $90\%$ quantile of $\log\{1+ \sqrt{Y}(s,t)\}\mid\{Y(s,t)>0,\mathbf{X}(s,t)\}$ (log-$\sqrt{\mbox{acres}}$; bottom-right) for July, 2007.}
+\label{fig:maps}
+\end{figure*}
+\begin{figure*}[t!]
+\centering
+\begin{minipage}{0.32\linewidth}
+\centering
+\includegraphics[width=\linewidth]{Images/cr_900_med_t103.pdf} 
+\end{minipage}
+\begin{minipage}{0.32\linewidth}
+\centering
+\includegraphics[width=\linewidth]{Images/cr_950_med_t103.pdf} 
+\end{minipage}
+\begin{minipage}{0.32\linewidth}
+\centering
+\includegraphics[width=\linewidth]{Images/cr_990_med_t103.pdf} 
+\end{minipage}
+\vspace{-0.5cm}
+\caption{Maps of median estimated quantiles for $\log\{1+\sqrt{Y}(s,t)\}\mid\mathbf{X}(s,t)$ (log-$\sqrt{\mbox{acres}}$) for July 2007. Quantiles, left to right: $90\%$, $95\%$, and $99\%$.}
+\label{fig:cr_map}
+\end{figure*}
+{To assess the overall risk of U.S. wildfires, Figure~\ref{fig:cr_map} provides maps of estimated extreme quantiles for $\log\{1+\sqrt{Y}(s,t)\}\mid\mathbf{X}(s,t)$, i.e., the unconditional response, in July 2007 \citep[Figure~S9,][shows similar maps for other months]{papersup}. This characterises the overall risk of burnt area, for this particular month, by combining estimates of $p_0$ with estimates of the bGEV-PP local PINN model. We note that areas of large values in Figure~\ref{fig:cr_map} do not necessarily correspond to areas of large values in estimates of $p_0$, $q_\alpha$, or $s_\beta$ (Figure~\ref{fig:maps}), and so we conclude that the spread and occurrence of wildfires are not always intrinsically linked; different factors lead to wildfire ignition as well as spread, and so our decision to model both processes separately is well-founded. We observe high values of the unconditional quantiles across large areas of the U.S., typically in the west of the U.S., including California, and the south-east, including Florida, with states in the north-east, and Texas, having relatively low compound risk. }
+\subsection{Temporal trends}
+\label{sec:temp_trends}
+To quantify temporal changes in the wildfire distribution, {we present maps of the site-wise trends in estimates of $p_0(s,t)$, stratified by month. Trends are estimated at each spatial location $s$ by fitting a linear regression to estimates of ${\{p_0(s,t):t \in \mathcal{T}^*\}}$, where $\mathcal{T}^*$ is the set of times corresponding to a specific month. A similar procedure is conducted to find temporal trends in the 90$\%$ quantile of $\sqrt{Y}(s,t)\mid\{Y(s,t)>0,\mathbf{X}(s,t)\}$, which we use here as a measure of wildfire severity. Results for two months, June and July, are presented in Figure~\ref{fig:temp_trends}, with others in \red{Figures~S10 and S11} \citep{papersup}.
+We generally observe increases in $p_0(s,t)$ during 1993--2015 for both June and July, and for the vast majority of locations, suggesting that climate change may be leading to an increase in the frequency of wildfires. Areas of particular concern include the north-eastern regions of the U.S. and Texas, which show large increases in $p_0(s,t)$. Interestingly, some parts of the U.S. show a decrease in $p_0(s,t)$, e.g., Georgia, Florida, and Maine, albeit very slightly. For the $90\%$ quantile of $\sqrt{Y}(s,t)\mid\{Y(s,t)>0,\mathbf{X}(s,t)\}$, we again observe positive trends across large parts of the U.S., particularly in the north-west and central regions. Negative trends can be observed in states closer to the boundaries of the contiguous U.S.,  particularly in the south-west and north-east. Again, we observe different spatial patterns in the behaviour of $p_0$ and the wildfire spread distribution, which provides further evidence to support our choice to model these two processes separately. }
+\begin{figure}[t!]
+\flushleft
+\begin{minipage}{0.495\textwidth}
+\includegraphics[width=0.9\linewidth]{Images/p0_diff_m6.pdf} 
+\end{minipage}
+\begin{minipage}{0.495\textwidth}
+\flushleft
+\includegraphics[width=0.9\linewidth]{Images/p0_diff_m7.pdf} 
+\end{minipage}
+\vspace{-0.3cm}
+\begin{minipage}{0.495\linewidth}
+\flushleft
+\includegraphics[width=0.9\linewidth]{Images/q90Map_diff_m6.pdf} 
+\end{minipage}
+\begin{minipage}{0.495\linewidth}
+\flushleft
+\hspace{-0.18cm}
+\includegraphics[width=0.9\linewidth]{Images/q90Map_diff_m7.pdf} 
+\end{minipage}
+\vspace{-0.3cm}
+\caption{Maps of median site-wise trends in estimated occurrence probability $p_0(s,t)$ (unitless; top) and $90\%$ quantile of $\sqrt{Y}(s,t)\mid\{Y(s,t)>0,\mathbf{X}(s,t)\}$ ($\sqrt{\mbox{acres}}$; bottom) across all bootstrap samples, stratified by month. Left; June. Right; July.}
+\label{fig:temp_trends}
+\end{figure}
+
+\section{Discussion}
+\label{discuss_sec}
+We have proposed a framework for performing semi-parametric extreme quantile regression using partially-interpretable neural networks. The methodology unifies the tail robustness and theoretical strength of parametric extreme-value models, the high predictive accuracy and computational efficiency of neural networks, and the interpretability of linear and spline-based regression models, allowing us to accurately estimate extreme quantiles whilst simultaneously performing statistical inference. To complement this flexible methodological framework, we propose a new point process model for extreme values that circumvents issues concerning finite lower-bounds on the process intensity function, which is a key issue when training neural networks. We use a large ensemble of neural networks to model the compound risk of extreme wildfires in the contiguous U.S., with separate models proposed for the occurrence and spread of extreme wildfires. {Our approach allows for the identification of high-risk areas of the U.S. and spatiotemporal trends in the wildfire distribution, as well as facilitating inference that reveals interesting insight into the spatial variation of the driving behaviour of extreme wildfires.} \par
+{Our extreme quantile regression model is computationally-scalable and capable of extracting information from a complex, high-dimensional predictor set ($d>40$). This comprises mostly environmental variables, and so our model omits anthropogenic factors that may also drive the behaviour of  U.S. wildfires. Wildfire politics, i.e., suppression and mitigation policies, vary across the U.S., and they are likely to directly impact the occurrence and extent of wildfires \citep[see, e.g., ][]{kupfer2020climate, barnett2016using, dunn2020wildfire}. Quantifying the efficacy of wildfire policies and incorporating this information into our model is a future endeavour that would be interesting to pursue.   }\par 
+Section~\ref{sec:model_compare} highlights the predictive power of convolutional networks, which are capable of capturing spatial patterns in predictors, when they are applied to our data. Further extensions of our model could leverage recurrent neural networks that capture temporal structure in data. For example,  long short-term memory neural networks \citep{hochreiter1997long} have been successfully used for prediction in a number of environmental applications, e.g., North Atlantic Oscillation index \citep{yuan2019prediction}, influenza trends \citep{liu2018lstm}, sea surface temperatures \citep{liu2018td} and basin water levels \citep{shuofeng2021lstm}, and these can be combined with CNNs to 
+build neural networks that model spatiotemporal structure. A drawback of CNNs is that they are only applicable to gridded spatial data, which have been constructed as a sequence of images. Hence, future studies may benefit from using alternatives to the CNN. For example, \cite{scarselli2008graph} propose graphical neural networks (GNNs), which are applicable to data with a graphical structure. Recent developments \citep[see review by][]{zhou2020graph} of GNNs have seen the proposal of convolutional \citep{kipf2016semi} and recurrent \cite[e.g.,][]{li2015gated} extensions that can handle data which are irregularly-spaced throughout $\mathcal{S}$ and $\mathcal{T}$, respectively; hence they could be used in our framework to model the extremes of processes observed at point locations or on irregularly-spaced grids.
+
+\par
+We have here considered one type of distribution for modelling extremes of the response, namely the newly proposed bGEV-PP model. However, our framework extends far beyond the use of this specific model, which can be easily replaced by any parametric model. For example, it is trivial to see how the bGEV point process could be replaced with the standard bGEV\footnote{For the reasons outlined in Sections \ref{bgev_PP_sec}, we would always favour the bGEV over the GEV when using neural networks; see, also, \cite{Richards2026}.} distribution; we would model block-maxima of the response and appropriately aggregate the predictors. As is common with many extreme value approaches, fitting of the bGEV-PP and GPD models requires a prerequisite step whereby a sufficiently high threshold $u(s,t)$ is estimated; $u(s,t)$ is typically estimated to ensure a constant exceedance probability $\Pr\{Y(s,t)>u(s,t)\}$ across all $(s,t)\in\mathcal{S}\times\mathcal{T}$. When modelling the response below $u(s,t)$, the bGEV-PP model performs poorly; alternatives that can be used to model both the upper-tails of the response, as well as the bulk, are mixture models with GPD tails, see, e.g., \cite{carreau2007hybrid} and \cite{carreau2011stochastic}, but these still require specification of $u(s,t)$. Estimating $u(s,t)$ requires additional modelling choices and can contribute to model uncertainty; \cite{papastathopoulos2013extended}, \cite{naveau2016modeling}, and \cite{yadav2021spatial} propose extensions of the GPD which model the whole distribution and removes this requirement, and so may provide better candidates for modelling extremes of burnt area than both the GPD and bGEV-PP. \par
+{{Our modelling framework does not account for dependence between the burnt area response $Y(s, t)$ across different space-time locations, and so we are unable to account for occurrences of wildfires that persist between spatial grid-cells or subsequent times. Such a limitation of our regression modelling approach would require fitting of a complex dependence model for both the bulk and the tail, which accounts for the significant non-stationarity exhibited by a process observed over a very large or complex topographical domain, e.g., the contiguous U.S.; this would not only be challenging to model, but also extremely computationally demanding to fit, and so is beyond the scope of our work.}}\par
+Finally, to make our unifying partially-interpretable neural network (PINN)-based framework for extreme quantile regression available to the whole statistical community at large, and for reproducibility, we have created the $\texttt{R}$ package $\texttt{pinnEV}$ \citep{pinnEV}. {All models considered in our application, as well as the GPD and bGEV extensions detailed above, are currently available to use in this package.}
+\section*{Acknowledgements}
+The authors would like to thank Thomas Opitz for providing the data and Michael O'Malley for supportive discussions. The research reported in this publication was supported by funding from King Abdullah University of Science and Technology (KAUST) Office of Sponsored Research (OSR) under Award No.\ OSR-CRG2020-4394. Support from the KAUST Supercomputing Laboratory is gratefully acknowledged. \red{This work has made use of the resources provided by the Edinburgh Compute and Data Facility (ECDF) (\url{http://www.ecdf.ed.ac.uk/}).}
+
+\bigskip
+\begin{center}
+{\large\bf SUPPLEMENTARY MATERIAL}
+\end{center}
+
+\begin{description}
+
+\item[Supplement:] Supporting material is provided for methodology proposed in the main text. This includes a simulation study, further comparison of candidate models for the analysis and supplementary results. (.pdf)
+
+\item[Data and code:] The data that supports our findings are available in the accompanying $\texttt{R}$ package, $\texttt{pinnEV}$, which is available at \url{https://github.com/Jbrich95/pinnEV}. \red{The results in this manuscript are fully reproducible, via the code available at the GitHub repository, \url{https://github.com/Jbrich95/USWildfireExtremes}.}
+
+
+
+\end{description}
+
+
+\bibliographystyle{apalike}
+{\small
+\bibliography{ref}
+}
+\end{document}

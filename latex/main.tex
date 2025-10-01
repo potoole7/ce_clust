@@ -1438,18 +1438,13 @@ Section~\ref{subsec:sim_mixture} extends the study to more complex scenarios, wh
 
 % Sim design
 % We first consider a simulation design based on the Gaussian copula.  
-We consider $S=12$ ``locations'', each associated with $d = 2$ variables. 
+We consider $D=12$ sites', $s_1, \ldots, s_{12}$, each associated with $d = 2$ variables. 
 % Data are generated independently across sites, with $n=1000$ bivariate observations per location.  
-Data are generated independently across ``locations'' using a Gaussian copula. 
+Data are generated independently across sites from a Gaussian copula. 
 % At site $s=1,\dots,S$, dependence is introduced through a Gaussian copula with correlation parameter $\rho_{\text{Gauss},s}$.
 % At each site $s=1,\dots,S$, dependence is introduced through a Gaussian copula with correlation parameter $\rho_{\text{Gauss}}^s$.
-Formally, for each site $s \in {1, \ldots, 12}$, we first sample 1000 observations for $X_{1,s}$ and $X_{2,s}$ from 
-\[
-  (X_{1,s}, X_{2,s})^T &\sim \mbox{MVN}(0, \rho^s_{\text{Gauss}}), \\
-\]
-\todo{Where does standard normal function come in here?}
-\todo{Should I enclose s in brackets, to show it's an index, not a power?}
-where $\rho^s_{\text{Gauss}} \in [0, 1]$ is a site-specific correlation parameter, and then apply the transformation in Equation~\eqref{eq:laplace}, with $F_X(\cdot)$ being the distribution function of the standard normal distribution, to obtain standard Laplace margins, denoting the resulting vectors as $Y_{1,s}$ and $Y_{2,s}$.
+Formally, for site $s = {1, \ldots, 12}$, we sample 1000 observations for $(\symbf{X}_{1,s} \symbf{X}_{2,s}) \sim \mbox{MVN}(0, \rho^s_{\text{Gauss}})$,
+where $\rho^s_{\text{Gauss}} \in [0, 1]$ is a site-specific correlation parameter, and then apply the transformation in Equation~\eqref{eq:laplace}, with $F_X(\cdot)$ being the standard normal distribution function, to obtain $(\symbf{Y}_{1,s}, \symbf{Y}_{2,s})$ with standard Laplace margins.
 
 % Per-site sampling
 % For each site, let
@@ -1470,26 +1465,28 @@ where $\rho^s_{\text{Gauss}} \in [0, 1]$ is a site-specific correlation paramete
 % The uniforms $(U_1,U_2)$ are then transformed to standard Laplace margins as in Equation~\eqref{eq:laplace}, yielding the observed pair $(X_1,X_2)$ at site $s$.
 
 % Parameter choices and true clustering
-The sites are arranged into three latent clusters of equal size, defined by $\rho_{\text{Gauss}}^s$. % their copula correlations. 
+The sites are assigned to one of three latent clusters of equal size, defined by their own correlation $\rho_{\text{Gauss}}^s$. % their copula correlations. 
 As a proof of concept, we choose well-separated values to ensure clear clustering.
-Specifically, the first cluster, comprising sites 1 to 4, has correlation $\rho_{\text{Gauss}}^s=0.1, s = 1, \ldots, 4$, the second cluster has $\rho_{\text{Gauss}}^s=0.5, s = 5, \ldots, 8$, 
-and the third cluster has $\rho_{\text{Gauss}}^s=0.9, s = 9, \ldots, 12$.
-These values determine the ground-truth clusters against which methods are evaluated.
-\citet{Keef2013} showed that for a bivariate Gaussian copula, the asymptotic CE parameters are $\alpha_{\mid i} = \text{sign}(\rho_{\text{Gauss}}) (\rho_{\text{Gauss}})^2$ and $\beta_{\mid i} = 1/2$, implying asymptotic independence between variables $X_1$ and $X_2$. 
+Specifically, the first cluster, comprising sites 1 to 4, has correlation $\rho_{\text{Gauss}}^s=0.1, s = 1, \ldots, 4$; the second cluster has $\rho_{\text{Gauss}}^s=0.5$, for $s = 5, \ldots, 8$, 
+and the third cluster has $\rho_{\text{Gauss}}^s=0.9$, for $s = 9, \ldots, 12$.
+% These values determine the ground-truth clusters against which methods are evaluated.
+% \citet{Keef2013} showed that for a bivariate Gaussian copula, the asymptotic CE parameters are $\alpha_{\mid i} = \text{sign}(\rho_{\text{Gauss}}) (\rho_{\text{Gauss}})^2$ and $\beta_{\mid i} = 1/2$, implying asymptotic independence between variables $X_1$ and $X_2$. 
+\citet{Keef2013} showed that the corresponding parameters of the CE framework are $\alpha_{\mid i} = (\rho_{\text{Gauss}}^s)^2$ and $\beta_{\mid i} = 1/2$, $i=1,2$, implying asymptotic independence between $\symbf{Y}_{1,s}$ and $\symbf{Y}_{2,s}$.
 
 % Estimation
 % At each site the CE model is fitted using conditional quantile levels $q=0.9$ and $q=0.99$, equivalent to taking the largest 100 and 10 observations of the conditioning variable, respectively, to estimate the dependence structure between the two variables as described by the CE parameters $\alpha$ and $\beta$.
 % After data generation, the conditional extremes (CE) model is fitted at each site using conditional quantile levels \(q=0.9\) and \(q=0.99\), equivalent to using the largest 100 and 10 observations of the conditioning variable, respectively.
-After data generation, the conditional extremes (CE) model is fitted at each site with conditioning thresholds $u_{i, s}$ in Equation~\eqref{eq:ce_model}, as the $q$-th Laplace quantile for \(q=0.9\) and \(q=0.99\).
-This is equivalent to using the largest 100 and 10 observations of the conditioning variable, respectively.
+% After data generation, the conditional extremes (CE) model is fitted at each site with conditioning thresholds $u_{i, s}$ in Equation~\eqref{eq:ce_model}, as the $q$-th Laplace quantile for \(q=0.9\) and \(q=0.99\).
+At each site $s = 1, \ldots, 12$, we estimate the CE model in Equation~\eqref{eq:ce_model}, with conditioning threshold $u_{i, s}$ as the standard Laplace q-quantile for \(q=0.9\) and \(q=0.99\).
+% This is equivalent to using the largest 100 and 10 observations of the conditioning variable, respectively.
 % Pairwise dissimilarities between sites are computed using the $\JSGa{}$ divergence, and clusters are identified using PAM, following the procedure in Section~\ref{subsec:clustering}.
 % Pairwise dissimilarities between sites are computed using the $\JSGa{}$ divergence between the fitted CE models for $X_1 \mid X_2$ and $X_2 \mid X_1$, which are averaged to obtain a single dissimilarity measure. 
-Pairwise dissimilarities between sites are computed using the expected divergence in Equation~\eqref{eq:jsga_integral}, averaged over both conditioning directions, \(X_1 \mid X_2\) and \(X_2 \mid X_1\), to obtain a single dissimilarity measure.
-Clusters are identified using the PAM algorithm, following Section~\ref{subsec:clustering}. 
+Pairwise dissimilarities between the CE fits at each site are computed using the expected divergence in Equation~\eqref{eq:jsga_integral}, and we average over both conditioning directions, to obtain a single dissimilarity measure (see $M$ in Equation~\eqref{eq:aggregate_matrix}).
+Clusters are identified using the PAM algorithm.
 % \citet{Keef2013} show that for a bivariate Gaussian copula, the asymptotic CE parameters are $\alpha = \text{sign}(\rho_{\text{Gauss}}) (\rho_{\text{Gauss}})^2$ and $\beta = 1/2$, implying asymptotic independence.  
 % These theoretical values serve as the reference for the CE estimates.
 % Simulations are repeated 500 times, with performance assessed via the ARI and by comparing finite-sample CE estimates to these asymptotic values.
-Simulations are repeated 500 times, with performance assessed via the ARI and by comparing finite-sample CE estimates to these asymptotic benchmarks. 
+Following Section~\ref{subsec:clustering}, we repeat this procedure 500 times, with performance assessed by comparing finite-sample CE estimates to the asymptotic truths. 
 % Across all simulations, the correct number of clusters, $k=3$, was identified using the elbow method described in Section~\ref{subsubsec:choose_k}, and the ARI was always equal to 1, indicating perfect clustering, as expected given such well-separated clusters.
 % Figure~\ref{fig:00_gauss_cop} summarises the results.
 
@@ -1507,11 +1504,12 @@ Simulations are repeated 500 times, with performance assessed via the ARI and by
 % \todo{Explain what is meant by pre and post-clustering here}
 % Figure~\ref{fig:00_gauss_cop} shows that our approach is able to reduce the uncertainty in the estimates for both $\alpha_{\mid i}$ and $\beta_{\mid i}$ for both considered conditioning quantiles. 
 % Figure~\ref{fig:00_gauss_cop} shows that by using clustering to pool information across different sites, we can reduce the uncertainty in the estimates for both $\alpha_{\mid i}$ and $\beta_{\mid i}$ for both considered conditioning quantiles. 
-Figure~\ref{fig:00_gauss_cop} shows results for estimating the CE model parameters for each specific site, and then after pooling information across different sites according to their known cluster structure. 
-By pooling the data at these sites, we reduce the uncertainty in the estimates for both $\alpha_{\mid i}$ and $\beta_{\mid i}$ for both considered conditioning quantiles. 
-Bias, as defined as the difference between the finite-sample estimate and the theoretical asymptotic parameter, and variance also decrease with increasing $\rho_{\text{Gauss}}$, indicating faster convergence under stronger dependence. 
+Figure~\ref{fig:00_gauss_cop} shows boxplots of the estimated model parameters stratified by the true values of $\rho_{\text{Gauss}}^s$.
+The results are shown pre- and post-clustering with the latter derived by pooling data across all sites according to their estimated clustering (which was always correct in this simple setting).
+By pooling data across sites, we reduce estimation uncertainty for both $\alpha_{\mid i}$ and $\beta_{\mid i}$.
+Bias, as defined as the difference between the finite-sample estimate and the true theoretical parameter, and variance decrease with increasing $\rho_{\text{Gauss}}^s$, indicating faster convergence to the asymptotic model under stronger dependence. 
 % We observe the expected bias-variance tradeoff in the choice of quantile for the CE model, with the higher quantile ($q=0.99$) yielding less biased estimates, as expected due to improved convergence to the asymptotic parameters further into the tail, but with greater variance due to data scarcity.
-We observe the expected bias-variance tradeoff in the choice of quantile for the CE model, with the higher quantile ($q=0.99$) yielding less biased estimates, but with greater variance due to data scarcity.
+We observe the expected bias-variance tradeoff in the choice of quantile for the CE model, with the higher quantile ($q=0.99$) yielding less bias, but with greater variance.
 
 % \begin{figure}[H]
 \begin{figure}[h]
@@ -1520,7 +1518,13 @@ We observe the expected bias-variance tradeoff in the choice of quantile for the
     \includegraphics[width = 0.9\linewidth]{plots/sim_01_gauss_cop_man.png}
     % \caption{Boxplots of \emph{$\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$ parameter estimates for the conditional extremes model pre- and post-clustering for a bivariate Gaussian copula simulation of 12 datasets, or ``locations'', each with 1000 observations of each variable, belonging equally to three known clusters. Simulations were repeated 500 times. The x-axis represents the conditional quantile used to fit the conditional extremes model, and the boxes are coloured by their Gaussian copula correlation parameter, $\rhou{Gauss}$. Dotted horizontal lines indicate the theoretical asymptotic values of $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$ for a bivariate Gaussian copula, coloured by the same $\rhou{Gauss}$ values for $\alpha^{(\CE{})}$ and black for $\beta^{(\CE{})}$ to indicate the same value across all clusters, at $1/2$.}}
     % \caption{\emph{Boxplots of $\alpha$ and $\beta$ parameter estimates for the conditional extremes model pre- and post-clustering for a bivariate Gaussian copula simulation of 12 datasets, or ``locations'', each with 1000 observations of each variable, belonging equally to three known clusters. Simulations were repeated 500 times. The x-axis represents the conditional quantile used to fit the conditional extremes model, and the boxes are coloured by their Gaussian copula correlation parameter, $\rhou{Gauss}$. Dotted horizontal lines indicate the theoretical asymptotic values of $\alpha$ and $\beta$ for a bivariate Gaussian copula, coloured by the same $\rhou{Gauss}$ values for $\alpha$ and black for $\beta$ to indicate the same value across all clusters, at $1/2$.}}
-    \caption{\emph{Boxplots of $\alpha_{\mid i}$ and $\beta_{\mid i}$ estimates for the conditional extremes model pre- and post-clustering for a bivariate Gaussian copula simulation of 12 datasets, or ``locations'', each with 1000 observations of each variable, belonging equally to three known clusters. Simulations were repeated 500 times. The x-axis represents the level of the conditional quantile used to fit the conditional extremes model, and the boxes are coloured by their Gaussian copula correlation parameter, $\rhou{Gauss}$. Dotted horizontal lines indicate the theoretical asymptotic values of $\alpha_{\mid i}$ and $\beta_{\mid i}$, coloured by the same $\rhou{Gauss}$ values for $\alpha_{\mid i}$ and black for $\beta_{\mid i}$ to indicate the same value across all clusters, at $1/2$.}}
+    % \caption{\emph{Boxplots of $\alpha_{\mid i}$ and $\beta_{\mid i}$ estimates for the conditional extremes model pre- and post-clustering for a bivariate Gaussian copula simulation of 12 datasets, or ``locations'', each with 1000 observations of each variable, belonging equally to three known clusters. Simulations were repeated 500 times. The x-axis represents the level of the conditional quantile used to fit the conditional extremes model, and the boxes are coloured by their Gaussian copula correlation parameter, $\rhou{Gauss}$. Dotted horizontal lines indicate the theoretical asymptotic values of $\alpha_{\mid i}$ and $\beta_{\mid i}$, coloured by the same $\rhou{Gauss}$ values for $\alpha_{\mid i}$ and black for $\beta_{\mid i}$ to indicate the same value across all clusters, at $1/2$.}}
+    \caption{\emph{ 
+    Boxplots of estimates of (top) $\alpha_{\mid i}$ and (bottom) $\beta{\mid i}$ for the conditional extremes model pre- and post-clustering with bivaraite Gaussian data simulated at 12 sites, belonging equally to three known clusters. 
+    Simulations were repeated 500 times.
+    The x-axis gives $q$, the level of the conditioning quantile sued to fit the odel, and the boxes are coloured by the true Gaussian copula correlation parameter, $\rho_{\text{Gauss}}^s$.
+    Dotted horizontal lines indicate the true theoretical values of $\alpha_{\mid i}$ and $\beta_{\mid i}$, with the colours for $\alpha_{\mid i}$ corresponding with the true $\rho_{\text{Gauss}}^s$ values.
+    }}
    ~\label{fig:00_gauss_cop}
 \end{figure}
 

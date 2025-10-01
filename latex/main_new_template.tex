@@ -83,6 +83,8 @@
 
 \newcommand{\red}{\textcolor{red}}
 
+
+
 %%%% Non-template packages %%%%
 \usepackage{tikz}
 % \usepackage[colorinlistoftodos]{todonotes}
@@ -157,10 +159,22 @@
 \usepackage{titlesec}
 
 % \titlespacing*{\section}{0pt}{1.5ex plus 1ex minus .2ex}{1ex plus .2ex}
-% \titlespacing*{\subsection}{0pt}{1ex plus .5ex minus .2ex}{0.5ex plus .2ex}
-% \titlespacing*{\subsubsection}{0pt}{0.5ex plus .2ex minus .1ex}{0.3ex plus .1ex}
+% % \titlespacing*{\subsection}{0pt}{1ex plus .5ex minus .2ex}{0.5ex plus .2ex}
+% % \titlespacing*{\subsubsection}{0pt}{0.5ex plus .2ex minus .1ex}{0.3ex plus .1ex}
+% \titlespacing*{\subsection}{0pt}{0.2ex}{0.2ex}   % tune the numbers
+% \titlespacing*{\subsubsection}{0pt}{0.2ex}{0.2ex}
 
+% Section spacing
+\titlespacing*{\section}
+  {0pt}{2ex plus .5ex minus .2ex}{1ex plus .2ex}
 
+% Subsection spacing
+\titlespacing*{\subsection}
+  {0pt}{1.5ex plus .5ex minus .2ex}{0.3ex}
+
+% Subsubsection spacing
+\titlespacing*{\subsubsection}
+  {0pt}{1ex plus .3ex minus .2ex}{0.2ex}
 
 \begin{document}
 
@@ -663,9 +677,9 @@ Finally, in Section~\ref{subsec:clustering}, we outline how to perform clusterin
 
 % \subsection{Multivariate conditional extremes}~\label{subsec:ce_model}
 \subsection{Multivariate conditional extremes}~\label{subsec:ce_model}
-
+\vspace{-1.5\baselineskip} % adjust until the gap looks right
 \subsubsection{Background}~\label{subsubsec:ce_background}
-
+\vspace{-1.5\baselineskip} % adjust until the gap looks right
 % See Jordan's paper for quick summary (TFR a bit long winded) (and Keef)
 % Need to talk about marginals, transformations and then model itself
 

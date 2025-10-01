@@ -1354,16 +1354,16 @@ We plot $\mathrm{TWGSS}(k)$ against $k$ and choose the optimal number of cluster
 % Introduce section
 % Throughout this section, we evaluate the effectiveness of our clustering method using a simulation study.
 % Throughout this section, we assess the performance of our clustering method through a simulation study. 
-We illustrate performance of our clustering approach using simulated data. 
-Clustering accuracy is evaluated using the adjusted Rand index (ARI) of \citet{Hubert1985-ys}, which measures similarity between the true and estimated clustering solutions, adjusted for chance.
+We illustrate performance of our multivariate extremal clustering approach across multiple simulation studies. 
+Clustering accuracy is evaluated using the adjusted Rand index (ARI) of \citet{Hubert1985-ys}. % , which measures similarity between the true and estimated clustering solutions, adjusted for chance.
 % In Section~\ref{subsec:sim_gauss}, a simple simulation design using a Gaussian copula to generate data is described. 
 % This data has the advantage of having theoretical asymptotic values for the CE parameters, to which we can directly compare our finite simulation estimates, as a test to ensure that our clustering is working as desired, reducing uncertainty in parameter estimates. 
 % Section~\ref{subsec:sim_gauss} introduces a simple design based on the Gaussian copula, which provides known asymptotic values for the CE parameters. 
-In Section~\ref{subsec:sim_gauss}, we generate data from a Gaussian copula for which the parameters of the CE model are available in closed-form \citep{Keef2013}.
+In Section~\ref{subsec:sim_gauss}, we generate data from a Gaussian copula for which the parameters of the CE model are known \citep{Keef2013}.
 % These allow us to benchmark our finite-sample estimates and verify that clustering reduces estimation uncertainty. 
-This allows us to verify that our clustering approach reduces the estimation uncertainty and to investigate the sensitivity to the threshold.
+This allows us to verify that our clustering approach reduces estimation uncertainty and to investigate the sensitivity of the results to the choice of conditioning threshold.
 % In Section~\ref{subsec:sim_mixture}, we extend this study to a more complex simulation design using a mixture of Gaussian and t-copulas, for a variety of simple and more complex dependence structures and scenarios. 
-Section~\ref{subsec:sim_mixture} extends the study to more complex scenarios, using mixtures of Gaussian and $t$-copulas to generate a range of dependence structures. 
+Section~\ref{subsec:sim_mixture} extends the study to more complex scenarios, where we use mixtures of Gaussian and $t$-copulas to generate data with complex extremal dependence. 
 % We evaluate our clustering solution using the adjusted rand index (ARI), and in Section~\ref{subsubsec:boot} ascertain the improvement of parameter estimation post-clustering using a bootstrapping scheme. 
 % We evaluate clustering accuracy using the adjusted Rand index (ARI), and in Section~\ref{subsubsec:boot} examine improvements in parameter estimation through a bootstrap resampling scheme \citet{Hubert1985-ys}.
 

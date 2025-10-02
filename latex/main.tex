@@ -1,4 +1,5 @@
-\documentclass[12pt]{article}
+% \documentclass[12pt]{article}
+\documentclass[12pt,compact]{article}
 \usepackage{amsmath}
 \usepackage{graphicx}
 %\usepackage{enumerate}
@@ -34,7 +35,7 @@
 \makeatletter
 \@ifundefined{KOMAClassName}{% if non-KOMA class
   \IfFileExists{parskip.sty}{%
-    \usepackage{parskip}
+    \usepackage{parskip} % begin paragraphs with empty line rather than indent
   }{% else
     \setlength{\parindent}{0pt}
     \setlength{\parskip}{6pt plus 2pt minus 1pt}}
@@ -83,9 +84,11 @@
 
 \newcommand{\red}{\textcolor{red}}
 
-
-
 %%%% Non-template packages %%%%
+\usepackage{titlesec} % Adjust spacing for sections
+% \usepackage[compact]{titlesec}
+% \usepackage{titlesec}
+% \usepackage[moderate]{savetrees} % uncomment to save space
 \usepackage{tikz}
 % \usepackage[colorinlistoftodos]{todonotes}
 % \usepackage{bm} % don't use with unicode-math
@@ -151,12 +154,17 @@
 \newcommand{\RT}[1]{\Sigma_{t}^{#1}}                % JxJ correlation matrix
 \newcommand{\LapTrans}{T_{\mathrm{Laplace}}}
 
+% Add to preamble
+% % \vspace{-1.5\baselineskip} % adjust until the gap looks right
+% \newcommand{\tightsection}[1]{\section{#1}\vspace*{-2ex}}
+\newcommand{\tightsection}[1]{\section{#1}\vspace{-1\baselineskip}}
+% \newcommand{\tightsubsection}[1]{\subsection{#1}\vspace*{-2.5ex}}
+\newcommand{\tightsubsection}[1]{\subsection{#1}\vspace{-1.2\baselineskip}}
+% \newcommand{\tightsubsubsection}[1]{\subsubsection{#1}\vspace*{-2ex}}
+\newcommand{\tightsubsubsection}[1]{\subsubsection{#1}\vspace{-1.2\baselineskip}}
+
 % fix setminus for unicode-math
 % \setmathfont[range=\setminus]{Asana Math}
-
-
-% Adjust spacing for sections
-\usepackage{titlesec}
 
 % \titlespacing*{\section}{0pt}{1.5ex plus 1ex minus .2ex}{1ex plus .2ex}
 % % \titlespacing*{\subsection}{0pt}{1ex plus .5ex minus .2ex}{0.5ex plus .2ex}
@@ -164,29 +172,46 @@
 % \titlespacing*{\subsection}{0pt}{0.2ex}{0.2ex}   % tune the numbers
 % \titlespacing*{\subsubsection}{0pt}{0.2ex}{0.2ex}
 
-% Section spacing
-\titlespacing*{\section}
-  {0pt}{2ex plus .5ex minus .2ex}{1ex plus .2ex}
+\titlespacing*{\section}{0pt}{1ex}{0.6ex}
+\titlespacing*{\subsection}{0pt}{0.8ex}{0.4ex}
+\titlespacing*{\subsubsection}{0pt}{0.5ex}{0.2ex}
+% \titlespacing*{\section}{0pt}{0.5ex}{0.3ex}
+% \titlespacing*{\subsection}{0pt}{0.4ex}{0.2ex}
+% \titlespacing*{\subsubsection}{0pt}{0.3ex}{0.1ex}
+% \titlespacing*{\section}{0pt}{2.5pt}{2.5pt}
+% \titlespacing*{\subsection}{0pt}{2pt}{2pt}
+% \titlespacing*{\subsubsection}{0pt}{1.5pt}{1.5pt}
 
-% Subsection spacing
-\titlespacing*{\subsection}
-  {0pt}{1.5ex plus .5ex minus .2ex}{0.3ex}
-
-% Subsubsection spacing
-\titlespacing*{\subsubsection}
-  {0pt}{1ex plus .3ex minus .2ex}{0.2ex}
+% Manual section spacing without titlesec
+% \usepackage{etoolbox}
+% \makeatletter
+% % Reduce spacing around sections
+% \patchcmd{\section}{\@startsection{section}{1}{\z@}}{%
+%   \@startsection{section}{1}{\z@}%
+%   {-2.5ex \@plus -1ex \@minus -.2ex}%  % Reduced before spacing
+%   {1.5ex \@plus .2ex}%                 % Reduced after spacing
+%   {\normalfont\large\bfseries}}{}{}
+%   
+% \patchcmd{\subsection}{\@startsection{subsection}{2}{\z@}}{%
+%   \@startsection{subsection}{2}{\z@}%
+%   {-2.25ex \@plus -1ex \@minus -.2ex}% % Reduced before spacing  
+%   {1.25ex \@plus .2ex}%                % Reduced after spacing
+%   {\normalfont\bfseries}}{}{}
+%   
+% \patchcmd{\subsubsection}{\@startsection{subsubsection}{3}{\z@}}{%
+%   \@startsection{subsubsection}{3}{\z@}%
+%   {-2ex \@plus -1ex \@minus -.2ex}%    % Reduced before spacing
+%   {1ex \@plus .2ex}%                   % Reduced after spacing  
+%   {\normalfont\bfseries}}{}{}
+% \makeatother
 
 \begin{document}
 
 %\bibliographystyle{natbib}
 
-% \def\spacingset#1{\renewcommand{\baselinestretch}%
-% {#1}\small\normalsize} \spacingset{1}
-\def\spacingset#1{%
-  \renewcommand{\baselinestretch}{#1}\small\normalsize
-}
-
-\spacingset{1}
+\def\spacingset#1{\renewcommand{\baselinestretch}{#1}\small\normalsize}
+% \spacingset{1.3}
+\spacingset{1.0}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -232,7 +257,7 @@
   \medskip
 } \fi
 
-\bigskip
+% \bigskip
 \begin{abstract}
 The conditional extremes (CE) framework has proven useful for analysing the joint tail behaviour of random vectors.
   However, when applied across many locations or variables, it can be difficult to interpret or compare the resulting extremal dependence structures, particularly for high dimensional vectors. 
@@ -676,10 +701,12 @@ Finally, in Section~\ref{subsec:clustering}, we outline how to perform clusterin
 % One such model which provides a flexible framework for describing tail dependence is the CE model of \citet{Heffernan2004}.
 
 % \subsection{Multivariate conditional extremes}~\label{subsec:ce_model}
-\subsection{Multivariate conditional extremes}~\label{subsec:ce_model}
-\vspace{-1.5\baselineskip} % adjust until the gap looks right
-\subsubsection{Background}~\label{subsubsec:ce_background}
-\vspace{-1.5\baselineskip} % adjust until the gap looks right
+% \subsection{Multivariate conditional extremes}~\label{subsec:ce_model}
+% % \vspace{-1.5\baselineskip} % adjust until the gap looks right
+% \subsubsection{Background}~\label{subsubsec:ce_background}
+% % \vspace{-1.5\baselineskip} % adjust until the gap looks right
+% \subsection{Background to multivariate conditional extremes}~\label{subsec:ce_model}
+\tightsubsection{Background to multivariate conditional extremes}~\label{subsec:ce_model}
 % See Jordan's paper for quick summary (TFR a bit long winded) (and Keef)
 % Need to talk about marginals, transformations and then model itself
 
@@ -854,7 +881,9 @@ $\alpha_{j\mid i}=1\ ( -1)$ and $\beta_{j\mid i}=0$, which corresponds to positi
 % $-1<\alpha_{j\mid i}<1$, which suggests asymptotic independence between $Y_j$ and $Y_i$, with dependence weakening as $Y_i\to\infty$, equivalent to $\chi<1$.
 $-1<\alpha_{j\mid i}<1$, which suggests asymptotic independence between $Y_j$ and $Y_i$, with the strength of extremal dependence weakening with $\alpha_{j \mid i}$, equivalent to $\chi<1$.
 
-\subsubsection{Setup}~\label{subsubsec:ce_setup}
+% \subsubsection{Setup}~\label{subsubsec:ce_setup}
+% \subsubsection{Framework and model inference}~\label{subsubsec:ce_setup}
+\tightsubsection{Framework and model inference}~\label{subsubsec:ce_setup}
 
 % We fit the CE model at different spatial sites. 
 \todo{Discuss with C + J, motivating spatial application no longer as strong}
@@ -947,7 +976,7 @@ To pick $q$, we use threshold stability plots and assess the stability of parame
 % The bootstrapping procedure of \citet{Heffernan2004} is used to obtain standard errors for the parameter estimates, and we choose the highest value of $q$ such that the parameter estimates are stable, and the bootstrap standard errors are reasonably small.
 Using the bootstrap procedure of \citet{Heffernan2004}, we obtain standard errors for parameter estimates and choose the highest value of $q$ such that the parameter estimates are stable and the bootstrap standard errors are reasonably small. \todo{Briefly describe this bootstrap method?}
 
-\subsection{A divergence measure for multivariate conditional extremes}~\label{subsec:div}
+\tightsubsection{A divergence measure for multivariate conditional extremes}~\label{subsec:div}
 
 % \todo{Need some references for applications of this metric! In intro, or here?}
 % We now define our divergence measure for multivariate conditional extremes models. 
@@ -1270,7 +1299,7 @@ Aggregating allows us to pool information across multiple comparisons and forms 
 % However, $JS^{G_{\alpha}}$ is also unbounded. The generalized JS divergence from \citet{Thiagarajan2025} is bounded, but must be estimated using MC, as it has no closed-form solution. Should I use/try it out?
 % \end{itemize}
 
-\subsection{Clustering of multivariate extremes}~\label{subsec:clustering}
+\tightsubsection{Clustering of multivariate extremes}~\label{subsec:clustering}
 
 % Describe clustering process via JS divergence and k-medoids/PAM algorithm (give?
 % See Vignotto)
@@ -1369,7 +1398,7 @@ For the bivariate case, we compare our clustering approach to that of \citet{Vig
 % We evaluate our clustering solution using the adjusted rand index (ARI), and in Section~\ref{subsubsec:boot} ascertain the improvement of parameter estimation post-clustering using a bootstrapping scheme. 
 % We evaluate clustering accuracy using the adjusted Rand index (ARI), and in Section~\ref{subsubsec:boot} examine improvements in parameter estimation through a bootstrap resampling scheme \citet{Hubert1985-ys}.
 
-\subsection{Gaussian copula setting}~\label{subsec:sim_gauss}
+\tightsubsection{Gaussian copula setting}~\label{subsec:sim_gauss}
 
 % Single location
 % We first consider a simple simulation design based on the Gaussian copula.  
@@ -1531,7 +1560,7 @@ We observe the expected bias-variance tradeoff in the choice of quantile for the
 \end{figure}
 
 
-\subsection{Mixture model setting}~\label{subsec:sim_mixture}
+\tightsubsection{Mixture model setting}~\label{subsec:sim_mixture}
 
 % In this section, we extend our simulation design to a mixture of Gaussian and t-copulas, where we control the dependence structure through their respective correlation parameters, $\rhou{Gauss}$ and $\rhou{t}$, with each t-copula having 3 degrees of freedom.
 % The idea behind this design is that the Gaussian copula generates observations exhibiting extremal independence, whereas the t-copula induces extremal dependence, the strength of which is determined by their respective correlation parameters.
@@ -1637,7 +1666,7 @@ Section~\ref{subsubsec:sim_realistic} considers a setting with $D = 60$ location
 % We can also evaluate the improvement in parameter estimation post-clustering using the bootstrapping scheme described in \cite{Heffernan2004}, as done in Section~\ref{subsubsec:boot}.
 Finally, in Section~\ref{subsubsec:boot}, we assess improvements in parameter estimation post-clustering using the bootstrap scheme of \citet{Heffernan2004}.  
 
-\subsubsection{Comparison to \citet{Vignotto2021}}~\label{subsubsec:sim_competing_methods}
+\tightsubsubsection{Comparison to \citet{Vignotto2021}}~\label{subsubsec:sim_competing_methods}
 
 % We compared our method to the leading competitor in the bivariate case, \citet{Vignotto2021}, using the max risk function which they propose.
 % We compared our method to that of \citet{Vignotto2021}.
@@ -1685,7 +1714,7 @@ This may be because the Gaussian copula becomes more similar to that of the t-co
     ~\label{fig:01_ce_vs_vi}
 \end{figure}
 
-\subsubsection{Extension to higher dimensions}~\label{subsubsec:sim_extension}
+\tightsubsubsection{Extension to higher dimensions}~\label{subsubsec:sim_extension}
 
 While the method of \citet{Vignotto2021} is restricted to $d = 2$ dimensions, our approach can be extended to $d > 3$ variables. 
 % To illustrate this, we can repeat the simulation study and grid search of Section~\ref{subsubsec:sim_competing_methods}, but now for three variables, the results of which are shown in Figure \ref{fig:02_3d}.
@@ -1749,7 +1778,7 @@ Nevertheless, the results demonstrate that the proposed method scales effectivel
 }}~\label{fig:02b_5d}
 \end{figure}
 
-\subsubsection{Extension to more sites}~\label{subsubsec:sim_realistic}
+\tightsubsubsection{Extension to more sites}~\label{subsubsec:sim_realistic}
 
 % We also design a more realistic example to somewhat mimic the structure of the Irish dataset introduced in Section~\ref{sec:ire}.
 % We also design a more realistic example to somewhat mimic the structure of the Irish dataset in our application in Section~\ref{sec:application}.
@@ -1792,7 +1821,7 @@ Moreover, variability in ARI across simulations is low, indicating that the clus
    ~\label{fig:03_realistic}
 \end{figure}
 
-\subsubsection{Parameter estimation pre- and post-clustering}~\label{subsubsec:boot}
+\tightsubsubsection{Parameter estimation pre- and post-clustering}~\label{subsubsec:boot}
 
 % Describe bootstrapping
 % Finally, we recall that an important reason for spatial clustering is to reduce the uncertainty in parameter estimates while minimising the introduction of bias by grouping similar locations together.
@@ -1866,7 +1895,7 @@ Section~\ref{subsec:app_explore} presents exploratory analysis, using the $\chi$
 % In Sections \ref{subsec:app_ce} and \ref{subsec:app_clust}, we fit the CE model to the data, and apply our clustering method to the estimated parameters, respectively, to determine the spatial dependence structure of the data.
 In Section~\ref{subsec:app_ce}, we fit the CE model to the data, and in Section~\ref{subsec:app_clust}, we apply our clustering approach to the estimated parameters to identify the spatial dependence structure. 
 
-\subsection{Ireland meteorological data}~\label{subsec:app_data}
+\tightsubsection{Ireland meteorological data}~\label{subsec:app_data}
 
 % % Image of locations and precipitation vs wind speed for two sites
 % \todo{Move elevation legend onto plot}
@@ -1961,7 +1990,7 @@ Kilcar in Donegal has a relatively low $\chi$ value despite its west-coast locat
 The latter may be related to the influence of the Wicklow Mountains, as reflected in the elevation profile. 
 It may be of interest to investigate if these outliers in $\chi$ are reflected in the CE model parameters, and whether clustering can help identify them.
 
-\subsection{Conditional extremes model}~\label{subsec:app_ce}
+\tightsubsection{Conditional extremes model}~\label{subsec:app_ce}
 
 % Procedure and results pre-clustering (choice of quantile)
 % In our analysis, we first transformed the data to Laplace margins, using the empirical cumulative distribution function (ECDF) to approximate density functions for precipitation and wind speed at each location. \todo{reference specific equation in methods}
@@ -2002,7 +2031,7 @@ To mitigate this uncertainty and aid interpretation, we next cluster the locatio
    ~\label{fig:a_b_vals}
 \end{figure}
 
-\subsection{Clustering}~\label{subsec:app_clust}
+\tightsubsection{Clustering}~\label{subsec:app_clust}
 
 % Clustering (including choice of k for each measure)
 % We clustered the locations using the $\JSGa{}$ dissimilarity matrix for their CE parameters, as described in Section~\ref{subsec:div}, for the CE models fit to precipitation conditional on extreme wind speed and vice versa, separately. 

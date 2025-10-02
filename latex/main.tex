@@ -235,13 +235,13 @@
   Patrick O'Toole\thanks{Patrick O'Toole is supported by a scholarship from the EPSRC Centre for Doctoral Training in Statistical Applied Mathematics at Bath (SAMBa), under the project EP/S022945/1.}\\
   Department of Mathematical Sciences, University of Bath, UK
   \and
+  Christian Rohrbeck\\
+  Department of Mathematical Sciences, University of Bath, UK 
+  \and
   Jordan Richards\\
   School of Mathematics \\
   and Maxwell Institute for Mathematical Sciences, \\
   University of Edinburgh, UK
-  \and
-  Christian Rohrbeck\\
-  Department of Mathematical Sciences, University of Bath, UK
   }
   \maketitle
 } \fi
@@ -886,7 +886,6 @@ $-1<\alpha_{j\mid i}<1$, which suggests asymptotic independence between $Y_j$ an
 \tightsubsection{Framework and model inference}~\label{subsubsec:ce_setup}
 
 % We fit the CE model at different spatial sites. 
-\todo{Discuss with C + J, motivating spatial application no longer as strong}
 In our motivating spatial environmental application, we consider a CE model at different spatial sites and across conditioning variables $i = 1, \ldots, d$.
 % We consider a CE model across conditioning variables $i = 1, \ldots, d$ in a $s$-dimensional setting, $s \in \{1, \ldots, D\}$.
 % In our motivating environmental application in Section~\ref{sec:application}, we take $s$ to be the index for different spatial sites.
@@ -940,7 +939,6 @@ This working assumption is the key to deriving a closed-form divergence measure 
 % Consequently, inference can be made about the extremal dependence of a random vector $\symbf{Y}(s)$ at site $s$ by conditioning on the exceedance of a high threshold $u_i$ by $Y_i(s)$, and assuming that this conditional distribution is multivariate Gaussian, i.e.,\@
 % Consequently, inference on $\alpha_{\mid i}$ and $\beta_{\mid i}$ by conditioning on the exceedance of a high threshold $u_i$ by $Y_{i, s}$, and assuming that this conditional distribution is multivariate Gaussian, i.e.,\@
 % Consequently, inference on $\alpha_{\mid i}$ and $\beta_{\mid i}$ by conditioning on the exceedance of a high threshold $u_i$ by $Y_{i, s}$.
-\todo{Also discuss! See Christian's notes}
 It follows that 
 \begin{equation}~\label{eq:ce_norm}
   % \bigl( \symbf{Y}_{-i} \mid Y_i  = y_i \bigr) \sim N\left(\symbf{\alpha}_{\mid i}^{(\CE{})} y_i + y_i^{\symbf{\beta}_{\mid i}^{(\CE{})}} \symbf{\mu}_{\mid i}^{(\CE{})}, y_i^{\symbf{\beta}_{\mid i}^{(\CE{})}} \Sigma_{\mid i}^{(\CE{})}\right), Y_i > u_i,
@@ -1000,8 +998,8 @@ We also desire provide computational efficiency through a closed-form solution o
 \citet{Nielsen2019} introduced the skew-geometric Jensen--Shannon divergence ($\JSGa{}$), which is a generalisation of the Jensen--Shannon ($\JS{}$) divergence \citep{Lin1991}. 
 \todo{Switch to H and H star to match below?}
 % Specifically, we use the dual form of the $\JSGa{}$ divergence \citep{Deasy2020}, which is defined between two continuous $d$-variate distribution functions, say $H_1$ and $H_2$, as 
-\todo{Discuss: d-variate? (d-1)-variate? multivariate?}
-Specifically, we use the dual form of the $\JSGa{}$ divergence \citep{Deasy2020}, which is defined between two continuous multivariate distribution functions, say $H_1$ and $H_2$, as 
+% \todo{Discuss: d-variate? (d-1)-variate? multivariate?}
+Specifically, we use the dual form of the $\JSGa{}$ divergence \citep{Deasy2020}, which is defined between two continuous $(d-1)$-variate distribution functions, say $H_1$ and $H_2$, as 
 \begin{equation}~\label{eq:jsga}
   % \JSGa{(P \Vert Q)} = \frac{1}{2} \left\{\KL{(P \Vert G_{\alpha}(P, Q))} + \KL{(Q \Vert G_{\alpha}(P, Q))} \right\},
   % \JSGa{(F_1 \Vert F_2)} = \frac{1}{2} \left\{\KL{(F_1 \Vert G_{\lambda}(F_1, F_2))} + \KL{(F_2 \Vert G_{\lambda}(F_1, F_2))} \right\},
@@ -1013,7 +1011,7 @@ Specifically, we use the dual form of the $\JSGa{}$ divergence \citep{Deasy2020}
 where $G_{\lambda}(H_1, H_2) = H_{1}^{1-\lambda} H_{2}^{\lambda}$ is the weighted geometric mean of $H_1$ and $H_2$, with $\lambda \in [0, 1]$, and $\KL{(H_1 \Vert H_2)}$ is the Kullback--Leibler divergence between $H_1$ and $H_2$ \citep{Kullback1951}, given by 
 \begin{equation}~\label{eq:kl}
   % KL(F_1 \Vert F_2) = \int_{-\infty}^{\infty} f_1(y) \log\left(\frac{f_1(y)}{f_2(y)}\right) dy,
-  \KL{(H_1 \Vert H_2)} = \int_{\mathbb{R}^d} h_1(\symbf{y}) \log\left(\frac{h_1(\symbf{y})}{h_2(\symbf{y})}\right) d\symbf{y},
+  \KL{(H_1 \Vert H_2)} = \int_{\mathbb{R}^{d-1}} h_1(\symbf{y}) \log\left(\frac{h_1(\symbf{y})}{h_2(\symbf{y})}\right) d\symbf{y},
 \end{equation}
 where $h_1$ and $h_2$ are the continuous density functions of $H_1$ and $H_2$, respectively. 
 % Here, $P$ and $Q$ represent the conditional multivariate Gaussian distributions induced by the CE model at two different sites.

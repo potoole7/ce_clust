@@ -128,7 +128,7 @@
 % \DeclareMathOperator{\JSGa}{\mathrm{JS}^{\mathrm{G}_{\alpha}}}
 % \newcommand{\JSGa}{\mathop{\mathrm{JS}^{\mathrm{G}_{\alpha}}}\nolimits}
 % \newcommand{\JSGa}{\mathop{\mathrm{JS}^{\mathrm{G}_{k}}}\nolimits}
-\newcommand{\GJS}{\mathop{{\mathrm{GJS}}}\nolimits}
+% \newcommand{\GJS}{\mathop{{\mathrm{GJS}}}\nolimits}
 \newcommand{\JSGa}{\mathop{\mathrm{JS}^{\mathrm{G}_{\lambda}}}\nolimits}
 % \newcommand{\cJSGa}{\mathop{\mathrm{cJS}^{\mathrm{G}_{\lambda}}}\nolimits}
 % \newcommand{\cJSGa}{\mathop{\mathrm{cJS}_{i}^{\mathrm{G}_{\lambda}}}\nolimits}
@@ -1053,11 +1053,11 @@ Hence, the principle advantage of the $\JSGa{}$ is that it has a closed-form sol
 For two generic multivariate Gaussian distributions $H \sim \mbox{MVN}(\symbf{m}, \Omega)$ and $H^* \sim \mbox{MVN}(\symbf{m}^*, \Omega^*)$ in $\mathbb{R}^d$ with mean vectors $\symbf{m}, \symbf{m}^* \in \mathbb{R}^d$ and covariance matrices $\Omega, \Omega^* \in \mathbb{R}^{d \times d}$, \citet{Nielsen2019} showed that the dual $\JSGa{}$ divergence introduced in Equation~\eqref{eq:jsga} has the closed-form solution 
 \begin{align*}%~\label{eq:js_norm_mvn}
   % JS^{G_{\lambda}}(F \Vert F^*) &= \frac{1}{2} \left( (1 - k) m^T \Omega^{-1} m + k m^*^T \Omega^*^{-1} m^* - m_{\lambda}^T \Omega_{\lambda}^{-1} m_{\lambda} + \log{\left( \frac{\abs{\Omega}^{1-k} \abs{\Omega^*}^{\lambda}}{\abs{\Omega_{\lambda}}} \right)} \right), \\
-  \JSGa{}(H \Vert H^*) &= \frac{1}{2} \left\{ (1-\lambda) \symbf{m}^T \Omega^{-1} \symbf{m} + \lambda \symbf{m}^*^T \Omega^*^{-1} \symbf{m}^* - \symbf{m}_{\lambda}^T \Omega_{\lambda}^{-1} \symbf{m}_{\lambda} + \log{\left( \frac{\abs{\Omega}^{1-\lambda} \abs{\Omega^*}^{\lambda}}{\abs{\Omega_{\lambda}}} \right)} \right\}, \\
+  \JSGa{}(H \Vert H^*) &= \frac{1}{2} \left\{ (1-\lambda) \symbf{m}^T \Omega^{-1} \symbf{m} + \lambda {\symbf{m}^*}^T {\Omega^*}^{-1} \symbf{m}^* - {\symbf{m}_{\lambda}}^T \Omega_{\lambda}^{-1} \symbf{m}_{\lambda} + \log{\left( \frac{\abs{\Omega}^{1-\lambda} \abs{\Omega^*}^{\lambda}}{\abs{\Omega_{\lambda}}} \right)} \right\}, \\
   % \Omega_{\lambda} &= \left( (1 - k) \Omega^{-1} + k \Omega^*^{-1} \right)^{-1}, \\
-  \Omega_{\lambda} &= \left\{ (1-\lambda) \Omega^{-1} + \lambda \Omega^*^{-1} \right\}^{-1}, \\
+  \Omega_{\lambda} &= \left\{ (1-\lambda) \Omega^{-1} + \lambda {\Omega^*}^{-1} \right\}^{-1}, \\
   % m_{\lambda} &= \Omega_{\lambda} \left( (1 - k) \Omega^{-1} m + k \Omega^*^{-1} m^* \right), \numberthis~\label{eq:js_norm_mvn1}
-  \symbf{m}_{\lambda} &= \Omega_{\lambda} \left\{(1-\lambda) \Omega^{-1} \symbf{m} + \lambda \Omega^*^{-1} \symbf{m}^* \right\}, \numberthis~\label{eq:js_norm_mvn1}
+  \symbf{m}_{\lambda} &= \Omega_{\lambda} \left\{(1-\lambda) \Omega^{-1} \symbf{m} + \lambda {\Omega^*}^{-1} \symbf{m}^* \right\}, \numberthis~\label{eq:js_norm_mvn1}
 \end{align*} 
 % where:
 % \begin{itemize}

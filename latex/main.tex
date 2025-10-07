@@ -578,7 +578,7 @@ Clustering is a popular tool in the extremes literature, where data sparsity and
 \emph{Univariate} methods group data by marginal tail behaviour, often through summaries such as return levels or parameter estimates \citep{Coles2001}, and have been used in environmental and financial applications \citep{Alonso2014-rr, deCarvalho2023, Zheng2023-jf}.
 % \emph{Spatial} methods cluster over entire spatial fields or process realizations.
 % They may build pairwise tail dissimilarities such as the F-madogram before clustering \citep{Cooley2006variograms, Bernard2013}, or fit spatially non-stationary extreme value models \citep{Carreau2017, Rohrbeck2021, Dupuis2023}. 
-\emph{Spatial} methods cluster entire spatial fields or partition the spatial domain via  pairwise tail dissimilarities, such as the F-madogram \citep{Cooley2006variograms, Bernard2013}, or by fitting non-stationary extremal models \citep{Carreau2017, Rohrbeck2021, Dupuis2023, Shao2025}. 
+\emph{Spatial} methods cluster entire spatial fields or partition the spatial domain via pairwise tail dissimilarities, such as the F-madogram \citep{Cooley2006variograms, Bernard2013}, or by fitting non-stationary extremal models \citep{Carreau2017, Rohrbeck2021, Dupuis2023, Shao2025}. 
 % \emph{Multivariate} methods compare joint tail summaries or fitted multivariate tail models at each site.
 Finally, \emph{multivariate} methods cluster on joint tail summaries or fitted multivariate extremal dependence models. 
 % A leading nonparametric example was provided by \citet{Vignotto2021}.
@@ -2174,51 +2174,75 @@ Apart from these observations, the clustering solutions are generally quite simi
 \section{Discussion}~\label{sec:discuss}
 
 % Points to consider
-Possible points to consider adding to discussion: 
-\begin{itemize}
-\item Talk about how subsequent analyses should constrain parameters to be non-negative?
-\item JSGa choice: why not use standard JS, Jeffreys or other measure ((2-)Wasserstein, Kolmogorov-Smirnov, etc?)
-\end{itemize}
+% \todo{Add limitations for simulation study?}
+% Possible points to consider adding to discussion: 
+% \begin{itemize}
+% \item Talk about how subsequent analyses should constrain parameters to be non-negative?
+% \item JSGa choice: why not use standard JS, Jeffreys or other measure ((2-)Wasserstein, Kolmogorov-Smirnov, etc?)
+% \end{itemize}
 
 % Rewrite Intro: Methods
-In this paper, we introduced a novel method for clustering spatial locations based on their multivariate extremal dependence structure, as estimated by the conditional extremes model.
-% The $\JSGa{}$ divergence measure of \citet{Nielsen2019} is proposed as a dissimilarity measure to compare locations based on their estimated CE parameters, $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$, which together describe the strength and ``stochasticity'' of each set of bivariate extremal relationships. 
-The $\JSGa{}$ divergence measure of \citet{Nielsen2019} is proposed as a dissimilarity measure to compare locations based on their estimated CE parameters, $\alpha$ and $\beta$, which together describe the strength and ``stochasticity'' of each set of bivariate extremal relationships. 
-This method exploits the fact that inference based on the CE model follows a multivariate Gaussian distribution, following from the Gaussian assumption for the residual process.
-This allows us to derive a closed-form for the $\JSGa{}$ divergence, making it computationally efficient to use in clustering.
-K-medoids clustering is performed on the dissimilarity matrix derived from this measure.
-This preserves the spatial nature of the data and ensures that actual spatial locations with fitted CE models, as opposed to some aggregation, serve as cluster centroids. 
-We can also choose to cluster on some or all of the bivariate extremal relationships in our data, and can aggregate information from multiple CE models to improve clustering performance.
+% In this paper, we introduced a novel method for clustering spatial locations based on their multivariate extremal dependence structure, as estimated by the conditional extremes model.
+% The $\JSGa{}$ divergence measure of \citet{Nielsen2019} is proposed as a dissimilarity measure to compare locations based on their estimated CE parameters, $\alpha$ and $\beta$, which together describe the strength and ``stochasticity'' of each set of bivariate extremal relationships. 
+% This method exploits the fact that inference based on the CE model follows a multivariate Gaussian distribution, following from the Gaussian assumption for the residual process.
+% This allows us to derive a closed-form for the $\JSGa{}$ divergence, making it computationally efficient to use in clustering.
+% K-medoids clustering is performed on the dissimilarity matrix derived from this measure.
+% This preserves the spatial nature of the data and ensures that actual spatial locations with fitted CE models, as opposed to some aggregation, serve as cluster centroids. 
+% We can also choose to cluster on some or all of the bivariate extremal relationships in our data, and can aggregate information from multiple CE models to improve clustering performance.
+% 
+% % Simulation study
+% A simulation study was performed to evaluate the effectiveness of our method.
+% First, a bivariate Gaussian copula simulation was used to ensure that our clustering method works as desired, since the asymptotic values of the CE parameters are known for this copula.
+% Clustering solutions were perfectly identified, and parameter estimates showed both reduced uncertainty and bias when the CE model was re-fit post-clustering. 
+% We then extended this study to a more complex simulation design using a mixture of Gaussian and t-copulas, for a variety of simple and more complex dependence structures and scenarios.
+% We compared our method to the leading competitor in the bivariate case, \citet{Vignotto2021}, and showed that our method outperforms theirs across a range of possible bivariate dependence scenarios. 
+% Our method is also shown to be uniquely extendable to three dimensions and beyond, and providing more information to the clustering solution in the absence of additional noise is shown to improve clustering performance, as expected.
+% 
+% % Application
+% We applied our method to a dataset of Irish meteorological data, consisting of 59 locations with weekly rainfall and wind speed observations.
+% We estimated the CE model parameters for each location, and clustered the locations based on these parameters using our $\JSGa{}$ divergence-based method. 
+% Three clusters were identified, with the clustering solution showing distinct spatial patterns.
+% Namely, fairly well separated clusters representing the east and west coasts and the centre of Ireland emerged.
+% This was pleasing as no spatial information was used in fitting the CE model or clustering, and suggests that the CE model parameters are capturing some of the spatial heterogeneity inherent to the extremal dependence in our data. 
 
-% Simulation study
-A simulation study was performed to evaluate the effectiveness of our method.
-First, a bivariate Gaussian copula simulation was used to ensure that our clustering method works as desired, since the asymptotic values of the CE parameters are known for this copula.
-Clustering solutions were perfectly identified, and parameter estimates showed both reduced uncertainty and bias when the CE model was re-fit post-clustering. 
-We then extended this study to a more complex simulation design using a mixture of Gaussian and t-copulas, for a variety of simple and more complex dependence structures and scenarios.
-We compared our method to the leading competitor in the bivariate case, \citet{Vignotto2021}, and showed that our method outperforms theirs across a range of possible bivariate dependence scenarios. 
-Our method is also shown to be uniquely extendable to three dimensions and beyond, and providing more information to the clustering solution in the absence of additional noise is shown to improve clustering performance, as expected.
+% Quick summary
+In this paper, we introduced a novel method for multivariate extremal clustering based on the conditional extremes model and the $\JSGa{}$ divergence measure.
+Our parametric approach is effective and uniquely extendable to higher dimensions, while remaining computationally efficient due to the closed-form for the $\JSGa{}$ divergence. 
+In Section~\ref{sec:sim}, we showed via a simulation study that our method outperforms the leading competitor in the bivariate case, and is robust to a variety of multivariate dependence structures and scenarios.
+We also applied our method to a real dataset of Irish meteorological data in Section~\ref{sec:application}, and demonstrated how our method can be used to identify meaningful spatial patterns in the extremal dependence structure of this data.
 
-% Application
-We applied our method to a dataset of Irish meteorological data, consisting of 59 locations with weekly rainfall and wind speed observations.
-We estimated the CE model parameters for each location, and clustered the locations based on these parameters using our $\JSGa{}$ divergence-based method. 
-Three clusters were identified, with the clustering solution showing distinct spatial patterns.
-Namely, fairly well separated clusters representing the east and west coasts and the centre of Ireland emerged.
-This was pleasing as no spatial information was used in fitting the CE model or clustering, and suggests that the CE model parameters are capturing some of the spatial heterogeneity inherent to the extremal dependence in our data. 
+% Extension
+While we focused on spatial applications in this work, our method is applicable to any multivariate extremal dependence setting, and so could be used in a variety of other contexts.
+% For example, we could apply our method could be explicitly applied to temporal or spatio-temporal data, where we could cluster different time periods and/or locations based on their extremal dependence structure.
+For example, our method could naturally be applied to temporal or spatio-temporal data, where we could cluster different time periods and/or locations based on their extremal dependence structure.
+% In financial applications, we could cluster different assets based on their extremal dependence structure over time, which could be useful for portfolio management and risk assessment.
+
+% Future work 
+\todo{Too much here?}
+There is scope for further work in this area, particularly in the application of our method to other datasets.
+While we advertise our method as being uniquely applicable to any multivariate extremal dependence setting, our application is currently limited to bivariate extremal dependence.
+Therefore, an obvious line of future work would be to extend this application to look at additional variables, such as temperature or humidity, to explore the multivariate extremal dependence structure of these variables in conjunction with rainfall and wind speed, and to see if this provides additional insights into the spatial patterns observed. 
+We could also explore further how varying the weight given to each variable in the dissimilarity matrix aggregation affects the clustering solution, particularly as the wind speed data is from a reanalysis dataset and so may not be as reliable as the observed rainfall data.
+% The ERA5 reanalysis dataset, for example, where we get our wind speed data contains many variables that could be used in conjunction with our method, such as temperature, humidity, and pressure, all of which may have interesting extremal dependence relationships with rainfall and wind speed which could be explored.
+% We could also look at other datasets where multivariate extremal dependence is of interest. 
+%   % \item \citet{Vettori2020-fw} derived a method for extremal clustering based on max-stable processes, a competing model to CE, paired with a Reversible Jump MCMC scheme for Bayesian clustering, and applied it to California air pollution data. 
+%   % \item It may be interesting to compare the performance of our method versus a fully parametric approach such as this, as opposed to the semi-parametric approach of \citet{Vignotto2021} which drew comparisons to in our simulation study.
+% For example, \citet{Vettori2020} modelled the extremal dependence structure of California state air pollution and environmental data across 21 sites. 
+% It would be interesting to see if we could build on such work via exploratory spatial clustering using our method, and whether the CE model would provide greater flexibility than their max-stable process approach, which can only model asymptotic dependence. 
 
 % Limitations: Gaussian assumption
+\todo{What to keep amongst these limitations? Needs cutting down significantly!}
 There are several limitations to our method as currently implemented.
 Our method relies heavily on the Gaussian assumption for residual process of CE model to provide a closed-form for the $\JSGa{}$ divergence.
-This may not hold in all cases, particularly for more complex dependence structures, and so the method may not be appropriate for all datasets.
-For example, in \citet{Farrell2025}, the authors use the generalised and asymmetric generalised Gaussian distributions to model their residuals. 
+This may not hold in all cases, particularly for more complex dependence structures, and so this assumption may not always be appropriate. 
+For example, in \citet{Farrell2025}, the authors model the residuals using the generalised and asymmetric generalised Gaussian distributions.
 While our closed-form would not hold in this case, the $\JSGa{}$ divergence could still be used, but would require computationally expensive Monte Carlo sampling to estimate the dissimilarity matrix.
-Indeed, it may be preferable to use the standard $\JS{}$ divergence if choosing to forgo this Gaussian assumption, since it is bounded between 0 and $\log{(2)}$, while the $\JSGa{}$ is unbounded, as described in \citet{Thiagarajan2025}.
-
-\todo{Address use of empirical residuals? How would that affect the method?}
+Indeed, it may be preferable to use the standard $\JS{}$ divergence if choosing to forgo the Gaussian assumption, since it is bounded above by $\log{(2)}$ and so may be more robust, as described in \citet{Thiagarajan2025}.
 
 % Limitations: Uncertainty
 The other important limitation of our method is in its treatment of uncertainty. 
 % We use the MLE estimates of $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$ to compute our dissimilarity matrix, and so the uncertainty in these estimates is not accounted for in the clustering solution.
-We use the MLE estimates of $\alpha$ and $\beta$ to compute our dissimilarity matrix, and so the uncertainty in these estimates is not accounted for in the clustering solution.
+We use the MLE estimates of $\alpha_{\mid i}$ and $\beta_{\mid i}$ to compute our dissimilarity matrix, and so the uncertainty in these estimates is not accounted for in the clustering solution.
 % This is less problematic in our simulation study where we often know the true values of $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$ and can perform extensive grid searches to ensure that the clustering solution is robust.
 This is less problematic in our simulation study where we often know the true values of $\alpha$ and $\beta$ and can perform extensive grid searches to ensure that the clustering solution is robust.
 % However, in real applications, the uncertainty in these estimates can be quite large, and so vastly different clustering solutions may be obtained depending on the estimated values of $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$.
@@ -2228,12 +2252,6 @@ We could then produce a distribution of dissimilarity matrices, and use these to
 This would allow us to account for the uncertainty in the CE model parameter estimates, and provide a more robust clustering solution.
 However, this would be quite computationally expensive, and so would hurt one of the main advantages of our method, namely its computational efficiency, and may not be feasible for larger datasets.
 
-\todo{Could have looked at Anderson-Darling, as used in Carreau2017, rather than KL?}
-
-\todo{Add limitations for simulation study?}
-% \item For simulations, could have looked at LRI as well as ARI.
-% \item Could have looked at spatially varying clustering parameters, to more closely mimic spatial applications. 
-
 % Limitations: Application
 In this work, we focused on the methodological development and novelties of our method, and so we did not explore the application of our method to the Irish meteorological dataset in great detail, and so there are some limitations in this application.
   % \item Two important aspects of extremal modelling which we did not explore in detail were the choices of marginal model and dependence threshold. 
@@ -2241,24 +2259,8 @@ Starting with the marginal transformations, we used the ECDF to transform the da
 In the original \citet{Heffernan2004} model, the Generalised Pareto distribution (GPD) is used to model exceedances above an extremal threshold, combined with the ECDF for the ``bulk'' of data. 
 This GPD marginal model can be extended to include covariates such as spatial location to inform the marginal distribution.
 We wanted to show that our clustering could produce sensible results using just the ECDF in the early exploratory stages of modelling, where a sensible GPD or other such marginal model may not be immediately obvious.
-We believe we were successful in this, showing that with no spatial information our clustering solution did indeed indicate some spatial structure in the extremal dependence in our data.
+We believe we were successful in this, showing that with no spatial information our clustering solution did indeed indicate some spatial structure.
 As future work, a more sophisticated marginal model could be considered, using the information we have gained from our exploratory clustering. 
-\todo{Also talk about not exploring other quantiles to ascert robustness!}
-\todo{Could also mention that we could weight results more towards model cond. on precipitation since wind speed data is weird!}
-
-% Future Work: (Application, potential other uses)
-There is scope for further work in this area, particularly in the application of our method to other datasets.
-While we advertise our method as being uniquely applicable to any multivariate extremal dependence setting, our application is currently limited to bivariate extremal dependence.
-Therefore, an obvious line of future work would be to extend this application to look at additional variables. 
-The ERA5 reanalysis dataset, for example, where we get our wind speed data contains many variables that could be used in conjunction with our method, such as temperature, humidity, and pressure, all of which may have interesting extremal dependence relationships with rainfall and wind speed which could be explored.
-We could also look at other datasets where multivariate extremal dependence is of interest. 
-  % \item \citet{Vettori2020-fw} derived a method for extremal clustering based on max-stable processes, a competing model to CE, paired with a Reversible Jump MCMC scheme for Bayesian clustering, and applied it to California air pollution data. 
-  % \item It may be interesting to compare the performance of our method versus a fully parametric approach such as this, as opposed to the semi-parametric approach of \citet{Vignotto2021} which drew comparisons to in our simulation study.
-For example, \citet{Vettori2020} modelled the extremal dependence structure of California state air pollution and environmental data across 21 sites. 
-It would be interesting to see if we could build on such work via exploratory spatial clustering using our method, and whether the CE model would provide greater flexibility than their max-stable process approach, which can only model asymptotic dependence. 
-
-
-
 
 \section*{Acknowledgements}
 

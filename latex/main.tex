@@ -1681,7 +1681,7 @@ However, we now use a mixture of a Gaussian and t-copula (with Laplace margins),
 Two clusters of sites $s = {1, \ldots, 6}$ and $s = {7, \ldots, 12}$ are defined with different values of $\rhou{t}^s$. 
 We set $\rhou{t}^s = \rho_{\text{t}_1}$ for $s = 1, \ldots, 6$ and $\rhou{t}^s = \rho_{\text{t}_2}$ for $s = 7, \ldots, 12$, while $\rhou{Gauss}^s$ is the same for both clusters. 
 % We keep $\rhou{Gauss}^s$ equal across both clusters.
-We consider a range of extremal dependence scenarios defined by a grid over the values ($\rhou{Gauss}^s \in \{0.1, 0.2, \ldots, 1.0\}, \rhou{t}^s \in \{0.1, 0.3, \ldots, 0.9\}, \rhou_{t_2} \in \{0, 0.2, \ldots, 0.8\}$).
+We consider a range of extremal dependence scenarios defined by a grid over the values $(\rhou{Gauss}^s \in \{0.1, 0.2, \ldots, 1.0\}, \rhou{t}^s \in \{0.1, 0.3, \ldots, 0.9\}, \rho_{\text{t}_2}^s \in \{0, 0.2, \ldots, 0.8\}$.
   % \item These values were varied across a grid search.
 % The CE model was fit at the $90^{th}$ quantile, i.e., the $90^{th}$ quantile of $Y_{i} \mid Y_{j} = y_j$, and clustering solutions were obtained using the $\JSGa{}$ divergence. 
 We estimate the CE model using $q = 0.9$, and clusters were obtained using the aggregate dissimilarity matrix in Equation~\eqref{eq:aggregate_matrix}.
@@ -1727,7 +1727,7 @@ This may be because the Gaussian copula becomes more similar to that of the t-co
 While the method of \citet{Vignotto2021} is restricted to $d = 2$ dimensions, our approach can be extended to $d \geq 3$ variables. 
 % To illustrate this, we can repeat the simulation study and grid search of Section~\ref{subsubsec:sim_competing_methods}, but now for three variables, the results of which are shown in Figure \ref{fig:02_3d}.
 % To illustrate this, we repeated the simulation study and grid search of Section~\ref{subsubsec:sim_competing_methods} for three variables, with results shown in Figure~\ref{fig:02_3d}. 
-To illustrate this, we extend the simulation study of Section~\ref{subsubsec:sim_competing_methods} by simulating at $D = 12$ locations, with two equally-sized true clusters of sites each with $n = 1000$ observations, but now for $d = 3$ variables, using the same grid of ($\rhou{Gauss}, \rhou{t_1}, \rhou{t_2}$) values as in Section~\ref{subsubsec:sim_competing_methods}.
+To illustrate this, we extend the simulation study of Section~\ref{subsubsec:sim_competing_methods} by simulating at $D = 12$ locations, with two equally-sized true clusters of sites each with $n = 1000$ observations, but now for $d = 3$ variables, using the same grid of ($\rhou{Gauss}, \rho_{\text{t}_1}, \rho_{\text{t}_2}$) values as in Section~\ref{subsubsec:sim_competing_methods}.
 % Now the mixture copula $C_{\mathrm{mix}}^{(s)}$ described in equation has three dimensions, and we fit six CE models at each site, averaging the $\JSGa{}$ divergence over all of these models between each pair of sites to obtain a single dissimilarity matrix over which we perform PAM clustering.
 Our mixture copula now has three dimensions (with all pairwise correlations equal), and we fit six CE models at each site.
 Clustering is performed using the aggregated divergence matrix $M$ from Equation~\eqref{eq:aggregate_matrix}.
@@ -1801,13 +1801,14 @@ We now design another simulation study to better mimic the structure of the Iris
 % We generated data from 60 locations, each with 1000 observations of two variables, using a mixture of Gaussian and t-copulas with Laplace margins.
 Data are generated at $D = 60$ sites, each with $n = 1000$ observations of $d = 2$ variables, using the mixture of Gaussian and t-copulas.
 % The 60 locations had three known clusters, with 10, 20, and 30 locations in each cluster, respectively.
-The 60 sites are partitioned into three unequally-sized clusters of 10, 20, and 30 sites. 
+The 60 sites are partitioned into three unequally-sized clusters of 10, 20, and 30 sites. %, as defined by their respective t-copula correlation parameters, $\rho_{\text{t}_1}, \rho_{\text{t}_2}$ and $\rho_{\text{t}_3}$.
 % A slight perturbation via a uniform sample between $-0.05$ and $0.05$ was added to the correlation parameters of the t-copula for each location, to make the clustering solution more challenging.
 % The $\rho_{\text{t}}^s$ values which make up the off-diagonal elements of $\Sigma_{t}^s$, the correlation matrix of the $t$-copula at site $s$ as described in Equation~\eqref{eq:mix_copula}, were perturbed for each location by a uniform random value between $-0.05$ and $0.05$, making the clustering task more challenging. 
 % The $\rho_{\text{t}}^s$ are perturbed for each location by a uniform random value between $-0.05$ and $0.05$, making the clustering task more challenging. 
 The $\rho_{\text{t}}^s$ are perturbed for each location by $\text{Unif}(-0.05, 0.05)$ noise, making the clustering task more challenging.
 % A constant $\rhou{Gauss}$ of 0.5 was used for all locations and simulations, to reduce the dimensionality of the grid search.
 % To reduce the dimensionality of the grid search, a constant $\rhou{Gauss} = 0.5$ was used for all locations and simulations. 
+We now have three t-copula correlation parameters for each cluster, $\rho_{\text{t}_1}, \rho_{\text{t}_2}$ and $\rho_{\text{t}_3}$.
 To reduce the dimensionality of the grid of considered copula parameter values, a constant $\rhou{Gauss} = 0.5$ was used across all sites and experiments. 
 % Again, clustering was done on the CE model parameters using the $\JSGa{}$ divergence, and the ARI for a grid search over different $\rhou{t}$ values is shown in Figure~\ref{fig:03_realistic}.
 % Clustering was performed on the CE model parameters using the $\JSGa{}$ divergence, and the ARI for a grid search over $\rhou{t}$ values is shown in Figure~\ref{fig:03_realistic}. 
@@ -1815,8 +1816,9 @@ To reduce the dimensionality of the grid of considered copula parameter values, 
 The results of 500 repetitions of this simulation study are shown in Figure~\ref{fig:03_realistic}.
 % The algorithm is again shown to perform well, particularly where the difference in the t-copula correlation parameters between the clusters is largest, as expected.
 Similarly to the previous simulation studies, our clustering method performs well, particularly when the differences in t-copula correlation parameters between clusters are larger. 
+For example, the best performance is observed where $\rho_{\text{t}_1} = 0.9, \rho_{\text{t}_2} = 0.1, \rho_{\text{t}_3} = 0.5$, as the clusters are most distinct, while performance is worst for $\rho_{\text{t}_1} = 0.6, \rho_{\text{t}_2} = 0.4, \rho_{\text{t}_3} = 0.5$.
 % The variability in ARI across simulations is also quite low, indicating that the clustering solution is robust.
-Moreover, variability in ARI across simulations is low, indicating that the clustering solution is robust. 
+% Moreover, variability in ARI across simulations is low, indicating that the clustering solution is robust. 
 
 % \todo{Have x-axis ticks match unique values in grid search}
 \todo{Dicuss: Add greater explanation as to what is going on here}
@@ -2259,7 +2261,7 @@ It would be interesting to see if we could build on such work via exploratory sp
 
 
 \section*{Acknowledgements}
-The authors would like to thank Thomas Opitz for providing the data and Michael O'Malley for supportive discussions. The research reported in this publication was supported by funding from King Abdullah University of Science and Technology (KAUST) Office of Sponsored Research (OSR) under Award No.\ OSR-CRG2020-4394. Support from the KAUST Supercomputing Laboratory is gratefully acknowledged. \red{This work has made use of the resources provided by the Edinburgh Compute and Data Facility (ECDF) (\url{http://www.ecdf.ed.ac.uk/}).}
+
 
 \bigskip
 \begin{center}
@@ -2268,9 +2270,9 @@ The authors would like to thank Thomas Opitz for providing the data and Michael 
 
 \begin{description}
 
-\item[Supplement:] Supporting material is provided for methodology proposed in the main text. This includes a simulation study, further comparison of candidate models for the analysis and supplementary results. (.pdf)
+\item[Supplement:]
 
-\item[Data and code:] The data that supports our findings are available in the accompanying $\texttt{R}$ package, $\texttt{pinnEV}$, which is available at \url{https://github.com/Jbrich95/pinnEV}. \red{The results in this manuscript are fully reproducible, via the code available at the GitHub repository, \url{https://github.com/Jbrich95/USWildfireExtremes}.}
+\item[Data and code:] 
 
 \end{description}
 

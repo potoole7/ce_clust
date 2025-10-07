@@ -2172,15 +2172,11 @@ Apart from these observations, the clustering solutions are generally quite simi
 \section{Discussion}~\label{sec:discuss}
 
 % Points to consider
-\todo{Talk about how subsequent analyses should constrain parameters to be non-negative?}
-\todo{Say something about $\alpha$!}
-\todo{Laplace truncation: how truncation point may lead to errors in severely unbalanced data (empirical quantile > sitewise maxima)}
-\todo{Mention mim(maxima) approach as alternative if extrapolation occurs at any site}
-\todo{But min(maxima) approach for unbalanced data may also be lower than sitewise thresholds}
-\todo{Could also say Laplace truncation point could be tuned further to improve clustering performance?}
-\todo{Also, if empirical quantile exceeds any sitewise maxima, will perform extrapolation; if a problem use `minima of maxima' approach}
-\todo{JSGa choice: why not use standard JS, Jeffreys or other measure (2-Wasserstein, one beginning with H?)?}
-\todo{In multidimensional case, currently restricted to using same DQU for e.g. X2 | X1 and X3 | X1, could extend}
+Possible points to consider adding to discussion: 
+\begin{itemize}
+\item Talk about how subsequent analyses should constrain parameters to be non-negative?
+\item JSGa choice: why not use standard JS, Jeffreys or other measure ((2-)Wasserstein, Kolmogorov-Smirnov, etc?)
+\end{itemize}
 
 % Rewrite Intro: Methods
 In this paper, we introduced a novel method for clustering spatial locations based on their multivariate extremal dependence structure, as estimated by the conditional extremes model.

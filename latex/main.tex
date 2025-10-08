@@ -1838,66 +1838,66 @@ For example, the best performance is observed where $\rho_{\text{t}_1} = 0.9, \r
    ~\label{fig:03_realistic}
 \end{figure}
 
-\tightsubsubsection{Parameter estimation pre- and post-clustering}~\label{subsubsec:boot}
-
-% Describe bootstrapping
-% Finally, we recall that an important reason for spatial clustering is to reduce the uncertainty in parameter estimates while minimising the introduction of bias by grouping similar locations together.
-An important motivation for spatial clustering is to reduce the uncertainty in parameter estimates while minimising the introduction of bias by grouping similar locations. 
-% To this end, we desired to ascertain whether the estimates of our dependence parameters were less uncertain after clustering.
-% To evaluate this, we assess whether estimates of the dependence parameters are less uncertain after clustering. 
-To evaluate this, we investigate reduction in parameter uncertainty after clustering.
-% We can use the bootstrapping scheme described in \citet{Heffernan2004} to determine the uncertainty in our parameter estimates. \todo{Do I need to describe this scheme and how it preserves the dependence structure of the data?}
-Uncertainty is quantified using the bootstrap procedure of \citet{Heffernan2004}, which preserves the dependence structure of the data. 
-
-% % As we are estimating two parameters, $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$, for which we do not know the true values, it may be that although our uncertainty is diminished post-clustering, the estimates may still be biased, with the parameters unidentifiable.
-% As we are estimating two parameters, $\alpha$ and $\beta$, for which we do not know the true values, it may be that although our uncertainty is diminished post-clustering, the estimates may still be biased, with the parameters unidentifiable.
-As the true values of the CE model parameters for a location $s$ are unknown, reduced variability in estimates post-clustering could still be accompanied by bias. 
-% There are also many possible combinations of $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$ that could give the same conditional estimates, and so the estimates may be biased in this sengse as well.
-% There are also many possible combinations of $\alpha$ and $\beta$ that could
-% give the same conditional estimates, and so the estimates may be biased in
-% this sense as well.
-% Indeed, many combinations of $\alpha(s)$ and $\beta(s)$ can yield similar conditional estimates, making these parameters only weakly identifiable. 
-Indeed, many combinations of $\alpha_{j \mid i, s}$ and $\beta_{j \mid i, s}$ can yield characterisation of the conditional distribution, making these parameters only weakly identifiable.
-% To avoid this, we adopt the approach of \citet{Richards2021-qm} in calculating the conditional expectation of one variable given the other at the $98\%$ marginal quantile $u_i$ for the conditioning variable, given by
-% To address this, we follow the approach of \citet{Richards2021-qm} and instead calculate the conditional expectation of one variable given another at the 98\% marginal quantile $u_i$ of the conditioning variable,  
-To address this, we follow the approach of \citet{Richards2021-qm} and instead calculate the conditional expectation of one variable given another is equal to the conditioning threshold $u_i$:
-\todo{Discuss: How to find true value??}
-\begin{equation}~\label{eq:boot}
-  % \mathbb{E}[Y_j \mid Y_i = u_i] = \hat{\alpha}_{j \mid i} u_i + u_i^{\hat{\beta}_{j \mid i}} \hat{\mu}_{j \mid i},
-  % \mathbb{E}[Y_j(s) \mid Y_i(s) = u_i] = \hat{\alpha}_{j \mid i}(s) u_i + u_i^{\hat{\beta}_{j \mid i}(s)} \hat{\mu}_{j \mid i}(s),
-  \mathbb{E}[Y_{j, s} \mid Y_{i, s} = u_i] = \hat{\alpha}_{j \mid i, s} u_i + u_i^{\hat{\beta}_{j \mid i, s}} \hat{\mu}_{j \mid i, s},
-\end{equation}
-% where ($\hat{\alpha}, \hat{\beta}, \hat{\mu}$) are the estimated CE model parameters.
-% where $(\hat{\alpha}_{j \mid i}^{(\CE{})}, \hat{\beta}_{j \mid i}^{(\CE{})}, \hat{\mu}_{j \mid i}^{(\CE{})})$ are the estimated CE model parameters for the $j$-th variable given the conditioning variable $Y_i$ at the $98\%$ marginal quantile $u_i$.
-% where $(\hat{\alpha}_{j \mid i}, \hat{\beta}_{j \mid i}, \hat{\mu}_{j \mid i})$ are the estimated CE model parameters for the $j$-th variable given the conditioning variable $Y_i$ at the $98\%$ marginal quantile $u_i$.
-% where $(\hat{\alpha}_{j \mid i}(s), \hat{\beta}_{j \mid i}(s), \hat{\mu}_{j \mid i}(s))$ are the estimated CE model parameters for the $j$th variable given $Y_i(s)$. 
-where $(\hat{\alpha}_{j \mid i, s}, \hat{\beta}_{j \mid i, s}, \hat{\mu}_{j \mid i, s})$ are the estimated CE model parameters for the $j$-th variable given the conditioning variable $Y_{i, s}$ at location $s$.
-We set $u_i$ to be the $98\%$ standard Laplace quantile. 
-% We can bootstrap this conditional expectation to evaluate the reduction in uncertainty post-clustering. \todo{Tense consistency}
-% We then apply bootstrapping to this conditional expectation to evaluate the reduction in uncertainty achieved through clustering. 
-
-% Results
-% We take an example for which we know the clustering algorithm performs well, namely the same simulation design as in Section~\ref{subsubsec:sim_competing_methods}, with $\rhou{Gauss} = 0.5$, and $\rhou{t} = 0.1$ and $0.9$ for the two clusters.
-% We illustrate the effect of clustering on parameter uncertainty using the same simulation design as in Section~\ref{subsubsec:sim_competing_methods}, with $\rhou{Gauss} = 0.5$ and $\rhou{t} = 0.1$ and $0.9$ for the two clusters. 
-We illustrate the effect of clustering on parameter uncertainty using the same simulation design as in Section~\ref{subsubsec:sim_competing_methods}, with $\rhou{Gauss} = 0.5$, $\rho_{\text{t}_1} = 0.1$ and $\rho_{\text{t}_2} = 0.9$. 
-% We estimate the CE model parameters pre- and post-clustering, and generate 500 bootstrap samples for  the conditional expectation of Equation~\eqref{eq:boot}.
-Estimates of the CE model were computed both pre- and post-clustering, and 500 bootstrap samples were generated for the conditional expectation in Equation~\eqref{eq:boot}. 
-% The results are plotted in Figure \ref{fig:04_bootstrap}.
-% We can see that the uncertainty in the bootstrapped estimates has markedly reduced post-clustering, as desired.
-The results, shown in Figure~\ref{fig:04_bootstrap}, demonstrate a clear reduction in the variability of the bootstrap estimates after clustering. 
-% The conditional expectation is higher for the higher t-copula correlation cluster, as expected. \todo{Anything else need to be said here? Be more specific with results?}
-In addition, the conditional expectation is consistently higher for the cluster with larger t-copula correlation, reflecting stronger extremal dependence. 
-These findings confirm that clustering reduces parameter uncertainty while preserving meaningful differences between clusters. 
-
-\begin{figure}[h]
-    \centering
-    \includegraphics[width = 0.9\linewidth]{plots/sim_01e_bootstrap_box_man.png}
-    \caption{\emph{
-    % Boxplots of 500 bootstrapped conditional expectations of one variable given the other is at the $98\%$ marginal quantile $u$, pre- and post-clustering for a simulation of 12 ``locations'', each with 1000 observations for each variable, from a mixture of Normal and Gaussian copulas, with the Gaussian correlation set to 0.5. 
-    Boxplots of 500 bootstrap estiamtes of the conditional expectation in Equation~\eqref{eq:boot}, pre- and post-clustering. 
-    The t-copula correlation parameters for the two clusters were set to $\rho_{\text{t}_1} = 0.1$ and $\rho_{\text{t}_2} = 0.9$, as shown on the x-axis.
-    }}~\label{fig:04_bootstrap}
-\end{figure}
+% \tightsubsubsection{Parameter estimation pre- and post-clustering}~\label{subsubsec:boot}
+% 
+% % Describe bootstrapping
+% % Finally, we recall that an important reason for spatial clustering is to reduce the uncertainty in parameter estimates while minimising the introduction of bias by grouping similar locations together.
+% An important motivation for spatial clustering is to reduce the uncertainty in parameter estimates while minimising the introduction of bias by grouping similar locations. 
+% % To this end, we desired to ascertain whether the estimates of our dependence parameters were less uncertain after clustering.
+% % To evaluate this, we assess whether estimates of the dependence parameters are less uncertain after clustering. 
+% To evaluate this, we investigate reduction in parameter uncertainty after clustering.
+% % We can use the bootstrapping scheme described in \citet{Heffernan2004} to determine the uncertainty in our parameter estimates. \todo{Do I need to describe this scheme and how it preserves the dependence structure of the data?}
+% Uncertainty is quantified using the bootstrap procedure of \citet{Heffernan2004}, which preserves the dependence structure of the data. 
+% 
+% % % As we are estimating two parameters, $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$, for which we do not know the true values, it may be that although our uncertainty is diminished post-clustering, the estimates may still be biased, with the parameters unidentifiable.
+% % As we are estimating two parameters, $\alpha$ and $\beta$, for which we do not know the true values, it may be that although our uncertainty is diminished post-clustering, the estimates may still be biased, with the parameters unidentifiable.
+% As the true values of the CE model parameters for a location $s$ are unknown, reduced variability in estimates post-clustering could still be accompanied by bias. 
+% % There are also many possible combinations of $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$ that could give the same conditional estimates, and so the estimates may be biased in this sengse as well.
+% % There are also many possible combinations of $\alpha$ and $\beta$ that could
+% % give the same conditional estimates, and so the estimates may be biased in
+% % this sense as well.
+% % Indeed, many combinations of $\alpha(s)$ and $\beta(s)$ can yield similar conditional estimates, making these parameters only weakly identifiable. 
+% Indeed, many combinations of $\alpha_{j \mid i, s}$ and $\beta_{j \mid i, s}$ can yield characterisation of the conditional distribution, making these parameters only weakly identifiable.
+% % To avoid this, we adopt the approach of \citet{Richards2021-qm} in calculating the conditional expectation of one variable given the other at the $98\%$ marginal quantile $u_i$ for the conditioning variable, given by
+% % To address this, we follow the approach of \citet{Richards2021-qm} and instead calculate the conditional expectation of one variable given another at the 98\% marginal quantile $u_i$ of the conditioning variable,  
+% To address this, we follow the approach of \citet{Richards2021-qm} and instead calculate the conditional expectation of one variable given another is equal to the conditioning threshold $u_i$:
+% \todo{Discuss: How to find true value??}
+% \begin{equation}~\label{eq:boot}
+%   % \mathbb{E}[Y_j \mid Y_i = u_i] = \hat{\alpha}_{j \mid i} u_i + u_i^{\hat{\beta}_{j \mid i}} \hat{\mu}_{j \mid i},
+%   % \mathbb{E}[Y_j(s) \mid Y_i(s) = u_i] = \hat{\alpha}_{j \mid i}(s) u_i + u_i^{\hat{\beta}_{j \mid i}(s)} \hat{\mu}_{j \mid i}(s),
+%   \mathbb{E}[Y_{j, s} \mid Y_{i, s} = u_i] = \hat{\alpha}_{j \mid i, s} u_i + u_i^{\hat{\beta}_{j \mid i, s}} \hat{\mu}_{j \mid i, s},
+% \end{equation}
+% % where ($\hat{\alpha}, \hat{\beta}, \hat{\mu}$) are the estimated CE model parameters.
+% % where $(\hat{\alpha}_{j \mid i}^{(\CE{})}, \hat{\beta}_{j \mid i}^{(\CE{})}, \hat{\mu}_{j \mid i}^{(\CE{})})$ are the estimated CE model parameters for the $j$-th variable given the conditioning variable $Y_i$ at the $98\%$ marginal quantile $u_i$.
+% % where $(\hat{\alpha}_{j \mid i}, \hat{\beta}_{j \mid i}, \hat{\mu}_{j \mid i})$ are the estimated CE model parameters for the $j$-th variable given the conditioning variable $Y_i$ at the $98\%$ marginal quantile $u_i$.
+% % where $(\hat{\alpha}_{j \mid i}(s), \hat{\beta}_{j \mid i}(s), \hat{\mu}_{j \mid i}(s))$ are the estimated CE model parameters for the $j$th variable given $Y_i(s)$. 
+% where $(\hat{\alpha}_{j \mid i, s}, \hat{\beta}_{j \mid i, s}, \hat{\mu}_{j \mid i, s})$ are the estimated CE model parameters for the $j$-th variable given the conditioning variable $Y_{i, s}$ at location $s$.
+% We set $u_i$ to be the $98\%$ standard Laplace quantile. 
+% % We can bootstrap this conditional expectation to evaluate the reduction in uncertainty post-clustering. \todo{Tense consistency}
+% % We then apply bootstrapping to this conditional expectation to evaluate the reduction in uncertainty achieved through clustering. 
+% 
+% % Results
+% % We take an example for which we know the clustering algorithm performs well, namely the same simulation design as in Section~\ref{subsubsec:sim_competing_methods}, with $\rhou{Gauss} = 0.5$, and $\rhou{t} = 0.1$ and $0.9$ for the two clusters.
+% % We illustrate the effect of clustering on parameter uncertainty using the same simulation design as in Section~\ref{subsubsec:sim_competing_methods}, with $\rhou{Gauss} = 0.5$ and $\rhou{t} = 0.1$ and $0.9$ for the two clusters. 
+% We illustrate the effect of clustering on parameter uncertainty using the same simulation design as in Section~\ref{subsubsec:sim_competing_methods}, with $\rhou{Gauss} = 0.5$, $\rho_{\text{t}_1} = 0.1$ and $\rho_{\text{t}_2} = 0.9$. 
+% % We estimate the CE model parameters pre- and post-clustering, and generate 500 bootstrap samples for  the conditional expectation of Equation~\eqref{eq:boot}.
+% Estimates of the CE model were computed both pre- and post-clustering, and 500 bootstrap samples were generated for the conditional expectation in Equation~\eqref{eq:boot}. 
+% % The results are plotted in Figure \ref{fig:04_bootstrap}.
+% % We can see that the uncertainty in the bootstrapped estimates has markedly reduced post-clustering, as desired.
+% The results, shown in Figure~\ref{fig:04_bootstrap}, demonstrate a clear reduction in the variability of the bootstrap estimates after clustering. 
+% % The conditional expectation is higher for the higher t-copula correlation cluster, as expected. \todo{Anything else need to be said here? Be more specific with results?}
+% In addition, the conditional expectation is consistently higher for the cluster with larger t-copula correlation, reflecting stronger extremal dependence. 
+% These findings confirm that clustering reduces parameter uncertainty while preserving meaningful differences between clusters. 
+% 
+% \begin{figure}[h]
+%     \centering
+%     \includegraphics[width = 0.9\linewidth]{plots/sim_01e_bootstrap_box_man.png}
+%     \caption{\emph{
+%     % Boxplots of 500 bootstrapped conditional expectations of one variable given the other is at the $98\%$ marginal quantile $u$, pre- and post-clustering for a simulation of 12 ``locations'', each with 1000 observations for each variable, from a mixture of Normal and Gaussian copulas, with the Gaussian correlation set to 0.5. 
+%     Boxplots of 500 bootstrap estiamtes of the conditional expectation in Equation~\eqref{eq:boot}, pre- and post-clustering. 
+%     The t-copula correlation parameters for the two clusters were set to $\rho_{\text{t}_1} = 0.1$ and $\rho_{\text{t}_2} = 0.9$, as shown on the x-axis.
+%     }}~\label{fig:04_bootstrap}
+% \end{figure}
 
 \section{Application to Irish meteorological data}~\label{sec:application}
 

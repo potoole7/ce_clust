@@ -1682,9 +1682,9 @@ To obtain a sample of size $n = 1000$ from the mixture copula, at each site $s =
 In Section~\ref{subsubsec:sim_competing_methods}, we compare our method to the leading extremal competitor in the bivariate case \citep{Vignotto2021} and, in Section~\ref{subsubsec:sim_extension}, we show how our approach uniquely handles clustering in higher dimensions ($d > 2$).
 % A more realistic setting is considered in Section~\ref{subsubsec:sim_realistic}, where we simulate data from 60 locations with three unequally sized clusters, and perturb the correlation parameters to make the clustering solution more challenging.
 % A more realistic experiment is presented in Section~\ref{subsubsec:sim_realistic}, where data are simulated from 60 locations in three unequally sized clusters, with perturbed correlation parameters to make clustering more challenging.  
-Section~\ref{subsubsec:sim_realistic} considers a setting with $D = 60$ locations across three unequally sized clusters, and locations in the same cluster exhibiting perturbations in their correlation parameters.
+Finally, section~\ref{subsubsec:sim_realistic} considers a setting with $D = 60$ locations across three unequally sized clusters, and locations in the same cluster exhibiting perturbations in their correlation parameters.
 % We can also evaluate the improvement in parameter estimation post-clustering using the bootstrapping scheme described in \cite{Heffernan2004}, as done in Section~\ref{subsubsec:boot}.
-Finally, in Section~\ref{subsubsec:boot}, we assess improvements in parameter estimation post-clustering using the bootstrap scheme of \citet{Heffernan2004}.  
+% Finally, in Section~\ref{subsubsec:boot}, we assess improvements in parameter estimation post-clustering using the bootstrap scheme of \citet{Heffernan2004}.  
 
 \tightsubsubsection{Comparison to \citet{Vignotto2021}}~\label{subsubsec:sim_competing_methods}
 
@@ -2280,12 +2280,16 @@ We propose the expected conditional $\JSGa{}$ divergence \citep{Nielsen2019} as 
 We use the common Gaussianity assumption to derive a closed-form expression for the $\JSGa{}$ divergence.
 Efficient k-medoids clustering is then performed on the dissimilarity matrix derived from this measure. 
 
-In our simulation study, a bivariate Gaussian copula example was used to illustrate that our clustering method reduces parameter unceratinty and bias when the CE model was re-fitted post-clustering. 
-We then used mixtures of Gaussian and t-copulas to show that our method outperforms our competitor \citep{Vignotto2021} across a range of bivariate extremal dependence scenarios. 
+% In our simulation study, a bivariate Gaussian copula example was used to illustrate that our clustering method reduces parameter unceratinty and bias when the CE model was re-fitted post-clustering. 
+In our simulation study, a bivariate Gaussian copula example illustrated that our clustering method reduces parameter uncertainty and bias when the CE model is re-fitted post-clustering.
+% We then used mixtures of Gaussian and t-copulas to show that our method outperforms our competitor \citep{Vignotto2021} across a range of bivariate extremal dependence scenarios. 
+% We then used mixtures of Gaussian and $t$-copulas to show that our method outperforms our competitor \citet{Vignotto2021} across diverse bivariate extremal dependence scenarios.
+Using mixtures of Gaussian and $t$-copulas, we showed that our method outperforms \citet{Vignotto2021} across a range of bivariate extremal dependence scenarios.
 Our method was also shown to be uniquely extendable to $d > 2$ dimensions. 
 
-We applied our extremal clustering method to a dataset of Irish meteorological data, consisting of 59 locations with weekly rainfall and wind speed observations.
-Without explicitly incorporating spatial information, three clusters with distinct spatial patterns were identified, with well separated clsuters representing the east and west coasts and the centre of Ireland.
+% We applied our extremal clustering method to a dataset of Irish meteorological data, consisting of 59 locations with weekly rainfall and wind speed observations.
+We applied our extremal clustering method to Irish meteorological data, consisting of 59 locations with weekly rainfall and wind speed observations.
+Without explicitly incorporating spatial information, three clusters with distinct spatial patterns were identified, with well separated clusters representing the east and west coasts and the centre of Ireland.
 
 % % Extension
 % While we focused on spatial applications in this work, our method is applicable to any multivariate extremal dependence setting, and so could be used in a variety of other contexts.

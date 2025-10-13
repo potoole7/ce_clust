@@ -345,12 +345,12 @@ Consequently, joint risks may be underestimated unless tail \emph{dependence} is
 % The strength of tail dependence between two random vectors is commonly summarised by the coefficient of asymptotic dependence \(\chi\in[0,1]\) (see e.g.\ \citet{Coles1999}), defined for two random variables $X_1$ and $X_2$ with marginal distribution functions $F_1$ and $F_2$ respectively as
 The strength of tail dependence between two random vectors is commonly summarised by the coefficient of asymptotic dependence \(\chi\in[0,1]\) \citep[see e.g.,][]{Coles1999}.
 For two random variables $X_1$ and $X_2$ with distribution functions $F_1$ and $F_2$, respectively, $\chi$ is defined as
-\[
+\begin{equation} \label{eq:chi}
   % \chi \;=\; \lim_{u\to 1}\Pr\big(F_1(X_1)>u \mid F_2(X_2)>u\big).
   % \chi \;=\; \lim_{u\to 1}\Pr\left[F_1(X_1)>u \mid F_2(X_2)>u\right].
   % \chi \;=\; \lim_{u\to 1}\Pr\left\{F_1(X_1)>u \mid F_2(X_2)>u\right\}.
   \chi \;=\; \lim_{u\to 1} \chi(u) \;=\; \lim_{u\to 1}\Pr\big(F_1(X_1)>u \mid F_2(X_2)>u\big).
-\]
+\end{equation}
 % The values \(\chi>0\) indicate asymptotic dependence (AD) and \(\chi=0\) asymptotic independence (AI) for the random vector $\left(X_1, X_2\right)$. 
 When $\chi$ > 0, the variables $X_1$ and $X_2$ are asymptotically dependent (AD), while $\chi=0$ corresponds to asymptotic independence (AI) between $X_1$ and $X_2$.
 Although \(\chi\) is a useful pairwise summary of extremal dependence, it does not fully characterise multivariate the tail dependence structure or support inference on joint exceedance probabilities, for which a full probabilistic model is required. 
@@ -1814,6 +1814,8 @@ To reduce the dimensionality of the grid of considered copula parameter values, 
 % Again, clustering was done on the CE model parameters using the $\JSGa{}$ divergence, and the ARI for a grid search over different $\rhou{t}$ values is shown in Figure~\ref{fig:03_realistic}.
 % Clustering was performed on the CE model parameters using the $\JSGa{}$ divergence, and the ARI for a grid search over $\rhou{t}$ values is shown in Figure~\ref{fig:03_realistic}. 
 % The CE model was again fit at the 90th quantile, i.e., the 90th quantile of $Y_{i} \mid Y_{j} = y_j$, and clustering solutions were obtained using the expected divergence from Equation~\ref{eq:jsga_integral}, averaged across all models. 
+
+% results
 The results of 500 repetitions of this simulation study are shown in Figure~\ref{fig:03_realistic}.
 % The algorithm is again shown to perform well, particularly where the difference in the t-copula correlation parameters between the clusters is largest, as expected.
 Similarly to the previous simulation studies, our clustering method performs well, particularly when the differences in t-copula correlation parameters between clusters are larger. 
@@ -1911,7 +1913,8 @@ We now apply our extremal clustering method to meteorological observations from 
 % In Section~\ref{subsec:app_data}, we describe the data we have collected, and in Section~\ref{subsec:app_explore} we perform some exploratory analysis of the data, using the $\chi$ statistic to assess the asymptotic dependence between precipitation and wind speed across the country. 
 % In Section~\ref{subsec:app_data}, we describe the dataset of precipitation and wind speed measurements collected across the country. 
 % Section~\ref{subsec:app_explore} presents exploratory analysis, using the $\chi$ statistic to assess the extremal dependence between the two variables. 
-In Section~\ref{subsec:app_data}, we describe the dataset of precipitation and wind speed measurements and present exploratory analysis using the $\chi$ statistic to assess the extremal dependence between the two variables. 
+% In Section~\ref{subsec:app_data}, we describe the dataset of precipitation and wind speed measurements and present exploratory analysis using the $\chi$ statistic to assess the extremal dependence between the two variables. 
+In Section~\ref{subsec:app_data}, we describe the dataset of precipitation and wind speed measurements and present exploratory analysis using the $\chi$ statistic from Equation~\eqref{eq:chi} to assess the extremal dependence between the two variables. 
 % In Sections \ref{subsec:app_ce} and \ref{subsec:app_clust}, we fit the CE model to the data, and apply our clustering method to the estimated parameters, respectively, to determine the spatial dependence structure of the data.
 % In Section~\ref{subsec:app_ce}, we fit the CE model to the data, and in Section~\ref{subsec:app_clust}, we apply our clustering approach to the estimated parameters to identify the spatial dependence structure. 
 In Section~\ref{subsec:app_ce}, we discuss fits of the conditional extremes model, and, in Section~\ref{subsec:app_clust}, we apply our clustering approach. %to the estimated parameters to identify the spatial dependence structure. 
@@ -1992,7 +1995,8 @@ Weeks with no precipitation are excluded, resulting in 5,022 observations across
 % As a brief exploration of the dependence profile in our data, we looked at the $\chi$ and $\bar{\chi}$ statistics introduced in Section~\ref{subsec:asym_dep}.
 % As a brief exploration of the dependence profile of our data, we looked at the $\chi$ statistic introduced in Section~\ref{subsec:asym_dep}.
 % We begin exploring the dependence structure of the data using the $\chi$ statistic introduced in Section~\ref{subsec:asym_dep}. 
-We explore the extremal dependence structure of the data using the $\chi$ statistic introduced in Section~\ref{sec:intro}. 
+% We explore the extremal dependence structure of the data using the $\chi$ statistic introduced in Section~\ref{sec:intro}. 
+We explore the extremal dependence structure of the data using the $\chi$ statistic introduced in Equation~\eqref{eq:chi}.
 % Specifically, we estimated $\chi$ at the 95th quantile for each of our 59 sites, to determine the extent of asymptotic dependence between our variables, and whether any spatial patterns in this dependence emerge. 
 % Specifically, as shown in Figure \ref{fig:chi}, we estimated $\chi(0.95)$ at all 59 sites, to determine the extent of asymptotic dependence between precipitation and wind speed at each, and whether any discernible spatial patterns in this dependence emerge.
 % These values are shown in Figure \ref{fig:chi}.

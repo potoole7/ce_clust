@@ -167,6 +167,8 @@
 % \newcommand{\tightsubsubsection}[1]{\subsubsection{#1}\vspace*{-2ex}}
 \newcommand{\tightsubsubsection}[1]{\subsubsection{#1}\vspace{-1.2\baselineskip}}
 
+\newcommand{\shrinkfig}{\vspace{-1.0\baselineskip}} 
+
 % fix setminus for unicode-math
 % \setmathfont[range=\setminus]{Asana Math}
 
@@ -1585,6 +1587,7 @@ We observe the expected bias-variance tradeoff in the choice of quantile for the
    ~\label{fig:00_gauss_cop}
 \end{figure}
 
+\shrinkfig
 
 \tightsubsection{Mixture model setting}~\label{subsec:sim_mixture}
 
@@ -1781,6 +1784,8 @@ Therefore, the aggregated matrix $M$ in Equation~\eqref{eq:aggregate_matrix} is 
    ~\label{fig:02_3d}
 \end{figure}
 
+\shrinkfig
+
 % Expand to up to 5 dimensions!
 % To further illustrate how our method can be extended to higher dimensions and why this is useful, let us consider a specific example from our grid search, where we have $\rho_{\text{t}_1}, \rho_{\text{t}_2} = 0.5$.
 To further illustrate the performance of our method to higher dimensions, we consider a specific case from the grid where $\rho_{\text{t}_1} = 0.4$ and $\rho_{\text{t}_2} = 0.5$. 
@@ -1812,6 +1817,8 @@ Nevertheless, the results demonstrate that the proposed method scales effectivel
     % Points show individual values of the ARI for a given simulation.}} 
 }}~\label{fig:02b_5d}
 \end{figure}
+
+\shrinkfig
 
 \tightsubsubsection{Extension to more sites}~\label{subsubsec:sim_realistic}
 
@@ -1860,6 +1867,9 @@ For example, the best performance is observed where $\rho_{\text{t}_1} = 0.9, \r
  % The line shows the median of the Adjusted Rand Index for both clustering methods, with uncertainty coming from the 90\% credible interval. Points show individual values of the ARI for a given simulation.}} 
    ~\label{fig:03_realistic}
 \end{figure}
+
+\shrinkfig
+
 
 % \tightsubsubsection{Parameter estimation pre- and post-clustering}~\label{subsubsec:boot}
 % 
@@ -1959,6 +1969,8 @@ In Section~\ref{subsec:app_ce}, we discuss fits of the conditional extremes mode
     Right: Estimated $\chi(0.95)$ between precipitation and wind speed at all 59 locations. Darker colours and larger points indicate stronger asymptotic dependence.}}
    ~\label{fig:chi}
 \end{figure}
+
+\shrinkfig
 
 % We consider the joint extremal behaviour of precipitation and wind speeds at 59 sites across the Republic of Ireland from 1990 to 2020, inclusive.
 We analyse the joint extremal behaviour of precipitation and wind speed at $D=59$ sites across the Republic of Ireland from 1990 to 2020, inclusive. 
@@ -2108,6 +2120,8 @@ The colour scale is the same for both variables, with darker red indicating larg
    }}~\label{fig:a_b_vals}
 \end{figure}
 
+\shrinkfig
+
 \tightsubsection{Clustering}~\label{subsec:app_clust}
 
 % Clustering (including choice of k for each measure)
@@ -2157,6 +2171,8 @@ This may be related to the influence of the Wicklow Mountains, as reflected in t
    ~\label{fig:clust_sol}
 \end{figure}
 
+\shrinkfig
+
 \begin{figure}[htb]
     \centering
     % \includegraphics[width = 0.9\linewidth]{plots/ire_dist_heatmap.png}
@@ -2166,9 +2182,10 @@ This may be related to the influence of the Wicklow Mountains, as reflected in t
     Heatmap of the estimated aggregated dissimilarity matrix $M$.% for the conditional extremes model parameters estimated at the 85th quantile across all 59 sites. 
 The names of each site are coloured and ordered according to the estimated clustering, matching that of Figure \ref{fig:clust_sol}. 
 The dissimilarity colour scale is shown on the right, with darker colours indicating larger values.
-}}
-    ~\label{fig:dist_heatmap}
+}}~\label{fig:dist_heatmap}
 \end{figure}
+
+\shrinkfig
 
 % Analysis of dissimilarity matrix
 We visualise the dissimilarity matrix for the ``combined'' clusters in Figure~\ref{fig:dist_heatmap}.
@@ -2193,16 +2210,17 @@ We also see that Kilcar in county Donegal, which had a low $\chi(0.95)$ value re
 
 \begin{figure}[htb]
     \centering
-    \includegraphics[width = 0.9\linewidth]{plots/cluster_dqu_crop.png}
+    \includegraphics[width = 0.85\linewidth]{plots/cluster_dqu_crop.png}
     % \caption{\emph{ Clustering solutions for the conditional extremes model parameters estimated at the 88th quantile across all 59 sites, using the $\JSGa{}$ dissimilarity matrix for precipitation conditional on wind speed (centre), wind speed conditional on precipitation (right), and the combined dissimilarity matrix (left). The clusters are shown in different colours.}}
     % \caption{\emph{Clustering solutions for the conditional extremes model parameters estimated at the 85th, 88th and 90th quantiles across all 59 sites, using the combined $\JSGa{}$ dissimilarity matrix for precipitation conditional on wind speed and wind speed conditional on precipitation. The clusters are shown in different colours.}}
     \caption{\emph{
     Estimated extremal clusters with the conditional extremes model parameters estimated at $q = 0.85, q = 0.88$ and $q = 0.9$ quantiles, using the combined dissimilarity matrix. % for precipitation conditional on wind speed and wind speed conditional on precipitation. 
 % The clusters are shown in different colours.
     Sites are coloured by cluster. 
-}}
-    ~\label{fig:clust_sens}
+}}~\label{fig:clust_sens}
 \end{figure}
+
+\shrinkfig
 
 % Sensitivity Analysis (to choice of DQU)
 % Another interesting aspect of our clustering method is its robustness to the choice of quantile.

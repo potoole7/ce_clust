@@ -1034,11 +1034,14 @@ In our context, we replace $H_1$ and $H_2$ by the conditional multivariate Gauss
 % The parameter $\lambda$ skews the geometric mean $G_{\lambda}(H_1,H_2)\propto H_1^{1-\lambda}H_{2}^{\lambda}$ towards $H_1$ (when $\lambda$ is close to 0) or towards $H_2$ (when $\lambda$ is close to 1). 
 % The weight $\lambda$ skews the geometric mean $G_{\lambda}(H_1,H_2) = H_1^{1-\lambda}H_{2}^{\lambda}$ towards $H_1$ (when $\lambda$ is close to 0) or towards $H_2$ (when $\lambda$ is close to 1). 
 % The weight $\lambda$ skews the geometric mean $G_{\lambda}(H_1,H_2) = H_1^{1-\lambda}H_{2}^{\lambda}$ towards $H_1$ as $\lambda$ goes to 0 (and conversely towards $H_2$ as $\lambda \rightarrow 1$). 
-The weight $\lambda$ skews the geometric mean $G_{\lambda}(H_1,H_2)$ towards $H_1$ as $\lambda$ goes to 0 (and conversely towards $H_2$ as $\lambda \rightarrow 1$). 
+% The weight $\lambda$ skews the geometric mean $G_{\lambda}(H_1,H_2)$ towards $H_1$ as $\lambda$ goes to 0 (and conversely towards $H_2$ as $\lambda \rightarrow 1$). 
+The weight $\lambda$ skews the geometric mean $G_{\lambda}(H_1,H_2)$ towards $H_1$ as $\lambda \to 0$ (and towards $H_2$ as $\lambda \to 1$).
 % When one site has a more reliable CE fit, we set $\alpha$ to a reliability weight $w\in[0,1]$ (e.g.\ proportional to effective sample size), and apply the symmetrised divergence so that the final dissimilarity remains symmetric.
 % One possible advantage for having a skew parameter such as $\lambda$ is that in our divergence measure we can favour sites with a more reliable CE fit, as determined by, for example, the effective sample size.
+% One possible advantage of specifying $\lambda$ is that we can design our divergence measure to place more weight on the CE model at sites with more reliable fit, as determined by, for example, the effective sample size.
 One possible advantage of specifying $\lambda$ is that we can design our divergence measure to place more weight on the CE model at sites with more reliable fit, as determined by, for example, the effective sample size.
-In this paper, we set $\lambda = 0.5$ throughout, as all sites have equal numberof observations in both our simulation and case studies.
+% In this paper, we set $\lambda = 0.5$ throughout, as all sites have equal number of observations in both our simulation and case studies.
+In this paper, we set $\lambda = 0.5$ throughout, as all sites have the same number of observations in both our simulations and case studies.
 
 % As such, for the sake of brevity we refer to $\JSGa{}(H_1 \Vert H_2)$ as simply $
 % \todo{Refer to JSGa as GJS from now on, since lambda is fixed?}

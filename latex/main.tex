@@ -205,6 +205,9 @@
 %   {\normalfont\bfseries}}{}{}
 % \makeatother
 
+% turn off TODO notes
+\usepackage[disable]{todonotes}
+
 \begin{document}
 
 %\bibliographystyle{natbib}
@@ -1782,7 +1785,7 @@ Nevertheless, the results demonstrate that the proposed method scales effectivel
 \begin{figure}[htb]
     \centering
     % \includegraphics[width = 0.9\linewidth]{plots/sim_01c_js_sens_3_var_dqu_0.9.png}
-    \includegraphics[width = 0.9\linewidth]{plots/sim_01d_js_sens_3_var_dqu_0.9mult_var_man.png}
+    \includegraphics[width = 0.7\linewidth]{plots/sim_01d_js_sens_3_var_dqu_0.9mult_var_man.png}
     \caption{\emph{Evaluation of clustering for $d = 2$ to $d = 5$ variables and two equally-sized clusters for simulations at 12 sites from a mixture of Gaussian and t-copulas.% each with 1000 observations for each variable, from a mixture of Gaussian and t-copulas. 
     The t-copula correlation parameters for each true cluster were set to $\rho_{\text{t}_1} = 0.4, and \rho_{\text{t}_2} = 0.5$. 
     % A grid search was performed over the values of the Gaussian correlation parameter, as represented on the x-axis. 
@@ -1828,7 +1831,8 @@ For example, the best performance is observed where $\rho_{\text{t}_1} = 0.9, \r
 \begin{figure}[htb]
     \centering
     % \includegraphics[width = 0.9\linewidth]{plots/sim_01d_js_sens_3_var_dqu_0.9.png}
-    \includegraphics[width = 0.9\linewidth]{plots/01c2_js_sens_sim_60_locs_dqu_0.9_smooth_man_no_points.png}
+    % \includegraphics[width = 0.9\linewidth]{plots/01c2_js_sens_sim_60_locs_dqu_0.9_smooth_man_no_points.png}
+    \includegraphics[width = 0.7\linewidth]{plots/01c2_js_sens_sim_60_locs_dqu_0.9_smooth_man_no_points.png}
     \caption{\emph{Evaluation of clustering performance for $d = 2$ variables and three clusters of 60 locations for simulations from a mixture of Gaussian and t-copulas.
     % 60 locations with 1000 observations for each variable were simulated, with 10, 20 and 30 belonging to each respective cluster. 
 % A grid search was performed, with the x-axis and facet labels showing the t-copula correlation parameters for each of the three ``known'' clusters, for a Gaussian copula correlation of 0.5. 

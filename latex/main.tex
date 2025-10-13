@@ -1572,7 +1572,7 @@ We observe the expected bias-variance tradeoff in the choice of quantile for the
 \begin{figure}[htb]
     \centering
     % \includegraphics[width = 0.9\linewidth]{plots/sim_01_gauss_cop.png}
-    \includegraphics[width = 0.9\linewidth]{plots/sim_01_gauss_cop_man.png}
+    \includegraphics[width = 0.85\linewidth]{plots/sim_01_gauss_cop_man.png}
     % \caption{Boxplots of \emph{$\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$ parameter estimates for the conditional extremes model pre- and post-clustering for a bivariate Gaussian copula simulation of 12 datasets, or ``locations'', each with 1000 observations of each variable, belonging equally to three known clusters. Simulations were repeated 500 times. The x-axis represents the conditional quantile used to fit the conditional extremes model, and the boxes are coloured by their Gaussian copula correlation parameter, $\rhou{Gauss}$. Dotted horizontal lines indicate the theoretical asymptotic values of $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$ for a bivariate Gaussian copula, coloured by the same $\rhou{Gauss}$ values for $\alpha^{(\CE{})}$ and black for $\beta^{(\CE{})}$ to indicate the same value across all clusters, at $1/2$.}}
     % \caption{\emph{Boxplots of $\alpha$ and $\beta$ parameter estimates for the conditional extremes model pre- and post-clustering for a bivariate Gaussian copula simulation of 12 datasets, or ``locations'', each with 1000 observations of each variable, belonging equally to three known clusters. Simulations were repeated 500 times. The x-axis represents the conditional quantile used to fit the conditional extremes model, and the boxes are coloured by their Gaussian copula correlation parameter, $\rhou{Gauss}$. Dotted horizontal lines indicate the theoretical asymptotic values of $\alpha$ and $\beta$ for a bivariate Gaussian copula, coloured by the same $\rhou{Gauss}$ values for $\alpha$ and black for $\beta$ to indicate the same value across all clusters, at $1/2$.}}
     % \caption{\emph{Boxplots of $\alpha_{\mid i}$ and $\beta_{\mid i}$ estimates for the conditional extremes model pre- and post-clustering for a bivariate Gaussian copula simulation of 12 datasets, or ``locations'', each with 1000 observations of each variable, belonging equally to three known clusters. Simulations were repeated 500 times. The x-axis represents the level of the conditional quantile used to fit the conditional extremes model, and the boxes are coloured by their Gaussian copula correlation parameter, $\rhou{Gauss}$. Dotted horizontal lines indicate the theoretical asymptotic values of $\alpha_{\mid i}$ and $\beta_{\mid i}$, coloured by the same $\rhou{Gauss}$ values for $\alpha_{\mid i}$ and black for $\beta_{\mid i}$ to indicate the same value across all clusters, at $1/2$.}}
@@ -1720,14 +1720,13 @@ Both methods have high ARI when the cluster-wise difference in $\rhou{t}^s$ is l
 % Similarly, both performed better when the Gaussian and t-copula correlations were higher, as stronger extremal dependence increases the availability of extremal data. \todo{Is this why performance was better for higher Gaussian correlation?}
 Both methods perform better when the Gaussian and t-copula correlations are higher.
 % This may be because the Gaussian copula becomes more similar to that of the t-copula for higher values of $\rhou{Gauss}$, thus allowing the clustering approach to focus on differences in the t-copula.
-\todo{Dicuss: Explain better}
 This may be because the Gaussian copula becomes more similar to that of the t-copula for higher values of $\rhou{Gauss}$, thus allowing the clustering approach to focus on differences in the t-copula.
 
 % \todo{Come up with better acronym than CE}
 % \begin{figure}[htb]
 \begin{figure}[htb]
     \centering
-    \includegraphics[width = 0.9\linewidth]{plots/sim_01b_ce_vs_vi_dqu_0.9_man.png}
+    \includegraphics[width = 0.85\linewidth]{plots/sim_01b_ce_vs_vi_dqu_0.9_man.png}
     % \caption{\emph{Comparison of \citep{Vignotto2021} clustering with our proposed method (labelled ``Cond. Extremes''), for two variables and two equally sized clusters for simulations of 12 ``locations'', each with 1000 observations of each variable, from a mixture of Normal and Gaussian copulas. A grid search was performed, with the x-axis representing the Gaussian correlation parameter used for both clusters, and the facet labels showing the t-copula correlation parameters for each ``known'' cluster. This grid search was repeated 500 times. The smoothed lines show the smoothed median of the Adjusted Rand Index for both clustering methods, with smoothing performing using a generalised additive model.}} % The lines show the median of the Adjusted Rand Index for both clustering methods, with uncertainty coming from the 90\% credible interval.}} % The proposed method is shown to be superior to the leading competitor in the bivariate case, that of \cite{Vignotto2021}. Both models perform better when the difference in the t-copula correlation parameters between the two clusters is larger, and when Gaussian correlation is higher.
     % \caption{\emph{Comparison of our clustering method based on the Conditional Extremes model and the method of \citet{Vignotto2021} for extremal clustering.  
     % \caption{\emph{Comparison of performance for CE clustering and \citet{Vignotto2021}. 
@@ -1774,7 +1773,7 @@ Therefore, the aggregated matrix $M$ in Equation~\eqref{eq:aggregate_matrix} is 
     % A grid search was performed,  with the x-axis representing the Gaussian correlation parameter used for both clusters, and the facet labels showing the t-copula correlation parameters for each ``known'' cluster. 
     % This grid search was repeated 500 times. 
     % The smoothed lines show the smoothed median of the Adjusted Rand Index for both clustering methods, with smoothing performing using a generalised additive model.}} % Points show individual values of the ARI for a given simulation.}} 
-    \includegraphics[width = 0.9\linewidth]{plots/sim_01d_js_sens_2_3_var_dqu_0.9_man.png}
+    \includegraphics[width = 0.85\linewidth]{plots/sim_01d_js_sens_2_3_var_dqu_0.9_man.png}
     \caption{\emph{
         Comparison of clustering perfomance for $d = 2$ and $d=3$ variables and two equally-sized clusters. % for simulations of 12 locations from a mixture of Gaussian and t-copulas.
         The x-axis represents the Gaussian correlation parameter for both clusters, and the facet labels show the t-copula correlation parameters for the two true clusters.
@@ -1953,7 +1952,7 @@ In Section~\ref{subsec:app_ce}, we discuss fits of the conditional extremes mode
 \begin{figure}[htb]
     \centering
     % \includegraphics[width = 0.9\linewidth]{plots/041_chi_plots_man.png}
-    \includegraphics[width = 0.9\linewidth]{plots/043_chi_elevation_man_crop.png}
+    \includegraphics[width = 0.85\linewidth]{plots/043_chi_elevation_man_crop.png}
     % \caption{\emph{$\chi$ and $\bar{\chi} $ statistics for each of the 59 locations in our Irish meteorological dataset, estimated at the 95th quantile. The $\bar{chi}$ statistic is shown on the left, and $\chi$ on the right. For both maps, darker colours indicate stronger asymptotic dependence.}}
     \caption{\emph{Left: elevation (m) profile of Ireland.%, with elevation in metres above sea level binned into 100m intervals with the highest bin for elevations above 500m.
     % Right: $\chi$ statistics between precipitation and wind speed at all 59 locations, estimated at the 95th quantile. Darker colours and larger points indicate stronger asymptotic dependence.}}

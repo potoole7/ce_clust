@@ -923,8 +923,8 @@ This leads to a spatial extension of Equation~\eqref{eq:ce_model}, with site-spe
 % with location-specific residuals $\symbf{Z}_{\mid i}(s) \sim \symbf{G}_{\mid i}(s)$. \todo{Do I need to define alpha(s), beta(s), ui(s) again?}
 % where $\symbf{Y}_{-i}(s) \coloneqq \symbf{Y}(s) \setminus Y_i(s), \symbf{\alpha}_{\mid i}(s), \symbf{\beta}_{\mid i}(s)$ and $\symbf{Z}_{\mid i}(s) \sim \symbf{G}_{\mid i}(\cdot ; s)$ are the site-specific counterparts of the regression parameters and residuals introduced above.  
 % where $\symbf{Y}_{-i, s} \coloneqq \symbf{Y}_{s} \setminus Y_{i, s}$, and $\symbf{\alpha}_{\mid i, s}$, $\symbf{\beta}_{\mid i, s}$ $\symbf{Z}_{\mid i, s} \sim \symbf{G}_{\mid i, s}$ and $u_{i, s}$ are the site-specific counterparts of the regression parameters, residuals and exceedance threshold introduced above in Equations~\eqref{eq:ce_limiting_dist} and~\eqref{eq:ce_model}.
-where $\symbf{Y}_{-i, s} \coloneqq \symbf{Y}_{s} \backslash Y_{i, s}$, and $\symbf{\alpha}_{\mid i, s}$, $\symbf{\beta}_{\mid i, s}$ $\symbf{Z}_{\mid i, s} \sim \symbf{G}_{\mid i, s}$ and $u_{i, s}$ are the site-specific counterparts of the regression parameters, residuals and exceedance threshold introduced above in Equations~\eqref{eq:ce_limiting_dist} and~\eqref{eq:ce_model}.
-Note that we make no assumptions about spatial smoothness in the regression model. 
+where $\symbf{Y}_{-i, s} \coloneqq \symbf{Y}_{s} \backslash Y_{i, s}$, and $\symbf{\alpha}_{\mid i, s}$, $\symbf{\beta}_{\mid i, s}$ $\symbf{Z}_{\mid i, s} \sim \symbf{G}_{\mid i, s}$ and $u_{i, s}$ are the site-specific counterparts of the regression parameters, residuals and exceedance threshold introduced in Equations~\eqref{eq:ce_limiting_dist} and~\eqref{eq:ce_model}.
+Note that make no assumptions about spatial smoothness in the regression model. 
 
 % Intro: CE gives distributions, which need to be compared
 % Definition of Z moved here to be impactful than after eq:ce_model
@@ -1033,11 +1033,13 @@ In our context, we replace $H_1$ and $H_2$ by the conditional multivariate Gauss
 
 % The parameter $\lambda$ skews the geometric mean $G_{\lambda}(H_1,H_2)\propto H_1^{1-\lambda}H_{2}^{\lambda}$ towards $H_1$ (when $\lambda$ is close to 0) or towards $H_2$ (when $\lambda$ is close to 1). 
 % The weight $\lambda$ skews the geometric mean $G_{\lambda}(H_1,H_2) = H_1^{1-\lambda}H_{2}^{\lambda}$ towards $H_1$ (when $\lambda$ is close to 0) or towards $H_2$ (when $\lambda$ is close to 1). 
-The weight $\lambda$ skews the geometric mean $G_{\lambda}(H_1,H_2) = H_1^{1-\lambda}H_{2}^{\lambda}$ towards $H_1$ as $\lambda$ goes to 0 (and conversely towards $H_2$ as $\lambda \rightarrow 1$). 
+% The weight $\lambda$ skews the geometric mean $G_{\lambda}(H_1,H_2) = H_1^{1-\lambda}H_{2}^{\lambda}$ towards $H_1$ as $\lambda$ goes to 0 (and conversely towards $H_2$ as $\lambda \rightarrow 1$). 
+The weight $\lambda$ skews the geometric mean $G_{\lambda}(H_1,H_2)$ towards $H_1$ as $\lambda$ goes to 0 (and conversely towards $H_2$ as $\lambda \rightarrow 1$). 
 % When one site has a more reliable CE fit, we set $\alpha$ to a reliability weight $w\in[0,1]$ (e.g.\ proportional to effective sample size), and apply the symmetrised divergence so that the final dissimilarity remains symmetric.
 % One possible advantage for having a skew parameter such as $\lambda$ is that in our divergence measure we can favour sites with a more reliable CE fit, as determined by, for example, the effective sample size.
 One possible advantage of specifying $\lambda$ is that we can design our divergence measure to place more weight on the CE model at sites with more reliable fit, as determined by, for example, the effective sample size.
-In this paper, we set $\lambda = 0.5$ throughout, as all sites have equal number of observations in both our simulation and case studies.
+In this paper, we set $\lambda = 0.5$ throughout, as all sites have equal numberof observations in both our simulation and case studies.
+
 % As such, for the sake of brevity we refer to $\JSGa{}(H_1 \Vert H_2)$ as simply $
 % \todo{Refer to JSGa as GJS from now on, since lambda is fixed?}
 % For our application, we set $\alpha = 0.5$, so that $G_{\alpha}(P, Q)$ is unweighted, but note that $\alpha$ 
@@ -1111,7 +1113,8 @@ where the Jeffreys' divergence $\mathrm{J}(H_1 \Vert H_2) = \KL{(H_1 \Vert H_2)}
 Now, suppose that for a specified conditioning variable $i \in \{1, \ldots, d\}$, we have fitted the CE model at two different sites, $s$ and $s^*$, and we want to compare their induced extremal dependence (i.e.\ the joint tails of $Y_{-i, s}$ and $Y_{-i, s^*}$; see Equation~\eqref{eq:ce_norm}). 
 % Using the $\JSGa{}$ divergence in Equation~\eqref{eq:js_norm_mvn1}, we define the \textit{conditional skew-geometric Jensen-Shannon divergence} ($\cJSGa{s, s^*}$) between the two sites $s$ and $s^*$ for the conditioning variable $Y_i$ as
 % Using the $\JSGa{}$ divergence in Equation~\eqref{eq:js_norm_mvn1}, we define the \textit{conditional skew-geometric Jensen-Shannon divergence} ($\cJSGa{s, s^*}$) between the two sites $s$ and $s^*$ for the conditioning variable $Y_i$ as
-Using the $\JSGa{}$ divergence in Equation~\eqref{eq:js_norm_mvn1}, we define the \textit{conditional skew-geometric Jensen-Shannon divergence} ($\cJSGa{s, s^*}$) between the two sites $s$ and $s^*$, conditional on the $i$-th variable being extreme, defined as
+% Using the $\JSGa{}$ divergence in Equation~\eqref{eq:js_norm_mvn1}, we define the \textit{conditional skew-geometric Jensen-Shannon divergence} ($\cJSGa{s, s^*}$) between the two sites $s$ and $s^*$, conditional on the $i$-th variable being extreme, defined as
+Using the $\JSGa{}$ divergence in Equation~\eqref{eq:js_norm_mvn1}, we define the \textit{conditional skew-geometric Jensen-Shannon divergence} ($\cJSGa{s, s^*}$) between two sites $s$ and $s^*$, conditional on the $i$-th variable being extreme, as
 \begin{equation} \label{eq:cjsga}
   % \cJSGa{}\bigl(y; s \Vert s^*\bigr) = \JSGa{}\left(H_{\mathbf{Y}_{-i}(s)|Y_i(s)=y} \Vert H_{\mathbf{Y}_{-i}(s^*)|Y_i(s^*)=y}\right),
   \cJSGa{s, s^*}(y) = \JSGa{}\left(H_{i, s}(y) \Vert H_{i, s^*}(y)\right),\qquad y > u_i,

@@ -19,6 +19,8 @@
   \usepackage{textcomp} % provide euro and other symbols
 \else % if luatex or xetex
   \usepackage{unicode-math}
+  % \setmathfont{Latin Modern Math}  % or another full Unicode math font
+  % \setmathfont{XITS Math}
   \defaultfontfeatures{Scale=MatchLowercase}
   \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
 \fi
@@ -784,13 +786,15 @@ Formally, for $i = 1, \ldots, d$,
 % We use $Y_{-i} = \symbf{Y} \backslash Y_{i}, \symbf{Y} \in \mathbb{R}^d, y \in (1, \ldots, d)$ to denote the vector of all variables in $\symbf{Y}$ except $Y_i$, and assume all operations hereafter are performed component-wise.
 % For $d \in \mathbb{N}$, we use $ \symbf{Y} \in \mathbb{R}^d, d \in \mathbb{N}$ and for $i \in \{1,\ldots,d\}$ write $Y_{-i} = \symbf{Y}\setminus\{Y_i\}$ to denote the $(d-1)$-dimensional random vector of all components except $Y_i$, and assume all operations below are component-wise. 
 % For $d \in \mathbb{N}$, we consider the random vector $\symbf{Y} \coloneqq \left(Y_1, \ldots, Y_d\right) \in \mathbb{R}^d$ and, for $i \in \{1, \ldots, d\}$, we write $\symbf{Y}_{-i} \coloneq \symbf{Y} \setminus Y_i \in \mathbb{R}^{d-1}$ to denote $\symbf{Y}$ with its $i^{\text{th}}$ component removed. 
-Let $\symbf{Y}_{-i} \coloneq \symbf{Y} \setminus Y_i \in \mathbb{R}^{d-1}$ denote $\symbf{Y}$ with its $i^{\text{th}}$ component removed, for $i \in \{1, \ldots, d\}$.
+% Let $\symbf{Y}_{-i} \coloneq \symbf{Y} \setminus Y_i \in \mathbb{R}^{d-1}$ denote $\symbf{Y}$ with its $i^{\text{th}}$ component removed, for $i \in \{1, \ldots, d\}$.
+Let $\symbf{Y}_{-i} \coloneq \symbf{Y} \backslash Y_i \in \mathbb{R}^{d-1}$ denote $\symbf{Y}$ with its $i^{\text{th}}$ component removed, for $i \in \{1, \ldots, d\}$.
 % Assume all operations below are component-wise. 
 % \item The CE model of \citet{Heffernan2004} assumes that there exists vector normalising parameters $\alpha_{\mid i} := \symbf{a}_{\mid i}(y_i), \beta_{\mid i} := \symbf{b}_{\mid i}(y_i) \in \mathbb{R} \rightarrow \mathbb{R}^{(d-1)}$ such that for fixed $\symbf{z}_{\mid i} \in \mathbb{R}^{(d-1)}$,
 % The CE model of \citet{Heffernan2004} assumes that there exist parameter vectors $\symbf{\alpha}_{\mid i}^{(\CE{})} := \left\{\alpha_{j \mid i}^{(\CE{})} : j\in\{1,\dots,d\}\setminus\{i\}\right\} \in [-1, 1]^{(d-1)}$ and $\symbf{\beta}_{\mid i}^{(\CE{})} := \left\{\beta_{j \mid i}^{(\CE{})} : j\in\{1,\dots,d\}\setminus\{i\} \right\} \in [-\infty, 1]^{(d-1)}$ such that for fixed $\symbf{z}_{\mid i} \in \mathbb{R}^{(d-1)}$, $y_i > 0$,
 % The CE model of \citet{Heffernan2004} assumes that for each $i = 1, \ldots, d$ there exist parameter vectors $\symbf{\alpha}_{\mid i} := \left\{\alpha_{j \mid i} : j\in\{1,\dots,d\}\setminus i \right\} \in [-1, 1]^{d-1}$ and $\symbf{\beta}_{\mid i} := \left\{\beta_{j \mid i} : j\in\{1,\dots,d\}\setminus i \right\} \in [-\infty, 1]^{d-1}$ such that for fixed $\symbf{z}_{\mid i} \in \mathbb{R}^{d-1}$ and $y_i > 0$,
 % With all operations below taken component-wise, the CE model assumes that there exist parameter vectors $\symbf{\alpha}_{\mid i} \coloneqq \left\{\alpha_{j \mid i} : j\in\{1,\dots,d\}\setminus i \right\} \in [-1, 1]^{d-1}$ and $\symbf{\beta}_{\mid i} \coloneqq \left\{\beta_{j \mid i} : j\in\{1,\dots,d\}\setminus i \right\} \in [-\infty, 1]^{d-1}$ such that for fixed $\symbf{z} \in \mathbb{R}^{d-1}$ and % $y_i > 0$, such that for fixed $\symbf{z} \in \mathbb{R}^{(d-1)}$ and $y > 0$,
-With all operations below taken component-wise, \citet{Heffernan2004} assume that there exist parameter vectors $\symbf{\alpha}_{\mid i} \coloneqq \left\{\alpha_{j \mid i} : j\in\{1,\dots,d\}\setminus i \right\} \in [-1, 1]^{d-1}$ and $\symbf{\beta}_{\mid i} \coloneqq \left\{\beta_{j \mid i} : j\in\{1,\dots,d\}\setminus i \right\} \in (-\infty, 1]^{d-1}$ such that, for fixed $\symbf{z} \in \mathbb{R}^{d-1}$, % $y_i > 0$, such that for fixed $\symbf{z} \in \mathbb{R}^{(d-1)}$ and $y > 0$,
+% With all operations below taken component-wise, \citet{Heffernan2004} assume that there exist parameter vectors $\symbf{\alpha}_{\mid i} \coloneqq \left\{\alpha_{j \mid i} : j\in\{1,\dots,d\}\setminus i \right\} \in [-1, 1]^{d-1}$ and $\symbf{\beta}_{\mid i} \coloneqq \left\{\beta_{j \mid i} : j\in\{1,\dots,d\}\setminus i \right\} \in (-\infty, 1]^{d-1}$ such that, for fixed $\symbf{z} \in \mathbb{R}^{d-1}$, % $y_i > 0$, such that for fixed $\symbf{z} \in \mathbb{R}^{(d-1)}$ and $y > 0$,
+With all operations below taken component-wise, \citet{Heffernan2004} assume that there exist parameter vectors $\symbf{\alpha}_{\mid i} \coloneqq \left\{\alpha_{j \mid i} : j\in\{1,\dots,d\}\backslash i \right\} \in [-1, 1]^{d-1}$ and $\symbf{\beta}_{\mid i} \coloneqq \left\{\beta_{j \mid i} : j\in\{1,\dots,d\}\backslash i \right\} \in (-\infty, 1]^{d-1}$ such that, for fixed $\symbf{z} \in \mathbb{R}^{d-1}$, % $y_i > 0$, such that for fixed $\symbf{z} \in \mathbb{R}^{(d-1)}$ and $y > 0$,
 % \todo{Check if probably is for equal to yi or greater than yi}
 \begin{equation}~\label{eq:ce_limiting_dist}
   % \mathbb{P}\left(\frac{\symbf{Y}_{-i} - \symbf{\alpha}_{\mid i}^{(\CE{})} Y_{i}}{Y_{i}^{\symbf{\beta}_{\mid i}^{(\CE{})}} \le \symbf{z}_{\mid i}, Y_i - u_i > y_i \mid Y_i > u_i \right) \longrightarrow \symbf{G}_{\mid i}(\symbf{z}_{\mid i}) \exp(-y_i) \text{ as } u_i \rightarrow \infty,
@@ -874,7 +878,8 @@ The parameter vector $\symbf{\alpha}_{\mid i}$ describes the strength of extrema
 %   \item $-1 < \symbf{\alpha}_{\mid i} < 1$, which suggests asymptotic independence between $Y_{-i}$ and large $Y_{i}$.
 % \end{itemize}
 % The values $\symbf{\alpha}_{j \mid i}$ and $\symbf{\beta}_{j \mid i}$ for $j \ne i$ are the components of the vectors $\symbf{\alpha}_{\mid i}$ and $\symbf{\beta}_{\mid i}$ corresponding to the variable $Y_j$, $j \in \{1,\ldots,d\}\setminus\{i\}$. % Defined so next bit makes sense
-Some special cases (for $j\in\{1,\ldots,d\}\setminus i$) of the CE model are:
+% Some special cases (for $j\in\{1,\ldots,d\} \setminus i$) of the CE model are:
+Some special cases (for $j\in\{1,\ldots,d\} \backslash i$) of the CE model are:
 % \begin{itemize}
 %   \item $\symbf{\alpha}_{j \mid i} = 0$ and  $\symbf{\beta}_{j \mid i} = 0$, for which we have perfect independence, between $Y_j$ and $Y_i \mid Y_i > u_i, j \ne i$, corresponding to $\chi= 0$;
 %   \item $\symbf{\alpha}_{j \mid i} = 1(-1)$ and $\symbf{\beta}_{j \mid i} = 0$, which corresponds to positive (negative) asymptotic dependence, equivalent to having $\chi = 1 (\chi = 0)$, and 
@@ -915,7 +920,8 @@ This leads to a spatial extension of Equation~\eqref{eq:ce_model}, with site-spe
 \end{equation}
 % with location-specific residuals $\symbf{Z}_{\mid i}(s) \sim \symbf{G}_{\mid i}(s)$. \todo{Do I need to define alpha(s), beta(s), ui(s) again?}
 % where $\symbf{Y}_{-i}(s) \coloneqq \symbf{Y}(s) \setminus Y_i(s), \symbf{\alpha}_{\mid i}(s), \symbf{\beta}_{\mid i}(s)$ and $\symbf{Z}_{\mid i}(s) \sim \symbf{G}_{\mid i}(\cdot ; s)$ are the site-specific counterparts of the regression parameters and residuals introduced above.  
-where $\symbf{Y}_{-i, s} \coloneqq \symbf{Y}_{s} \setminus Y_{i, s}$, and $\symbf{\alpha}_{\mid i, s}$, $\symbf{\beta}_{\mid i, s}$ $\symbf{Z}_{\mid i, s} \sim \symbf{G}_{\mid i, s}$ and $u_{i, s}$ are the site-specific counterparts of the regression parameters, residuals and exceedance threshold introduced above in Equations~\eqref{eq:ce_limiting_dist} and~\eqref{eq:ce_model}.
+% where $\symbf{Y}_{-i, s} \coloneqq \symbf{Y}_{s} \setminus Y_{i, s}$, and $\symbf{\alpha}_{\mid i, s}$, $\symbf{\beta}_{\mid i, s}$ $\symbf{Z}_{\mid i, s} \sim \symbf{G}_{\mid i, s}$ and $u_{i, s}$ are the site-specific counterparts of the regression parameters, residuals and exceedance threshold introduced above in Equations~\eqref{eq:ce_limiting_dist} and~\eqref{eq:ce_model}.
+where $\symbf{Y}_{-i, s} \coloneqq \symbf{Y}_{s} \backslash Y_{i, s}$, and $\symbf{\alpha}_{\mid i, s}$, $\symbf{\beta}_{\mid i, s}$ $\symbf{Z}_{\mid i, s} \sim \symbf{G}_{\mid i, s}$ and $u_{i, s}$ are the site-specific counterparts of the regression parameters, residuals and exceedance threshold introduced above in Equations~\eqref{eq:ce_limiting_dist} and~\eqref{eq:ce_model}.
 Note that we make no assumptions about spatial smoothness in the regression model. 
 
 % Intro: CE gives distributions, which need to be compared
@@ -967,7 +973,7 @@ To compare tail dependence across different sites $s$, we compare the conditiona
 % The model parameters $\symbf{\alpha}_{\mid i, s}, \symbf{\beta}_{\mid i, s}, \symbf{\mu}_{\mid i, s}, \Sigma_{\mid i, s}$ in Equation~\eqref{eq:ce_norm} are estimated at each site $s$ and for each conditioning variable, $Y_i, i = 1, \ldots, d$, using maximum likelihood estimation. \todo{Again, i already defined above?}
 % The model parameters $\symbf{\alpha}_{\mid i, s}, \symbf{\beta}_{\mid i, s}, \symbf{\mu}_{\mid i, s}, \Sigma_{\mid i, s}$ in Equation~\eqref{eq:ce_norm} are estimated at each site-specific conditioning variable, $Y_{i, s}, i = 1, \ldots, d, s = 1, \ldots, D$, using maximum likelihood estimation. \todo{Again, i and s already defined above?}
 We estimate the parameters $\symbf{\alpha}_{\mid i, s}, \symbf{\beta}_{\mid i, s}, \symbf{\mu}_{\mid i, s}, \Sigma_{\mid i, s}$ for each site $s = 1, \ldots, D$ and conditioning 
-variable $i = 1, \ldots, d$, using maximum likelihood estimation. \todo{Again, i and s already defined above?}
+variable $i = 1, \ldots, d$, using maximum likelihood estimation. % \todo{Again, i and s already defined above?}
 % In practice, for each $i = 1, \ldots, d$ and $s \in (s_1, \ldots, s_D)$, we set the threshold $u_i(s)$ to the $q^{\text{th}}$ Laplace quantile.  
 % In practice, for each $i$ and $s$, we set the threshold $u_{i, s}$ to the $q^{\text{th}}$ Laplace quantile of $Y_{i, s}$. \todo{Need to use th superscript throughout if keeping}
 % In practice, we set the threshold $u_{i, s} \coloneqq u$ for all $i$ and $s$, to the $q^{\text{th}}$ standard Laplace quantile. \todo{Need to use th superscript throughout if keeping}
@@ -975,9 +981,9 @@ In practice, we set the threshold $u_{i, s} \coloneqq u_i$ to the $q^{\text{th}}
 % We choose $q$ such that there are a sufficient number of exceedances above $u_{i, s}$ to fit the CE model, while keeping $q$ high enough so that the limiting assumption in Equation~\eqref{eq:ce_limiting_dist} is reasonable.
 Choosing $q$ involves the classical bias-variance tradeoff: $q$ must be sufficiently low as to leave enough excesses above $u_i$ for reliable estimation, but high enough to reduce bias induced when the asymptotic arguments in Equation~\eqref{eq:ce_limiting_dist} are not satisfied. 
 % To pick $q$, we use threshold stability plots \citep{Scarrott2012}. \todo{This reference is for univariate cases, need multivariate one? texmex okay?}
-To pick $q$, we use threshold stability plots and assess the stability of parameter estimates at different thresholds \citep{Southworth2012}. \todo{Cite texmex where I get this method from?}
+To pick $q$, we use threshold stability plots and assess the stability of parameter estimates at different thresholds \citep{Southworth2012}. % \todo{Cite texmex where I get this method from?}
 % The bootstrapping procedure of \citet{Heffernan2004} is used to obtain standard errors for the parameter estimates, and we choose the highest value of $q$ such that the parameter estimates are stable, and the bootstrap standard errors are reasonably small.
-Using the bootstrap procedure of \citet{Heffernan2004}, we obtain standard errors for parameter estimates and choose the highest value of $q$ such that the parameter estimates are stable and the bootstrap standard errors are reasonably small. \todo{Briefly describe this bootstrap method?}
+Using the bootstrap procedure of \citet{Heffernan2004}, we obtain standard errors for parameter estimates and choose the highest value of $q$ such that the parameter estimates are stable and the bootstrap standard errors are reasonably small. % \todo{Briefly describe this bootstrap method?}
 
 \tightsubsection{A divergence measure for multivariate conditional extremes}~\label{subsec:div}
 
@@ -1001,7 +1007,7 @@ We also desire provide computational efficiency through a closed-form solution o
 % Introduce JSGa
 % One divergence measure introduced in \citet{Nielsen2019} which satisfies these properties is the skew-geometric Jensen-Shannon divergence ($\JSGa{}$), which is a generalisation of the Jensen-Shannon ($\JS{}$) divergence \citep{Lin1991}. 
 \citet{Nielsen2019} introduced the skew-geometric Jensen-Shannon divergence ($\JSGa{}$), which is a generalisation of the Jensen-Shannon ($\JS{}$) divergence \citep{Lin1991}. 
-\todo{Switch to H and H star to match below?}
+% \todo{Switch to H and H star to match below?}
 % Specifically, we use the dual form of the $\JSGa{}$ divergence \citep{Deasy2020}, which is defined between two continuous $d$-variate distribution functions, say $H_1$ and $H_2$, as 
 % \todo{Discuss: d-variate? (d-1)-variate? multivariate?}
 Specifically, we use the dual form of the $\JSGa{}$ divergence \citep{Deasy2020}, which is defined between two continuous $(d-1)$-variate distribution functions, say $H_1$ and $H_2$, as 
@@ -1031,7 +1037,7 @@ The weight $\lambda$ skews the geometric mean $G_{\lambda}(H_1,H_2) = H_1^{1-\la
 One possible advantage of specifying $\lambda$ is that we can design our divergence measure to place more weight on the CE model at sites with more reliable fit, as determined by, for example, the effective sample size.
 In this paper, we set $\lambda = 0.5$ throughout, as all sites have equal number of observations in both our simulation and case studies.
 % As such, for the sake of brevity we refer to $\JSGa{}(H_1 \Vert H_2)$ as simply $
-\todo{Refer to JSGa as GJS from now on, since lambda is fixed?}
+% \todo{Refer to JSGa as GJS from now on, since lambda is fixed?}
 % For our application, we set $\alpha = 0.5$, so that $G_{\alpha}(P, Q)$ is unweighted, but note that $\alpha$ 
 % The Kullback--Leibler (KL) divergence, $KL(P \Vert Q)$, is defined as
 % \begin{equation}~\label{eq:kl}
@@ -1072,7 +1078,7 @@ Finally, the $\JSGa{}$ is bounded above by $\JSGa{(H_1 \Vert H_2)} \leq \frac{1}
 % \begin{equation}~\label{eq:jsga_bound}
 %   \JSGa{(F_1 \Vert F_2)} \leq \frac{1}{4} \mathrm{J}(F_1 \Vert F_2),
 % \end{equation}
-where the Jeffreys' divergence $\mathrm{J}(H_1 \Vert H_2) = \KL{(H_1 \Vert H_2)} + \KL{(H_2 \Vert H_1)}$ is simply the sum of the forward and backward $\KL{}$ divergences \citep{Nielsen2025}. \todo{this follows short derivation from this paper, include in appendix?}
+where the Jeffreys' divergence $\mathrm{J}(H_1 \Vert H_2) = \KL{(H_1 \Vert H_2)} + \KL{(H_2 \Vert H_1)}$ is simply the sum of the forward and backward $\KL{}$ divergences \citep{Nielsen2025}. % \todo{this follows short derivation from this paper, include in appendix?}
 % Therefore, $\JSGa{}$ provides more well-defined clusters than the Jeffreys' divergence, motivating the higher conceptual complexity by comparison. 
 % Therefore, the $\JSGa{}$ divergence is less susceptible to numerical instability than this simple summation. %, and also provides more tightly defined clusters.
 % Hence, we identify the $\JSGa{}$ divergence as a suitable measure of dissimilarity for clustering CE model fits.
@@ -1100,7 +1106,7 @@ where the Jeffreys' divergence $\mathrm{J}(H_1 \Vert H_2) = \KL{(H_1 \Vert H_2)}
 % Now suppose we have fitted the CE model at two different sites $s$ and $s^*$, and we want to compare the extremal dependence structure of the random vector $\symbf{Y}_{s}$ at site $s$ with that of $\symbf{Y}_{s^*}$ at site $s^*$, for a given conditioning variable $Y_{i, s}$ and $Y_{i, s^*}$, respectively. %, where $i \in \{1, \ldots, d\}, s, s^* \in \{1, \ldots, D\}$.
 % Now suppose we have fitted the CE model at two different sites $s$ and $s^*$, and we want to compare the extremal dependence structure of the random vector $\symbf{Y}_{s}$ at site $s$ with that of $\symbf{Y}_{s^*}$ at site $s^*$, for conditioning variable $i$ (i.e.\ $Y_{i, s}$ and $Y_{i, s^*}$).%, where $i \in \{1, \ldots, d\}, s, s^* \in \{1, \ldots, D\}$.
 % Now suppose we have fitted the CE model at two different sites $s$ and $s^*$, and we want to compare the extremal dependence structure for the conditioning variable $i$ (i.e.\ $Y_{i, s}$ and $Y_{i, s^*}$).%, where $i \in \{1, \ldots, d\}, s, s^* \in \{1, \ldots, D\}$.
-Now, suppose that for a specified conditioning variable $i \in \{1, \ldots, d\}$, we have fitted the CE model at two different sites, $s$ and $s^*$, and we want to compare their induced extremal dependence (i.e.\ the joint tails of $Y_{-i, s}$ and $Y_{-i, s^*}$; see Equation~\eqref{eq:ce_norm}). \todo{have bold Y here?}
+Now, suppose that for a specified conditioning variable $i \in \{1, \ldots, d\}$, we have fitted the CE model at two different sites, $s$ and $s^*$, and we want to compare their induced extremal dependence (i.e.\ the joint tails of $Y_{-i, s}$ and $Y_{-i, s^*}$; see Equation~\eqref{eq:ce_norm}). 
 % Using the $\JSGa{}$ divergence in Equation~\eqref{eq:js_norm_mvn1}, we define the \textit{conditional skew-geometric Jensen-Shannon divergence} ($\cJSGa{s, s^*}$) between the two sites $s$ and $s^*$ for the conditioning variable $Y_i$ as
 % Using the $\JSGa{}$ divergence in Equation~\eqref{eq:js_norm_mvn1}, we define the \textit{conditional skew-geometric Jensen-Shannon divergence} ($\cJSGa{s, s^*}$) between the two sites $s$ and $s^*$ for the conditioning variable $Y_i$ as
 Using the $\JSGa{}$ divergence in Equation~\eqref{eq:js_norm_mvn1}, we define the \textit{conditional skew-geometric Jensen-Shannon divergence} ($\cJSGa{s, s^*}$) between the two sites $s$ and $s^*$, conditional on the $i$-th variable being extreme, defined as
@@ -1255,7 +1261,7 @@ We estimate the integral in Equation~\eqref{eq:jsga_integral} using Monte Carlo 
 In practice, very large values of $Y_{i, s}$ can lead to unstable estimates, and we also want to avoid extrapolating beyond the range of the observations of $Y_{i, s}$ used to fit the CE model. 
 % Hence, we truncate the expectation at the 99th percentile of the empirical distribution of $Y_i(s)$ across all sites.
 % Hence, we truncate the integral in Equation~\eqref{eq:jsga_integral} at the 99th percentile of the empirical distribution of $Y_{i, s}$ across all sites.
-Hence, we truncate the limits in integral~\eqref{eq:jsga_integral}, so that the upper limit is the 99th percentile of the empirical distribution of $Y_{i, s}$ pooled across all sites. \todo{Dicuss: How to reformulate to show pooling over all sites?}
+Hence, we truncate the limits in integral~\eqref{eq:jsga_integral}, so that the upper limit is the 99th percentile of the empirical distribution of $Y_{i, s}$ pooled across all sites. % \todo{Dicuss: How to reformulate to show pooling over all sites?}
 
 % Matrix
 % We can repeat this procedure for each pair of sites $(s, s^*)$ and for each conditioning variable $Y_i$, to obtain a matrix of pairwise dissimilarities between all sites for each conditioning variable, given by
@@ -1324,8 +1330,6 @@ Assuming we use the dissimilarity matrix $M^{(i)}$, a brief description of the a
 %   \item The centroids are updated by selecting the observation in each cluster which minimises the sum of dissimilarities to all other observations in that cluster.
 %   \item This process is repeated until convergence, when no observations change clusters.
 % \end{itemize}
-\todo{Need to replace j?}
-\todo{fix argmin}
 \begin{algorithm}[H]
   % \caption{k-medoids (PAM)}
   \caption{Partitioning Around Medoids (PAM) algorithm using the $\eJSGa{}$ divergence.}
@@ -1766,7 +1770,6 @@ Therefore, the aggregated matrix $M$ in Equation~\eqref{eq:aggregate_matrix} is 
 
 % Expand to up to 5 dimensions!
 % To further illustrate how our method can be extended to higher dimensions and why this is useful, let us consider a specific example from our grid search, where we have $\rho_{\text{t}_1}, \rho_{\text{t}_2} = 0.5$.
-\todo{Move to appendix?}
 To further illustrate the performance of our method to higher dimensions, we consider a specific case from the grid where $\rho_{\text{t}_1} = 0.4$ and $\rho_{\text{t}_2} = 0.5$. 
 % This is a relatively difficult clustering scenario in both the bivariate and three-dimensional cases, as the difference in the t-copula correlation parameters between the two clusters is small.
 This setting presents a challenging clustering scenario in both two and three dimensions, as the cluster-wise difference in the t-copula correlation parameters is small. 
@@ -1828,7 +1831,6 @@ For example, the best performance is observed where $\rho_{\text{t}_1} = 0.9, \r
 % Moreover, variability in ARI across simulations is low, indicating that the clustering solution is robust. 
 
 % \todo{Have x-axis ticks match unique values in grid search}
-\todo{Dicuss: Add greater explanation as to what is going on here}
 \begin{figure}[htb]
     \centering
     % \includegraphics[width = 0.9\linewidth]{plots/sim_01d_js_sens_3_var_dqu_0.9.png}
@@ -2036,10 +2038,10 @@ We transform the precipitation and wind speed data, separately at each location 
 % % Using the bootstrapping scheme of \citet{Heffernan2004}, we estimated the CE model parameters $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$ at various quantiles. \todo{Sufficient reference to bootstrapping scheme?}
 % Using the bootstrapping scheme of \citet{Heffernan2004}, we estimated the CE model parameters $\alpha$ and $\beta$ at various quantiles. \todo{Sufficient reference to bootstrapping scheme?}
 % The CE model was then fitted to the transformed data, and parameter estimates $(\alpha, \beta)$ were obtained at various quantiles using the bootstrap procedure of \citet{Heffernan2004}.  
-\todo{Christian: Check that brief description of bootstrapping for choosing quantile is sufficient}
+% \todo{Christian: Check that brief description of bootstrapping for choosing quantile is sufficient}
 % In order to select an appropriate quantile for fitting the CE model, we estimated the parameters $(\alpha, \beta)$ at various quantile levels using the bootstrap procedure of \citet{Heffernan2004}. 
 % The idea was to identify the highest quantile at which parameter estimates remained stable, balancing extremity and stability.
-\todo{Jordan: I used bootstrapping here, mention or no?}
+% \todo{Jordan: I used bootstrapping here, mention or no?}
 % To select an appropriate quantile level $q$ for fitting the CE model (see Section~\ref{subsec:ce_model}), we estimate the parameters $(\alpha_{\mid i}, \beta_{\mid i})$ at a sequence of levels $q$, to identify the highest $q$ at which parameter estimates appear stable.
 To select an appropriate quantile level $q$ for fitting the CE model (see Section~\ref{subsec:ce_model}), we estimate the parameters $(\alpha_{\mid i}, \beta_{\mid i})$ at a sequence of levels $q$, to identify the lowest $q$ beyond which parameter estimates appear stable.
 % This revealed that estimates in general were quite stable up to the 88th quantile.  \todo{Need to expand with more details, could include plots in Appendix?}
@@ -2094,7 +2096,7 @@ To mitigate this uncertainty and aid interpretation, we next cluster the locatio
         Maps of site-wise estimated conditional extremes model parameters $\alpha_{\mid i, s}$ (top) and $\beta_{\mid i, s}$ (bottom) for precipitation conditional on wind speed (left) and wind speed conditional on precipitation (right).%, estimated at the 85th quantile. 
 % The $\alpha$ parameter is shown in the top row, and $\beta$ in the bottom row. 
 The colour scale is the same for both variables, with darker red indicating larger positive values of $\alpha$ and $\beta$, and darker blue indicating larger negative values.
-   }}~\label{fig:a_b_vals2}
+   }}~\label{fig:a_b_vals}
 \end{figure}
 
 
@@ -2111,7 +2113,6 @@ The colour scale is the same for both variables, with darker red indicating larg
 We cluster the locations using the ``combined'' dissimilarity matrix aggregated across both conditioning variables, as defined in Equation~\eqref{eq:aggregate_matrix}, and also separately for each individual matrix $M^{i}, i = 1, 2$, as in Equation~\eqref{eq:distance_matrix}. 
 % The number of clusters $k$ was chosen via the method described in Section~\ref{subsubsec:choose_k}, using the elbow plot of the TWGSS. 
 The number of clusters $k$ is chosen via the method described in Section~\ref{subsec:clustering}, using the elbow plot of the $\mathrm{TWGSS}$. 
-\todo{Include plots in Appendix!}
 For all three clustering scenarios, clear elbows are observed at $k = 3$. %, so this was the number of clusters chosen. 
 
 % Our clustering solutions for each of the three dissimilarity matrices at the 85th quantile are shown in Figure \ref{fig:clust_sol}.
@@ -2169,8 +2170,8 @@ In particular, the difference between the eastern and western clusters is quite 
 % The western and central clusters exhibit many sites with small pairwise dissimilarities, indicating that their allocations are not always clear-cut. 
 % In particular, several central sites are nearly interchangeable with those in the western cluster, a pattern that is also reflected in the variable-specific clustering solutions in Figure~\ref{fig:clust_sol} and in the quantile sensitivity analysis in Figure~\ref{fig:clust_sens}. 
 In constrast, the western and central clusters seem to be quite close, in that we observe many small inter-cluster pairwise dissimilarities between them. 
-This indicates that allocation between the two is not always clear-cut and for several sites is nearly interchangeable, as observed in  the variable-specific estimated clusters in Figure~\ref{fig:clust_sol} and in the quantile sensitivity analysis in Figure~\ref{fig:clust_sens}, where membership between the two often switches. \todo{Mention specific sites}
-\todo{Add plots for k = 2, k = 4 to Appendix?}
+This indicates that allocation between the two is not always clear-cut and for several sites is nearly interchangeable, as observed in  the variable-specific estimated clusters in Figure~\ref{fig:clust_sol} and in the quantile sensitivity analysis in Figure~\ref{fig:clust_sens}, where membership between the two often switches. % \todo{Mention specific sites}
+% \todo{Add plots for k = 2, k = 4 to Appendix?}
 Also, if we only fit two clusters, we find that most of the central cluster members are assigned to the ``western'' cluster, reflecting this less obvious separation between the two compared to the more markedly different eastern cluster. 
 A noticeable outlier in the dissimilarity matrix is the site at Malahide Castle, which is located in Dublin, which even amongst its own cluster has a relatively high dissimilarity to the other sites.
 % Furthermore, we go to having four clusters, Malahide Castle becomes the only member of the new cluster, and so it is quite distinct from the other sites.
@@ -2201,7 +2202,7 @@ We perform a sensitivity analysis of the estimated clusters to the choice of qua
 The estimated clusters are similar across the three values of $q$, with some small differences. 
 Noticeably, the earlier identified outlier at Kilcar in county Donegal is assigned to the eastern cluster when $q = 0.85$ and $q = 0.90$, but to the central cluster when $q = 0.88$.
 % Also, Costelloe Fishery in county Galway is assigned to the wester cluster for the 85th quantile, but to the central cluster for the 88th and 90th quantiles.
-\todo{Name some of these sites?}
+% \todo{Name some of these sites?}
 Also, there are more sites in the western cluster ($q = 0.85$), with some sites moving to the central cluster for $q = 0.88$.
 Interestingly, some of these sites then move back to the western cluster for $q = 0.90$.
 Apart from these observations, the estimated clusters are generally quite similar across the three quantiles, and so we can conclude that our clustering method is relatively robust to the choice of quantile level, as desired. 
@@ -2243,7 +2244,7 @@ Apart from these observations, the estimated clusters are generally quite simila
 
 \section{Discussion}~\label{sec:discuss}
 
-\todo{Mention that method applicable to non-spatial settings?}
+% \todo{Mention that method applicable to non-spatial settings?}
 
 % Points to consider
 % \todo{Add limitations for simulation study?}
@@ -2301,7 +2302,6 @@ Without explicitly incorporating spatial information, three clusters with distin
 % % In financial applications, we could cluster different assets based on their extremal dependence structure over time, which could be useful for portfolio management and risk assessment.
 
 % Limitations: Gaussian assumption
-\todo{What to keep amongst these limitations? Needs cutting down significantly!}
 % There are several limitations to our method as currently implemented.
 % Our method relies on the residual Gaussianity assumption to provide a closed-form expression for the $\JSGa{}$ divergence.
 % % This may not hold in all cases, particularly for more complex dependence structures, and so this assumption may not always be appropriate. 

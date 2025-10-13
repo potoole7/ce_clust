@@ -292,7 +292,7 @@ Environmental applications are one area which particularly benefits from the use
 % % Extreme rainfall contributes to storms and flooding, which can cause major damage and trigger large insurance claims \citep{Rohrbeck_flooding, osei2021estimation}.
 % Extreme rainfall and high wind speeds can cause major damage and large insurance claims, and thus it is important to understand their likelihood \citep{Rohrbeck_flooding, osei2021estimation, soukissian2015effect, steinkohl2013extreme}. 
 % % High wind speeds can lead to significantly damaging events such as tropical cyclones, and have also seen much focus in the field of EVT \citep{soukissian2015effect, steinkohl2013extreme}.
-Examples include the analysis of heatwaves \citep{tanarhte2015heat, french2019quantifying}, extreme rainfall \citep{osei2021estimation}, wind speeds \citep{steinkohl2013extreme, soukissian2015effect}, wildfire risks \citep{Koh2024}, and the impact of environmental extremes on insurance claims \citep{Rohrbeck_flooding, Miralles2024}. 
+Examples include the analysis of heatwaves \citep{tanarhte2015heat, french2019quantifying}, extreme rainfall \citep{osei2021estimation}, wind speeds \citep{steinkohl2013extreme, soukissian2015effect}, wildfire risks \citep{Koh2023}, and the impact of environmental extremes on insurance claims \citep{Rohrbeck_flooding, Miralles2024}.
 
 % Dependence modelling 
 % \todo{C: Shorten this paragraph}
@@ -1546,8 +1546,8 @@ Bias, as defined as the difference between the finite-sample estimate and the tr
 % We observe the expected bias-variance tradeoff in the choice of quantile for the CE model, with the higher quantile ($q=0.99$) yielding less biased estimates, as expected due to improved convergence to the asymptotic parameters further into the tail, but with greater variance due to data scarcity.
 We observe the expected bias-variance tradeoff in the choice of quantile for the CE model, with the higher quantile ($q=0.99$) yielding less bias, but with higher variance.
 
-% \begin{figure}[H]
-\begin{figure}[h]
+% \begin{figure}[htb]
+\begin{figure}[htb]
     \centering
     % \includegraphics[width = 0.9\linewidth]{plots/sim_01_gauss_cop.png}
     \includegraphics[width = 0.9\linewidth]{plots/sim_01_gauss_cop_man.png}
@@ -1702,8 +1702,8 @@ Both methods perform better when the Gaussian and t-copula correlations are high
 This may be because the Gaussian copula becomes more similar to that of the t-copula for higher values of $\rhou{Gauss}$, thus allowing the clustering approach to focus on differences in the t-copula.
 
 % \todo{Come up with better acronym than CE}
-% \begin{figure}[H]
-\begin{figure}[h]
+% \begin{figure}[htb]
+\begin{figure}[htb]
     \centering
     \includegraphics[width = 0.9\linewidth]{plots/sim_01b_ce_vs_vi_dqu_0.9_man.png}
     % \caption{\emph{Comparison of \citep{Vignotto2021} clustering with our proposed method (labelled ``Cond. Extremes''), for two variables and two equally sized clusters for simulations of 12 ``locations'', each with 1000 observations of each variable, from a mixture of Normal and Gaussian copulas. A grid search was performed, with the x-axis representing the Gaussian correlation parameter used for both clusters, and the facet labels showing the t-copula correlation parameters for each ``known'' cluster. This grid search was repeated 500 times. The smoothed lines show the smoothed median of the Adjusted Rand Index for both clustering methods, with smoothing performing using a generalised additive model.}} % The lines show the median of the Adjusted Rand Index for both clustering methods, with uncertainty coming from the 90\% credible interval.}} % The proposed method is shown to be superior to the leading competitor in the bivariate case, that of \cite{Vignotto2021}. Both models perform better when the difference in the t-copula correlation parameters between the two clusters is larger, and when Gaussian correlation is higher.
@@ -1744,7 +1744,7 @@ In fact, performance is markedly stronger in three dimensions than in two.
 This is not surprising, as the CE fits in this setup are similar in both two and three dimensions, with the same $\rhou{t}^s$ being used across all variable pairs.
 Therefore, the aggregated matrix $M$ in Equation~\eqref{eq:aggregate_matrix} is computed similarly, just averaged over more models with more data, which naturally improves clustering performance.
 
-\begin{figure}[h]
+\begin{figure}[htb]
     \centering
     % \includegraphics[width = 0.9\linewidth]{plots/sim_01c_js_sens_3_var_dqu_0.9.png}
     % \includegraphics[width = 0.9\linewidth]{plots/sim_01d_js_sens_3_var_dqu_0.9_man.png}
@@ -1779,7 +1779,7 @@ Having separate $\rhou{t}^s$ values for each variable pair would increase the co
 Nevertheless, the results demonstrate that the proposed method scales effectively to higher dimensions and performs well in multivariate settings. 
 
 % \todo{Look into this, is this correct?? Shouldn't the clustering performance be much worse for 0.4 and 0.5?}
-\begin{figure}[h]
+\begin{figure}[htb]
     \centering
     % \includegraphics[width = 0.9\linewidth]{plots/sim_01c_js_sens_3_var_dqu_0.9.png}
     \includegraphics[width = 0.9\linewidth]{plots/sim_01d_js_sens_3_var_dqu_0.9mult_var_man.png}
@@ -1825,7 +1825,7 @@ For example, the best performance is observed where $\rho_{\text{t}_1} = 0.9, \r
 
 % \todo{Have x-axis ticks match unique values in grid search}
 \todo{Dicuss: Add greater explanation as to what is going on here}
-\begin{figure}[h]
+\begin{figure}[htb]
     \centering
     % \includegraphics[width = 0.9\linewidth]{plots/sim_01d_js_sens_3_var_dqu_0.9.png}
     \includegraphics[width = 0.9\linewidth]{plots/01c2_js_sens_sim_60_locs_dqu_0.9_smooth_man_no_points.png}
@@ -1892,7 +1892,7 @@ For example, the best performance is observed where $\rho_{\text{t}_1} = 0.9, \r
 % In addition, the conditional expectation is consistently higher for the cluster with larger t-copula correlation, reflecting stronger extremal dependence. 
 % These findings confirm that clustering reduces parameter uncertainty while preserving meaningful differences between clusters. 
 % 
-% \begin{figure}[h]
+% \begin{figure}[htb]
 %     \centering
 %     \includegraphics[width = 0.9\linewidth]{plots/sim_01e_bootstrap_box_man.png}
 %     \caption{\emph{
@@ -1924,7 +1924,7 @@ In Section~\ref{subsec:app_ce}, we discuss fits of the conditional extremes mode
 % % Image of locations and precipitation vs wind speed for two sites
 % \todo{Move elevation legend onto plot}
 % \todo{If keeping this plot, need to comment on heterogeneity motivating analysis!}
-% \begin{figure}[h]
+% \begin{figure}[htb]
 %     \centering
 %     % \includegraphics[width = 0.9\linewidth]{plots/02_mot_ex_plot.png}
 %     \includegraphics[width = 0.9\linewidth]{plots/02_mot_ex_plot_elev.png}
@@ -1933,7 +1933,7 @@ In Section~\ref{subsec:app_ce}, we discuss fits of the conditional extremes mode
 %    ~\label{fig:02_locs}
 % \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[htb]
     \centering
     % \includegraphics[width = 0.9\linewidth]{plots/041_chi_plots_man.png}
     \includegraphics[width = 0.9\linewidth]{plots/043_chi_elevation_man_crop.png}
@@ -1949,7 +1949,7 @@ We analyse the joint extremal behaviour of precipitation and wind speed at $D=59
 % The data we have performed our clustering on is precipitation data for the Republic of Ireland, collected from the Met Éireann website at \citet{metHistoricalData}, and wind speed data from the ERA5 Reanalysis dataset at \citet{Hersbach2020}, corresponding to the closest grid point to each location.
 % Precipitation data were collected from the Met Éireann website (accessed 2024-09-01), and wind speed data from the gridded ERA5 Reanalysis dataset \citep{metHistoricalData, Hersbach2020}.
 % Precipitation data are obtained from the Met Éireann archive (accessed 2024-09-01), and wind speed data from the ERA5 Reanalysis dataset \citep{Hersbach2020, metHistoricalData}. 
-Precipitation and wind speed data are obtained from the Met Éireann archive \citep{metHistoricalData}, and ERA5 Reanalysis \citep{Hersback2020}, respectively.
+Precipitation and wind speed data are obtained from the Met Éireann archive \citep{metHistoricalData}, and ERA5 Reanalysis \citep{Hersbach2020}, respectively.
 % ERA5 provides averages over a gridded box of $0.25^{\circ} \times 0.25^{\circ}$, so each site will lie within a grid cell, to which the wind speed data corresponds.
 % ERA5 provides spatial averages on a $0.25^{\circ} \times 0.25^{\circ}$ grid, and each site was matched to the grid cell in which it lies. 
 Met Éireann data are irregularly spaced over space, while ERA5 provides spatial averages on a regular $0.25^{\circ} \times 0.25^{\circ}$ grid.
@@ -2062,17 +2062,36 @@ Although interpretation is challenging due to variability in the estimates, simi
 % We will cluster the locations based on their CE parameters, to help improve the interpretation of CE results.
 To mitigate this uncertainty and aid interpretation, we next cluster the locations based on their estimated model CE parameters, using the algorithm presented in Section~\ref{subsec:clustering}.
 
-\begin{figure}[h]
+% \todo{Why is this figure moved below the appendix?}
+% % \begin{figure}[htb]
+% \begin{figure}[htb]
+%     \centering
+%     % \includegraphics[width = 0.9\linewidth]{plots/ire_ce_new.png}
+%     \includegraphics[width = 0.8\linewidth]{plots/ire_ce_new.png}
+%     % \caption{\emph{Map of conditional extremes model parameters $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$ for precipitation conditional on wind speed (left) and wind speed conditional on precipitation (right), estimated at the 88th quantile. The $\alpha^{(\CE{})}$ parameter is shown in the top row, and $\beta^{(\CE{})}$ in the bottom row. The colour scale is the same for both variables, with darker red indicating larger positive values of $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$, and darker blue indicating larger negative values.}}
+%     % \caption{\emph{Map of conditional extremes model parameters $\alpha$ and $\beta$ for precipitation conditional on wind speed (left) and wind speed conditional on precipitation (right), estimated at the 85th quantile. The $\alpha$ parameter is shown in the top row, and $\beta$ in the bottom row. The colour scale is the same for both variables, with darker red indicating larger positive values of $\alpha$ and $\beta$, and darker blue indicating larger negative values.}}
+%     \caption{\emph{
+%         Maps of site-wise estimated conditional extremes model parameters $\alpha_{\mid i, s}$ (top) and $\beta_{\mid i, s}$ (bottom) for precipitation conditional on wind speed (left) and wind speed conditional on precipitation (right).%, estimated at the 85th quantile. 
+% % The $\alpha$ parameter is shown in the top row, and $\beta$ in the bottom row. 
+% The colour scale is the same for both variables, with darker red indicating larger positive values of $\alpha$ and $\beta$, and darker blue indicating larger negative values.
+%    }}~\label{fig:a_b_vals}
+% \end{figure}
+
+% \begin{figure}[htb]
+\begin{figure}[htb]
     \centering
-    \includegraphics[width = 0.9\linewidth]{plots/ire_ce_new.png}
+    % \includegraphics[width = 0.9\linewidth]{plots/ire_ce_new.png}
+    % \includegraphics[width = 0.5\linewidth]{plots/ire_ce_new_man.png}
+    \includegraphics[width = 0.8\linewidth]{plots/ire_ce_new.png}
     % \caption{\emph{Map of conditional extremes model parameters $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$ for precipitation conditional on wind speed (left) and wind speed conditional on precipitation (right), estimated at the 88th quantile. The $\alpha^{(\CE{})}$ parameter is shown in the top row, and $\beta^{(\CE{})}$ in the bottom row. The colour scale is the same for both variables, with darker red indicating larger positive values of $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$, and darker blue indicating larger negative values.}}
     % \caption{\emph{Map of conditional extremes model parameters $\alpha$ and $\beta$ for precipitation conditional on wind speed (left) and wind speed conditional on precipitation (right), estimated at the 85th quantile. The $\alpha$ parameter is shown in the top row, and $\beta$ in the bottom row. The colour scale is the same for both variables, with darker red indicating larger positive values of $\alpha$ and $\beta$, and darker blue indicating larger negative values.}}
     \caption{\emph{
         Maps of site-wise estimated conditional extremes model parameters $\alpha_{\mid i, s}$ (top) and $\beta_{\mid i, s}$ (bottom) for precipitation conditional on wind speed (left) and wind speed conditional on precipitation (right).%, estimated at the 85th quantile. 
 % The $\alpha$ parameter is shown in the top row, and $\beta$ in the bottom row. 
 The colour scale is the same for both variables, with darker red indicating larger positive values of $\alpha$ and $\beta$, and darker blue indicating larger negative values.
-   }}~\label{fig:a_b_vals}
+   }}~\label{fig:a_b_vals2}
 \end{figure}
+
 
 \tightsubsection{Clustering}~\label{subsec:app_clust}
 
@@ -2111,7 +2130,7 @@ There are also notable outliers in the clusters, which we further discuss below.
 % Similarly, several Wicklow sites, which had relatively high $\chi$ values for the east coast, are assigned to the central cluster, rather than the eastern one.
 This may be related to the influence of the Wicklow Mountains, as reflected in the elevation profile in Figure~\ref{fig:chi}.
 
-\begin{figure}[h]
+\begin{figure}[htb]
     \centering
     \includegraphics[width = 0.9\linewidth]{plots/cluster_dqu_sep_new_crop.png}
     % \caption{\emph{Clustering solutions for the conditional extremes model parameters estimated at the 85th quantile across all 59 sites, using the $\JSGa{}$ dissimilarity matrix for wind speed conditional on precipitation (centre), precipitation conditional on wind speed (right), and the combined dissimilarity matrix (left). The clusters are shown in different colours.}}
@@ -2124,8 +2143,7 @@ This may be related to the influence of the Wicklow Mountains, as reflected in t
    ~\label{fig:clust_sol}
 \end{figure}
 
-\todo{Add back in site names to x-axis}
-\begin{figure}[h]
+\begin{figure}[htb]
     \centering
     % \includegraphics[width = 0.9\linewidth]{plots/ire_dist_heatmap.png}
     \includegraphics[width = 0.9\linewidth]{plots/ire_dist_heatmap_man.png}
@@ -2159,7 +2177,7 @@ Malahide Castle has the lowest mean weekly precipitation of any site, with the s
 This may explain its outlying behaviour, even amongst the eastern cluster, in that rainfall extremes and consequently concomitant extremes are less likely to occur, as shown by its low $\chi(0.95)$ (Figure~\ref{fig:chi}) and $\alpha_{\mid i}$ (Figure~\ref{fig:a_b_vals}) estimates.
 We also see that Kilcar in county Donegal, which had a low $\chi(0.95)$ value relative to other sites on the west coast, is the member of the eastern cluster with the lowest dissimilarity to the members of the western cluster, reflecting its geographical location in the northwest of Ireland, despite its low $\chi(0.95)$ value.
 
-\begin{figure}[h]
+\begin{figure}[htb]
     \centering
     \includegraphics[width = 0.9\linewidth]{plots/cluster_dqu_crop.png}
     % \caption{\emph{ Clustering solutions for the conditional extremes model parameters estimated at the 88th quantile across all 59 sites, using the $\JSGa{}$ dissimilarity matrix for precipitation conditional on wind speed (centre), wind speed conditional on precipitation (right), and the combined dissimilarity matrix (left). The clusters are shown in different colours.}}
@@ -2203,7 +2221,7 @@ Apart from these observations, the estimated clusters are generally quite simila
 % Interpreting these results is much easier post-clustering. \todo{More detail here!}
 % 
 % \todo{Switch to using hat for estimates?}
-% \begin{figure}[h]
+% \begin{figure}[htb]
 %     \centering
 %     % \includegraphics[width = 0.9\linewidth]{plots/ab_map_post_clust.png}
 %     \includegraphics[width = 0.9\linewidth]{plots/ab_map_post_clust_new.png}

@@ -1488,8 +1488,16 @@ Data are generated independently across sites from a Gaussian copula.
 % At each site $s=1,\dots,S$, dependence is introduced through a Gaussian copula with correlation parameter $\rho_{\text{Gauss}}^s$.
 % Formally, for site $s = {1, \ldots, 12}$, we sample 1000 observations for $(X_{1,s} X_{2,s}) \sim \mbox{MVN}(0, \rho^s_{\text{Gauss}})$,
 % where $\rho^s_{\text{Gauss}} \in [0, 1]$ is a site-specific correlation parameter, and then apply the transformation in Equation~\eqref{eq:laplace}, with $F_X(\cdot)$ being the standard normal distribution function, to obtain $(Y_{1,s}, Y_{2,s})$ with standard Laplace margins.
+% For site $s = {1, \ldots, 12}$, we sample 1000 observations for $(Z_{1,s}, Z_{2,s})$ from a bivariate normal distribution with mean zero and covariance matrix with off-diagonal elements $\rho^s_{\text{Gauss}} \in [0, 1]$ serving as site-specific correlation parameters.
+For site $s = {1, \ldots, 12}$, we sample 1000 observations of $(Z_{1,s}, Z_{2,s})$ from a bivariate normal distribution with mean zero and covariance matrix having off-diagonal element $\rho^s_{\text{Gauss}} \in [0,1]$ as the site-specific correlation.
+We then apply the transformation in Equation~\eqref{eq:laplace}, with $F_X(\cdot)$ being the standard normal distribution function, to obtain $(Y_{1,s}, Y_{2,s})$ with standard Laplace margins.
+
+We consider a setting with $d=2$ variables observed at $D=12$ sites. 
+Data are generated independently across sites from a Gaussian copula. 
 For site $s = {1, \ldots, 12}$, we sample 1000 observations for $(Z_{1,s}, Z_{2,s})$ from a bivariate normal distribution with mean zero and covariance matrix with off-diagonal elements $\rho^s_{\text{Gauss}} \in [0, 1]$ serving as site-specific correlation parameters.
 We then apply the transformation in Equation~\eqref{eq:laplace}, with $F_X(\cdot)$ being the standard normal distribution function, to obtain $(Y_{1,s}, Y_{2,s})$ with standard Laplace margins.
+
+
 
 
 

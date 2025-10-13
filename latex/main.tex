@@ -159,7 +159,8 @@
 % Add to preamble
 % % \vspace{-1.5\baselineskip} % adjust until the gap looks right
 % \newcommand{\tightsection}[1]{\section{#1}\vspace*{-2ex}}
-\newcommand{\tightsection}[1]{\section{#1}\vspace{-1\baselineskip}}
+% \newcommand{\tightsection}[1]{\section{#1}\vspace{-1\baselineskip}}
+\newcommand{\tightsection}[1]{\section{#1}\vspace{-0.3\baselineskip}}
 % \newcommand{\tightsubsection}[1]{\subsection{#1}\vspace*{-2.5ex}}
 \newcommand{\tightsubsection}[1]{\subsection{#1}\vspace{-1.2\baselineskip}}
 % \newcommand{\tightsubsubsection}[1]{\subsubsection{#1}\vspace*{-2ex}}
@@ -279,10 +280,9 @@ The conditional extremes (CE) framework has proven useful for analysing the join
 
 \newpage
 \spacingset{1.75} % DON'T change the spacing!
-\section{Introduction}
+\tightsection{Introduction}
 \label{sec:intro}
 % Introduction to EVT
-% Extreme Value Theory (EVT) provides an asymptotically justified framework for projecting beyond the magnitude of observed data into the extreme tails of distributions \citep{Coles2001}.
 Extreme Value Theory (EVT) provides asymptotically justified models for estimating the probability of events outside the range of observed values \citep{Coles2001}.
 % EVT has seen widespread use in a variety of fields, including finance \citep{Poon2004}, public health \citep{Vettori2019}, neuroscience \citep{Talento2025} and ecology \citep{Koh2025}. 
 EVT has found broad usage in numerous, disparate domains, including finance \citep{Poon2004}, public health \citep{Vettori2019}, neuroscience \citep{Talento2025}, and ecology \citep{Koh2025}.
@@ -641,13 +641,9 @@ Section~\ref{sec:sim} provides a simulation study where we demonstrate that our 
 In Section~\ref{sec:application}, we apply our clustering framework to Irish meteorological data, and identify sites with similar tail dependence between precipitation and wind speeds.
 Section~\ref{sec:discuss} concludes with a discussion of our findings, the limitations of our method, and potential avenues for future work.
 
-\section{Methodology}
+\tightsection{Methodology}
 \label{sec:method}
 
-% \subsection{Peaks-over-threshold}
-
-% In this section, we introduce our clustering framework for CE models.
-% In this section, we introduce our clustering framework for multivariate extremes. 
 In this section, we introduce our clustering framework. % for CE models. 
 % We begin in Section~\ref{subsec:asym_dep} by defining the concepts of asymptotic dependence and independence, which are used to characterise extremal dependence.
 % We introduce the CE model in Section~\ref{subsec:ce_model}, which is used to model the joint tail behaviour of a random vector conditional on one of its components exceeding a suitably high threshold.
@@ -1393,7 +1389,9 @@ where $\eJSGa{s, s_c}$ is the dissimilarity in Equation \eqref{eq:jsga_integral}
 site $s$ and the medoid site $s_c$ of cluster $c$, $c = 1, \ldots, k$. 
 We plot $\mathrm{TWGSS}(k)$ against $k$ and choose the optimal number of clusters as the value of $k$ at which the TWGSS reduction sharply slows, or equivalently, the point at which the curve has an ``elbow'' \citet{Hastie2009}. 
 
-\section{Simulation study}~\label{sec:sim}
+\tightsection{Simulation study}
+\label{sec:sim}
+
 % Introduce section
 % Throughout this section, we evaluate the effectiveness of our clustering method using a simulation study.
 % Throughout this section, we assess the performance of our clustering method through a simulation study. 
@@ -1925,13 +1923,9 @@ For example, the best performance is observed where $\rho_{\text{t}_1} = 0.9, \r
 %     }}~\label{fig:04_bootstrap}
 % \end{figure}
 
-\section{Application to Irish meteorological data}~\label{sec:application}
-
-% \todo{Add image of distance matrices coloured by cluster}
-% \todo{Add something on robustness to choice of DQU? Have plots for this!}
-
+\tightsection{Application to Irish meteorological data}
+\label{sec:application}
 % Section Intro
-% \todo{Where to put first plot? And which plot to have as first?}
 We now apply our extremal clustering method to meteorological observations from the Republic of Ireland. 
 % In Section~\ref{subsec:app_data}, we describe the data we have collected, and in Section~\ref{subsec:app_explore} we perform some exploratory analysis of the data, using the $\chi$ statistic to assess the asymptotic dependence between precipitation and wind speed across the country. 
 % In Section~\ref{subsec:app_data}, we describe the dataset of precipitation and wind speed measurements collected across the country. 
@@ -2115,7 +2109,6 @@ The colour scale is the same for both variables, with darker red indicating larg
    }}~\label{fig:a_b_vals}
 \end{figure}
 
-
 \tightsubsection{Clustering}~\label{subsec:app_clust}
 
 % Clustering (including choice of k for each measure)
@@ -2258,17 +2251,8 @@ Apart from these observations, the estimated clusters are generally quite simila
 %     \item 
 % \end{itemize}
 
-\section{Discussion}~\label{sec:discuss}
-
-% \todo{Mention that method applicable to non-spatial settings?}
-
-% Points to consider
-% \todo{Add limitations for simulation study?}
-% Possible points to consider adding to discussion: 
-% \begin{itemize}
-% \item Talk about how subsequent analyses should constrain parameters to be non-negative?
-% \item JSGa choice: why not use standard JS, Jeffreys or other measure ((2-)Wasserstein, Kolmogorov-Smirnov, etc?)
-% \end{itemize}
+\tightsection{Discussion}
+\label{sec:discuss}
 
 % Rewrite Intro: Methods
 % In this paper, we introduced a novel method for clustering spatial locations based on their multivariate extremal dependence structure, as estimated by the conditional extremes model.

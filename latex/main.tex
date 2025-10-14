@@ -217,6 +217,8 @@
 \setlength{\belowcaptionskip}{1ex}
 \setlength{\floatsep}{1ex}
 \setlength{\textfloatsep}{1ex}
+\setlength{\abovedisplayskip}{6pt}
+\setlength{\belowdisplayskip}{6pt}
 
 % turn off TODO notes
 % \usepackage[disable]{todonotes}
@@ -354,7 +356,8 @@ In the multivariate EVT setting, one is interested in the \emph{joint} tail beha
 Multivariate extremes frequently arise in spatial applications, where one or more variables are recorded at a discrete set of sampling locations, or sites. 
 % In environmental applications, extreme events rarely occur in isolation, and the compounded impact of simultaneous or ``concomitant'' extremes can produce substantially more severe outcomes \citep{zscheischler2018future, bevacqua2021guidelines, Rohrbeck2021, Sando2022}.
 % ``Concomitant'' extremes, where multiple variables or locations simultaneously exhibit extreme behaviour, can produce substantially more severe outcomes than single-variable extremes \citep{zscheischler2018future, bevacqua2021guidelines, Rohrbeck2021, Sando2022}.
-Within such settings, simultaneous or ``concomitant'' extremes, where multiple variables or locations concurrently exhibit extreme behaviour, can produce substantially more severe outcomes than single-variable extremes \citep{zscheischler2018future, bevacqua2021guidelines, Rohrbeck2021, Sando2022}.
+% Within such settings, simultaneous or ``concomitant'' extremes, where multiple variables or locations concurrently exhibit extreme behaviour, can produce substantially more severe outcomes than single-variable extremes \citep{Sando2022, bevacqua2021guidelines, Rohrbeck2021, zscheischler2018future}.
+Within such settings, simultaneous or ``concomitant'' extremes, where multiple variables or locations concurrently exhibit extreme behaviour, can produce substantially more severe outcomes than single-variable extremes \citep{Sando2022, bevacqua2021guidelines, Rohrbeck2021}. \todo{Fix order of references!}
 % Consequently, these joint risks are liable to be underestimated unless tail \emph{dependence} is explicitly modelled \citep{Zhang2024}. 
 Consequently, joint risks may be underestimated unless tail \emph{dependence} is explicitly modelled \citep{Zhang2024}. 
 % Tail dependence can be described using the coefficient of asymptotic dependence \(\chi\in[0,1]\) (see e.g.\ \citet{Coles1999}), which for two random variables \(X_1,X_2\) with corresponding marginal distribution functions \(F_1,F_2\) is defined as 
@@ -1574,20 +1577,20 @@ We observe the expected bias-variance tradeoff in the choice of quantile for the
 \begin{figure}[htb]
     \centering
     % \includegraphics[width = 0.9\linewidth]{plots/sim_01_gauss_cop.png}
-    \includegraphics[width = 0.85\linewidth]{plots/sim_01_gauss_cop_man.png}
+    \includegraphics[width = 0.8\linewidth]{plots/sim_01_gauss_cop_man.png}
     % \caption{Boxplots of \emph{$\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$ parameter estimates for the conditional extremes model pre- and post-clustering for a bivariate Gaussian copula simulation of 12 datasets, or ``locations'', each with 1000 observations of each variable, belonging equally to three known clusters. Simulations were repeated 500 times. The x-axis represents the conditional quantile used to fit the conditional extremes model, and the boxes are coloured by their Gaussian copula correlation parameter, $\rhou{Gauss}$. Dotted horizontal lines indicate the theoretical asymptotic values of $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$ for a bivariate Gaussian copula, coloured by the same $\rhou{Gauss}$ values for $\alpha^{(\CE{})}$ and black for $\beta^{(\CE{})}$ to indicate the same value across all clusters, at $1/2$.}}
     % \caption{\emph{Boxplots of $\alpha$ and $\beta$ parameter estimates for the conditional extremes model pre- and post-clustering for a bivariate Gaussian copula simulation of 12 datasets, or ``locations'', each with 1000 observations of each variable, belonging equally to three known clusters. Simulations were repeated 500 times. The x-axis represents the conditional quantile used to fit the conditional extremes model, and the boxes are coloured by their Gaussian copula correlation parameter, $\rhou{Gauss}$. Dotted horizontal lines indicate the theoretical asymptotic values of $\alpha$ and $\beta$ for a bivariate Gaussian copula, coloured by the same $\rhou{Gauss}$ values for $\alpha$ and black for $\beta$ to indicate the same value across all clusters, at $1/2$.}}
     % \caption{\emph{Boxplots of $\alpha_{\mid i}$ and $\beta_{\mid i}$ estimates for the conditional extremes model pre- and post-clustering for a bivariate Gaussian copula simulation of 12 datasets, or ``locations'', each with 1000 observations of each variable, belonging equally to three known clusters. Simulations were repeated 500 times. The x-axis represents the level of the conditional quantile used to fit the conditional extremes model, and the boxes are coloured by their Gaussian copula correlation parameter, $\rhou{Gauss}$. Dotted horizontal lines indicate the theoretical asymptotic values of $\alpha_{\mid i}$ and $\beta_{\mid i}$, coloured by the same $\rhou{Gauss}$ values for $\alpha_{\mid i}$ and black for $\beta_{\mid i}$ to indicate the same value across all clusters, at $1/2$.}}
     \caption{\emph{ 
     Boxplots of estimates of (top) $\alpha_{\mid i}$ and (bottom) $\beta_{\mid i}$ for the conditional extremes model pre- and post-clustering with bivariate Gaussian data simulated at 12 sites, belonging equally to three known clusters. 
-    Simulations were repeated 500 times.
+    % Simulations were repeated 500 times.
     The x-axis gives $q$, the level of the conditioning quantile used to fit the model, and the boxes are coloured by the true Gaussian copula correlation parameter, $\rho_{\text{Gauss}}^s$.
     The horizontal lines indicate the true theoretical values of $\alpha_{\mid i}$ and $\beta_{\mid i}$, with the colours for $\alpha_{\mid i}$ corresponding with the true $\rho_{\text{Gauss}}^s$ values.
     }}
    ~\label{fig:00_gauss_cop}
+   \shrinkfig
 \end{figure}
 
-\shrinkfig
 
 \tightsubsection{Mixture model setting}~\label{subsec:sim_mixture}
 
@@ -1782,9 +1785,9 @@ Therefore, the aggregated matrix $M$ in Equation~\eqref{eq:aggregate_matrix} is 
         The x-axis represents the Gaussian correlation parameter for both clusters, and the facet labels show the t-copula correlation parameters for the two true clusters.
         The smoothed lines show the smoothed median of the Adjusted Rand Index for both dimensions, with smoothing performing using a generalised additive model.}} % Points show individual values of the ARI for a given simulation.}} 
    ~\label{fig:02_3d}
+   \shrinkfig
 \end{figure}
 
-\shrinkfig
 
 % Expand to up to 5 dimensions!
 % To further illustrate how our method can be extended to higher dimensions and why this is useful, let us consider a specific example from our grid search, where we have $\rho_{\text{t}_1}, \rho_{\text{t}_2} = 0.5$.
@@ -1816,9 +1819,9 @@ Nevertheless, the results demonstrate that the proposed method scales effectivel
     The smoothed lines show the smoothed median of the Adjusted Rand Index for both clustering methods, with smoothing performing using a generalised additive model. 
     % Points show individual values of the ARI for a given simulation.}} 
 }}~\label{fig:02b_5d}
+\shrinkfig
 \end{figure}
 
-\shrinkfig
 
 \tightsubsubsection{Extension to more sites}~\label{subsubsec:sim_realistic}
 
@@ -1866,9 +1869,9 @@ For example, the best performance is observed where $\rho_{\text{t}_1} = 0.9, \r
      % Points show individual values of the ARI for a given simulation.}} 
  % The line shows the median of the Adjusted Rand Index for both clustering methods, with uncertainty coming from the 90\% credible interval. Points show individual values of the ARI for a given simulation.}} 
    ~\label{fig:03_realistic}
+   \shrinkfig
 \end{figure}
 
-\shrinkfig
 
 
 % \tightsubsubsection{Parameter estimation pre- and post-clustering}~\label{subsubsec:boot}
@@ -1962,15 +1965,15 @@ In Section~\ref{subsec:app_ce}, we discuss fits of the conditional extremes mode
 \begin{figure}[htb]
     \centering
     % \includegraphics[width = 0.9\linewidth]{plots/041_chi_plots_man.png}
-    \includegraphics[width = 0.85\linewidth]{plots/043_chi_elevation_man_crop.png}
+    \includegraphics[width = 0.8\linewidth]{plots/043_chi_elevation_man_crop.png}
     % \caption{\emph{$\chi$ and $\bar{\chi} $ statistics for each of the 59 locations in our Irish meteorological dataset, estimated at the 95th quantile. The $\bar{chi}$ statistic is shown on the left, and $\chi$ on the right. For both maps, darker colours indicate stronger asymptotic dependence.}}
     \caption{\emph{Left: elevation (m) profile of Ireland.%, with elevation in metres above sea level binned into 100m intervals with the highest bin for elevations above 500m.
     % Right: $\chi$ statistics between precipitation and wind speed at all 59 locations, estimated at the 95th quantile. Darker colours and larger points indicate stronger asymptotic dependence.}}
     Right: Estimated $\chi(0.95)$ between precipitation and wind speed at all 59 locations. Darker colours and larger points indicate stronger asymptotic dependence.}}
    ~\label{fig:chi}
+   \shrinkfig
 \end{figure}
 
-\shrinkfig
 
 % We consider the joint extremal behaviour of precipitation and wind speeds at 59 sites across the Republic of Ireland from 1990 to 2020, inclusive.
 We analyse the joint extremal behaviour of precipitation and wind speed at $D=59$ sites across the Republic of Ireland from 1990 to 2020, inclusive. 
@@ -2030,7 +2033,7 @@ We explore the extremal dependence structure of the data using the $\chi$ statis
 % These values are shown in Figure \ref{fig:chi}.
 % These values, along with an elevation profile of Ireland, are shown in Figure \ref{fig:chi}.
 Figure~\ref{fig:chi} shows empirical estimates of $\chi(0.95)$ at all 59 sites.
-An elevation profile of Ireland is also shown in Figure \ref{fig:chi}, which may help further explain some of this spatial structure.
+An elevation profile of Ireland is also shown in Figure~\ref{fig:chi}, which may help further explain some of this spatial structure.
 % We can see that $\chi$ is positive for almost all sites, indicating positive asymptotic dependence of varying degree between precipitation and wind speed. 
 % This means that when, for example, wind speed is high, precipitation is also likely to be high, and vice versa, to a greater or lesser extent depending on the site.
 Non-zero values are observed at almost all sites, indicating positive asymptotic dependence between precipitation and wind speed. 
@@ -2118,9 +2121,9 @@ To mitigate this uncertainty and aid interpretation, we next cluster the locatio
 % The $\alpha$ parameter is shown in the top row, and $\beta$ in the bottom row. 
 The colour scale is the same for both variables, with darker red indicating larger positive values of $\alpha$ and $\beta$, and darker blue indicating larger negative values.
    }}~\label{fig:a_b_vals}
+   \shrinkfig
 \end{figure}
 
-\shrinkfig
 
 \tightsubsection{Clustering}~\label{subsec:app_clust}
 
@@ -2160,7 +2163,7 @@ This may be related to the influence of the Wicklow Mountains, as reflected in t
 
 \begin{figure}[htb]
     \centering
-    \includegraphics[width = 0.85\linewidth]{plots/cluster_dqu_sep_new_crop.png}
+    \includegraphics[width = 0.8\linewidth]{plots/cluster_dqu_sep_new_crop.png}
     % \caption{\emph{Clustering solutions for the conditional extremes model parameters estimated at the 85th quantile across all 59 sites, using the $\JSGa{}$ dissimilarity matrix for wind speed conditional on precipitation (centre), precipitation conditional on wind speed (right), and the combined dissimilarity matrix (left). The clusters are shown in different colours.}}
     \caption{\emph{
     % Clustering solutions for the conditional extremes model parameters estimated at the 85th quantile across all 59 sites, using the $\JSGa{}$ dissimilarity matrix for wind speed conditional on precipitation (centre), precipitation conditional on wind speed (right), and the combined dissimilarity matrix (left). 
@@ -2169,23 +2172,22 @@ This may be related to the influence of the Wicklow Mountains, as reflected in t
     Sites are coloured by cluster. 
 }}
    ~\label{fig:clust_sol}
+   \shrinkfig
 \end{figure}
-
-\shrinkfig
 
 \begin{figure}[htb]
     \centering
     % \includegraphics[width = 0.9\linewidth]{plots/ire_dist_heatmap.png}
-    \includegraphics[width = 0.85\linewidth]{plots/ire_dist_heatmap_man.png}
+    \includegraphics[width = 0.8\linewidth]{plots/ire_dist_heatmap_man.png}
     % \caption{\emph{Heatmap of the aggregated dissimilarity matrix $M$ for the conditional extremes model parameters estimated at the 85th quantile across all 59 sites. The names of each site are coloured and ordered according to the clustering solution, matching that of Figure \ref{fig:clust_sol}. The dissimilarity colour scale is shown on the right, with darker colours indicating larger values.}}
     \caption{\emph{
     Heatmap of the estimated aggregated dissimilarity matrix $M$.% for the conditional extremes model parameters estimated at the 85th quantile across all 59 sites. 
 The names of each site are coloured and ordered according to the estimated clustering, matching that of Figure \ref{fig:clust_sol}. 
 The dissimilarity colour scale is shown on the right, with darker colours indicating larger values.
 }}~\label{fig:dist_heatmap}
+\shrinkfig
 \end{figure}
 
-\shrinkfig
 
 % Analysis of dissimilarity matrix
 We visualise the dissimilarity matrix for the ``combined'' clusters in Figure~\ref{fig:dist_heatmap}.
@@ -2218,9 +2220,9 @@ We also see that Kilcar in county Donegal, which had a low $\chi(0.95)$ value re
 % The clusters are shown in different colours.
     Sites are coloured by cluster. 
 }}~\label{fig:clust_sens}
+\shrinkfig
 \end{figure}
 
-\shrinkfig
 
 % Sensitivity Analysis (to choice of DQU)
 % Another interesting aspect of our clustering method is its robustness to the choice of quantile.

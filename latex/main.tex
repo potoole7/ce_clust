@@ -124,129 +124,30 @@
 \DeclareMathOperator*{\argmin}{arg\,min}
 \DeclarePairedDelimiter\abs{\lvert}{\rvert}%
 \DeclareMathOperator{\EX}{\mathbb{E}}% expected value
-% \newcommand{\JSGa}[1]{\mathrm{JS}^{\mathrm{G}_{#1}}}
-% \newcommand{\JSGa}[1]{\mathrm{JS}^{\mathrm{G}_{\alpha}}}
-% \DeclareMathOperator{\JSGa}{\mathrm{JS}^{\mathrm{G}_{\alpha}}}
-% \newcommand{\JSGa}{\mathop{\mathrm{JS}^{\mathrm{G}_{\alpha}}}\nolimits}
-% \newcommand{\JSGa}{\mathop{\mathrm{JS}^{\mathrm{G}_{k}}}\nolimits}
-% \newcommand{\GJS}{\mathop{{\mathrm{GJS}}}\nolimits}
 \newcommand{\JSGa}{\mathop{\mathrm{JS}^{\mathrm{G}_{\lambda}}}\nolimits}
-% \newcommand{\cJSGa}{\mathop{\mathrm{cJS}^{\mathrm{G}_{\lambda}}}\nolimits}
-% \newcommand{\cJSGa}{\mathop{\mathrm{cJS}_{i}^{\mathrm{G}_{\lambda}}}\nolimits}
 \newcommand{\cJSGa}[1]{\mathop{\mathrm{cJS}_{i, #1}^{\mathrm{G}_{\lambda}}}\nolimits}
-% \newcommand{\eJSGa}{\mathop{\mathrm{eJS}^{\mathrm{G}_{\lambda}}}\nolimits}
 \newcommand{\eJSGa}[1]{\mathop{\mathrm{eJS}_{i, #1}^{\mathrm{G}_{\lambda}}}\nolimits}
-% \newcommand{\GJS}[1]{\mathrm{JS}^{\mathrm{G}}}
 \DeclareMathOperator{\GJS}{\mathrm{JS}^{\mathrm{G}}}
 \DeclareMathOperator{\CE}{\mathrm{CE}}
 \newcommand{\rhou}[1]{\rho_{\text{#1}}}
 \newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
 
-% \newcommand{\mvmean}[1]{\symbf{\alpha}_{\mid i}(#1) y + y^{\symbf{\beta}_{\mid i}(s)} \symbf{\mu}_{\mid i}(#1)}
 \newcommand{\mvmean}[1]{\symbf{\alpha}_{\mid i, #1} y + y^{\symbf{\beta}_{\mid i, #1}} \symbf{\mu}_{\mid i, #1}}
-% \newcommand{\mvcov}[1]{\left(y^{\beta_{\mid i}(#1)}\right)^{\mathrm{T}} \Sigma_{\mid i}(#1) y^{\beta_{\mid i}(#1)}}
 \newcommand{\mvcov}[1]{\left(y^{\beta_{\mid i, #1}}\right)^{\mathrm{T}} \Sigma_{\mid i, #1} y^{\beta_{\mid i, #1}}}
-
-% \symbf{\alpha}_{\mid i}(s) y + y^{\symbf{\beta}_{\mid i}(s)} \symbf{\mu}_{\mid i}(s)
-
-\newcommand{\rG}[1]{\rho_{\mathrm{Gauss}}_{#1}}
-\newcommand{\rT}[1]{\rho_{\text{t}}_{#1}}
-\newcommand{\RG}[1]{\Sigma_{\mathrm{Gauss}}^{#1}}   % JxJ correlation matrix
-\newcommand{\RT}[1]{\Sigma_{t}^{#1}}                % JxJ correlation matrix
-\newcommand{\LapTrans}{T_{\mathrm{Laplace}}}
-
-% Add to preamble
-% % \vspace{-1.5\baselineskip} % adjust until the gap looks right
-% \newcommand{\tightsection}[1]{\section{#1}\vspace*{-2ex}}
-% \newcommand{\tightsection}[1]{\section{#1}\vspace{-1\baselineskip}}
-\newcommand{\tightsection}[1]{\section{#1}\vspace{-0.3\baselineskip}}
-% \newcommand{\tightsubsection}[1]{\subsection{#1}\vspace*{-2.5ex}}
-\newcommand{\tightsubsection}[1]{\subsection{#1}\vspace{-1.2\baselineskip}}
-% \newcommand{\tightsubsubsection}[1]{\subsubsection{#1}\vspace*{-2ex}}
-\newcommand{\tightsubsubsection}[1]{\subsubsection{#1}\vspace{-1.2\baselineskip}}
-
-\newcommand{\shrinkfig}{\vspace{-1.0\baselineskip}} 
-
-% fix setminus for unicode-math
-% \setmathfont[range=\setminus]{Asana Math}
-
-% \titlespacing*{\section}{0pt}{1.5ex plus 1ex minus .2ex}{1ex plus .2ex}
-% % \titlespacing*{\subsection}{0pt}{1ex plus .5ex minus .2ex}{0.5ex plus .2ex}
-% % \titlespacing*{\subsubsection}{0pt}{0.5ex plus .2ex minus .1ex}{0.3ex plus .1ex}
-% \titlespacing*{\subsection}{0pt}{0.2ex}{0.2ex}   % tune the numbers
-% \titlespacing*{\subsubsection}{0pt}{0.2ex}{0.2ex}
-
-\titlespacing*{\section}{0pt}{1ex}{0.6ex}
-\titlespacing*{\subsection}{0pt}{0.8ex}{0.4ex}
-\titlespacing*{\subsubsection}{0pt}{0.5ex}{0.2ex}
-% \titlespacing*{\section}{0pt}{0.5ex}{0.3ex}
-% \titlespacing*{\subsection}{0pt}{0.4ex}{0.2ex}
-% \titlespacing*{\subsubsection}{0pt}{0.3ex}{0.1ex}
-% \titlespacing*{\section}{0pt}{2.5pt}{2.5pt}
-% \titlespacing*{\subsection}{0pt}{2pt}{2pt}
-% \titlespacing*{\subsubsection}{0pt}{1.5pt}{1.5pt}
-
-% Manual section spacing without titlesec
-% \usepackage{etoolbox}
-% \makeatletter
-% % Reduce spacing around sections
-% \patchcmd{\section}{\@startsection{section}{1}{\z@}}{%
-%   \@startsection{section}{1}{\z@}%
-%   {-2.5ex \@plus -1ex \@minus -.2ex}%  % Reduced before spacing
-%   {1.5ex \@plus .2ex}%                 % Reduced after spacing
-%   {\normalfont\large\bfseries}}{}{}
-%   
-% \patchcmd{\subsection}{\@startsection{subsection}{2}{\z@}}{%
-%   \@startsection{subsection}{2}{\z@}%
-%   {-2.25ex \@plus -1ex \@minus -.2ex}% % Reduced before spacing  
-%   {1.25ex \@plus .2ex}%                % Reduced after spacing
-%   {\normalfont\bfseries}}{}{}
-%   
-% \patchcmd{\subsubsection}{\@startsection{subsubsection}{3}{\z@}}{%
-%   \@startsection{subsubsection}{3}{\z@}%
-%   {-2ex \@plus -1ex \@minus -.2ex}%    % Reduced before spacing
-%   {1ex \@plus .2ex}%                   % Reduced after spacing  
-%   {\normalfont\bfseries}}{}{}
-% \makeatother
-
-% \setlength{\abovecaptionskip}{4pt plus 2pt minus 2pt}
-% \setlength{\belowcaptionskip}{2pt plus 1pt minus 1pt}
-\setlength{\abovecaptionskip}{1ex}
-\setlength{\belowcaptionskip}{1ex}
-\setlength{\floatsep}{1ex}
-\setlength{\textfloatsep}{1ex}
-\setlength{\abovedisplayskip}{6pt}
-\setlength{\belowdisplayskip}{6pt}
 
 % turn off TODO notes
 % \usepackage[disable]{todonotes}
 
 \begin{document}
 
-%\bibliographystyle{natbib}
-
-\def\spacingset#1{\renewcommand{\baselinestretch}{#1}\small\normalsize}
-% \spacingset{1.3}
-\spacingset{1.0}
-
+\def\spacingset#1{\renewcommand{\baselinestretch}%
+{#1}\small\normalsize} \spacingset{1}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \if0\blind
 {
-  % \title{\bf Regression modelling of spatiotemporal extreme U.S. wildfires via partially-interpretable neural networks}
   \title{\bf Clustering of multivariate tail dependence using conditional methods}
-  % \author{Jordan Richards\thanks{The authors gratefully acknowledge funding from King Abdullah University of Science and Technology (KAUST) Office of Sponsored Research (OSR) under Award No.\ OSR-CRG2020-4394.}\hspace{.2cm}\\
-  % \author{Patrick O'Toole\thanks{Patrick O'Toole is supported by a scholarship from the EPSRC Centre for Doctoral Training in Statistical Applied Mathematics at Bath (SAMBa), under the project EP/S022945/1.}\hspace{.2cm}\\
-  %   % School of Mathematics \\ and Maxwell Institute for Mathematical Sciences, \\ University of Edinburgh, UK\\
-  %   Department of Mathematical Sciences, University of Bath, UK \\
-  %   and \\
-  %   Jordan Richards \\
-  %   School of Mathematics and Maxwell Institute for Mathematical Sciences, University of Edinburgh, UK \\
-  %   and \\ 
-  %   Christian Rohrbeck \\
-  %   Department of Mathematical Sciences, University of Bath, UK
-  % }
   \author{%
   Patrick O'Toole\thanks{Patrick O'Toole is supported by a scholarship from the EPSRC Centre for Doctoral Training in Statistical Applied Mathematics at Bath (SAMBa), under the project EP/S022945/1.}\\
   Department of Mathematical Sciences, University of Bath, UK
@@ -290,7 +191,29 @@ The conditional extremes (CE) framework has proven useful for analysing the join
 
 \newpage
 \spacingset{1.75} % DON'T change the spacing!
-\tightsection{Introduction}
+
+% --- Tighter spacing around figures and equations ---
+\setlength{\textfloatsep}{10pt plus 1pt minus 2pt}
+\setlength{\intextsep}{8pt plus 1pt minus 2pt}
+\setlength{\floatsep}{8pt plus 1pt minus 2pt}
+
+\setlength{\abovedisplayskip}{8pt plus 2pt minus 4pt}
+\setlength{\belowdisplayskip}{8pt plus 2pt minus 4pt}
+\setlength{\abovedisplayshortskip}{4pt plus 2pt minus 4pt}
+\setlength{\belowdisplayshortskip}{4pt plus 2pt minus 4pt}
+
+% -- Defaults 
+% \setlength{\textfloatsep}{20pt plus 2pt minus 4pt}
+% \setlength{\intextsep}{12pt plus 2pt minus 2pt}
+% \setlength{\floatsep}{12pt plus 2pt minus 2pt}
+% 
+% \setlength{\abovedisplayskip}{12pt plus 3pt minus 9pt}
+% \setlength{\belowdisplayskip}{12pt plus 3pt minus 9pt}
+% \setlength{\abovedisplayshortskip}{0pt plus 3pt}
+% \setlength{\belowdisplayshortskip}{7pt plus 3pt minus 4pt}
+
+
+\section{Introduction}
 \label{sec:intro}
 % Introduction to EVT
 Extreme Value Theory (EVT) provides asymptotically justified models for estimating the probability of events outside the range of observed values \citep{Coles2001}.

@@ -1288,7 +1288,7 @@ Assuming we use the dissimilarity matrix $M^{(i)}$, a brief description of the a
     \Repeat
     \State \textbf{Assignment:} \parbox[t]{.82\linewidth}{\raggedright Assign each observation $s\in\{1,\dots,D\}$ to its closest medoid in terms of $\eJSGa{}$ (see Equation~\eqref{eq:jsga_integral}), i.e.\ \\ $j \coloneq \argmin_{\ell\in\{1,\dots,k\}} \eJSGa{s,\kappa_\ell}$ and assign $s$ to $C_j$.}
       \For{$j=1,\dots,k$}
-        \State \textbf{Update:} \parbox[t]{.82\linewidth}{\raggedright Update medoid index to minimise intracluster dissimilarity, i.e.\ $\kappa_j \coloneq \argmin_{p\in C_j}\sum_{q\in C_j} \eJSGa{p,q}$.}
+        \State \textbf{Update:} \parbox[t]{.82\linewidth}{\raggedright Update medoid index to minimise intra-cluster dissimilarity, i.e.\ $\kappa_j \coloneq \argmin_{p\in C_j}\sum_{q\in C_j} \eJSGa{p,q}$.}
         \State \Comment{Break ties by choosing the smallest index.}
       \EndFor
     \Until{no observation changes cluster assignment}
@@ -1666,7 +1666,7 @@ This may be because the Gaussian copula becomes more similar to that of the t-co
 % \begin{figure}[htb]
 \begin{figure}[htb]
     \centering
-    \includegraphics[width = 0.85\linewidth]{plots/sim_01b_ce_vs_vi_dqu_0.9_man.png}
+    \includegraphics[width = 0.8\linewidth]{plots/sim_01b_ce_vs_vi_dqu_0.9_man.png}
     % \caption{\emph{Comparison of \citep{Vignotto2021} clustering with our proposed method (labelled ``Cond. Extremes''), for two variables and two equally sized clusters for simulations of 12 ``locations'', each with 1000 observations of each variable, from a mixture of Normal and Gaussian copulas. A grid search was performed, with the x-axis representing the Gaussian correlation parameter used for both clusters, and the facet labels showing the t-copula correlation parameters for each ``known'' cluster. This grid search was repeated 500 times. The smoothed lines show the smoothed median of the Adjusted Rand Index for both clustering methods, with smoothing performing using a generalised additive model.}} % The lines show the median of the Adjusted Rand Index for both clustering methods, with uncertainty coming from the 90\% credible interval.}} % The proposed method is shown to be superior to the leading competitor in the bivariate case, that of \cite{Vignotto2021}. Both models perform better when the difference in the t-copula correlation parameters between the two clusters is larger, and when Gaussian correlation is higher.
     % \caption{\emph{Comparison of our clustering method based on the Conditional Extremes model and the method of \citet{Vignotto2021} for extremal clustering.  
     % \caption{\emph{Comparison of performance for CE clustering and \citet{Vignotto2021}. 
@@ -1715,7 +1715,7 @@ Therefore, the aggregated matrix $M$ in Equation~\eqref{eq:aggregate_matrix} is 
     % A grid search was performed,  with the x-axis representing the Gaussian correlation parameter used for both clusters, and the facet labels showing the t-copula correlation parameters for each ``known'' cluster. 
     % This grid search was repeated 500 times. 
     % The smoothed lines show the smoothed median of the Adjusted Rand Index for both clustering methods, with smoothing performing using a generalised additive model.}} % Points show individual values of the ARI for a given simulation.}} 
-    \includegraphics[width = 0.85\linewidth]{plots/sim_01d_js_sens_2_3_var_dqu_0.9_man.png}
+    \includegraphics[width = 0.8\linewidth]{plots/sim_01d_js_sens_2_3_var_dqu_0.9_man.png}
     \caption{\emph{
         Comparison of clustering perfomance for $d = 2$ and $d=3$ variables and two equally-sized clusters. % for simulations of 12 locations from a mixture of Gaussian and t-copulas.
         The x-axis represents the Gaussian correlation parameter for both clusters, and the facet labels show the t-copula correlation parameters for the two true clusters.
@@ -1920,7 +1920,7 @@ We analyse the joint extremal behaviour of precipitation and wind speed at $D=59
 % The data we have performed our clustering on is precipitation data for the Republic of Ireland, collected from the Met Éireann website at \citet{metHistoricalData}, and wind speed data from the ERA5 Reanalysis dataset at \citet{Hersbach2020}, corresponding to the closest grid point to each location.
 % Precipitation data were collected from the Met Éireann website (accessed 2024-09-01), and wind speed data from the gridded ERA5 Reanalysis dataset \citep{metHistoricalData, Hersbach2020}.
 % Precipitation data are obtained from the Met Éireann archive (accessed 2024-09-01), and wind speed data from the ERA5 Reanalysis dataset \citep{Hersbach2020, metHistoricalData}. 
-Precipitation and wind speed data are obtained from the Met Éireann archive \citep{metHistoricalData}, and ERA5 Reanalysis \citep{Hersbach2020}, respectively.
+Precipitation and wind speed data are obtained from the Met Éireann archive \citep{metHistoricalData}, and ERA5 Reanalysis \citep{Hersbach2020}, respectively. \todo{ERA5 Reanalysis dataset?}
 % ERA5 provides averages over a gridded box of $0.25^{\circ} \times 0.25^{\circ}$, so each site will lie within a grid cell, to which the wind speed data corresponds.
 % ERA5 provides spatial averages on a $0.25^{\circ} \times 0.25^{\circ}$ grid, and each site was matched to the grid cell in which it lies. 
 Met Éireann data are irregularly spaced over space, while ERA5 provides spatial averages on a regular $0.25^{\circ} \times 0.25^{\circ}$ grid.
@@ -1941,7 +1941,7 @@ The dataset spans 11,323 consecutive daily observations.% between 1990-01-01 and
 % Preprocessing follows the procedure outlined in \citet{Vignotto2021}. 
 % Daily precipitation totals were aggregated into weekly sums, and wind speed maxima into weekly averages, for the winter months (October to March). 
 We focus on the winter months, October to March, following \citet{Vignotto2021}.
-Precipitation are aggregated into weekly sums, and wind speed maxima are aggregated into weekly averages.
+Precipitation are aggregated into weekly sums, and daily wind speed maxima are aggregated into weekly averages.
 % This weekly temporal scale was chosen because in the case of storms, precipitation and wind are believed to experience a slight lag \citep{Bengtsson2009}.
 % This weekly temporal scale was chosen because in the case of storms, there is often a slight lag between extreme precipitation and wind speed events \citep{Bengtsson2009}.
 % This thinning may also remove some temporal dependence in the data, which is not accounted for in our model.
@@ -1976,7 +1976,7 @@ Figure~\ref{fig:chi} shows empirical estimates of $\chi(0.95)$ at all 59 sites.
 An elevation profile of Ireland is also shown in Figure~\ref{fig:chi}, which may help further explain some of this spatial structure.
 % We can see that $\chi$ is positive for almost all sites, indicating positive asymptotic dependence of varying degree between precipitation and wind speed. 
 % This means that when, for example, wind speed is high, precipitation is also likely to be high, and vice versa, to a greater or lesser extent depending on the site.
-Non-zero values are observed at almost all sites, indicating positive asymptotic dependence between precipitation and wind speed. 
+Non-zero values are observed at almost all sites, indicating positive asymptotic dependence between precipitation and wind speed. \todo{positive extremal dependence, not asymptotic?}
 In practical terms, this suggests that extreme wind speeds tend to be accompanied by high precipitation, and vice versa. 
 % A clear spatial pattern emerges, whereby asymptotic dependence gets progressively stronger for locations further south and west, being highest along the west coast of Ireland, in counties such as Kerry, Galway, Mayo and Donegal. 
 % Conversely, sites in Dublin, Wicklow and Wexford have lower values of $\chi$ and $\bar{\chi}$, indicating weaker extremal dependence along the east coast. \todo{And Louth?}
@@ -1988,9 +1988,9 @@ The highest $\chi(0.95)$ value (0.414) is observed at Derryhillagh in Mayo, whil
 
 Some spatial outliers are also apparent. 
 Kilcar in Donegal has a relatively low $\chi(0.95)$ value despite its west-coast location, while certain Wicklow sites show unusually high values for the east. 
-The latter may be related to the influence of the Wicklow Mountains, as reflected in the elevation profile (Figure~\ref{fig:chi}).
+The latter may be related to the influence of the Wicklow Mountains, as reflected in the elevation profile (Figure~\ref{fig:chi}). \todo{Need to refer to figure here when whole paragraph is about it?}
 It may be of interest to investigate if these outliers in $\chi(0.95)$ are reflected in the CE model parameter estimates, and whether clustering can identify them.
-These results indicate distinct regional patterns of extremal dependence, as well as notable outliers, motivating the use of our extremal clustering framework to characterise and interpret this spatial structure more formally. 
+These results indicate distinct regional patterns of extremal dependence, as well as notable outliers, motivating the use of our extremal clustering framework to characterise and interpret this spatial structure more formally. \todo{Need to mention outliers again? Can't we say ``In general, ...''}
 
 \subsection{Conditional extremes model}
 \label{subsec:app_ce}
@@ -2011,6 +2011,7 @@ We transform the precipitation and wind speed data, separately at each location 
 To select an appropriate quantile level $q$ for fitting the CE model (see Section~\ref{subsec:ce_model}), we estimate the parameters $(\alpha_{\mid i}, \beta_{\mid i})$ at a sequence of levels $q$, to identify the lowest $q$ beyond which parameter estimates appear stable.
 % This revealed that estimates in general were quite stable up to the 88th quantile.  \todo{Need to expand with more details, could include plots in Appendix?}
 Estimates are generally stable for both models, i.e.,\@ precipitation conditional on wind speed and vice versa, up to $q = 0.85$ quantile, with similar maximum likelihood estimates across bootstrap samples for $(\alpha_{\mid i}, \beta_{\mid i})$. % and clustering solutions obtained when using the 85th quantile were quite similar to higher quantiles.
+\todo{Need to include threshold stability and/or diagnostic plots in supplementary materials?}
 % Diagnostic plots for the CE fits at $q=0.85$ for each location are included in the supplementary material. 
 % Therefore, the 85th quantile was used for subsequent analysis for both models.
 Therefore, we fix $q = 0.85$ for the subsequent analysis. 
@@ -2080,11 +2081,11 @@ The colour scale is the same for both variables, with darker red indicating larg
 % We cluster the locations using the ``combined'' dissimilarity matrix aggregated across both models (precipitation conditional on wind speed and vice versa), as defined in Section~\ref{subsec:div} and Equation~\eqref{eq:aggregate_matrix}, and also separately for each individual matrix as in Equation~\eqref{eq:distance_matrix}. 
 % We cluster the locations using the ``combined'' dissimilarity matrix aggregated across both conditioning variables, as defined in Equation~\eqref{eq:aggregate_matrix}, and also separately for each individual matrix $M^{i}, i = 1, 2$, as in Equation~\eqref{eq:distance_matrix}. 
 % We cluster the locations using the ``combined'' dissimilarity matrix aggregated across both conditioning variables, as defined in Equation~\eqref{eq:aggregate_matrix}, and separately for each individual matrix $M^{i}, i = 1, 2$, as in Equation~\eqref{eq:distance_matrix}.
-We cluster the locations using the ``combined'' dissimilarity matrix aggregated across both conditioning variables as defined in Equation~\eqref{eq:aggregate_matrix}, and separately for each individual matrix $M^{i}, i = 1, 2$, as in Equation~\eqref{eq:distance_matrix}.
+We cluster the locations using the ``combined'' dissimilarity matrix $M$ aggregated across both conditioning variables as defined in Equation~\eqref{eq:aggregate_matrix}, and separately for each individual matrix $M^{i}, i = 1, 2$, as in Equation~\eqref{eq:distance_matrix}.
 % The number of clusters $k$ was chosen via the method described in Section~\ref{subsubsec:choose_k}, using the elbow plot of the TWGSS. 
 % The number of clusters $k$ is chosen via the method described in Section~\ref{subsec:clustering}, using the elbow plot of the $\mathrm{TWGSS}$. 
 The number of clusters $k$ is chosen via the method in Section~\ref{subsec:clustering}, using the elbow plot of the $\mathrm{TWGSS}$. 
-For all three clustering scenarios, clear elbows are observed at $k = 3$. %, so this was the number of clusters chosen. 
+For all three clustering scenarios, clear elbows are observed at $k = 3$. \todo{Include elbow plots in supplementary material?}
 % Elbow plots are provided in the supplementary material.
 
 % Our clustering solutions for each of the three dissimilarity matrices at the 85th quantile are shown in Figure \ref{fig:clust_sol}.
@@ -2103,10 +2104,10 @@ For precipitation conditional on wind speed, the clustering is somewhat less dis
 % This may indicate greater complexity in the behaviour of wind speed extremes compared to rainfall extremes.%, or data issues.
 % This may also be due to our wind speeds coming from the ERA5 reanalysis dataset, which performs smoothing over a grid and so may underestimate wind speed extremes, and fail to capture more granular local variability.
 % It could also reflect the use of ERA5 reanalysis data for wind speed, which is known to smooth across grid cells, potentially underestimating local extremes and failing to capture fine-scale variability.  
-There are also notable outliers in the clusters, which we further discuss below.
+There are also notable outliers in the clusters, which we further discuss below. \todo{Mentioned above for chi as well, try to link better}
 % Kilcar in Donegal, which had a low $\chi$ value relative to other west coast sites as shown in Figure~\ref{fig:chi}, is assigned to the eastern cluster for $M$, the aggregated dissimilarity matrix, and the central cluster for each individual matrix.
 % Similarly, several Wicklow sites, which had relatively high $\chi$ values for the east coast, are assigned to the central cluster, rather than the eastern one.
-This may be related to the influence of the Wicklow Mountains, as reflected in the elevation profile in Figure~\ref{fig:chi}.
+% This may be related to the influence of the Wicklow Mountains, as reflected in the elevation profile in Figure~\ref{fig:chi}.
 
 \begin{figure}[htb]
     \centering
@@ -2144,7 +2145,8 @@ In particular, the difference between the eastern and western clusters is quite 
 In contrast, the western and central clusters seem to be quite close, in that we observe many small inter-cluster pairwise dissimilarities between them. 
 This indicates that allocation between the two is not always clear-cut and for several sites is nearly interchangeable, as observed in  the variable-specific estimated clusters in Figure~\ref{fig:clust_sol} and in the quantile sensitivity analysis in Figure~\ref{fig:clust_sens}, where membership between the two often switches. % \todo{Mention specific sites}
 % \todo{Add plots for k = 2, k = 4 to Appendix?}
-Also, if we only fit two clusters, we find that most of the central cluster members are assigned to the ``western'' cluster, reflecting this less obvious separation between the two compared to the more markedly different eastern cluster. 
+Also, if we only fit two clusters, we find that most of the central cluster members are assigned to the western cluster, reflecting this less obvious separation between the two compared to the more markedly different eastern cluster. 
+\todo{Link better to chi outliers}
 A noticeable outlier in the dissimilarity matrix is the site at Malahide Castle, which is located in Dublin, which even amongst its own cluster has a relatively high dissimilarity to the other sites.
 % Furthermore, we go to having four clusters, Malahide Castle becomes the only member of the new cluster, and so it is quite distinct from the other sites.
 Furthermore, if we set $k=4$, Malahide Castle becomes its own cluster, and so it is quite distinct from the other sites.
@@ -2158,7 +2160,7 @@ We also see that Kilcar in county Donegal, which had a low $\chi(0.95)$ value re
 
 \begin{figure}[htb]
     \centering
-    \includegraphics[width = 0.85\linewidth]{plots/cluster_dqu_crop.png}
+    \includegraphics[width = 0.85\linewidth]{plots/cluster_dqu_crop.png} % 0.8 doesn't add more lines than 0.85
     % \caption{\emph{ Clustering solutions for the conditional extremes model parameters estimated at the 88th quantile across all 59 sites, using the $\JSGa{}$ dissimilarity matrix for precipitation conditional on wind speed (centre), wind speed conditional on precipitation (right), and the combined dissimilarity matrix (left). The clusters are shown in different colours.}}
     % \caption{\emph{Clustering solutions for the conditional extremes model parameters estimated at the 85th, 88th and 90th quantiles across all 59 sites, using the combined $\JSGa{}$ dissimilarity matrix for precipitation conditional on wind speed and wind speed conditional on precipitation. The clusters are shown in different colours.}}
     \caption{\emph{

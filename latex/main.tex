@@ -2371,6 +2371,17 @@ However, this would be computationally expensive, and so would compromise one of
 % % For example, \citet{Vettori2020} modelled the extremal dependence structure of California state air pollution and environmental data across 21 sites. 
 % % It would be interesting to see if we could build on such work via exploratory spatial clustering using our method, and whether the CE model would provide greater flexibility than their max-stable process approach, which can only model asymptotic dependence. 
 
+% Future work
+There is lots of scope for further work in this area.
+Most obviously, we could apply our method to a dataset with $d > 2$ variables.
+This could be as simple as adding a third variable, such as temperature or humidity, from the ERA5 reanalysis dataset to our Irish meteorological example, to explore the multivariate extremal dependence, to see if this provides additional insights into the spatial patterns observed.
+In this work, we implicitly assume spatial stationarity in the extremal dependence structure, as we fit a separate CE model at each location.
+Many extensions of the CE model have been proposed to go beyond this, such as those incorporating covariates \citep{Richards2023} and spatio- and spatio-temporal representations of the CE parameters \citep{Simpson2021, Wadsworth2022} (see Section~\ref{sec:intro} for more details).
+These could be incorporated into our clustering framework, but care must be taken to ensure that the residual Gaussianity assumption still holds, or that an appropriate alternative dissimilarity is used, as discussed above.
+Another approach to dealing with the uncertainty in the clustering solution would be to use a Bayesian framework.
+By placing priors on the CE model parameters, we could obtain posterior distributions for these parameters, which could be used to compute a distribution of dissimilarity matrices and clustering solutions.
+Approaches such as that of \citep{Rohrbeck2021} have used a Reversible-Jump MCMC scheme to perform Bayesian clustering for spatial extremes, which does not require the number of clusters to be specified in advance.
+
 \section*{Acknowledgements}
 
 Patrick O'Toole is supported by a scholarship from the EPSRC Centre for Doctoral Training in Statistical Applied Mathematics at Bath (SAMBa), under the project EP/S022945/1.

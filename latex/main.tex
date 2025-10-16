@@ -2250,7 +2250,7 @@ Apart from these observations, the estimated clusters are generally quite simila
 % Our parametric approach is effective and uniquely extendable to higher dimensions, while remaining computationally efficient due to the closed-form for the $\JSGa{}$ divergence. 
 % In Section~\ref{sec:sim}, we showed via a simulation study that our method outperforms the leading competitor in the bivariate case, and is robust to a variety of multivariate dependence structures and scenarios.
 % We also applied our method to a real dataset of Irish meteorological data in Section~\ref{sec:application}, and demonstrated how our method can be used to identify meaningful spatial patterns in the extremal dependence structure of this data.
-In this paper, we introduced a novel method for clustering multivariate extremes using the conditional extremes model \citep{Heffernan2004}.
+In this paper, we introduced a novel method for clustering multivariate extremes using the conditional extremes (CE) model \citep{Heffernan2004}.
 We propose the expected conditional $\JSGa{}$ divergence \citep{Nielsen2019} as a measure of dissimilarity between multivariate conditional extremes models. 
 We use the common Gaussianity assumption to derive a closed-form expression for the $\JSGa{}$ divergence.
 Efficient k-medoids clustering is then performed on the dissimilarity matrix derived from this measure. 
@@ -2267,19 +2267,14 @@ We applied our extremal clustering method to Irish meteorological data, consisti
 Without explicitly incorporating spatial information, three clusters with distinct spatial patterns were identified, with well separated clusters representing the east and west coasts and the centre of Ireland.
 
 % Extension
+% While our motivating example was spatial, our method is broadly applicable to any multivariate extremal dependence setting and could therefore be employed in a variety of other contexts.
 While we focused on spatial applications in this work, our method is applicable to any multivariate extremal dependence setting, and so could be used in a variety of other contexts.
-For instance, our method could naturally be applied to clinical trial or public health data, where we could cluster different patients based on the tail dependence structure of their symptoms or biomarker measurements. 
-This type of analysis has also been explored by \citet{Talento2025}, who used the CE model to study the tail dependence of electroencephalogram (EEG) signals in neonatal subjects prone to seizures.
-Also, in financial applications, we could cluster time periods based on the extremal dependence structure of different assets, which could be useful for portfolio management and risk assessment.
-However, this would include the strong assumption that the time periods are independent.
-
-% Extension
-% While we focused on spatial applications in this work, our method is applicable to any multivariate extremal dependence setting, and so could be used in a variety of other contexts.
-% % For example, we could apply our method could be explicitly applied to temporal or spatio-temporal data, where we could cluster different time periods and/or locations based on their extremal dependence structure.
-% For example, our method could naturally be applied to temporal or spatio-temporal data, where we could cluster different time periods and/or locations based on their extremal dependence structure.
-% % In financial applications, we could cluster different assets based on their extremal dependence structure over time, which could be useful for portfolio management and risk assessment.
-While our motivating example was spatial, our method is broadly applicable to any multivariate extremal dependence setting and could therefore be employed in a variety of other contexts.
-For instance, it could be applied to clinical trial or public health data to cluster patients based on the tail dependence structure of their symptoms or biomarker measurements \citep{Talento2025}.
+For instance, it could be applied to clinical trial or public health data to cluster patients based on the tail dependence structure of their symptoms or biomarker measurements.
+% For instance, our method could naturally be applied to clinical trial or public health data, where we could cluster different patients based on the tail dependence structure of their symptoms or biomarker measurements. 
+% This has been explored in \citet{Talento2025}, where CE was used to study the tail dependence of electroencephalogram (EEG) signals in neonatal subjects prone to seizures. \todo{Word better}
+This application has been explored in \citet{Talento2025}, where CE was used to study the tail dependence of electroencephalogram (EEG) signals in neonates prone to seizures.
+% Also, in financial applications, we could cluster time periods based on the extremal dependence structure of different assets or returns, which could be useful for portfolio management and risk assessment.
+% However, this would require the strong assumption that the time periods are independent.
 In financial applications, we could cluster time periods according to the extremal dependence structure of different assets, offering potential insights for portfolio management and risk assessment.
 However, such an application would rely on the strong assumption that the time periods are independent.
 
@@ -2290,9 +2285,9 @@ However, such an application would rely on the strong assumption that the time p
 % This may not hold for all datasets. 
 % For example, in \citet{Farrell2025}, the authors model residuals using the generalised and asymmetric Gaussian distributions.
 While the Gaussianity assumption on which our method relies may not hold for all datasets, our approach showed good performance for all settings in Section~\ref{sec:sim}.
-A possible alternative is to employ the generalised and asymmetric Gaussian distribution by \citet{Farrell2025}. 
+A possible alternative is to employ the generalised and asymmetric Gaussian distributions used in \citet{Farrell2025}. 
 % While our closed-form would not hold in this case, the $\JSGa{}$ divergence could still be used, but would require computationally expensive Monte Carlo sampling to estimate the dissimilarity matrix.
-While we do not have a closed-form divergence in this case, our clustering method could still be used, but would require cosly numerical techniques to estimate the the dissimlarity matrix.
+While we do not have a closed-form divergence in this case, our clustering method could still be used, but would require cosly numerical techniques to estimate the dissimilarity matrix.
 % Indeed, it may be preferable to use the standard $\JS{}$ divergence if choosing to forgo the Gaussian assumption, since it is bounded above by $\log{(2)}$ and so may be more robust, as described in \citet{Thiagarajan2025}.
 Indeed, if choosing to forgo this Gaussian assumption, it may be preferable to use the standard Jensen-Shannon divergence in place of the $\JSGa{}$ divergence, since the former is bounded \citep{Thiagarajan2025}.
 
@@ -2305,7 +2300,8 @@ Another important limitation of our method is in its treatment of uncertainty, a
 % This is less problematic in our simulation study where we often know the true values of $\alpha$ and $\beta$ and can perform extensive grid searches to ensure that the clustering solution is robust.
 % However, in real applications, the uncertainty in these estimates can be quite large, and so vastly different clustering solutions may be obtained depending on the estimated values of $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$.
 % However, in real applications, the uncertainty in these estimates can be quite large, and so vastly different estimated clusters may be obtained depending on the estimated values of $\alpha$ and $\beta$.
-To account for this uncertainty, one possible approach could be to use the bootstrap method of \citet{Heffernan2004} to generate samples of CE model estimates, and compute our dissimilarity matrix for each sample. 
+% To account for this uncertainty, one possible approach could be to use the bootstrap method of \citet{Heffernan2004} to generate samples of CE model estimates, and compute our dissimilarity matrix for each sample. 
+To account for this, one possible approach is to use the bootstrap method of \citet{Heffernan2004} to generate samples of CE model estimates, and compute our dissimilarity matrix for each sample. 
 We could then produce a distribution of dissimilarity matrices, and use these to compute a distribution of estimated clusters.
 % This would allow us to account for the uncertainty in the CE model parameter estimates, and provide a more robust clustering solution.
 % However, this would be computationally expensive, and so would hurt one of the main advantages of our method, namely its computational efficiency.

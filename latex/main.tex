@@ -183,11 +183,11 @@
 \begin{abstract}
 The conditional extremes (CE) framework has proven useful for analysing the joint tail behaviour of random vectors.
   However, when applied across many locations or variables, it can be difficult to interpret or compare the resulting extremal dependence structures, particularly for high dimensional vectors. 
-  To address this, we propose a novel clustering framework multivariate extremes using the for CE framework, which can identify groups with similar extremal dependence structures.
+  To address this, we propose a novel clustering framework multivariate extremes using the CE framework, which can identify groups with similar extremal dependence structures.
   Our approach introduces a closed-form, computationally efficient dissimilarity measure for comparing tail dependence, based on the geometric Jensen-Shannon divergence, and is applicable in arbitrary dimensions.
   Applying standard clustering algorithms to the resulting pairwise distances, we obtain interpretable groups of random vectors with homogeneous tail dependence.
   Simulation studies demonstrate that our method outperforms existing approaches for clustering bivariate extremes, and uniquely extends to the multivariate setting. 
-  in our application to Irish meteorological data, our clustering identifies spatially coherent regions with similar extremal dependence between precipitation and wind speeds. 
+  In our application to Irish meteorological data, our clustering identifies spatially coherent regions with similar extremal dependence between precipitation and wind speeds. 
 \end{abstract}
 
 \noindent%
@@ -233,10 +233,11 @@ EVT has found broad usage in numerous, disparate domains, including finance \cit
 % Environmental applications are one area which particularly benefits from the use of EVT methods, to estimate the severity of future extreme events and develop risk management strategies. % and to assess the impact of climate change. 
 Environmental applications are one area which benefits from the use of EVT methods, to estimate the severity of future extreme events and develop risk management strategies. % and to assess the impact of climate change. 
 % For instance, heatwaves can lead to droughts and wild fires \citep{tanarhte2015heat, french2019quantifying, koh2023gradient}.
-% % Extreme rainfall contributes to storms and flooding, which can cause major damage and trigger large insurance claims \citep{Rohrbeck_flooding, osei2021estimation}.
-% Extreme rainfall and high wind speeds can cause major damage and large insurance claims, and thus it is important to understand their likelihood \citep{Rohrbeck_flooding, osei2021estimation, soukissian2015effect, steinkohl2013extreme}. 
+% % Extreme rainfall contributes to storms and flooding, which can cause major damage and trigger large insurance claims \citep{Rohrbeck_flooding_2018, osei2021estimation}.
+% Extreme rainfall and high wind speeds can cause major damage and large
+% insurance claims, and thus it is important to understand their likelihood \citep{Rohrbeck_flooding_2018, osei2021estimation, soukissian2015effect, steinkohl2013extreme}. 
 % % High wind speeds can lead to significantly damaging events such as tropical cyclones, and have also seen much focus in the field of EVT \citep{soukissian2015effect, steinkohl2013extreme}.
-Examples include the analysis of heatwaves \citep{tanarhte2015heat, french2019quantifying}, extreme rainfall \citep{osei2021estimation}, wind speeds \citep{steinkohl2013extreme, soukissian2015effect}, wildfire risks \citep{Koh2023}, and the impact of environmental extremes on insurance claims \citep{Rohrbeck_flooding, Miralles2024}.
+Examples include the analysis of heatwaves \citep{tanarhte2015heat, french2019quantifying}, extreme rainfall \citep{osei2021estimation}, wind speeds \citep{steinkohl2013extreme, soukissian2015effect}, wildfire risks \citep{Koh2023}, and the impact of environmental extremes on insurance claims \citep{Rohrbeck_flooding_2018, Miralles2024}.
 
 % Dependence modelling 
 % \todo{C: Shorten this paragraph}
@@ -282,7 +283,7 @@ In the multivariate EVT setting, one is interested in the \emph{joint} tail beha
 Multivariate extremes frequently arise in spatial applications, where one or more variables are recorded at a discrete set of sampling locations, or sites. 
 % In environmental applications, extreme events rarely occur in isolation, and the compounded impact of simultaneous or ``concomitant'' extremes can produce substantially more severe outcomes \citep{zscheischler2018future, bevacqua2021guidelines, Rohrbeck2021, Sando2022}.
 % ``Concomitant'' extremes, where multiple variables or locations simultaneously exhibit extreme behaviour, can produce substantially more severe outcomes than single-variable extremes \citep{zscheischler2018future, bevacqua2021guidelines, Rohrbeck2021, Sando2022}.
-Within such settings, simultaneous or ``concomitant'' extremes, where multiple variables or locations concurrently exhibit extreme behaviour, can produce substantially more severe outcomes than single-variable extremes \citep{Sando2022, bevacqua2021guidelines, Rohrbeck2021, zscheischler2018future}.
+Within such settings, simultaneous or ``concomitant'' extremes, where multiple variables or locations concurrently exhibit extreme behaviour, can produce substantially more severe outcomes than single-variable extremes \citep{zscheischler2018future, bevacqua2021guidelines, Rohrbeck2021, Sando2022}.
 % Consequently, these joint risks are liable to be underestimated unless tail \emph{dependence} is explicitly modelled \citep{Zhang2024}. 
 Consequently, joint risks may be underestimated unless tail \emph{dependence} is explicitly modelled \citep{Zhang2024}. 
 % Tail dependence can be described using the coefficient of asymptotic dependence \(\chi\in[0,1]\) (see e.g.\ \citet{Coles1999}), which for two random variables \(X_1,X_2\) with corresponding marginal distribution functions \(F_1,F_2\) is defined as 
@@ -293,11 +294,12 @@ For two random variables $X_1$ and $X_2$ with distribution functions $F_1$ and $
   % \chi \;=\; \lim_{u\to 1}\Pr\big(F_1(X_1)>u \mid F_2(X_2)>u\big).
   % \chi \;=\; \lim_{u\to 1}\Pr\left[F_1(X_1)>u \mid F_2(X_2)>u\right].
   % \chi \;=\; \lim_{u\to 1}\Pr\left\{F_1(X_1)>u \mid F_2(X_2)>u\right\}.
-  \chi \;=\; \lim_{u\to 1} \chi(u) \;=\; \lim_{u\to 1}\Pr\big(F_1(X_1)>u \mid F_2(X_2)>u\big).
+  % \chi \;=\; \lim_{u\to 1} \chi(u) \;=\; \lim_{u\to 1}\Pr\big(F_1(X_1)>u \mid F_2(X_2)>u\big).
+  \chi \;=\; \lim_{u\to 1} \chi(u) \;=\; \lim_{u\to 1}\Pr\left(F_1(X_1)>u \mid F_2(X_2)>u\right).
 \end{equation}
 % The values \(\chi>0\) indicate asymptotic dependence (AD) and \(\chi=0\) asymptotic independence (AI) for the random vector $\left(X_1, X_2\right)$. 
 When $\chi$ > 0, the variables $X_1$ and $X_2$ are asymptotically dependent (AD), while $\chi=0$ corresponds to asymptotic independence (AI) between $X_1$ and $X_2$.
-Although \(\chi\) is a useful pairwise summary of extremal dependence, it does not fully characterise multivariate the tail dependence structure or support inference on joint exceedance probabilities, for which a full probabilistic model is required. 
+Although \(\chi\) is a useful pairwise summary of extremal dependence, it does not fully characterise the multivariate tail dependence structure or support inference on joint exceedance probabilities, for which a full probabilistic model is required.
 % \todo{Move later, follow up by saying our clustering method can capture AI}
 % Many classical models and clustering frameworks assume AD \citep{Vignotto2021,Boulin2025}, but a growing literature argues that environmental data often exhibit AI and that AD models can be inappropriate in such contexts \citep{Opitz2016,Dawkins2018,Huser2024}. 
 
@@ -355,11 +357,12 @@ To illustrate the efficiency of our approach, we consider a motivating applicati
 % It provides a flexible framework which can capture both AD and AI patterns. % , and other complex extremal dependence patterns. 
 % A key advantage is that the CE model provides a flexible framework which can capture both AD and AI patterns. % , and other complex extremal dependence patterns.
 % This flexibility, along with its conceptual simplicity and computational efficiency, have made it a popular choice for modelling multivariate extremes. 
-This framework can flexibly capture both AD and AI structure in data, and it is both conceptually simple and computationally efficient.
+This framework can flexibly capture both AD and AI structure in data, and is both conceptually simple and computationally efficient.
 Spatio-temporal extensions and single-site conditioning methods have been developed to handle high-dimensional settings \citep{Simpson2021, Wadsworth2022}, and adaptations that incorporate covariates, hierarchical structure, and mixtures or random-scale constructions further increase the models flexibility \citep{Tawn2018, Tendijck2023, Richards2023, Talento2025}.
 % As a result, CE models have been applied across a broad range of environmental problems, where AI as well as AD may be prevalent, including modelling river flow and flood risk \citep{Gilleland2013, Jane2020}, rainfall extremes \citep{Richards2022}, sea-surface temperature extremes \citep{Simpson2023,Kakampakou2024}, and heatwaves \citep{Winter2016}, and so are well suited to this class of problems and our motivating example.
-As a result, CE models have been applied across a broad range of environmental problems, here AI as well as AD may be prevalent, including river flow and flood risk \citep{Gilleland2013, Jane2020}, rainfall extremes \citep{Richards2022}, sea-surface temperature extremes \citep{Simpson2023,Kakampakou2024}, and heatwaves \citep{Winter2016}.
-They are thus well-suited to this class of problems and our motivating example.
+As a result, CE models have been applied across a broad range of environmental problems, where AI as well as AD may be prevalent, including river flow and flood risk \citep{Gilleland2013, Jane2020}, rainfall extremes \citep{Richards2022}, sea-surface temperature extremes \citep{Simpson2023,Kakampakou2024}, and heatwaves \citep{Winter2016}.
+% They are thus well-suited to this class of problems and our motivating example.
+Thus, they are well-suited to this class of problems and our motivating example.
 % Despite these strengths, sparsity of joint extremes, particularly in high dimensions, can make pattern discovery and interpretation difficult.
 % However, the sparsity of joint extreme observations, particularly in high dimensions, can make pattern discovery and interpretation using the CE model difficult, which requires further addressing to fully exploit its potential.
 However, the scarcity of joint extreme observations, particularly in high dimensions, and the number of required model parameters, often results in estimates of the CE model being highly uncertain. 
@@ -535,7 +538,7 @@ However, their method is restricted to the bivariate case, and,
 % However, their method is restricted to the bivariate case and the AD regime, which may be limiting both in our application and in applying the method more generally to this class of multivariate clustering problem. 
 being non-parametric, lacks a generative model for tail dependence inference. % and may perform poorly without a large sample size. 
 % Also, it is undefined where no joint extreme events are observed, which can occur frequently in practice, and so is unsuitable for applications where AI may be prevalent, which we expect in our motivating example.
-Also, it is undefined where no joint extreme events are observed, which can occur frequently in environmental applications, AI is prevalent.
+Also, it is undefined where no joint extreme events are observed, which can occur frequently in environmental applications, where AI is prevalent.
 % Therefore, this approach may be limiting for our motivating example and across this class of problems, indicating the need for a more flexible and general clustering framework within multivariate extremes.
 
 % Clustering: Motivating our clustering algorithm
@@ -562,7 +565,7 @@ Our clustering method can flexibly handle both AD and AI.
 % Using the working conditional Gaussianity assumption of \citet{Heffernan2004} for estimating the CE model, we define a simple, closed-form divergence measure for multivariate extremes which permits clustering.
 % Using the working conditional Gaussian assumption of \citet{Heffernan2004} for estimating the CE model, we define a closed-form divergence measure for CE models which permits clustering.
 Using the working Gaussianity modelling assumption of \citet{Heffernan2004}, we define a closed-form divergence measure for CE models which permits clustering using traditional methods.
-Our parametric clustering approach delivers a unified and statistically principled tool for exploratory analysis of multivariate extremes, facilitating the identification of spatial locations with similar tail dependence. 
+Our parametric clustering approach delivers a unified and statistically principled tool for exploratory analysis of multivariate extremes, facilitating the identification of spatial locations with similar tail dependence. \todo{Mention random vectors as well as spatial locations?}
 
 % Structure of paper
 The remainder of this paper is structured as follows.
@@ -577,7 +580,7 @@ skew-geometric Jensen-Shannon divergence $\left(\JSGa{}\right)$ of \citet{Nielse
 % Section~\ref{sec:sim} describes a simulation study, where we demonstrate that our approach outperforms the method by \citet{Vignotto2021} across a range of extremal dependence structures. 
 Section~\ref{sec:sim} provides a simulation study where we demonstrate that our approach outperforms the clustering method of \citet{Vignotto2021} across a range of extremal dependence structures. 
 In Section~\ref{sec:application}, we apply our clustering framework to Irish meteorological data, and identify sites with similar tail dependence between precipitation and wind speeds.
-Section~\ref{sec:discuss} concludes with a discussion of our findings, the limitations of our method, and potential avenues for future work.
+Section~\ref{sec:discuss} concludes with a discussion of our findings, the limitations of our method, and potential avenues for future work. \todo{Future work mentioned? Apart from other applications..}
 
 \section{Methodology}
 \label{sec:method}
@@ -2320,7 +2323,6 @@ However, this would be computationally expensive, and so would compromise one of
 \section*{Acknowledgements}
 
 Patrick O'Toole is supported by a scholarship from the EPSRC Centre for Doctoral Training in Statistical Applied Mathematics at Bath (SAMBa), under the project EP/S022945/1.
-).
 We acknowledge the use of the ERA5 reanalysis dataset, available from the Copernicus Climate Change Service (C3S) Climate Data Store (CDS) (\url{https://cds.climate.copernicus.eu/}). 
 We also acknowledge the use of the Irish meteorological dataset obtained from Met Éireann (\url{https://www.met.ie/climate/available-data/historical-data}).
 
@@ -2341,6 +2343,8 @@ We also acknowledge the use of the Irish meteorological dataset obtained from Me
 \end{description}
 
 \bibliographystyle{apalike}
+% Don't sort bibliography so it stays in chronological order
+% \bibliographystyle{apalike_unsrt}
 {\small
 \bibliography{library.bib}
 }

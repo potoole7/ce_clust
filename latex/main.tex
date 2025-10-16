@@ -593,7 +593,7 @@ Section~\ref{subsec:ce_model} provides background on the conditional extremes (C
 % We explain how inference with this model is equivalent to estimating a multivariate Gaussian distribution. 
 % In Section~\ref{subsec:div}, we describe our chosen dissimilarity measure, the skew-geometric Jensen-Shannon divergence, which has analytical form when comparing Gaussian distributions, and allows us to efficiently quantify the pairwise dissimilarity between fitted CE models.
 % In Section~\ref{subsec:div}, we describe our novel dissimilarity measure for multivariate CE, which uses the skew-geometric Jensen-Shannon divergence, to efficiently quantify pairwise dissimilarity between fitted CE models.
-In Section~\ref{subsec:div}, we describe a novel dissimilarity measure for multivariate CE, which uses the skew-geometric Jensen-Shannon divergence, to efficiently quantify dissimilarity between fitted CE models.
+In Section~\ref{subsec:div}, we describe a novel dissimilarity measure for multivariate CE, which uses the skew-geometric Jensen-Shannon divergence to efficiently quantify dissimilarity between fitted CE models.
 % Finally, Section~\ref{subsec:clustering} outlines how we perform k-medoids clustering using this dissimilarity measure, to identify sites with similar tail dependence structures, and how the number of clusters is selected.
 % Finally, in Section~\ref{subsec:clustering}, we outline how to perform clustering using this dissimilarity measure, and provide practical advice on choosing the number of clusters.
 Finally, in Section~\ref{subsec:clustering}, we outline how to perform clustering using this dissimilarity measure, and provide practical advice on choosing the number of clusters.
@@ -759,6 +759,7 @@ With all operations below taken component-wise, \citet{Heffernan2004} assume tha
   % \quad\text{as } u_i \to \infty.
   \quad\text{as } u \to \infty,
 \end{equation}
+\todo{Okay to use u here, and ui in below equation?}
 % \todo{i subscript removed from LHS, but not on RHS, is this ok?}
 % where $u_i$ is a suitably high threshold for $Y_i$, and $\symbf{G}_{j \mid i}$ is non-degenerate for all $j \ne i$. 
 % \todo{below points needed, or can some of this be removed?}
@@ -813,10 +814,11 @@ Some special cases (for $j\in\{1,\ldots,d\} \backslash i$) of the CE model are:
 %   \item $-1 < \symbf{\alpha}_{j \mid i} < 1$, which suggests asymptotic independence between $Y_j$ and $Y_i$, with dependence weakening as $Y_i \to \infty$, equivalent to $\chi < 1$. 
 % \end{itemize}
 % $\alpha_{j\mid i}=0$ and $\beta_{j\mid i}=0$, for which we have perfect independence between $Y_j$ and $Y_i\mid Y_i>u_i$, corresponding to $\chi=0$;
-$\alpha_{j\mid i}=0$ and $\beta_{j\mid i}=0$, which implies asymptotic independence between $Y_j$ and $Y_i\mid Y_i>u_i$, corresponding to $\chi=0$;
-$\alpha_{j\mid i}=1\ ( -1)$ and $\beta_{j\mid i}=0$, which corresponds to positive (negative) asymptotic dependence, equivalent to $\chi=1$ ($\chi=0$); and
+$\alpha_{j\mid i}=0$ and $\beta_{j\mid i}=0$, which imply asymptotic independence between $Y_j$ and $Y_i\mid Y_i>u_i$, corresponding to $\chi=0$;
+% $\alpha_{j\mid i}=1\ ( -1)$ and $\beta_{j\mid i}=0$, which corresponds to positive (negative) asymptotic dependence, equivalent to $\chi=1$ ($\chi=0$); and
+$\alpha_{j\mid i}=1\ ( -1)$ and $\beta_{j\mid i}=0$, which corresponds to positive (negative) asymptotic dependence, equivalent to $\chi=1$ ($\chi=-1$); and
 % $-1<\alpha_{j\mid i}<1$, which suggests asymptotic independence between $Y_j$ and $Y_i$, with dependence weakening as $Y_i\to\infty$, equivalent to $\chi<1$.
-$-1<\alpha_{j\mid i}<1$, which suggests asymptotic independence between $Y_j$ and $Y_i$, with the strength of extremal dependence weakening with $\alpha_{j \mid i}$, equivalent to $\chi<1$.
+$-1<\alpha_{j\mid i}<1$, which suggests asymptotic independence between $Y_j$ and $Y_i$, with the strength of extremal dependence weakening with $\alpha_{j \mid i}$, equivalent to $\chi<1$. \todo{Should I have 0 < chi < 1 here?}
 
 % \subsubsection{Setup}~\label{subsubsec:ce_setup}
 % \subsubsection{Framework and model inference}~\label{subsubsec:ce_setup}
@@ -846,11 +848,12 @@ This leads to a spatial extension of Equation~\eqref{eq:ce_model}, with site-spe
       + y^{\symbf{\beta}_{\mid i, s}} \, \symbf{Z}_{\mid i, s}, 
       \quad y > u_{i, s}, 
 \end{equation}
+\todo{Should I define this as H from equation 10 here?}
 % with location-specific residuals $\symbf{Z}_{\mid i}(s) \sim \symbf{G}_{\mid i}(s)$. \todo{Do I need to define alpha(s), beta(s), ui(s) again?}
 % where $\symbf{Y}_{-i}(s) \coloneqq \symbf{Y}(s) \setminus Y_i(s), \symbf{\alpha}_{\mid i}(s), \symbf{\beta}_{\mid i}(s)$ and $\symbf{Z}_{\mid i}(s) \sim \symbf{G}_{\mid i}(\cdot ; s)$ are the site-specific counterparts of the regression parameters and residuals introduced above.  
 % where $\symbf{Y}_{-i, s} \coloneqq \symbf{Y}_{s} \setminus Y_{i, s}$, and $\symbf{\alpha}_{\mid i, s}$, $\symbf{\beta}_{\mid i, s}$ $\symbf{Z}_{\mid i, s} \sim \symbf{G}_{\mid i, s}$ and $u_{i, s}$ are the site-specific counterparts of the regression parameters, residuals and exceedance threshold introduced above in Equations~\eqref{eq:ce_limiting_dist} and~\eqref{eq:ce_model}.
 where $\symbf{Y}_{-i, s} \coloneqq \symbf{Y}_{s} \backslash Y_{i, s}$, and $\symbf{\alpha}_{\mid i, s}$, $\symbf{\beta}_{\mid i, s}$ $\symbf{Z}_{\mid i, s} \sim \symbf{G}_{\mid i, s}$ and $u_{i, s}$ are the site-specific counterparts of the regression parameters, residuals and exceedance threshold introduced in Equations~\eqref{eq:ce_limiting_dist} and~\eqref{eq:ce_model}.
-Note that make no assumptions about spatial smoothness in the regression model. 
+Note that we make no assumptions about spatial smoothness in the regression model. \todo{don't have on own line}
 
 % Intro: CE gives distributions, which need to be compared
 % Definition of Z moved here to be impactful than after eq:ce_model
@@ -910,8 +913,9 @@ In practice, we set the threshold $u_{i, s} \coloneqq u_i$ to the $q^{\text{th}}
 Choosing $q$ involves the classical bias-variance tradeoff: $q$ must be sufficiently low as to leave enough excesses above $u_i$ for reliable estimation, but high enough to reduce bias induced when the asymptotic arguments in Equation~\eqref{eq:ce_limiting_dist} are not satisfied. 
 % To pick $q$, we use threshold stability plots \citep{Scarrott2012}. \todo{This reference is for univariate cases, need multivariate one? texmex okay?}
 To pick $q$, we use threshold stability plots and assess the stability of parameter estimates at different thresholds \citep{Southworth2012}. % \todo{Cite texmex where I get this method from?}
+\todo{Include in supplementary materials?}
 % The bootstrapping procedure of \citet{Heffernan2004} is used to obtain standard errors for the parameter estimates, and we choose the highest value of $q$ such that the parameter estimates are stable, and the bootstrap standard errors are reasonably small.
-Using the bootstrap procedure of \citet{Heffernan2004}, we obtain standard errors for parameter estimates and choose the highest value of $q$ such that the parameter estimates are stable and the bootstrap standard errors are reasonably small. % \todo{Briefly describe this bootstrap method?}
+Using the bootstrap procedure of \citet{Heffernan2004}, we obtain standard errors for parameter estimates and choose the highest value of $q$ such that the parameter estimates are stable and the bootstrap standard errors are reasonably small. \todo{Say this is done across sites?}
 
 \subsection{A divergence measure for multivariate conditional extremes}
 \label{subsec:div}
@@ -929,7 +933,7 @@ The measure should be non-negative and symmetric so that it can be interpreted a
 % Ideally, our measure should also have some form of upper bound, as smaller divergences lead to more well-defined clusters, and very large divergences can lead to numerical instability. \todo{Citation!}
 Ideally, our measure should also have an upper bound, as large divergences can lead to numerical instability during clustering \citep{Thiagarajan2025}. % , and less stable and well-defined clusters \citep{Thiagarajan2025}. 
 % Finally, we would like our measure to be a true metric, so that it satisfies the triangle inequality and is non-negative, and this is known to improve the performance of clustering algorithms \todo{Again, citation?}.
-We also desire provide computational efficiency through a closed-form solution our divergence, which is cheap to compute. 
+We also provide computational efficiency through a closed-form solution for our divergence, which is cheap to compute. 
 % We achieve this using the Gaussian assumption in Equation~\eqref{eq:ce_norm}.
 % \todo{Any other properties? Convex (as KL is?) (which may be better?) (need citation)}
 
@@ -939,7 +943,7 @@ We also desire provide computational efficiency through a closed-form solution o
 % \todo{Switch to H and H star to match below?}
 % Specifically, we use the dual form of the $\JSGa{}$ divergence \citep{Deasy2020}, which is defined between two continuous $d$-variate distribution functions, say $H_1$ and $H_2$, as 
 % \todo{Discuss: d-variate? (d-1)-variate? multivariate?}
-Specifically, we use the dual form of the $\JSGa{}$ divergence \citep{Deasy2020}, which is defined between two continuous $(d-1)$-variate distribution functions, say $H_1$ and $H_2$, as 
+Specifically, we use the dual form of the $\JSGa{}$ divergence \citep{Deasy2020}, which is defined between two continuous $(d-1)$-variate distribution functions, say $H_1$ and $H_2$, as  \todo{Do we want H* here?}
 \begin{equation}\label{eq:jsga}
   % \JSGa{(P \Vert Q)} = \frac{1}{2} \left\{\KL{(P \Vert G_{\alpha}(P, Q))} + \KL{(Q \Vert G_{\alpha}(P, Q))} \right\},
   % \JSGa{(F_1 \Vert F_2)} = \frac{1}{2} \left\{\KL{(F_1 \Vert G_{\lambda}(F_1, F_2))} + \KL{(F_2 \Vert G_{\lambda}(F_1, F_2))} \right\},
@@ -967,7 +971,7 @@ The weight $\lambda$ skews the geometric mean $G_{\lambda}(H_1,H_2)$ towards $H_
 % One possible advantage of specifying $\lambda$ is that we can design our divergence measure to place more weight on the CE model at sites with more reliable fit, as determined by, for example, the effective sample size.
 One possible advantage of specifying $\lambda$ is that we can design our divergence measure to place more weight on the CE model at sites with more reliable fit, as determined by, for example, the effective sample size.
 % In this paper, we set $\lambda = 0.5$ throughout, as all sites have equal number of observations in both our simulation and case studies.
-In this paper, we set $\lambda = 0.5$ throughout, as all sites have the same number of observations in both our simulations and case studies.
+In this paper, we set $\lambda = 0.5$ throughout, as all sites have the same number of observations in both our simulations and case study.
 
 % As such, for the sake of brevity we refer to $\JSGa{}(H_1 \Vert H_2)$ as simply $
 % \todo{Refer to JSGa as GJS from now on, since lambda is fixed?}
@@ -985,14 +989,14 @@ For two multivariate Gaussian distributions, the $\KL{}$ divergence in Equation~
 The $\JSGa{}$ divergence exploits the property that the (weighted) product of two distributions from the same exponential family is proportional to another member of that family, and hence, after normalisation, is itself an exponential-family distribution \citep{Nielsen2019}.
 % It then follows that $G_{\lambda}(H_1, H_2)$ is multivariate Gaussian, and so the $\KL{}$ divergences in Equation~\eqref{eq:jsga} are between multivariate Gaussian distributions and can be computed in closed-form.
 It then follows that $G_{\lambda}(H_1, H_2)$ is multivariate Gaussian, and so the $\KL{}$ divergences in Equation~\eqref{eq:jsga} are evaluated on multivariate Gaussian distributions and are therefore available in closed-form.
-Hence, the principle advantage of the $\JSGa{}$ is that it has a closed-form solution for two multivariate Gaussian distributions, and so is computationally efficient to compute \citep{Nielsen2019}, which has led to its use in several applications, including clustering, deep learning, variational inference, and remote sensing \citep{Nielsen2019, Deasy2020, Ni2023-cd, Thiagarajan2025}.
+Hence, the principle advantage of the $\JSGa{}$ is that it has a closed-form solution for two multivariate Gaussian distributions, and so is computationally efficient to compute \citep{Nielsen2019}, which has led to its use in several applications, including clustering, deep learning, variational inference, and remote sensing \citep{Nielsen2019, Deasy2020, Ni2023-cd, Thiagarajan2025}. \todo{reference order}
 % Furthermore, it is clearly symmetric and non-negative, as the sum of two $KL$ divergences, which is also important for clustering.
 % Furthermore, as the average of two $\KL{}$ divergences, it is clearly symmetric and non-negative.
 % Finally, when $\lambda = 0.5$, $\JSGa{}$ is bounded above by $\JSGa{(H_1 \Vert H_2)} \leq \frac{1}{4} \mathrm{J}(H_1 \Vert H_2)$,
 % JSGa form
 % For two multivariate normals, \citet{Nielsen2019} shows that the $\JSGa{}$ divergence introduced in Equation~\eqref{eq:js_norm} has the closed-form solution
 % \todo{eq:js_norm can't be found}
-For two generic multivariate Gaussian distributions $H \sim \mbox{MVN}(\symbf{m}, \Omega)$ and $H^* \sim \mbox{MVN}(\symbf{m}^*, \Omega^*)$ in $\mathbb{R}^d$ with mean vectors $\symbf{m}, \symbf{m}^* \in \mathbb{R}^d$ and covariance matrices $\Omega, \Omega^* \in \mathbb{R}^{d \times d}$, \citet{Nielsen2019} showed that the dual $\JSGa{}$ divergence introduced in Equation~\eqref{eq:jsga} has the closed-form solution 
+For two generic multivariate Gaussian distributions $H \sim \mbox{MVN}(\symbf{m}, \Omega)$ and $H^* \sim \mbox{MVN}(\symbf{m}^*, \Omega^*)$ in $\mathbb{R}^d$ with mean vectors $\symbf{m}, \symbf{m}^* \in \mathbb{R}^d$ and covariance matrices $\Omega, \Omega^* \in \mathbb{R}^{d \times d}$, \citet{Nielsen2019} showed that the dual $\JSGa{}$ divergence introduced in Equation~\eqref{eq:jsga} has the closed-form solution \todo{don't have on own line}
 \begin{align*}%\label{eq:js_norm_mvn}
   % JS^{G_{\lambda}}(F \Vert F^*) &= \frac{1}{2} \left( (1 - k) m^T \Omega^{-1} m + k m^*^T \Omega^*^{-1} m^* - m_{\lambda}^T \Omega_{\lambda}^{-1} m_{\lambda} + \log{\left( \frac{\abs{\Omega}^{1-k} \abs{\Omega^*}^{\lambda}}{\abs{\Omega_{\lambda}}} \right)} \right), \\
   \JSGa{}(H \Vert H^*) &= \frac{1}{2} \left\{ (1-\lambda) \symbf{m}^T \Omega^{-1} \symbf{m} + \lambda {\symbf{m}^*}^T {\Omega^*}^{-1} \symbf{m}^* - {\symbf{m}_{\lambda}}^T \Omega_{\lambda}^{-1} \symbf{m}_{\lambda} + \log{\left( \frac{\abs{\Omega}^{1-\lambda} \abs{\Omega^*}^{\lambda}}{\abs{\Omega_{\lambda}}} \right)} \right\}, \\
@@ -1001,6 +1005,7 @@ For two generic multivariate Gaussian distributions $H \sim \mbox{MVN}(\symbf{m}
   % m_{\lambda} &= \Omega_{\lambda} \left( (1 - k) \Omega^{-1} m + k \Omega^*^{-1} m^* \right), \numberthis\label{eq:js_norm_mvn1}
   \symbf{m}_{\lambda} &= \Omega_{\lambda} \left\{(1-\lambda) \Omega^{-1} \symbf{m} + \lambda {\Omega^*}^{-1} \symbf{m}^* \right\}. \numberthis \label{eq:js_norm_mvn1}
 \end{align*} 
+\todo{Is power of variable (Omega) with superscript (*) done correctly here?}
 % where:
 % \begin{itemize}
 %   \item $m_1 = (m_{1,1}, m_{1,2}, \ldots, m_{1,d})^\top$ and $m_2 = (m_{2,1}, m_{2,2}, \ldots, m_{2,d})^\top$ are the mean vectors,
@@ -1012,6 +1017,8 @@ Finally, the $\JSGa{}$ is bounded above by $\JSGa{(H_1 \Vert H_2)} \leq \frac{1}
 %   \JSGa{(F_1 \Vert F_2)} \leq \frac{1}{4} \mathrm{J}(F_1 \Vert F_2),
 % \end{equation}
 where the Jeffreys' divergence $\mathrm{J}(H_1 \Vert H_2) = \KL{(H_1 \Vert H_2)} + \KL{(H_2 \Vert H_1)}$ is simply the sum of the forward and backward $\KL{}$ divergences \citep{Nielsen2025}.
+\todo{Include brief derivation in supplementary materials?}
+\todo{Can we say anyting more about this?}
 % A derivation of this bound is provided in the supplementary material.
 % Therefore, $\JSGa{}$ provides more well-defined clusters than the Jeffreys' divergence, motivating the higher conceptual complexity by comparison. 
 % Therefore, the $\JSGa{}$ divergence is less susceptible to numerical instability than this simple summation. %, and also provides more tightly defined clusters.
@@ -1051,7 +1058,7 @@ Using the $\JSGa{}$ divergence in Equation~\eqref{eq:js_norm_mvn1}, we define th
 \end{equation}
 % where $H_{\mathbf{Y}_{-i}(s)|Y_i(s)=y}$ and $H_{\mathbf{Y}_{-i}(s^*)|Y_i(s^*)=y}$ are the conditional multivariate Gaussian distributions induced by the CE model at sites $s$ and $s^*$, respectively, for a given value of $y > \max(u_i(s), u_i(s^*))$. \todo{Is this max correct?}
 % where $H_{i, s}(y)$ and $H_{i, s^*}(y)$ are the conditional multivariate Gaussian distributions for variable $i$ induced by the CE model at sites $s$ and $s^*$, respectively, for a given value of $y > \max(u_{i, s}, u_{i, s^*})$. \todo{Is this max correct? Has it been talked about enough before?} \todo{Should this be mid i? What does Heff2004 do?}
-where $H_{i, s}(y)$ and $H_{i, s^*}(y)$ are the conditional $(d-1)$-variate Gaussian distributions at sites $s$ and $s^*$, respectively, see Equation~\eqref{eq:ce_norm}.
+where $H_{i, s}(y)$ and $H_{i, s^*}(y)$ are the conditional $(d-1)$-variate Gaussian distributions at sites $s$ and $s^*$, respectively; see Equation~\eqref{eq:ce_norm}.
 % Substituting the means and covariances of these conditional distributions from Equation\eqref{eq:ce_norm} into Equation~\eqref{eq:js_norm_mvn1} gives the closed-form expression
 % \todo{Need help tidying up}
 % \todo{move equation number to right}
@@ -1191,12 +1198,14 @@ We here exploit our standardised Laplace margins and note that $h(y \mid Y_{i, s
 
 % Monte Carlo estimation
 % We estimate the integral in Equation~\eqref{eq:jsga_integral} using Monte Carlo methods, noting that $Y_{i, s}$ follows a standard Laplace distribution.
-We estimate the integral in Equation~\eqref{eq:jsga_integral} using Monte Carlo methods.%, noting that $Y_{i, s}$ follows a standard Laplace distribution.
+We estimate the integral in Equation~\eqref{eq:jsga_integral} using Monte Carlo methods. %, noting that $Y_{i, s}$ follows a standard Laplace distribution.
 % We average across the individual scores for each individual realisation of $Y_i(s)$ to derive the divergence for a pair of sites, weighted by the distribution of $Y_i(s)$.
 In practice, very large values of $Y_{i, s}$ can lead to unstable estimates, and we also want to avoid extrapolating beyond the range of the observations of $Y_{i, s}$ used to fit the CE model. 
 % Hence, we truncate the expectation at the 99th percentile of the empirical distribution of $Y_i(s)$ across all sites.
 % Hence, we truncate the integral in Equation~\eqref{eq:jsga_integral} at the 99th percentile of the empirical distribution of $Y_{i, s}$ across all sites.
 Hence, we truncate the limits in integral~\eqref{eq:jsga_integral}, so that the upper limit is the 99th percentile of the empirical distribution of $Y_{i, s}$ pooled across all sites. % \todo{Dicuss: How to reformulate to show pooling over all sites?}
+\todo{Need to mention what to do if any sites have obs which exceed 99th percentile?}
+\todo{mention what to do when 99th empirical percentile is greater than max obs at any sites?}
 
 % Matrix
 % We can repeat this procedure for each pair of sites $(s, s^*)$ and for each conditioning variable $Y_i$, to obtain a matrix of pairwise dissimilarities between all sites for each conditioning variable, given by
@@ -1266,13 +1275,15 @@ Assuming we use the dissimilarity matrix $M^{(i)}$, a brief description of the a
 %   \item The centroids are updated by selecting the observation in each cluster which minimises the sum of dissimilarities to all other observations in that cluster.
 %   \item This process is repeated until convergence, when no observations change clusters.
 % \end{itemize}
+\todo{Need to have index below argmin?}
+\todo{is ``observation'' on line 5 the right word?}
 \begin{algorithm}[htb]
   % \caption{k-medoids (PAM)}
   \caption{Partitioning Around Medoids (PAM) algorithm using the $\eJSGa{}$ divergence.}
   \label{alg:kmedoids_kappa}
   \begin{algorithmic}[1]
     \State \textbf{Input:} dissimilarity matrix $M^{(i)}\in\mathbb{R}^{D\times D}$, number of clusters $k$
-    \State \textbf{Output:} Cluster assignments $C_1,\dots,C_k$ and medoid indices $\boldsymbol{\kappa}=(\kappa_1,\dots,\kappa_k)$
+    \State \textbf{Output:} Cluster assignments $C_1,\dots,C_k$, medoid indices $\boldsymbol{\kappa}=(\kappa_1,\dots,\kappa_k)$
     \State \textbf{Initialise:} choose $k$ distinct medoid indices $\{\kappa_1,\dots,\kappa_k\}\subseteq\{1,\dots,D\}$ uniformly at random.
     \Repeat
     \State \textbf{Assignment:} \parbox[t]{.82\linewidth}{\raggedright Assign each observation $s\in\{1,\dots,D\}$ to its closest medoid in terms of $\eJSGa{}$ (see Equation~\eqref{eq:jsga_integral}), i.e.\ \\ $j \coloneq \argmin_{\ell\in\{1,\dots,k\}} \eJSGa{s,\kappa_\ell}$ and assign $s$ to $C_j$.}
@@ -1304,7 +1315,7 @@ The PAM algorithm takes a single hyperparameter, the number of clusters, $k$.
 We use the method of \citet{Thorndike1953-ie} to select $k$.
 This uses the total within-cluster sum of squares ($\mathrm{TWGSS}$).
 % We find in in our simulation study (Section~\ref{sec:sim}) and our Irish meteorological application in Section~\ref{sec:application}, this method provides clear suggestions for the value of $k$ to use.
-We find in our simulation study (Section~\ref{sec:sim}) that this method correctly identifies $k$. 
+We find in our simulation study (Section~\ref{sec:sim}) that this method correctly identifies $k$.  \todo{Need to include plots in supplementary material?}
 Specifically, we define the $\mathrm{TWGSS}$ as
 % \begin{equation}\label{eq:twgss}
 %   % \mathrm{TWGSS}(k) = \sum_{i=1}^{k} \sum_{j=1}^{n_i} d_{ij}^2,
@@ -1319,7 +1330,7 @@ Specifically, we define the $\mathrm{TWGSS}$ as
 % where $\eJSGa{s, s_c}$ is the dissimilarity between site $s$ and the medoid site $s_c$ of cluster $c$, and $D$ is the total number of sites. \todo{Is this right?}
 where $\eJSGa{s, s_c}$ is the dissimilarity in Equation \eqref{eq:jsga_integral} evaluated for 
 site $s$ and the medoid site $s_c$ of cluster $c$, $c = 1, \ldots, k$. 
-We plot $\mathrm{TWGSS}(k)$ against $k$ and choose the optimal number of clusters as the value of $k$ at which the TWGSS reduction sharply slows, or equivalently, the point at which the curve has an ``elbow'' \citet{Hastie2009}. 
+We plot $\mathrm{TWGSS}(k)$ against $k$ and choose the optimal number of clusters as the value of $k$ at which the TWGSS reduction sharply slows, or equivalently, the point at which the curve has an ``elbow'' \citep{Hastie2009}. 
 
 \section{Simulation study}
 \label{sec:sim}

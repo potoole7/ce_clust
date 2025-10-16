@@ -72,8 +72,6 @@
 \fi
 \makeatother
 
-
-
 % NOTE: To produce blinded version, replace "0" with "1" below.
 \newcommand{\blind}{0}
 \usepackage{rotating}
@@ -115,6 +113,11 @@
 \usepackage{multirow}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
+\usepackage[defaultlines=2,all]{nowidow} % prevent widows and orphans
+
+% penalties for breaking equations
+\relpenalty=10000
+\binoppenalty=10000
 
 % Define a custom note command for general notes
 \newcommand{\mynote}[1]{\todo[color=yellow!40,inline]{#1}}
@@ -126,129 +129,30 @@
 \DeclareMathOperator*{\argmin}{arg\,min}
 \DeclarePairedDelimiter\abs{\lvert}{\rvert}%
 \DeclareMathOperator{\EX}{\mathbb{E}}% expected value
-% \newcommand{\JSGa}[1]{\mathrm{JS}^{\mathrm{G}_{#1}}}
-% \newcommand{\JSGa}[1]{\mathrm{JS}^{\mathrm{G}_{\alpha}}}
-% \DeclareMathOperator{\JSGa}{\mathrm{JS}^{\mathrm{G}_{\alpha}}}
-% \newcommand{\JSGa}{\mathop{\mathrm{JS}^{\mathrm{G}_{\alpha}}}\nolimits}
-% \newcommand{\JSGa}{\mathop{\mathrm{JS}^{\mathrm{G}_{k}}}\nolimits}
-% \newcommand{\GJS}{\mathop{{\mathrm{GJS}}}\nolimits}
 \newcommand{\JSGa}{\mathop{\mathrm{JS}^{\mathrm{G}_{\lambda}}}\nolimits}
-% \newcommand{\cJSGa}{\mathop{\mathrm{cJS}^{\mathrm{G}_{\lambda}}}\nolimits}
-% \newcommand{\cJSGa}{\mathop{\mathrm{cJS}_{i}^{\mathrm{G}_{\lambda}}}\nolimits}
 \newcommand{\cJSGa}[1]{\mathop{\mathrm{cJS}_{i, #1}^{\mathrm{G}_{\lambda}}}\nolimits}
-% \newcommand{\eJSGa}{\mathop{\mathrm{eJS}^{\mathrm{G}_{\lambda}}}\nolimits}
 \newcommand{\eJSGa}[1]{\mathop{\mathrm{eJS}_{i, #1}^{\mathrm{G}_{\lambda}}}\nolimits}
-% \newcommand{\GJS}[1]{\mathrm{JS}^{\mathrm{G}}}
 \DeclareMathOperator{\GJS}{\mathrm{JS}^{\mathrm{G}}}
 \DeclareMathOperator{\CE}{\mathrm{CE}}
 \newcommand{\rhou}[1]{\rho_{\text{#1}}}
 \newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
 
-% \newcommand{\mvmean}[1]{\symbf{\alpha}_{\mid i}(#1) y + y^{\symbf{\beta}_{\mid i}(s)} \symbf{\mu}_{\mid i}(#1)}
 \newcommand{\mvmean}[1]{\symbf{\alpha}_{\mid i, #1} y + y^{\symbf{\beta}_{\mid i, #1}} \symbf{\mu}_{\mid i, #1}}
-% \newcommand{\mvcov}[1]{\left(y^{\beta_{\mid i}(#1)}\right)^{\mathrm{T}} \Sigma_{\mid i}(#1) y^{\beta_{\mid i}(#1)}}
 \newcommand{\mvcov}[1]{\left(y^{\beta_{\mid i, #1}}\right)^{\mathrm{T}} \Sigma_{\mid i, #1} y^{\beta_{\mid i, #1}}}
-
-% \symbf{\alpha}_{\mid i}(s) y + y^{\symbf{\beta}_{\mid i}(s)} \symbf{\mu}_{\mid i}(s)
-
-\newcommand{\rG}[1]{\rho_{\mathrm{Gauss}}_{#1}}
-\newcommand{\rT}[1]{\rho_{\text{t}}_{#1}}
-\newcommand{\RG}[1]{\Sigma_{\mathrm{Gauss}}^{#1}}   % JxJ correlation matrix
-\newcommand{\RT}[1]{\Sigma_{t}^{#1}}                % JxJ correlation matrix
-\newcommand{\LapTrans}{T_{\mathrm{Laplace}}}
-
-% Add to preamble
-% % \vspace{-1.5\baselineskip} % adjust until the gap looks right
-% \newcommand{\tightsection}[1]{\section{#1}\vspace*{-2ex}}
-% \newcommand{\tightsection}[1]{\section{#1}\vspace{-1\baselineskip}}
-\newcommand{\tightsection}[1]{\section{#1}\vspace{-0.3\baselineskip}}
-% \newcommand{\tightsubsection}[1]{\subsection{#1}\vspace*{-2.5ex}}
-\newcommand{\tightsubsection}[1]{\subsection{#1}\vspace{-1.2\baselineskip}}
-% \newcommand{\tightsubsubsection}[1]{\subsubsection{#1}\vspace*{-2ex}}
-\newcommand{\tightsubsubsection}[1]{\subsubsection{#1}\vspace{-1.2\baselineskip}}
-
-\newcommand{\shrinkfig}{\vspace{-1.0\baselineskip}} 
-
-% fix setminus for unicode-math
-% \setmathfont[range=\setminus]{Asana Math}
-
-% \titlespacing*{\section}{0pt}{1.5ex plus 1ex minus .2ex}{1ex plus .2ex}
-% % \titlespacing*{\subsection}{0pt}{1ex plus .5ex minus .2ex}{0.5ex plus .2ex}
-% % \titlespacing*{\subsubsection}{0pt}{0.5ex plus .2ex minus .1ex}{0.3ex plus .1ex}
-% \titlespacing*{\subsection}{0pt}{0.2ex}{0.2ex}   % tune the numbers
-% \titlespacing*{\subsubsection}{0pt}{0.2ex}{0.2ex}
-
-\titlespacing*{\section}{0pt}{1ex}{0.6ex}
-\titlespacing*{\subsection}{0pt}{0.8ex}{0.4ex}
-\titlespacing*{\subsubsection}{0pt}{0.5ex}{0.2ex}
-% \titlespacing*{\section}{0pt}{0.5ex}{0.3ex}
-% \titlespacing*{\subsection}{0pt}{0.4ex}{0.2ex}
-% \titlespacing*{\subsubsection}{0pt}{0.3ex}{0.1ex}
-% \titlespacing*{\section}{0pt}{2.5pt}{2.5pt}
-% \titlespacing*{\subsection}{0pt}{2pt}{2pt}
-% \titlespacing*{\subsubsection}{0pt}{1.5pt}{1.5pt}
-
-% Manual section spacing without titlesec
-% \usepackage{etoolbox}
-% \makeatletter
-% % Reduce spacing around sections
-% \patchcmd{\section}{\@startsection{section}{1}{\z@}}{%
-%   \@startsection{section}{1}{\z@}%
-%   {-2.5ex \@plus -1ex \@minus -.2ex}%  % Reduced before spacing
-%   {1.5ex \@plus .2ex}%                 % Reduced after spacing
-%   {\normalfont\large\bfseries}}{}{}
-%   
-% \patchcmd{\subsection}{\@startsection{subsection}{2}{\z@}}{%
-%   \@startsection{subsection}{2}{\z@}%
-%   {-2.25ex \@plus -1ex \@minus -.2ex}% % Reduced before spacing  
-%   {1.25ex \@plus .2ex}%                % Reduced after spacing
-%   {\normalfont\bfseries}}{}{}
-%   
-% \patchcmd{\subsubsection}{\@startsection{subsubsection}{3}{\z@}}{%
-%   \@startsection{subsubsection}{3}{\z@}%
-%   {-2ex \@plus -1ex \@minus -.2ex}%    % Reduced before spacing
-%   {1ex \@plus .2ex}%                   % Reduced after spacing  
-%   {\normalfont\bfseries}}{}{}
-% \makeatother
-
-% \setlength{\abovecaptionskip}{4pt plus 2pt minus 2pt}
-% \setlength{\belowcaptionskip}{2pt plus 1pt minus 1pt}
-\setlength{\abovecaptionskip}{1ex}
-\setlength{\belowcaptionskip}{1ex}
-\setlength{\floatsep}{1ex}
-\setlength{\textfloatsep}{1ex}
-\setlength{\abovedisplayskip}{6pt}
-\setlength{\belowdisplayskip}{6pt}
 
 % turn off TODO notes
 % \usepackage[disable]{todonotes}
 
 \begin{document}
 
-%\bibliographystyle{natbib}
-
-\def\spacingset#1{\renewcommand{\baselinestretch}{#1}\small\normalsize}
-% \spacingset{1.3}
-\spacingset{1.0}
-
+\def\spacingset#1{\renewcommand{\baselinestretch}%
+{#1}\small\normalsize} \spacingset{1}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \if0\blind
 {
-  % \title{\bf Regression modelling of spatiotemporal extreme U.S. wildfires via partially-interpretable neural networks}
   \title{\bf Clustering of multivariate tail dependence using conditional methods}
-  % \author{Jordan Richards\thanks{The authors gratefully acknowledge funding from King Abdullah University of Science and Technology (KAUST) Office of Sponsored Research (OSR) under Award No.\ OSR-CRG2020-4394.}\hspace{.2cm}\\
-  % \author{Patrick O'Toole\thanks{Patrick O'Toole is supported by a scholarship from the EPSRC Centre for Doctoral Training in Statistical Applied Mathematics at Bath (SAMBa), under the project EP/S022945/1.}\hspace{.2cm}\\
-  %   % School of Mathematics \\ and Maxwell Institute for Mathematical Sciences, \\ University of Edinburgh, UK\\
-  %   Department of Mathematical Sciences, University of Bath, UK \\
-  %   and \\
-  %   Jordan Richards \\
-  %   School of Mathematics and Maxwell Institute for Mathematical Sciences, University of Edinburgh, UK \\
-  %   and \\ 
-  %   Christian Rohrbeck \\
-  %   Department of Mathematical Sciences, University of Bath, UK
-  % }
   \author{%
   Patrick O'Toole\thanks{Patrick O'Toole is supported by a scholarship from the EPSRC Centre for Doctoral Training in Statistical Applied Mathematics at Bath (SAMBa), under the project EP/S022945/1.}\\
   Department of Mathematical Sciences, University of Bath, UK
@@ -279,11 +183,11 @@
 \begin{abstract}
 The conditional extremes (CE) framework has proven useful for analysing the joint tail behaviour of random vectors.
   However, when applied across many locations or variables, it can be difficult to interpret or compare the resulting extremal dependence structures, particularly for high dimensional vectors. 
-  To address this, we propose a novel clustering framework multivariate extremes using the for CE framework, which can identify groups with similar extremal dependence structures.
+  To address this, we propose a novel clustering framework multivariate extremes using the CE framework, which can identify groups with similar extremal dependence structures.
   Our approach introduces a closed-form, computationally efficient dissimilarity measure for comparing tail dependence, based on the geometric Jensen-Shannon divergence, and is applicable in arbitrary dimensions.
   Applying standard clustering algorithms to the resulting pairwise distances, we obtain interpretable groups of random vectors with homogeneous tail dependence.
   Simulation studies demonstrate that our method outperforms existing approaches for clustering bivariate extremes, and uniquely extends to the multivariate setting. 
-  in our application to Irish meteorological data, our clustering identifies spatially coherent regions with similar extremal dependence between precipitation and wind speeds. 
+  In our application to Irish meteorological data, our clustering identifies spatially coherent regions with similar extremal dependence between precipitation and wind speeds. 
 \end{abstract}
 
 \noindent%
@@ -292,7 +196,29 @@ The conditional extremes (CE) framework has proven useful for analysing the join
 
 \newpage
 \spacingset{1.75} % DON'T change the spacing!
-\tightsection{Introduction}
+
+% --- Tighter spacing around figures and equations ---
+\setlength{\textfloatsep}{10pt plus 1pt minus 2pt}
+\setlength{\intextsep}{8pt plus 1pt minus 2pt}
+\setlength{\floatsep}{8pt plus 1pt minus 2pt}
+
+\setlength{\abovedisplayskip}{8pt plus 2pt minus 4pt}
+\setlength{\belowdisplayskip}{8pt plus 2pt minus 4pt}
+\setlength{\abovedisplayshortskip}{4pt plus 2pt minus 4pt}
+\setlength{\belowdisplayshortskip}{4pt plus 2pt minus 4pt}
+
+% -- Defaults 
+% \setlength{\textfloatsep}{20pt plus 2pt minus 4pt}
+% \setlength{\intextsep}{12pt plus 2pt minus 2pt}
+% \setlength{\floatsep}{12pt plus 2pt minus 2pt}
+% 
+% \setlength{\abovedisplayskip}{12pt plus 3pt minus 9pt}
+% \setlength{\belowdisplayskip}{12pt plus 3pt minus 9pt}
+% \setlength{\abovedisplayshortskip}{0pt plus 3pt}
+% \setlength{\belowdisplayshortskip}{7pt plus 3pt minus 4pt}
+
+
+\section{Introduction}
 \label{sec:intro}
 % Introduction to EVT
 Extreme Value Theory (EVT) provides asymptotically justified models for estimating the probability of events outside the range of observed values \citep{Coles2001}.
@@ -307,10 +233,11 @@ EVT has found broad usage in numerous, disparate domains, including finance \cit
 % Environmental applications are one area which particularly benefits from the use of EVT methods, to estimate the severity of future extreme events and develop risk management strategies. % and to assess the impact of climate change. 
 Environmental applications are one area which benefits from the use of EVT methods, to estimate the severity of future extreme events and develop risk management strategies. % and to assess the impact of climate change. 
 % For instance, heatwaves can lead to droughts and wild fires \citep{tanarhte2015heat, french2019quantifying, koh2023gradient}.
-% % Extreme rainfall contributes to storms and flooding, which can cause major damage and trigger large insurance claims \citep{Rohrbeck_flooding, osei2021estimation}.
-% Extreme rainfall and high wind speeds can cause major damage and large insurance claims, and thus it is important to understand their likelihood \citep{Rohrbeck_flooding, osei2021estimation, soukissian2015effect, steinkohl2013extreme}. 
+% % Extreme rainfall contributes to storms and flooding, which can cause major damage and trigger large insurance claims \citep{Rohrbeck_flooding_2018, osei2021estimation}.
+% Extreme rainfall and high wind speeds can cause major damage and large
+% insurance claims, and thus it is important to understand their likelihood \citep{Rohrbeck_flooding_2018, osei2021estimation, soukissian2015effect, steinkohl2013extreme}. 
 % % High wind speeds can lead to significantly damaging events such as tropical cyclones, and have also seen much focus in the field of EVT \citep{soukissian2015effect, steinkohl2013extreme}.
-Examples include the analysis of heatwaves \citep{tanarhte2015heat, french2019quantifying}, extreme rainfall \citep{osei2021estimation}, wind speeds \citep{steinkohl2013extreme, soukissian2015effect}, wildfire risks \citep{Koh2023}, and the impact of environmental extremes on insurance claims \citep{Rohrbeck_flooding, Miralles2024}.
+Examples include the analysis of heatwaves \citep{tanarhte2015heat, french2019quantifying}, extreme rainfall \citep{osei2021estimation}, wind speeds \citep{steinkohl2013extreme, soukissian2015effect}, wildfire risks \citep{Koh2023}, and the impact of environmental extremes on insurance claims \citep{Rohrbeck_flooding_2018, Miralles2024}.
 
 % Dependence modelling 
 % \todo{C: Shorten this paragraph}
@@ -356,8 +283,7 @@ In the multivariate EVT setting, one is interested in the \emph{joint} tail beha
 Multivariate extremes frequently arise in spatial applications, where one or more variables are recorded at a discrete set of sampling locations, or sites. 
 % In environmental applications, extreme events rarely occur in isolation, and the compounded impact of simultaneous or ``concomitant'' extremes can produce substantially more severe outcomes \citep{zscheischler2018future, bevacqua2021guidelines, Rohrbeck2021, Sando2022}.
 % ``Concomitant'' extremes, where multiple variables or locations simultaneously exhibit extreme behaviour, can produce substantially more severe outcomes than single-variable extremes \citep{zscheischler2018future, bevacqua2021guidelines, Rohrbeck2021, Sando2022}.
-% Within such settings, simultaneous or ``concomitant'' extremes, where multiple variables or locations concurrently exhibit extreme behaviour, can produce substantially more severe outcomes than single-variable extremes \citep{Sando2022, bevacqua2021guidelines, Rohrbeck2021, zscheischler2018future}.
-Within such settings, simultaneous or ``concomitant'' extremes, where multiple variables or locations concurrently exhibit extreme behaviour, can produce substantially more severe outcomes than single-variable extremes \citep{Sando2022, bevacqua2021guidelines, Rohrbeck2021}. \todo{Fix order of references!}
+Within such settings, simultaneous or ``concomitant'' extremes, where multiple variables or locations concurrently exhibit extreme behaviour, can produce substantially more severe outcomes than single-variable extremes \citep{zscheischler2018future, bevacqua2021guidelines, Rohrbeck2021, Sando2022}.
 % Consequently, these joint risks are liable to be underestimated unless tail \emph{dependence} is explicitly modelled \citep{Zhang2024}. 
 Consequently, joint risks may be underestimated unless tail \emph{dependence} is explicitly modelled \citep{Zhang2024}. 
 % Tail dependence can be described using the coefficient of asymptotic dependence \(\chi\in[0,1]\) (see e.g.\ \citet{Coles1999}), which for two random variables \(X_1,X_2\) with corresponding marginal distribution functions \(F_1,F_2\) is defined as 
@@ -368,11 +294,12 @@ For two random variables $X_1$ and $X_2$ with distribution functions $F_1$ and $
   % \chi \;=\; \lim_{u\to 1}\Pr\big(F_1(X_1)>u \mid F_2(X_2)>u\big).
   % \chi \;=\; \lim_{u\to 1}\Pr\left[F_1(X_1)>u \mid F_2(X_2)>u\right].
   % \chi \;=\; \lim_{u\to 1}\Pr\left\{F_1(X_1)>u \mid F_2(X_2)>u\right\}.
-  \chi \;=\; \lim_{u\to 1} \chi(u) \;=\; \lim_{u\to 1}\Pr\big(F_1(X_1)>u \mid F_2(X_2)>u\big).
+  % \chi \;=\; \lim_{u\to 1} \chi(u) \;=\; \lim_{u\to 1}\Pr\big(F_1(X_1)>u \mid F_2(X_2)>u\big).
+  \chi \;=\; \lim_{u\to 1} \chi(u) \;=\; \lim_{u\to 1}\Pr\left(F_1(X_1)>u \mid F_2(X_2)>u\right).
 \end{equation}
 % The values \(\chi>0\) indicate asymptotic dependence (AD) and \(\chi=0\) asymptotic independence (AI) for the random vector $\left(X_1, X_2\right)$. 
 When $\chi$ > 0, the variables $X_1$ and $X_2$ are asymptotically dependent (AD), while $\chi=0$ corresponds to asymptotic independence (AI) between $X_1$ and $X_2$.
-Although \(\chi\) is a useful pairwise summary of extremal dependence, it does not fully characterise multivariate the tail dependence structure or support inference on joint exceedance probabilities, for which a full probabilistic model is required. 
+Although \(\chi\) is a useful pairwise summary of extremal dependence, it does not fully characterise the multivariate tail dependence structure or support inference on joint exceedance probabilities, for which a full probabilistic model is required.
 % \todo{Move later, follow up by saying our clustering method can capture AI}
 % Many classical models and clustering frameworks assume AD \citep{Vignotto2021,Boulin2025}, but a growing literature argues that environmental data often exhibit AI and that AD models can be inappropriate in such contexts \citep{Opitz2016,Dawkins2018,Huser2024}. 
 
@@ -430,11 +357,12 @@ To illustrate the efficiency of our approach, we consider a motivating applicati
 % It provides a flexible framework which can capture both AD and AI patterns. % , and other complex extremal dependence patterns. 
 % A key advantage is that the CE model provides a flexible framework which can capture both AD and AI patterns. % , and other complex extremal dependence patterns.
 % This flexibility, along with its conceptual simplicity and computational efficiency, have made it a popular choice for modelling multivariate extremes. 
-This framework can flexibly capture both AD and AI structure in data, and it is both conceptually simple and computationally efficient.
+This framework can flexibly capture both AD and AI structure in data, and is both conceptually simple and computationally efficient.
 Spatio-temporal extensions and single-site conditioning methods have been developed to handle high-dimensional settings \citep{Simpson2021, Wadsworth2022}, and adaptations that incorporate covariates, hierarchical structure, and mixtures or random-scale constructions further increase the models flexibility \citep{Tawn2018, Tendijck2023, Richards2023, Talento2025}.
 % As a result, CE models have been applied across a broad range of environmental problems, where AI as well as AD may be prevalent, including modelling river flow and flood risk \citep{Gilleland2013, Jane2020}, rainfall extremes \citep{Richards2022}, sea-surface temperature extremes \citep{Simpson2023,Kakampakou2024}, and heatwaves \citep{Winter2016}, and so are well suited to this class of problems and our motivating example.
-As a result, CE models have been applied across a broad range of environmental problems, here AI as well as AD may be prevalent, including river flow and flood risk \citep{Gilleland2013, Jane2020}, rainfall extremes \citep{Richards2022}, sea-surface temperature extremes \citep{Simpson2023,Kakampakou2024}, and heatwaves \citep{Winter2016}.
-They are thus well-suited to this class of problems and our motivating example.
+As a result, CE models have been applied across a broad range of environmental problems, where AI as well as AD may be prevalent, including river flow and flood risk \citep{Gilleland2013, Jane2020}, rainfall extremes \citep{Richards2022}, sea-surface temperature extremes \citep{Simpson2023,Kakampakou2024}, and heatwaves \citep{Winter2016}.
+% They are thus well-suited to this class of problems and our motivating example.
+Thus, they are well-suited to this class of problems and our motivating example.
 % Despite these strengths, sparsity of joint extremes, particularly in high dimensions, can make pattern discovery and interpretation difficult.
 % However, the sparsity of joint extreme observations, particularly in high dimensions, can make pattern discovery and interpretation using the CE model difficult, which requires further addressing to fully exploit its potential.
 However, the scarcity of joint extreme observations, particularly in high dimensions, and the number of required model parameters, often results in estimates of the CE model being highly uncertain. 
@@ -610,7 +538,7 @@ However, their method is restricted to the bivariate case, and,
 % However, their method is restricted to the bivariate case and the AD regime, which may be limiting both in our application and in applying the method more generally to this class of multivariate clustering problem. 
 being non-parametric, lacks a generative model for tail dependence inference. % and may perform poorly without a large sample size. 
 % Also, it is undefined where no joint extreme events are observed, which can occur frequently in practice, and so is unsuitable for applications where AI may be prevalent, which we expect in our motivating example.
-Also, it is undefined where no joint extreme events are observed, which can occur frequently in environmental applications, AI is prevalent.
+Also, it is undefined where no joint extreme events are observed, which can occur frequently in environmental applications, where AI is prevalent.
 % Therefore, this approach may be limiting for our motivating example and across this class of problems, indicating the need for a more flexible and general clustering framework within multivariate extremes.
 
 % Clustering: Motivating our clustering algorithm
@@ -637,7 +565,7 @@ Our clustering method can flexibly handle both AD and AI.
 % Using the working conditional Gaussianity assumption of \citet{Heffernan2004} for estimating the CE model, we define a simple, closed-form divergence measure for multivariate extremes which permits clustering.
 % Using the working conditional Gaussian assumption of \citet{Heffernan2004} for estimating the CE model, we define a closed-form divergence measure for CE models which permits clustering.
 Using the working Gaussianity modelling assumption of \citet{Heffernan2004}, we define a closed-form divergence measure for CE models which permits clustering using traditional methods.
-Our parametric clustering approach delivers a unified and statistically principled tool for exploratory analysis of multivariate extremes, facilitating the identification of spatial locations with similar tail dependence. 
+Our parametric clustering approach delivers a unified and statistically principled tool for exploratory analysis of multivariate extremes, facilitating the identification of spatial locations with similar tail dependence. \todo{Mention random vectors as well as spatial locations?}
 
 % Structure of paper
 The remainder of this paper is structured as follows.
@@ -652,9 +580,9 @@ skew-geometric Jensen-Shannon divergence $\left(\JSGa{}\right)$ of \citet{Nielse
 % Section~\ref{sec:sim} describes a simulation study, where we demonstrate that our approach outperforms the method by \citet{Vignotto2021} across a range of extremal dependence structures. 
 Section~\ref{sec:sim} provides a simulation study where we demonstrate that our approach outperforms the clustering method of \citet{Vignotto2021} across a range of extremal dependence structures. 
 In Section~\ref{sec:application}, we apply our clustering framework to Irish meteorological data, and identify sites with similar tail dependence between precipitation and wind speeds.
-Section~\ref{sec:discuss} concludes with a discussion of our findings, the limitations of our method, and potential avenues for future work.
+Section~\ref{sec:discuss} concludes with a discussion of our findings, the limitations of our method, and potential avenues for future work. \todo{Future work mentioned? Apart from other applications..}
 
-\tightsection{Methodology}
+\section{Methodology}
 \label{sec:method}
 
 In this section, we introduce our clustering framework. % for CE models. 
@@ -665,7 +593,7 @@ Section~\ref{subsec:ce_model} provides background on the conditional extremes (C
 % We explain how inference with this model is equivalent to estimating a multivariate Gaussian distribution. 
 % In Section~\ref{subsec:div}, we describe our chosen dissimilarity measure, the skew-geometric Jensen-Shannon divergence, which has analytical form when comparing Gaussian distributions, and allows us to efficiently quantify the pairwise dissimilarity between fitted CE models.
 % In Section~\ref{subsec:div}, we describe our novel dissimilarity measure for multivariate CE, which uses the skew-geometric Jensen-Shannon divergence, to efficiently quantify pairwise dissimilarity between fitted CE models.
-In Section~\ref{subsec:div}, we describe a novel dissimilarity measure for multivariate CE, which uses the skew-geometric Jensen-Shannon divergence, to efficiently quantify dissimilarity between fitted CE models.
+In Section~\ref{subsec:div}, we describe a novel dissimilarity measure for multivariate CE, which uses the skew-geometric Jensen-Shannon divergence to efficiently quantify dissimilarity between fitted CE models.
 % Finally, Section~\ref{subsec:clustering} outlines how we perform k-medoids clustering using this dissimilarity measure, to identify sites with similar tail dependence structures, and how the number of clusters is selected.
 % Finally, in Section~\ref{subsec:clustering}, we outline how to perform clustering using this dissimilarity measure, and provide practical advice on choosing the number of clusters.
 Finally, in Section~\ref{subsec:clustering}, we outline how to perform clustering using this dissimilarity measure, and provide practical advice on choosing the number of clusters.
@@ -724,7 +652,8 @@ Finally, in Section~\ref{subsec:clustering}, we outline how to perform clusterin
 % \subsubsection{Background}~\label{subsubsec:ce_background}
 % % \vspace{-1.5\baselineskip} % adjust until the gap looks right
 % \subsection{Background to multivariate conditional extremes}~\label{subsec:ce_model}
-\tightsubsection{Background to multivariate conditional extremes}~\label{subsec:ce_model}
+\subsection{Background to multivariate conditional extremes}
+\label{subsec:ce_model}
 % See Jordan's paper for quick summary (TFR a bit long winded) (and Keef)
 % Need to talk about marginals, transformations and then model itself
 
@@ -758,7 +687,7 @@ Let $\symbf{X} \coloneqq (X_1, \ldots, X_d) \in \mathbb{R}^d$ be a $d$-dimension
 % We apply the probability intergral transformation to obtain a random vector with Laplace margins, denoted by $\symbf{Y} = (Y_1, \ldots, Y_d) \in \mathbb{R}^d$.
 We apply the probability integral transformation to transform $\symbf{X}$ to a random vector with standard Laplace margins, denoted by $\symbf{Y} \coloneqq (Y_1, \ldots, Y_d) \in \mathbb{R}^d$.
 Formally, for $i = 1, \ldots, d$, 
-\begin{equation}~\label{eq:laplace}
+\begin{equation}\label{eq:laplace}
   Y_i \coloneqq \begin{cases}
     \log\left\{2F_{X_i}(X_i)\right\}, &\text{ for } X_i < F_{X_i}^{-1}(0.5), \\
     % -\log\left\{2(1 - F_{X_i}(X_i))\right\} &\text{ for } X_i \ge F_{X_i}^{-1}(0.5), \\
@@ -773,7 +702,7 @@ Formally, for $i = 1, \ldots, d$,
 %   \todo{Replace with defition that has alpha and beta instead of a and b (like in Jordan's paper)}
 %   \todo{Need to define Y -1, and also what alpha mid i is}
 %   \item The conditional extremes model of \citet{Heffernan2004} assumes that there exists vector normalising functions $\symbf{a}_{\mid i}(y_i),\symbf{b}_{\mid i}(y_i), \in \mathbb{R} \rightarrow \mathbb{R}^{(d-1)}$ such that for fixed $\symbf{z}_{\mid i}$,
-%   % \begin{equation}~\label{eq:ce_limiting_dist}
+%   % \begin{equation}\label{eq:ce_limiting_dist}
 %   %       \lim_{y_i \rightarrow \infty}\{\mathbb{P}(\symbf{Y}_{-i} \le \symbf{a}_{\mid i}(y_i) + \symbf{b}_{\mid i}(y_i)\symbf{z}_{\mid i} \mid Y_i = y_i)\} = \symbf{G}_{\mid i}(\symbf{z}_{\mid i}),
 %   % \end{equation}
 %   where $\symbf{G}_{j \mid i}$ is non-degenerate for all $j \ne i$. 
@@ -785,7 +714,7 @@ Formally, for $i = 1, \ldots, d$,
  %   some mass to be at $-\infty$, in order to ensure uniqueness of the solution
  %   \citep{Keef2013}.
 %   \item An important consequence of this formulation is the weak assumption that
-%   \begin{equation}~\label{eq:limit_independence}
+%   \begin{equation}\label{eq:limit_independence}
 %   \mathbb{P}(\symbf{Z}_{\mid i} \le \symbf{z}_{\mid i}, Y_i - u_i = y_i \mid Y_i > u_i) \rightarrow \symbf{G}_{\mid i}(\symbf{z}_i) \exp(-y) \text{ as } u_i \rightarrow \infty,
 %   \end{equation}
 %   so that in the limit as $u_i \to \infty$, the extremal exceedances $Y_i - u_i$ and $\symbf{Z}_{\mid i}$ are independent.
@@ -807,7 +736,7 @@ Let $\symbf{Y}_{-i} \coloneq \symbf{Y} \backslash Y_i \in \mathbb{R}^{d-1}$ deno
 % With all operations below taken component-wise, \citet{Heffernan2004} assume that there exist parameter vectors $\symbf{\alpha}_{\mid i} \coloneqq \left\{\alpha_{j \mid i} : j\in\{1,\dots,d\}\setminus i \right\} \in [-1, 1]^{d-1}$ and $\symbf{\beta}_{\mid i} \coloneqq \left\{\beta_{j \mid i} : j\in\{1,\dots,d\}\setminus i \right\} \in (-\infty, 1]^{d-1}$ such that, for fixed $\symbf{z} \in \mathbb{R}^{d-1}$, % $y_i > 0$, such that for fixed $\symbf{z} \in \mathbb{R}^{(d-1)}$ and $y > 0$,
 With all operations below taken component-wise, \citet{Heffernan2004} assume that there exist parameter vectors $\symbf{\alpha}_{\mid i} \coloneqq \left\{\alpha_{j \mid i} : j\in\{1,\dots,d\}\backslash i \right\} \in [-1, 1]^{d-1}$ and $\symbf{\beta}_{\mid i} \coloneqq \left\{\beta_{j \mid i} : j\in\{1,\dots,d\}\backslash i \right\} \in (-\infty, 1]^{d-1}$ such that, for fixed $\symbf{z} \in \mathbb{R}^{d-1}$, % $y_i > 0$, such that for fixed $\symbf{z} \in \mathbb{R}^{(d-1)}$ and $y > 0$,
 % \todo{Check if probably is for equal to yi or greater than yi}
-\begin{equation}~\label{eq:ce_limiting_dist}
+\begin{equation}\label{eq:ce_limiting_dist}
   % \mathbb{P}\left(\frac{\symbf{Y}_{-i} - \symbf{\alpha}_{\mid i}^{(\CE{})} Y_{i}}{Y_{i}^{\symbf{\beta}_{\mid i}^{(\CE{})}} \le \symbf{z}_{\mid i}, Y_i - u_i > y_i \mid Y_i > u_i \right) \longrightarrow \symbf{G}_{\mid i}(\symbf{z}_{\mid i}) \exp(-y_i) \text{ as } u_i \rightarrow \infty,
   \mathbb{P}\!\left(
   % \frac{\symbf{Y}_{-i} - \symbf{\alpha}_{\mid i}^{(\CE{})} Y_{i}}
@@ -830,6 +759,7 @@ With all operations below taken component-wise, \citet{Heffernan2004} assume tha
   % \quad\text{as } u_i \to \infty.
   \quad\text{as } u \to \infty,
 \end{equation}
+\todo{Okay to use u here, and ui in below equation?}
 % \todo{i subscript removed from LHS, but not on RHS, is this ok?}
 % where $u_i$ is a suitably high threshold for $Y_i$, and $\symbf{G}_{j \mid i}$ is non-degenerate for all $j \ne i$. 
 % \todo{below points needed, or can some of this be removed?}
@@ -855,23 +785,10 @@ $\symbf{Z}_{\mid i} \coloneqq Y_i^{-\symbf{\beta}_{\mid i}}\left(\symbf{Y}_{-i} 
 % heteroscedastic regression
 % The limiting distribution in equation~\eqref{eq:ce_limiting_dist} can be written as a heteroscedastic regression equation defined by
 Assuming that the limit in Equation~\eqref{eq:ce_limiting_dist} holds exactly for a large threshold $u_i > 0$ gives the heteroscedastic regression model
-% \todo{Should we be explicit that the equals here really should be an equality in distribution?}
-\begin{align}~\label{eq:ce_model}
-  % \bigl(\symbf{Y}_{-i} \mid Y_i = y_i \bigr) = \symbf{\alpha}_{\mid i}^{(\CE{})}\symbf{y}_i + \symbf{y}_i^{\symbf{\beta}_{\mid i}^{(\CE{})}}\symbf{Z}_{\mid i}, \text{ for } y_i > u_{_i},
-  % \bigl(\symbf{Y}_{-i} \mid Y_i = y_i \bigr) = \symbf{\alpha}_{\mid i}\symbf{y}_i + \symbf{y}_i^{\symbf{\beta}_{\mid i}}\symbf{Z}_{\mid i}, \text{ for } y_i > u_{_i},
-  % \bigl(\symbf{Y}_{-i} \mid Y_i = y \bigr) &= \symbf{\alpha}_{\mid i}y + y^{\symbf{\beta}_{\mid i}}\symbf{Z}_{\mid i}, \text{ for } y > u_i, \\
-  \bigl(\symbf{Y}_{-i} \mid Y_i = y \bigr) &= \symbf{\alpha}_{\mid i}y + y^{\symbf{\beta}_{\mid i}}\symbf{Z}_{\mid i},\qquad \text{ for } y > u_i,
+\begin{align}\label{eq:ce_model}
+\bigl(\symbf{Y}_{-i} \mid Y_i = y \bigr) &= \symbf{\alpha}_{\mid i}y + y^{\symbf{\beta}_{\mid i}}\symbf{Z}_{\mid i},\qquad \text{ for } y > u_i,
 \end{align}
 with residual vector $\symbf{Z}_{\mid i} \sim \symbf{G}_{\mid i}$.
-% The slope or linear regression coefficient $\symbf{\alpha}_{\mid i}^{(\CE{})} \in [-1, 1]$ describes the strength of association between $Y_{-i}$ and large $Y_i$ above the threshold $u_i$.
-% The vector $\symbf{\alpha}_{\mid i} \in [-1, 1]^{d-1}$ describes the strength of extremal association between components of $\symbf{Y}_{-i}$ and the conditioning variable $Y_i$. 
-% The parameter vector $\symbf{\alpha}_{\mid i}$ describes the strength of extremal association between components of $\symbf{Y}_{-i}$ and the conditioning variable $Y_i$. 
-% \item $\symbf{\beta}_{\mid i} \in [-\infty, 1]$ can be interpretated as a ``spread'' parameter, controlling the levels of heteroscedasticity in the model.
-% The levels of heteroscedasticity in the model is controlled by $\symbf{\beta}_{\mid i}^{(\CE{})} \in [-\infty, 1]$, and can be loosely interpreted as a ``spread'' parameter.
-% The degree of heteroscedasticity in the model is controlled by entries to $\symbf{\beta}_{\mid i} \in [-\infty, 1]^{d - 1}$, and can be loosely interpreted as a ``spread'' parameter.
-% The degree of heteroscedasticity in the model is controlled by entries to $\symbf{\beta}_{\mid i}$, and can be loosely interpreted as a ``spread'' parameter.
-% The degree of heteroscedasticity in the model is controlled by the entries to $\symbf{\beta}_{\mid i}$, and can be loosely interpreted as a parameter that determines the degree of spread induced by large values of $Y_i$.
-% The degree of heteroscedasticity in the model is controlled by $\symbf{\beta}_{\mid i}$, and can be loosely interpreted as a parameter that determines the degree of spread induced by large values of $Y_i$.
 The parameter vector $\symbf{\alpha}_{\mid i}$ describes the strength of extremal association between components of $\symbf{Y}_{-i}$ and the conditioning variable $Y_i$, while $\symbf{\beta}_{\mid i}$ determines the spread induced by large values of $Y_i$. 
   % \item Several choices for $\symbf{G}_{\mid i}$, the distribution of
 % $\symbf{Z}_{\mid i}$, were proposed in \citet{Heffernan2004}, before ultimately
@@ -897,14 +814,16 @@ Some special cases (for $j\in\{1,\ldots,d\} \backslash i$) of the CE model are:
 %   \item $-1 < \symbf{\alpha}_{j \mid i} < 1$, which suggests asymptotic independence between $Y_j$ and $Y_i$, with dependence weakening as $Y_i \to \infty$, equivalent to $\chi < 1$. 
 % \end{itemize}
 % $\alpha_{j\mid i}=0$ and $\beta_{j\mid i}=0$, for which we have perfect independence between $Y_j$ and $Y_i\mid Y_i>u_i$, corresponding to $\chi=0$;
-$\alpha_{j\mid i}=0$ and $\beta_{j\mid i}=0$, which implies asymptotic independence between $Y_j$ and $Y_i\mid Y_i>u_i$, corresponding to $\chi=0$;
-$\alpha_{j\mid i}=1\ ( -1)$ and $\beta_{j\mid i}=0$, which corresponds to positive (negative) asymptotic dependence, equivalent to $\chi=1$ ($\chi=0$); and
+$\alpha_{j\mid i}=0$ and $\beta_{j\mid i}=0$, which imply asymptotic independence between $Y_j$ and $Y_i\mid Y_i>u_i$, corresponding to $\chi=0$;
+% $\alpha_{j\mid i}=1\ ( -1)$ and $\beta_{j\mid i}=0$, which corresponds to positive (negative) asymptotic dependence, equivalent to $\chi=1$ ($\chi=0$); and
+$\alpha_{j\mid i}=1\ ( -1)$ and $\beta_{j\mid i}=0$, which corresponds to positive (negative) asymptotic dependence, equivalent to $\chi=1$ ($\chi=-1$); and
 % $-1<\alpha_{j\mid i}<1$, which suggests asymptotic independence between $Y_j$ and $Y_i$, with dependence weakening as $Y_i\to\infty$, equivalent to $\chi<1$.
-$-1<\alpha_{j\mid i}<1$, which suggests asymptotic independence between $Y_j$ and $Y_i$, with the strength of extremal dependence weakening with $\alpha_{j \mid i}$, equivalent to $\chi<1$.
+$-1<\alpha_{j\mid i}<1$, which suggests asymptotic independence between $Y_j$ and $Y_i$, with the strength of extremal dependence weakening with $\alpha_{j \mid i}$, equivalent to $\chi<1$. \todo{Should I have 0 < chi < 1 here?}
 
 % \subsubsection{Setup}~\label{subsubsec:ce_setup}
 % \subsubsection{Framework and model inference}~\label{subsubsec:ce_setup}
-\tightsubsection{Framework and model inference}~\label{subsubsec:ce_setup}
+\subsection{Framework and model inference}
+\label{subsubsec:ce_setup}
 
 % We fit the CE model at different spatial sites. 
 In our motivating spatial environmental application, we consider a CE model at different spatial sites and across conditioning variables $i = 1, \ldots, d$.
@@ -929,11 +848,12 @@ This leads to a spatial extension of Equation~\eqref{eq:ce_model}, with site-spe
       + y^{\symbf{\beta}_{\mid i, s}} \, \symbf{Z}_{\mid i, s}, 
       \quad y > u_{i, s}, 
 \end{equation}
+\todo{Should I define this as H from equation 10 here?}
 % with location-specific residuals $\symbf{Z}_{\mid i}(s) \sim \symbf{G}_{\mid i}(s)$. \todo{Do I need to define alpha(s), beta(s), ui(s) again?}
 % where $\symbf{Y}_{-i}(s) \coloneqq \symbf{Y}(s) \setminus Y_i(s), \symbf{\alpha}_{\mid i}(s), \symbf{\beta}_{\mid i}(s)$ and $\symbf{Z}_{\mid i}(s) \sim \symbf{G}_{\mid i}(\cdot ; s)$ are the site-specific counterparts of the regression parameters and residuals introduced above.  
 % where $\symbf{Y}_{-i, s} \coloneqq \symbf{Y}_{s} \setminus Y_{i, s}$, and $\symbf{\alpha}_{\mid i, s}$, $\symbf{\beta}_{\mid i, s}$ $\symbf{Z}_{\mid i, s} \sim \symbf{G}_{\mid i, s}$ and $u_{i, s}$ are the site-specific counterparts of the regression parameters, residuals and exceedance threshold introduced above in Equations~\eqref{eq:ce_limiting_dist} and~\eqref{eq:ce_model}.
 where $\symbf{Y}_{-i, s} \coloneqq \symbf{Y}_{s} \backslash Y_{i, s}$, and $\symbf{\alpha}_{\mid i, s}$, $\symbf{\beta}_{\mid i, s}$ $\symbf{Z}_{\mid i, s} \sim \symbf{G}_{\mid i, s}$ and $u_{i, s}$ are the site-specific counterparts of the regression parameters, residuals and exceedance threshold introduced in Equations~\eqref{eq:ce_limiting_dist} and~\eqref{eq:ce_model}.
-Note that make no assumptions about spatial smoothness in the regression model. 
+Note that we make no assumptions about spatial smoothness in the regression model. \todo{don't have on own line}
 
 % Intro: CE gives distributions, which need to be compared
 % Definition of Z moved here to be impactful than after eq:ce_model
@@ -962,7 +882,7 @@ This working assumption is the key to deriving a closed-form divergence measure 
 % Consequently, inference on $\alpha_{\mid i}$ and $\beta_{\mid i}$ by conditioning on the exceedance of a high threshold $u_i$ by $Y_{i, s}$, and assuming that this conditional distribution is multivariate Gaussian, i.e.,\@
 % Consequently, inference on $\alpha_{\mid i}$ and $\beta_{\mid i}$ by conditioning on the exceedance of a high threshold $u_i$ by $Y_{i, s}$.
 It follows that 
-\begin{equation}~\label{eq:ce_norm}
+\begin{equation}\label{eq:ce_norm}
   % \bigl( \symbf{Y}_{-i} \mid Y_i  = y_i \bigr) \sim N\left(\symbf{\alpha}_{\mid i}^{(\CE{})} y_i + y_i^{\symbf{\beta}_{\mid i}^{(\CE{})}} \symbf{\mu}_{\mid i}^{(\CE{})}, y_i^{\symbf{\beta}_{\mid i}^{(\CE{})}} \Sigma_{\mid i}^{(\CE{})}\right), Y_i > u_i,
   % \bigl( \symbf{Y}_{-i} \mid Y_i  = y_i \bigr) \sim N\left(\symbf{\alpha}_{\mid i} y_i + y_i^{\symbf{\beta}_{\mid i}} \symbf{\mu}_{\mid i}, y_i^{\symbf{\beta}_{\mid i}} \symbf{\Sigma_{\mid i}}\right), Y_i > u_i,
   % \bigl( \symbf{Y}_{-i}(s) \mid Y_i(s)  = y) \sim \mbox{MVN}_{d-1}\left(\symbf{\alpha}_{\mid i}(s) y + y^{\symbf{\beta}_{\mid i}(s)} \symbf{\mu}_{\mid i}(s), y^{\symbf{\beta}_{\mid i}(s)} \Sigma_{\mid i}(s)\right), y > u_i(s),
@@ -993,10 +913,12 @@ In practice, we set the threshold $u_{i, s} \coloneqq u_i$ to the $q^{\text{th}}
 Choosing $q$ involves the classical bias-variance tradeoff: $q$ must be sufficiently low as to leave enough excesses above $u_i$ for reliable estimation, but high enough to reduce bias induced when the asymptotic arguments in Equation~\eqref{eq:ce_limiting_dist} are not satisfied. 
 % To pick $q$, we use threshold stability plots \citep{Scarrott2012}. \todo{This reference is for univariate cases, need multivariate one? texmex okay?}
 To pick $q$, we use threshold stability plots and assess the stability of parameter estimates at different thresholds \citep{Southworth2012}. % \todo{Cite texmex where I get this method from?}
+\todo{Include in supplementary materials?}
 % The bootstrapping procedure of \citet{Heffernan2004} is used to obtain standard errors for the parameter estimates, and we choose the highest value of $q$ such that the parameter estimates are stable, and the bootstrap standard errors are reasonably small.
-Using the bootstrap procedure of \citet{Heffernan2004}, we obtain standard errors for parameter estimates and choose the highest value of $q$ such that the parameter estimates are stable and the bootstrap standard errors are reasonably small. % \todo{Briefly describe this bootstrap method?}
+Using the bootstrap procedure of \citet{Heffernan2004}, we obtain standard errors for parameter estimates and choose the highest value of $q$ such that the parameter estimates are stable and the bootstrap standard errors are reasonably small. \todo{Say this is done across sites?}
 
-\tightsubsection{A divergence measure for multivariate conditional extremes}~\label{subsec:div}
+\subsection{A divergence measure for multivariate conditional extremes}
+\label{subsec:div}
 
 % \todo{Need some references for applications of this metric! In intro, or here?}
 % We now define our divergence measure for multivariate conditional extremes models. 
@@ -1011,7 +933,7 @@ The measure should be non-negative and symmetric so that it can be interpreted a
 % Ideally, our measure should also have some form of upper bound, as smaller divergences lead to more well-defined clusters, and very large divergences can lead to numerical instability. \todo{Citation!}
 Ideally, our measure should also have an upper bound, as large divergences can lead to numerical instability during clustering \citep{Thiagarajan2025}. % , and less stable and well-defined clusters \citep{Thiagarajan2025}. 
 % Finally, we would like our measure to be a true metric, so that it satisfies the triangle inequality and is non-negative, and this is known to improve the performance of clustering algorithms \todo{Again, citation?}.
-We also desire provide computational efficiency through a closed-form solution our divergence, which is cheap to compute. 
+We also provide computational efficiency through a closed-form solution for our divergence, which is cheap to compute. 
 % We achieve this using the Gaussian assumption in Equation~\eqref{eq:ce_norm}.
 % \todo{Any other properties? Convex (as KL is?) (which may be better?) (need citation)}
 
@@ -1021,8 +943,8 @@ We also desire provide computational efficiency through a closed-form solution o
 % \todo{Switch to H and H star to match below?}
 % Specifically, we use the dual form of the $\JSGa{}$ divergence \citep{Deasy2020}, which is defined between two continuous $d$-variate distribution functions, say $H_1$ and $H_2$, as 
 % \todo{Discuss: d-variate? (d-1)-variate? multivariate?}
-Specifically, we use the dual form of the $\JSGa{}$ divergence \citep{Deasy2020}, which is defined between two continuous $(d-1)$-variate distribution functions, say $H_1$ and $H_2$, as 
-\begin{equation}~\label{eq:jsga}
+Specifically, we use the dual form of the $\JSGa{}$ divergence \citep{Deasy2020}, which is defined between two continuous $(d-1)$-variate distribution functions, say $H_1$ and $H_2$, as  \todo{Do we want H* here?}
+\begin{equation}\label{eq:jsga}
   % \JSGa{(P \Vert Q)} = \frac{1}{2} \left\{\KL{(P \Vert G_{\alpha}(P, Q))} + \KL{(Q \Vert G_{\alpha}(P, Q))} \right\},
   % \JSGa{(F_1 \Vert F_2)} = \frac{1}{2} \left\{\KL{(F_1 \Vert G_{\lambda}(F_1, F_2))} + \KL{(F_2 \Vert G_{\lambda}(F_1, F_2))} \right\},
   % dual-version
@@ -1031,14 +953,13 @@ Specifically, we use the dual form of the $\JSGa{}$ divergence \citep{Deasy2020}
 % where $G_{\alpha}(P, Q) = P^{\alpha} Q^{1 - \alpha}, \alpha \in [0, 1]$ is the weighted geometric mean of $P$ and $Q$, with $\alpha$ controlling the weighting between them, and $\KL{(P \Vert Q)}$ is the Kullback--Leibler divergence between $P$ and $Q$ \citep{Kullback1951}. 
 % where $G_{\lambda}(H_1, H_2) = H_{1}^{1-\lambda} H_{2}^{\lambda}, \lambda \in [0, 1]$, is the weighted geometric mean of $H_1$ and $H_2$, and $\KL{(H_1 \Vert H_2)}$ is the Kullback--Leibler divergence between $H_1$ and $H_2$ \citep{Kullback1951}, given by 
 where $G_{\lambda}(H_1, H_2) = H_{1}^{1-\lambda} H_{2}^{\lambda}$ is the weighted geometric mean of $H_1$ and $H_2$, with $\lambda \in [0, 1]$, and $\KL{(H_1 \Vert H_2)}$ is the Kullback--Leibler divergence between $H_1$ and $H_2$ \citep{Kullback1951}, given by 
-\begin{equation}~\label{eq:kl}
-  % KL(F_1 \Vert F_2) = \int_{-\infty}^{\infty} f_1(y) \log\left(\frac{f_1(y)}{f_2(y)}\right) dy,
+\begin{equation}\label{eq:kl}
   \KL{(H_1 \Vert H_2)} = \int_{\mathbb{R}^{d-1}} h_1(\symbf{y}) \log\left(\frac{h_1(\symbf{y})}{h_2(\symbf{y})}\right) d\symbf{y},
 \end{equation}
 where $h_1$ and $h_2$ are the continuous density functions of $H_1$ and $H_2$, respectively. 
 % Here, $P$ and $Q$ represent the conditional multivariate Gaussian distributions induced by the CE model at two different sites.
 % In our context, $H_1$ and $H_2$ will represent the conditional multivariate Gaussian distributions induced by the CE model at two different sites, say $s_1$ and $s_2$. \todo{Change to s and s star to match below?}
-In our context, we replace $H_1$ and $H_2$ by the conditional multivariate Gaussian distributions induced by the CE framework at two different sites, say $s$ and $s^*$, see Equation~\eqref{eq:ce_norm}.
+In our context, we replace $H_1$ and $H_2$ by the conditional multivariate Gaussian distributions induced by the CE framework at two different sites, say $s$ and $s^*$; see Equation~\eqref{eq:ce_norm}.
 
 % The parameter $\lambda$ skews the geometric mean $G_{\lambda}(H_1,H_2)\propto H_1^{1-\lambda}H_{2}^{\lambda}$ towards $H_1$ (when $\lambda$ is close to 0) or towards $H_2$ (when $\lambda$ is close to 1). 
 % The weight $\lambda$ skews the geometric mean $G_{\lambda}(H_1,H_2) = H_1^{1-\lambda}H_{2}^{\lambda}$ towards $H_1$ (when $\lambda$ is close to 0) or towards $H_2$ (when $\lambda$ is close to 1). 
@@ -1050,13 +971,13 @@ The weight $\lambda$ skews the geometric mean $G_{\lambda}(H_1,H_2)$ towards $H_
 % One possible advantage of specifying $\lambda$ is that we can design our divergence measure to place more weight on the CE model at sites with more reliable fit, as determined by, for example, the effective sample size.
 One possible advantage of specifying $\lambda$ is that we can design our divergence measure to place more weight on the CE model at sites with more reliable fit, as determined by, for example, the effective sample size.
 % In this paper, we set $\lambda = 0.5$ throughout, as all sites have equal number of observations in both our simulation and case studies.
-In this paper, we set $\lambda = 0.5$ throughout, as all sites have the same number of observations in both our simulations and case studies.
+In this paper, we set $\lambda = 0.5$ throughout, as all sites have the same number of observations in both our simulations and case study.
 
 % As such, for the sake of brevity we refer to $\JSGa{}(H_1 \Vert H_2)$ as simply $
 % \todo{Refer to JSGa as GJS from now on, since lambda is fixed?}
 % For our application, we set $\alpha = 0.5$, so that $G_{\alpha}(P, Q)$ is unweighted, but note that $\alpha$ 
 % The Kullback--Leibler (KL) divergence, $KL(P \Vert Q)$, is defined as
-% \begin{equation}~\label{eq:kl}
+% \begin{equation}\label{eq:kl}
 %   KL(P \Vert Q) = \int_{-\infty}^{\infty} p(y) \log\left(\frac{p(y)}{q(y)}\right) dy.
 % \end{equation}
 % The $\JSGa{}$ divergence is derived from the popular Kullback--Leibler ($KL$) divergence \citep{Killback1951}. 
@@ -1068,22 +989,23 @@ For two multivariate Gaussian distributions, the $\KL{}$ divergence in Equation~
 The $\JSGa{}$ divergence exploits the property that the (weighted) product of two distributions from the same exponential family is proportional to another member of that family, and hence, after normalisation, is itself an exponential-family distribution \citep{Nielsen2019}.
 % It then follows that $G_{\lambda}(H_1, H_2)$ is multivariate Gaussian, and so the $\KL{}$ divergences in Equation~\eqref{eq:jsga} are between multivariate Gaussian distributions and can be computed in closed-form.
 It then follows that $G_{\lambda}(H_1, H_2)$ is multivariate Gaussian, and so the $\KL{}$ divergences in Equation~\eqref{eq:jsga} are evaluated on multivariate Gaussian distributions and are therefore available in closed-form.
-Hence, the principle advantage of the $\JSGa{}$ is that it has a closed-form solution for two multivariate Gaussian distributions, and so is computationally efficient to compute \citep{Nielsen2019}, which has led to its use in several applications, including clustering, deep learning, variational inference, and remote sensing \citep{Nielsen2019, Deasy2020, Ni2023-cd, Thiagarajan2025}.
+Hence, the principle advantage of the $\JSGa{}$ is that it has a closed-form solution for two multivariate Gaussian distributions, and so is computationally efficient to compute \citep{Nielsen2019}, which has led to its use in several applications, including clustering, deep learning, variational inference, and remote sensing \citep{Nielsen2019, Deasy2020, Ni2023-cd, Thiagarajan2025}. \todo{reference order}
 % Furthermore, it is clearly symmetric and non-negative, as the sum of two $KL$ divergences, which is also important for clustering.
 % Furthermore, as the average of two $\KL{}$ divergences, it is clearly symmetric and non-negative.
 % Finally, when $\lambda = 0.5$, $\JSGa{}$ is bounded above by $\JSGa{(H_1 \Vert H_2)} \leq \frac{1}{4} \mathrm{J}(H_1 \Vert H_2)$,
 % JSGa form
 % For two multivariate normals, \citet{Nielsen2019} shows that the $\JSGa{}$ divergence introduced in Equation~\eqref{eq:js_norm} has the closed-form solution
 % \todo{eq:js_norm can't be found}
-For two generic multivariate Gaussian distributions $H \sim \mbox{MVN}(\symbf{m}, \Omega)$ and $H^* \sim \mbox{MVN}(\symbf{m}^*, \Omega^*)$ in $\mathbb{R}^d$ with mean vectors $\symbf{m}, \symbf{m}^* \in \mathbb{R}^d$ and covariance matrices $\Omega, \Omega^* \in \mathbb{R}^{d \times d}$, \citet{Nielsen2019} showed that the dual $\JSGa{}$ divergence introduced in Equation~\eqref{eq:jsga} has the closed-form solution 
-\begin{align*}%~\label{eq:js_norm_mvn}
+For two generic multivariate Gaussian distributions $H \sim \mbox{MVN}(\symbf{m}, \Omega)$ and $H^* \sim \mbox{MVN}(\symbf{m}^*, \Omega^*)$ in $\mathbb{R}^d$ with mean vectors $\symbf{m}, \symbf{m}^* \in \mathbb{R}^d$ and covariance matrices $\Omega, \Omega^* \in \mathbb{R}^{d \times d}$, \citet{Nielsen2019} showed that the dual $\JSGa{}$ divergence introduced in Equation~\eqref{eq:jsga} has the closed-form solution \todo{don't have on own line}
+\begin{align*}%\label{eq:js_norm_mvn}
   % JS^{G_{\lambda}}(F \Vert F^*) &= \frac{1}{2} \left( (1 - k) m^T \Omega^{-1} m + k m^*^T \Omega^*^{-1} m^* - m_{\lambda}^T \Omega_{\lambda}^{-1} m_{\lambda} + \log{\left( \frac{\abs{\Omega}^{1-k} \abs{\Omega^*}^{\lambda}}{\abs{\Omega_{\lambda}}} \right)} \right), \\
   \JSGa{}(H \Vert H^*) &= \frac{1}{2} \left\{ (1-\lambda) \symbf{m}^T \Omega^{-1} \symbf{m} + \lambda {\symbf{m}^*}^T {\Omega^*}^{-1} \symbf{m}^* - {\symbf{m}_{\lambda}}^T \Omega_{\lambda}^{-1} \symbf{m}_{\lambda} + \log{\left( \frac{\abs{\Omega}^{1-\lambda} \abs{\Omega^*}^{\lambda}}{\abs{\Omega_{\lambda}}} \right)} \right\}, \\
   % \Omega_{\lambda} &= \left( (1 - k) \Omega^{-1} + k \Omega^*^{-1} \right)^{-1}, \\
   \Omega_{\lambda} &= \left\{ (1-\lambda) \Omega^{-1} + \lambda {\Omega^*}^{-1} \right\}^{-1}, \\
-  % m_{\lambda} &= \Omega_{\lambda} \left( (1 - k) \Omega^{-1} m + k \Omega^*^{-1} m^* \right), \numberthis~\label{eq:js_norm_mvn1}
-  \symbf{m}_{\lambda} &= \Omega_{\lambda} \left\{(1-\lambda) \Omega^{-1} \symbf{m} + \lambda {\Omega^*}^{-1} \symbf{m}^* \right\}. \numberthis~\label{eq:js_norm_mvn1}
+  % m_{\lambda} &= \Omega_{\lambda} \left( (1 - k) \Omega^{-1} m + k \Omega^*^{-1} m^* \right), \numberthis\label{eq:js_norm_mvn1}
+  \symbf{m}_{\lambda} &= \Omega_{\lambda} \left\{(1-\lambda) \Omega^{-1} \symbf{m} + \lambda {\Omega^*}^{-1} \symbf{m}^* \right\}. \numberthis \label{eq:js_norm_mvn1}
 \end{align*} 
+\todo{Is power of variable (Omega) with superscript (*) done correctly here?}
 % where:
 % \begin{itemize}
 %   \item $m_1 = (m_{1,1}, m_{1,2}, \ldots, m_{1,d})^\top$ and $m_2 = (m_{2,1}, m_{2,2}, \ldots, m_{2,d})^\top$ are the mean vectors,
@@ -1091,10 +1013,13 @@ For two generic multivariate Gaussian distributions $H \sim \mbox{MVN}(\symbf{m}
 %   \item $\sigma_{1,i}^2$ and $\sigma_{2,i}^2$ denote the $i$-th diagonal element of $\Omega_1$ and $\Omega_2$, respectively.
 % \end{itemize}
 Finally, the $\JSGa{}$ is bounded above by $\JSGa{(H_1 \Vert H_2)} \leq \frac{1}{2}\max\{\lambda,\,1-\lambda\}\mathrm{J}(H_1 \Vert H_2)$, 
-% \begin{equation}~\label{eq:jsga_bound}
+% \begin{equation}\label{eq:jsga_bound}
 %   \JSGa{(F_1 \Vert F_2)} \leq \frac{1}{4} \mathrm{J}(F_1 \Vert F_2),
 % \end{equation}
-where the Jeffreys' divergence $\mathrm{J}(H_1 \Vert H_2) = \KL{(H_1 \Vert H_2)} + \KL{(H_2 \Vert H_1)}$ is simply the sum of the forward and backward $\KL{}$ divergences \citep{Nielsen2025}. % \todo{this follows short derivation from this paper, include in appendix?}
+where the Jeffreys' divergence $\mathrm{J}(H_1 \Vert H_2) = \KL{(H_1 \Vert H_2)} + \KL{(H_2 \Vert H_1)}$ is simply the sum of the forward and backward $\KL{}$ divergences \citep{Nielsen2025}.
+\todo{Include brief derivation in supplementary materials?}
+\todo{Can we say anyting more about this?}
+% A derivation of this bound is provided in the supplementary material.
 % Therefore, $\JSGa{}$ provides more well-defined clusters than the Jeffreys' divergence, motivating the higher conceptual complexity by comparison. 
 % Therefore, the $\JSGa{}$ divergence is less susceptible to numerical instability than this simple summation. %, and also provides more tightly defined clusters.
 % Hence, we identify the $\JSGa{}$ divergence as a suitable measure of dissimilarity for clustering CE model fits.
@@ -1108,7 +1033,7 @@ where the Jeffreys' divergence $\mathrm{J}(H_1 \Vert H_2) = \KL{(H_1 \Vert H_2)}
 % %   JS-G(P \Vert Q) = \frac{1}{2} \sum^n_{i=1} \left[ \frac{\alpha \sigma_{1, i}^2 + (1-\alpha)\sigma_{2, i}^2}{\sigma_{\alpha, i}^2} + \log{\left( \frac{\sigma_{\alpha, i}^2}{\sigma_{1, i}^{(2\alpha)}\sigma_{2, i}^{2(1 - \alpha)}} \right)} + \alpha \frac{(\mu_{\alpha, i} - \mu_{1, i})^2}{\sigma_{\alpha, i}^2} + (1 - \alpha) \frac{(\mu_{\alpha, i} - \mu_{2, i})^2}{\sigma_{\alpha, i}^2} -1 \right],
 % % \end{align*}
 % % \todo{Should I use a different notation here, since I also use mu, sigma for the CE model?}
-% \begin{align}~\label{eq:js_norm_mvn_diag}
+% \begin{align}\label{eq:js_norm_mvn_diag}
 % JS^{G_{\alpha}}(F_1 \Vert F_2) = \frac{1}{2} \sum_{i=1}^d \Bigg[
 %     & \frac{\alpha \sigma_{1,i}^2 + (1 - \alpha) \sigma_{2,i}^2}{\sigma_{\alpha,i}^2} 
 %     + \log\left( \frac{\sigma_{\alpha,i}^2}{\sigma_{1,i}^{2\alpha} \sigma_{2,i}^{2(1 - \alpha)}} \right) \nonumber \\
@@ -1127,13 +1052,13 @@ Now, suppose that for a specified conditioning variable $i \in \{1, \ldots, d\}$
 % Using the $\JSGa{}$ divergence in Equation~\eqref{eq:js_norm_mvn1}, we define the \textit{conditional skew-geometric Jensen-Shannon divergence} ($\cJSGa{s, s^*}$) between the two sites $s$ and $s^*$ for the conditioning variable $Y_i$ as
 % Using the $\JSGa{}$ divergence in Equation~\eqref{eq:js_norm_mvn1}, we define the \textit{conditional skew-geometric Jensen-Shannon divergence} ($\cJSGa{s, s^*}$) between the two sites $s$ and $s^*$, conditional on the $i$-th variable being extreme, defined as
 Using the $\JSGa{}$ divergence in Equation~\eqref{eq:js_norm_mvn1}, we define the \textit{conditional skew-geometric Jensen-Shannon divergence} ($\cJSGa{s, s^*}$) between two sites $s$ and $s^*$, conditional on the $i$-th variable being extreme, as
-\begin{equation} \label{eq:cjsga}
+\begin{equation}\label{eq:cjsga}
   % \cJSGa{}\bigl(y; s \Vert s^*\bigr) = \JSGa{}\left(H_{\mathbf{Y}_{-i}(s)|Y_i(s)=y} \Vert H_{\mathbf{Y}_{-i}(s^*)|Y_i(s^*)=y}\right),
   \cJSGa{s, s^*}(y) = \JSGa{}\left(H_{i, s}(y) \Vert H_{i, s^*}(y)\right),\qquad y > u_i,
 \end{equation}
 % where $H_{\mathbf{Y}_{-i}(s)|Y_i(s)=y}$ and $H_{\mathbf{Y}_{-i}(s^*)|Y_i(s^*)=y}$ are the conditional multivariate Gaussian distributions induced by the CE model at sites $s$ and $s^*$, respectively, for a given value of $y > \max(u_i(s), u_i(s^*))$. \todo{Is this max correct?}
 % where $H_{i, s}(y)$ and $H_{i, s^*}(y)$ are the conditional multivariate Gaussian distributions for variable $i$ induced by the CE model at sites $s$ and $s^*$, respectively, for a given value of $y > \max(u_{i, s}, u_{i, s^*})$. \todo{Is this max correct? Has it been talked about enough before?} \todo{Should this be mid i? What does Heff2004 do?}
-where $H_{i, s}(y)$ and $H_{i, s^*}(y)$ are the conditional $(d-1)$-variate Gaussian distributions at sites $s$ and $s^*$, respectively, see Equation~\eqref{eq:ce_norm}.
+where $H_{i, s}(y)$ and $H_{i, s^*}(y)$ are the conditional $(d-1)$-variate Gaussian distributions at sites $s$ and $s^*$, respectively; see Equation~\eqref{eq:ce_norm}.
 % Substituting the means and covariances of these conditional distributions from Equation\eqref{eq:ce_norm} into Equation~\eqref{eq:js_norm_mvn1} gives the closed-form expression
 % \todo{Need help tidying up}
 % \todo{move equation number to right}
@@ -1185,7 +1110,7 @@ and
 
 % % Introduce KL divergence 
 % One common measure of dissimilarity between two distributions $P$ and $Q$ is the Kullback-Leibler (KL) divergence, defined as
-% \begin{equation}~\label{eq:kl}
+% \begin{equation}\label{eq:kl}
 %   KL(F_1 \Vert F_2) = \int_{-\infty}^{\infty} p(y) \log\left(\frac{p(y)}{q(y)}\right) dy.
 % \end{equation}
 % \todo{define mid mid!?}
@@ -1198,7 +1123,7 @@ and
 % % For two multivariate normal distributions $P \sim N(\mu_1, \Sigma_1), Q \sim N(\mu_2, \Sigma_2) \in \mathbb{R}^n$ with diagonal covariance matrices, $KL(F_1 \Vert F_2)$ has closed-form.
 % A well known result is that the KL divergence between two multivariate normal distributions $P \sim N(\mu_1, \Sigma_1)$ and $Q \sim N(\mu_2, \Sigma_2)$ in $\mathbb{R}^n$ has a closed-form solution.
 %   % \item In the case where both covariance matrices are diagonal, this simplifies to
-%     % \begin{equation}~\label{eq:kl_mvn_diag}
+%     % \begin{equation}\label{eq:kl_mvn_diag}
 %     %   KL(F_1 \Vert F_2) = \frac{1}{2} \sum_{i=1}^{n} \left( \frac{\sigma_{1,i}^2}{\sigma_{2,i}^2} + \frac{(\mu_{1,i} - \mu_{2,i})^2}{\sigma_{2,i}^2} - 1 - \log\left(\frac{\sigma_{1,i}^2}{\sigma_{2,i}^2}\right) \right),
 %     % \end{equation}
 %     % where: \todo{Should I use a different notation here, since I also use mu, sigma for the CE model?}
@@ -1211,7 +1136,7 @@ and
 % 
 % \todo{Do we need to use the backward Geometric mean, as described in Deasy and Thiagarajan? Fine if using alpha = 0.5?}
 % The JS divergence is a simple extension of the KL divergence, defined as
-% \begin{equation}~\label{eq:js}
+% \begin{equation}\label{eq:js}
 %   % JS(F_1 \Vert F_2) = \frac{1}{2} KL(P \Vert M) + \frac{1}{2} KL(Q \Vert M),
 %   JS(F_1 \Vert F_2) = \frac{1}{2} \left\{ KL(P \Vert M) + KL(Q \Vert M) \right\},
 % \end{equation}
@@ -1227,7 +1152,7 @@ and
 % This allows us to exploit the property that the weighted product of exponential family distributions is itself a member of the same family, and so $G_{\alpha}(P, Q)$ will also be a multivariate normal distribution.
 % \todo{Need to use backward version instead?}
 % From this, we define the skew-geometric JS divergence as
-% \begin{equation}~\label{eq:js_norm}
+% \begin{equation}\label{eq:js_norm}
 %   % JS^{G_{\alpha}}(F_1 \Vert F_2) = \frac{1}{2} KL(P \Vert G_{\alpha}(P, Q)) + \frac{1}{2} KL(Q \Vert G_{\alpha}(P, Q)).
 %   JS^{G_{\alpha}}(F_1 \Vert F_2) = \frac{1}{2} \left\{ KL(P \Vert G_{\alpha}(P, Q)) + KL(Q \Vert G_{\alpha}(P, Q)) \right\}.
 % \end{equation}
@@ -1244,7 +1169,7 @@ and
 % Since the conditional distributions $P$ and $Q$ depend on the value of the conditioning variable $Y_i(s)$, the divergence between them also depends on $Y_i(s)$. 
 % To obtain a single measure of dissimilarity, we define the expected divergence
 % \todo{Need to clean up expectation?}
-% \begin{equation}~\label{eq:jsga_integral}
+% \begin{equation}\label{eq:jsga_integral}
 % % \mathbb{E}\!\left[ JS^{G_{\alpha}}(P(y_i)\, \| \, Q(y_i)) \,\middle|\, Y_i > u_i \right] 
 % % = \int_{u_i}^\infty JS^{G_{\alpha}}(P(y_i)\, \| \, Q(y_i)) \, f(y_i \mid Y_i > u_i)\, dy_i,
 %   % \mathbb{E}\!\left[ \JSGa{(P(y_i)\, \| \, Q(y_i))} \,\middle|\, Y_i > u_i \right] = \int_{u_i}^\infty \JSGa{(P(y_i)\, \| \, Q(y_i))} \, f(y_i \mid Y_i > u_i)\, dy_i,
@@ -1256,14 +1181,14 @@ and
 The $\cJSGa{s, s^*}(y)$ depends on the value of the corresponding conditioning variable. 
 % Therefore, to obtain a single measure of dissimilarity between the two sites $s$ and $s^*$ for the conditioning variable $Y_i$, we define the expected divergence
 Therefore, to obtain a single measure of dissimilarity between the CE models fitted at the two sites $s$ and $s^*$ for the $i$-th conditioning variable, we define the expected divergence
-\begin{align*}%~\label{eq:jsga_integral}
+\begin{align*}%\label{eq:jsga_integral}
   % eJS^{G_\lambda}_i(s || s^*) &= \mathbb{E}(cJS^{G_\lambda}_i(Y_i(s); s || s^*)| Y_i(s) > u_i) \\
   % \eJSGa{}(s || s^*) &= \mathbb{E}(cJS^{G_\lambda}_i(Y_i(s); s || s^*)| Y_i(s) > u_i) \\
   %                             &= \int_{u_i}^{\infty} \cJSGa{(y; s || s^*)} f(y \mid Y_i(s) > u_i) dy, \numberthis~\label{eq:jsga_integral}
   % \eJSGa{s, s^*} &= \mathbb{E}\left(\cJSGa{s, s^*}(Y_{i,s}) \mid Y_{i,s} > u_{i}\right) \\
   \eJSGa{s, s^*} &= \mathbb{E}\left(\cJSGa{s, s^*}(Y_{i,s}) \mid Y_{i,s} > u_i\right) \\
                  &= \mathbb{E}\left(\cJSGa{s^*, s}(Y_{i,s^*}) \mid Y_{i,s^*} > u_i\right) \\
-                 &= \int_{u_i}^{\infty} \cJSGa{s, s^*}(y) h(y \mid Y_{i,s} > u_i) dy, \numberthis~\label{eq:jsga_integral}
+                 &= \int_{u_i}^{\infty} \cJSGa{s, s^*}(y) h(y \mid Y_{i,s} > u_i) dy, \numberthis \label{eq:jsga_integral}
 \end{align*}
 % where $h(y \mid Y_{i, s} > u)$ is the conditional density of $Y_{i, s}$ given exceedance of the threshold. 
 where $h(y \mid Y_{i, s} > u_i)$ is the conditional density of $Y_{i, s} \mid Y_{i, s} > u_i$.
@@ -1273,12 +1198,14 @@ We here exploit our standardised Laplace margins and note that $h(y \mid Y_{i, s
 
 % Monte Carlo estimation
 % We estimate the integral in Equation~\eqref{eq:jsga_integral} using Monte Carlo methods, noting that $Y_{i, s}$ follows a standard Laplace distribution.
-We estimate the integral in Equation~\eqref{eq:jsga_integral} using Monte Carlo methods.%, noting that $Y_{i, s}$ follows a standard Laplace distribution.
+We estimate the integral in Equation~\eqref{eq:jsga_integral} using Monte Carlo methods. %, noting that $Y_{i, s}$ follows a standard Laplace distribution.
 % We average across the individual scores for each individual realisation of $Y_i(s)$ to derive the divergence for a pair of sites, weighted by the distribution of $Y_i(s)$.
 In practice, very large values of $Y_{i, s}$ can lead to unstable estimates, and we also want to avoid extrapolating beyond the range of the observations of $Y_{i, s}$ used to fit the CE model. 
 % Hence, we truncate the expectation at the 99th percentile of the empirical distribution of $Y_i(s)$ across all sites.
 % Hence, we truncate the integral in Equation~\eqref{eq:jsga_integral} at the 99th percentile of the empirical distribution of $Y_{i, s}$ across all sites.
 Hence, we truncate the limits in integral~\eqref{eq:jsga_integral}, so that the upper limit is the 99th percentile of the empirical distribution of $Y_{i, s}$ pooled across all sites. % \todo{Dicuss: How to reformulate to show pooling over all sites?}
+\todo{Need to mention what to do if any sites have obs which exceed 99th percentile?}
+\todo{mention what to do when 99th empirical percentile is greater than max obs at any sites?}
 
 % Matrix
 % We can repeat this procedure for each pair of sites $(s, s^*)$ and for each conditioning variable $Y_i$, to obtain a matrix of pairwise dissimilarities between all sites for each conditioning variable, given by
@@ -1324,7 +1251,8 @@ Aggregating allows us to pool information across multiple comparisons and forms 
 % However, $JS^{G_{\alpha}}$ is also unbounded. The generalized JS divergence from \citet{Thiagarajan2025} is bounded, but must be estimated using MC, as it has no closed-form solution. Should I use/try it out?
 % \end{itemize}
 
-\tightsubsection{Clustering of multivariate extremes}~\label{subsec:clustering}
+\subsection{Clustering of multivariate extremes}
+\label{subsec:clustering}
 
 % Describe clustering process via JS divergence and k-medoids/PAM algorithm (give?
 % See Vignotto)
@@ -1347,18 +1275,20 @@ Assuming we use the dissimilarity matrix $M^{(i)}$, a brief description of the a
 %   \item The centroids are updated by selecting the observation in each cluster which minimises the sum of dissimilarities to all other observations in that cluster.
 %   \item This process is repeated until convergence, when no observations change clusters.
 % \end{itemize}
+\todo{Need to have index below argmin?}
+\todo{is ``observation'' on line 5 the right word?}
 \begin{algorithm}[htb]
   % \caption{k-medoids (PAM)}
   \caption{Partitioning Around Medoids (PAM) algorithm using the $\eJSGa{}$ divergence.}
   \label{alg:kmedoids_kappa}
   \begin{algorithmic}[1]
     \State \textbf{Input:} dissimilarity matrix $M^{(i)}\in\mathbb{R}^{D\times D}$, number of clusters $k$
-    \State \textbf{Output:} Cluster assignments $C_1,\dots,C_k$ and medoid indices $\boldsymbol{\kappa}=(\kappa_1,\dots,\kappa_k)$
+    \State \textbf{Output:} Cluster assignments $C_1,\dots,C_k$, medoid indices $\boldsymbol{\kappa}=(\kappa_1,\dots,\kappa_k)$
     \State \textbf{Initialise:} choose $k$ distinct medoid indices $\{\kappa_1,\dots,\kappa_k\}\subseteq\{1,\dots,D\}$ uniformly at random.
     \Repeat
     \State \textbf{Assignment:} \parbox[t]{.82\linewidth}{\raggedright Assign each observation $s\in\{1,\dots,D\}$ to its closest medoid in terms of $\eJSGa{}$ (see Equation~\eqref{eq:jsga_integral}), i.e.\ \\ $j \coloneq \argmin_{\ell\in\{1,\dots,k\}} \eJSGa{s,\kappa_\ell}$ and assign $s$ to $C_j$.}
       \For{$j=1,\dots,k$}
-        \State \textbf{Update:} \parbox[t]{.82\linewidth}{\raggedright Update medoid index to minimise intracluster dissimilarity, i.e.\ $\kappa_j \coloneq \argmin_{p\in C_j}\sum_{q\in C_j} \eJSGa{p,q}$.}
+        \State \textbf{Update:} \parbox[t]{.82\linewidth}{\raggedright Update medoid index to minimise intra-cluster dissimilarity, i.e.\ $\kappa_j \coloneq \argmin_{p\in C_j}\sum_{q\in C_j} \eJSGa{p,q}$.}
         \State \Comment{Break ties by choosing the smallest index.}
       \EndFor
     \Until{no observation changes cluster assignment}
@@ -1385,14 +1315,14 @@ The PAM algorithm takes a single hyperparameter, the number of clusters, $k$.
 We use the method of \citet{Thorndike1953-ie} to select $k$.
 This uses the total within-cluster sum of squares ($\mathrm{TWGSS}$).
 % We find in in our simulation study (Section~\ref{sec:sim}) and our Irish meteorological application in Section~\ref{sec:application}, this method provides clear suggestions for the value of $k$ to use.
-We find in our simulation study (Section~\ref{sec:sim}) that this method correctly identifies $k$. 
+We find in our simulation study (Section~\ref{sec:sim}) that this method correctly identifies $k$.  \todo{Need to include plots in supplementary material?}
 Specifically, we define the $\mathrm{TWGSS}$ as
-% \begin{equation}~\label{eq:twgss}
+% \begin{equation}\label{eq:twgss}
 %   % \mathrm{TWGSS}(k) = \sum_{i=1}^{k} \sum_{j=1}^{n_i} d_{ij}^2,
 %   \mathrm{TWGSS}(k) = \sum_{i=1}^{k} \sum_{j=1}^{n_i} \delta_{ij}^2,
 % \end{equation}
 % where $\delta_{ij}$ is the dissimilarity between site $j$ and the centroid of cluster $i$, which we measure using the $\JSGa{}$ divergence defined in section \ref{subsec:div}, and $n_i$ is the number of observations in cluster $i$.
-\begin{equation}~\label{eq:twgss}
+\begin{equation}\label{eq:twgss}
   % \mathrm{TWGSS}(k) = \sum_{c=1}^{k} \sum_{s \in S} \eJSGa{}(s \Vert m_c),
   \mathrm{TWGSS}(k) = \sum_{c=1}^{k} \sum_{s =1}^{D} \eJSGa{s, s_c},
 \end{equation}
@@ -1400,15 +1330,15 @@ Specifically, we define the $\mathrm{TWGSS}$ as
 % where $\eJSGa{s, s_c}$ is the dissimilarity between site $s$ and the medoid site $s_c$ of cluster $c$, and $D$ is the total number of sites. \todo{Is this right?}
 where $\eJSGa{s, s_c}$ is the dissimilarity in Equation \eqref{eq:jsga_integral} evaluated for 
 site $s$ and the medoid site $s_c$ of cluster $c$, $c = 1, \ldots, k$. 
-We plot $\mathrm{TWGSS}(k)$ against $k$ and choose the optimal number of clusters as the value of $k$ at which the TWGSS reduction sharply slows, or equivalently, the point at which the curve has an ``elbow'' \citet{Hastie2009}. 
+We plot $\mathrp{TWGSS}(k)$ against $k$ and choose the optimal number of clusters as the value of $k$ at which the TWGSS reduction sharply slows, or equivalently, the point at which the curve has an ``elbow'' \citep{Hastie2009}. 
 
-\tightsection{Simulation study}
+\section{Simulation study}
 \label{sec:sim}
 
 % Introduce section
 % Throughout this section, we evaluate the effectiveness of our clustering method using a simulation study.
 % Throughout this section, we assess the performance of our clustering method through a simulation study. 
-We illustrate performance of our multivariate extremal clustering approach across multiple simulation studies. 
+We illustrate the performance of our multivariate extremal clustering approach across multiple simulation studies. 
 Clustering accuracy is evaluated using the adjusted Rand index (ARI) of \citet{Hubert1985-ys}. % , which measures similarity between the true and estimated clustering solutions, adjusted for chance.
 % In Section~\ref{subsec:sim_gauss}, a simple simulation design using a Gaussian copula to generate data is described. 
 % This data has the advantage of having theoretical asymptotic values for the CE parameters, to which we can directly compare our finite simulation estimates, as a test to ensure that our clustering is working as desired, reducing uncertainty in parameter estimates. 
@@ -1422,8 +1352,10 @@ Section~\ref{subsec:sim_mixture} extends the study to mixtures of Gaussian and $
 For the bivariate case, we compare our clustering approach to that of \citet{Vignotto2021}, while we also show how this method can be applied in higher dimensions and for more complex dependence structures.
 % We evaluate our clustering solution using the adjusted rand index (ARI), and in Section~\ref{subsubsec:boot} ascertain the improvement of parameter estimation post-clustering using a bootstrapping scheme. 
 % We evaluate clustering accuracy using the adjusted Rand index (ARI), and in Section~\ref{subsubsec:boot} examine improvements in parameter estimation through a bootstrap resampling scheme \citet{Hubert1985-ys}.
+% We also include an investigation of the elbow method for selecting $k$ in the supplementary material.
 
-\tightsubsection{Gaussian copula setting}~\label{subsec:sim_gauss}
+\subsection{Gaussian copula setting}
+\label{subsec:sim_gauss}
 
 % Single location
 % We first consider a simple simulation design based on the Gaussian copula.  
@@ -1504,7 +1436,7 @@ Data are generated independently across sites from a Gaussian copula.
 % where $\rho^s_{\text{Gauss}} \in [0, 1]$ is a site-specific correlation parameter, and then apply the transformation in Equation~\eqref{eq:laplace}, with $F_X(\cdot)$ being the standard normal distribution function, to obtain $(Y_{1,s}, Y_{2,s})$ with standard Laplace margins.
 % For site $s = {1, \ldots, 12}$, we sample 1000 observations for $(Z_{1,s}, Z_{2,s})$ from a bivariate normal distribution with mean zero and covariance matrix with off-diagonal elements $\rho^s_{\text{Gauss}} \in [0, 1]$ serving as site-specific correlation parameters.
 % For site $s = {1, \ldots, 12}$, we sample 1000 observations of $(Z_{1,s}, Z_{2,s})$ from a bivariate normal distribution with mean zero and covariance matrix having off-diagonal element $\rho^s_{\text{Gauss}} \in [0,1]$ as the site-specific correlation.
-For site $s = {1, \ldots, 12}$, we sample 1000 observations for $(Z_{1,s}, Z_{2,s})$ from a bivariate normal distribution with mean zero and covariance matrix with off-diagonal elements $\rho^s_{\text{Gauss}} \in [0, 1]$ serving as site-specific correlation parameters.
+For site $s = {1, \ldots, 12}$, we sample 1000 observations for $(X_{1,s}, X_{2,s})$ from a bivariate normal distribution with mean zero and covariance matrix with off-diagonal elements $\rho^s_{\text{Gauss}} \in [0, 1]$ serving as site-specific correlation parameters.
 We then apply the transformation in Equation~\eqref{eq:laplace}, with $F_X(\cdot)$ being the standard normal distribution function, to obtain $(Y_{1,s}, Y_{2,s})$ with standard Laplace margins.
 
 % Per-site sampling
@@ -1527,7 +1459,7 @@ We then apply the transformation in Equation~\eqref{eq:laplace}, with $F_X(\cdot
 
 % Parameter choices and true clustering
 % The sites are assigned to one of three latent clusters of equal size, defined by their own correlation $\rho_{\text{Gauss}}^s$. % their copula correlations. 
-The sites are assigned to one of three latent clusters of equal size based on $\rho^s_{\text{Gauss}}$.
+The sites are assigned to one of three latent clusters of equal size, based on $\rho^s_{\text{Gauss}}$.
 As a proof of concept, we choose well-separated values to ensure clear clustering.
 Specifically, the first cluster, comprising sites 1 to 4, has correlation $\rho_{\text{Gauss}}^s=0.1, s = 1, \ldots, 4$; the second cluster has $\rho_{\text{Gauss}}^s=0.5$, for $s = 5, \ldots, 8$, 
 and the third cluster has $\rho_{\text{Gauss}}^s=0.9$, for $s = 9, \ldots, 12$.
@@ -1539,7 +1471,8 @@ and the third cluster has $\rho_{\text{Gauss}}^s=0.9$, for $s = 9, \ldots, 12$.
 % At each site the CE model is fitted using conditional quantile levels $q=0.9$ and $q=0.99$, equivalent to taking the largest 100 and 10 observations of the conditioning variable, respectively, to estimate the dependence structure between the two variables as described by the CE parameters $\alpha$ and $\beta$.
 % After data generation, the conditional extremes (CE) model is fitted at each site using conditional quantile levels \(q=0.9\) and \(q=0.99\), equivalent to using the largest 100 and 10 observations of the conditioning variable, respectively.
 % After data generation, the conditional extremes (CE) model is fitted at each site with conditioning thresholds $u_{i, s}$ in Equation~\eqref{eq:ce_model}, as the $q$-th Laplace quantile for \(q=0.9\) and \(q=0.99\).
-At each site $s = 1, \ldots, 12$, we estimate the CE model in Equation~\eqref{eq:ce_model}, with conditioning threshold $u_{i, s}$ as the standard Laplace $q$-quantile for \(q=0.9\) and \(q=0.99\).
+At each site $s = 1, \ldots, 12$, we estimate the CE model in Equation~\eqref{eq:ce_model}, with conditioning threshold $u_{i}$ as the standard Laplace $q$-quantile for \(q=0.9\) and \(q=0.99\).
+\todo{If drawing q from standard Laplace, wouldn't this just be u, not ui or uis?}
 % This is equivalent to using the largest 100 and 10 observations of the conditioning variable, respectively.
 % Pairwise dissimilarities between sites are computed using the $\JSGa{}$ divergence, and clusters are identified using PAM, following the procedure in Section~\ref{subsec:clustering}.
 % Pairwise dissimilarities between sites are computed using the $\JSGa{}$ divergence between the fitted CE models for $X_1 \mid X_2$ and $X_2 \mid X_1$, which are averaged to obtain a single dissimilarity measure. 
@@ -1567,7 +1500,7 @@ Following Section~\ref{subsec:clustering}, we repeat this procedure 500 times, w
 % Figure~\ref{fig:00_gauss_cop} shows that our approach is able to reduce the uncertainty in the estimates for both $\alpha_{\mid i}$ and $\beta_{\mid i}$ for both considered conditioning quantiles. 
 % Figure~\ref{fig:00_gauss_cop} shows that by using clustering to pool information across different sites, we can reduce the uncertainty in the estimates for both $\alpha_{\mid i}$ and $\beta_{\mid i}$ for both considered conditioning quantiles. 
 Figure~\ref{fig:00_gauss_cop} shows boxplots of the estimated model parameters stratified by the true values of $\rho_{\text{Gauss}}^s$.
-The results are shown pre- and post-clustering with the latter derived by pooling data across all sites according to their estimated clustering (which was always correct in this setting).
+The results are shown pre- and post-clustering, with the latter derived by pooling data across all sites according to their estimated clustering (which was always correct in this setting).
 By pooling data across sites, we reduce estimation uncertainty for both $\alpha_{\mid i}$ and $\beta_{\mid i}$.
 Bias, as defined as the difference between the finite-sample estimate and the true theoretical parameter, and variance decrease with increasing $\rho_{\text{Gauss}}^s$, indicating faster convergence to the asymptotic model under stronger dependence. 
 % We observe the expected bias-variance tradeoff in the choice of quantile for the CE model, with the higher quantile ($q=0.99$) yielding less biased estimates, as expected due to improved convergence to the asymptotic parameters further into the tail, but with greater variance due to data scarcity.
@@ -1587,12 +1520,12 @@ We observe the expected bias-variance tradeoff in the choice of quantile for the
     The x-axis gives $q$, the level of the conditioning quantile used to fit the model, and the boxes are coloured by the true Gaussian copula correlation parameter, $\rho_{\text{Gauss}}^s$.
     The horizontal lines indicate the true theoretical values of $\alpha_{\mid i}$ and $\beta_{\mid i}$, with the colours for $\alpha_{\mid i}$ corresponding with the true $\rho_{\text{Gauss}}^s$ values.
     }}
-   ~\label{fig:00_gauss_cop}
-   \shrinkfig
+   \label{fig:00_gauss_cop}
 \end{figure}
 
 
-\tightsubsection{Mixture model setting}~\label{subsec:sim_mixture}
+\subsection{Mixture model setting}
+\label{subsec:sim_mixture}
 
 % In this section, we extend our simulation design to a mixture of Gaussian and t-copulas, where we control the dependence structure through their respective correlation parameters, $\rhou{Gauss}$ and $\rhou{t}$, with each t-copula having 3 degrees of freedom.
 % The idea behind this design is that the Gaussian copula generates observations exhibiting extremal independence, whereas the t-copula induces extremal dependence, the strength of which is determined by their respective correlation parameters.
@@ -1652,7 +1585,7 @@ We assess the clustering accuracy via the ARI.
 
 % More formally, for site $s=1,\dots,S$ and dimension $d\ge2$, let $\RG{s},\RT{s}\in\mathbb{R}^{d\times d}$ be correlation matrices where $\RG{s}$ has all off-diagonal entries equal to $\rhou{Gauss}^s$ and $\RT{s}$ has all off-diagonal entries equal to $\rhou{t}^s$, and all diagonal entries equal to 1 for both.
 % We define the $d$-variate mixture copula
-% \begin{equation} ~\label{eq:mix_copula}
+% \begin{equation} \label{eq:mix_copula}
 %   C_{\mathrm{mix}}^{(s)}(\mathbf{u})
 %   \;=\; \tfrac{1}{2}\,C_{t,\nu=3}\!\big(\mathbf{u};\RT{s}\big)
 %        \;+\; \tfrac{1}{2}\,C_{\mathrm{Gauss}}\!\big(\mathbf{u};\RG{s}\big),
@@ -1664,7 +1597,7 @@ We assess the clustering accuracy via the ARI.
 To obtain a sample of size $n = 1000$ from the mixture copula, at each site $s =1, \ldots, 12$, we combine $n/2 = 500$ samples from the Gaussian copula described in Section~\ref{subsec:sim_gauss} (with correlation parameter $\rhou{Gauss}^s$), and $n/2 = 500$ observations from a Student $t$-copula with 3 degrees of freedom and correlation $\rhou{t}^s$, before applying the Laplace transformation in Equation~\eqref{eq:laplace} to obtain the Laplace-scale pairs $(Y_{1,s}, Y_{2,s})$ at site $s$.
 % At site $s$, we generate an exact half–half sample of size $n$ by drawing $m=n/2$ observations from each component. 
 % Formally, let $\mathbf{Z}_{i}^{(s)}\in\mathbb{R}^d$ denote latent vectors. We sample
-% \begin{equation}~\label{eq:mix_latent}
+% \begin{equation}\label{eq:mix_latent}
 % \begin{aligned}
 % % &\text{Gaussian half:}\quad &&\mathbf{Z}_{i}^{(s)} \sim \mbox{MVN}_d\!\big(\mathbf{0},\RG{s}\big),
 %   &\text{Gaussian half:}\quad &&\mathbf{Z}_{i}^{(s)} \sim \mbox{MVN}_d\!\big(\mathbf{0},\rhou{Gauss}^s\big),
@@ -1700,7 +1633,8 @@ Finally, section~\ref{subsubsec:sim_realistic} considers a setting with $D = 60$
 % We can also evaluate the improvement in parameter estimation post-clustering using the bootstrapping scheme described in \cite{Heffernan2004}, as done in Section~\ref{subsubsec:boot}.
 % Finally, in Section~\ref{subsubsec:boot}, we assess improvements in parameter estimation post-clustering using the bootstrap scheme of \citet{Heffernan2004}.  
 
-\tightsubsubsection{Comparison to \citet{Vignotto2021}}~\label{subsubsec:sim_competing_methods}
+\subsubsection{Comparison to \citet{Vignotto2021}}
+\label{subsubsec:sim_competing_methods}
 
 % We compared our method to the leading competitor in the bivariate case, \citet{Vignotto2021}, using the max risk function which they propose.
 % We compared our method to that of \citet{Vignotto2021}.
@@ -1710,16 +1644,16 @@ However, we now use a mixture of a Gaussian and t-copula (with Laplace margins),
 Two clusters of sites $s = {1, \ldots, 6}$ and $s = {7, \ldots, 12}$ are defined with different values of $\rhou{t}^s$. 
 We set $\rhou{t}^s = \rho_{\text{t}_1}$ for $s = 1, \ldots, 6$ and $\rhou{t}^s = \rho_{\text{t}_2}$ for $s = 7, \ldots, 12$, while $\rhou{Gauss}^s$ is the same for both clusters. 
 % We keep $\rhou{Gauss}^s$ equal across both clusters.
-We consider a range of extremal dependence scenarios defined by a grid over the values $(\rhou{Gauss}^s \in \{0.1, 0.2, \ldots, 1.0\}, \rhou{t}^s \in \{0.1, 0.3, \ldots, 0.9\}, \rho_{\text{t}_2}^s \in \{0, 0.2, \ldots, 0.8\}$.
+We consider a range of extremal dependence scenarios defined by a grid over the values $\left(\rhou{Gauss}^s \in \{0.1, 0.2, \ldots, 1.0\}, \rho_{\text{t}_1}^s \in \{0.1, 0.3, \ldots, 0.9\}, \rho_{\text{t}_2}^s \in \{0, 0.2, \ldots, 0.8\}\right)$.
   % \item These values were varied across a grid search.
 % The CE model was fit at the $90^{th}$ quantile, i.e., the $90^{th}$ quantile of $Y_{i} \mid Y_{j} = y_j$, and clustering solutions were obtained using the $\JSGa{}$ divergence. 
-We estimate the CE model using $q = 0.9$, and clusters were obtained using the aggregate dissimilarity matrix in Equation~\eqref{eq:aggregate_matrix}.
+We estimate the CE model using $q = 0.9$, and clusters were obtained using the aggregated dissimilarity matrix $M$ in Equation~\eqref{eq:aggregate_matrix}.
 % The clustering solutions were evaluated using the ARI, with results shown in Figure \ref{fig:01_ce_vs_vi} for a grid search over different $\rhou{Gauss}$ and $\rhou{t}$ values, with 500 simulations for each setting.
 Performance is evaluated using the ARI, over a grid of $\rhou{Gauss}$ and $\rhou{t}$ values, with 500 replicated experiments per setting.
 
 % The proposed method is shown to be superior to the method of \cite{Vignotto2021}, across a range of possible bivariate dependence structures, as defined by $\rhou{t}$.
 The results are shown in Figure~\ref{fig:01_ce_vs_vi}. 
-Across this range of considered bivariate extremal dependence structures, our method consistently outperforms that of \citet{Vignotto2021}. 
+Across the range of considered bivariate extremal dependence structures, our method consistently outperforms that of \citet{Vignotto2021}. 
 % Both models perform better when the difference in the t-copula correlation parameters between the two clusters is larger, as the clusters are naturally more distinct when there is greater disparity in dependence.
 Both methods have high ARI when the cluster-wise difference in $\rhou{t}^s$ is larger, since greater disparity naturally makes clusters more distinct and clustering easier. 
 % Both models also perform better when Gaussian and t-copula correlation are higher, as the signal of extremal dependence is stronger, with more extremal data available.
@@ -1732,7 +1666,7 @@ This may be because the Gaussian copula becomes more similar to that of the t-co
 % \begin{figure}[htb]
 \begin{figure}[htb]
     \centering
-    \includegraphics[width = 0.85\linewidth]{plots/sim_01b_ce_vs_vi_dqu_0.9_man.png}
+    \includegraphics[width = 0.8\linewidth]{plots/sim_01b_ce_vs_vi_dqu_0.9_man.png}
     % \caption{\emph{Comparison of \citep{Vignotto2021} clustering with our proposed method (labelled ``Cond. Extremes''), for two variables and two equally sized clusters for simulations of 12 ``locations'', each with 1000 observations of each variable, from a mixture of Normal and Gaussian copulas. A grid search was performed, with the x-axis representing the Gaussian correlation parameter used for both clusters, and the facet labels showing the t-copula correlation parameters for each ``known'' cluster. This grid search was repeated 500 times. The smoothed lines show the smoothed median of the Adjusted Rand Index for both clustering methods, with smoothing performing using a generalised additive model.}} % The lines show the median of the Adjusted Rand Index for both clustering methods, with uncertainty coming from the 90\% credible interval.}} % The proposed method is shown to be superior to the leading competitor in the bivariate case, that of \cite{Vignotto2021}. Both models perform better when the difference in the t-copula correlation parameters between the two clusters is larger, and when Gaussian correlation is higher.
     % \caption{\emph{Comparison of our clustering method based on the Conditional Extremes model and the method of \citet{Vignotto2021} for extremal clustering.  
     % \caption{\emph{Comparison of performance for CE clustering and \citet{Vignotto2021}. 
@@ -1747,10 +1681,11 @@ This may be because the Gaussian copula becomes more similar to that of the t-co
     The x-axis represents the Gaussian correlation parameter $\rhou{Gauss}$, with facet labels indicating the t-copula correlation parameters $\rhou{t}$ for each true cluster.
     The smoothed lines show the Adjusted Rand Index (ARI) for both methods, with smoothing performed using a generalised additive model.
     }}
-    ~\label{fig:01_ce_vs_vi}
+    \label{fig:01_ce_vs_vi}
 \end{figure}
 
-\tightsubsubsection{Extension to higher dimensions}~\label{subsubsec:sim_extension}
+\subsubsection{Extension to higher dimensions}
+\label{subsubsec:sim_extension}
 
 While the method of \citet{Vignotto2021} is restricted to $d = 2$ dimensions, our approach can be extended to $d \geq 3$ variables. 
 % To illustrate this, we can repeat the simulation study and grid search of Section~\ref{subsubsec:sim_competing_methods}, but now for three variables, the results of which are shown in Figure \ref{fig:02_3d}.
@@ -1770,6 +1705,7 @@ In fact, performance is markedly stronger in three dimensions than in two.
 % This is not surprising, as the CE models in this setup are the same in both two and three dimensions, and the $\JSGa{}$ divergence and its integral from Equation~\eqref{eq:jsga_integral} are computed similarly. % in the same way, just averaged over more models with more data.
 This is not surprising, as the CE fits in this setup are similar in both two and three dimensions, with the same $\rhou{t}^s$ being used across all variable pairs.
 Therefore, the aggregated matrix $M$ in Equation~\eqref{eq:aggregate_matrix} is computed similarly, just averaged over more models with more data, which naturally improves clustering performance.
+% We further illustrate this for up to $d=5$ dimensions in the supplementary material.
 
 \begin{figure}[htb]
     \centering
@@ -1779,18 +1715,20 @@ Therefore, the aggregated matrix $M$ in Equation~\eqref{eq:aggregate_matrix} is 
     % A grid search was performed,  with the x-axis representing the Gaussian correlation parameter used for both clusters, and the facet labels showing the t-copula correlation parameters for each ``known'' cluster. 
     % This grid search was repeated 500 times. 
     % The smoothed lines show the smoothed median of the Adjusted Rand Index for both clustering methods, with smoothing performing using a generalised additive model.}} % Points show individual values of the ARI for a given simulation.}} 
-    \includegraphics[width = 0.85\linewidth]{plots/sim_01d_js_sens_2_3_var_dqu_0.9_man.png}
+    \includegraphics[width = 0.8\linewidth]{plots/sim_01d_js_sens_2_3_var_dqu_0.9_man.png}
     \caption{\emph{
         Comparison of clustering perfomance for $d = 2$ and $d=3$ variables and two equally-sized clusters. % for simulations of 12 locations from a mixture of Gaussian and t-copulas.
         The x-axis represents the Gaussian correlation parameter for both clusters, and the facet labels show the t-copula correlation parameters for the two true clusters.
-        The smoothed lines show the smoothed median of the Adjusted Rand Index for both dimensions, with smoothing performing using a generalised additive model.}} % Points show individual values of the ARI for a given simulation.}} 
-   ~\label{fig:02_3d}
-   \shrinkfig
+        % The smoothed lines show the smoothed median of the Adjusted Rand Index for both dimensions, with smoothing performing using a generalised additive model.}} % Points show individual values of the ARI for a given simulation.
+        The smoothed lines show the Adjusted Rand Index (ARI), with smoothing performed using a generalised additive model.
+    }}
+   \label{fig:02_3d}
 \end{figure}
 
 
 % Expand to up to 5 dimensions!
 % To further illustrate how our method can be extended to higher dimensions and why this is useful, let us consider a specific example from our grid search, where we have $\rho_{\text{t}_1}, \rho_{\text{t}_2} = 0.5$.
+\todo{Move to supplementary material?}
 To further illustrate the performance of our method to higher dimensions, we consider a specific case from the grid where $\rho_{\text{t}_1} = 0.4$ and $\rho_{\text{t}_2} = 0.5$. 
 % This is a relatively difficult clustering scenario in both the bivariate and three-dimensional cases, as the difference in the t-copula correlation parameters between the two clusters is small.
 This setting presents a challenging clustering scenario in both two and three dimensions, as the cluster-wise difference in the t-copula correlation parameters is small. 
@@ -1802,7 +1740,7 @@ Cluster accuracy improves steadily with dimension, reaching values close to 1 ac
 % Again, we must be cautious in interpreting these results, as in this example we merely increase the amount of data in our simulation and keep the dependence structure the same across each pair of variables, 
 % These gains should be interpreted cautiously, since the simulations increase the amount of data without altering the pairwise extremal dependence structure. % across variable pairs. 
 These gains should be interpreted cautiously, since as mentioned above we use the same $\rhou{t}^s$ across all variable pairs, thus not altering the pairwise extremal dependence structure, and merely increasing the amount of data as $d$ increases.
-Having separate $\rhou{t}^s$ values for each variable pair would increase the complexity and signal-to-noise ratio of the clustering task, and likely reduce performance.
+Having separate $\rhou{t}^s$ values for each variable pair would increase the complexity and signal-to-noise ratio of the clustering task, and likely reduce performance. \todo{Need for this line?}
 % However, we can still conclude that these results show that our method performs well for extremal clustering in higher dimensions, and motivates such a use. 
 Nevertheless, the results demonstrate that the proposed method scales effectively to higher dimensions and performs well in multivariate settings. 
 
@@ -1811,19 +1749,21 @@ Nevertheless, the results demonstrate that the proposed method scales effectivel
     \centering
     % \includegraphics[width = 0.9\linewidth]{plots/sim_01c_js_sens_3_var_dqu_0.9.png}
     \includegraphics[width = 0.7\linewidth]{plots/sim_01d_js_sens_3_var_dqu_0.9mult_var_man.png}
-    \caption{\emph{Evaluation of clustering for $d = 2$ to $d = 5$ variables and two equally-sized clusters for simulations at 12 sites from a mixture of Gaussian and t-copulas.% each with 1000 observations for each variable, from a mixture of Gaussian and t-copulas. 
+    \caption{\emph{
+        Evaluation of clustering for $d = 2$ to $d = 5$ variables and two equally-sized clusters for simulations at 12 sites from a mixture of Gaussian and t-copulas.% each with 1000 observations for each variable, from a mixture of Gaussian and t-copulas. 
     The t-copula correlation parameters for each true cluster were set to $\rho_{\text{t}_1} = 0.4, and \rho_{\text{t}_2} = 0.5$. 
     % A grid search was performed over the values of the Gaussian correlation parameter, as represented on the x-axis. 
     A sequence of values are considered for the Gaussian correlation parameter, $\rhou{Gauss}$, as represented on the x-axis.
     % This grid search was repeated 500 times. 
-    The smoothed lines show the smoothed median of the Adjusted Rand Index for both clustering methods, with smoothing performing using a generalised additive model. 
-    % Points show individual values of the ARI for a given simulation.}} 
-}}~\label{fig:02b_5d}
-\shrinkfig
+    % The smoothed lines show the smoothed median of the Adjusted Rand Index for both clustering methods, with smoothing performing using a generalised additive model. 
+    The smoothed lines show the Adjusted Rand Index (ARI), with smoothing performed using a generalised additive model.
+    % Points show individual values of the ARI for a given simulation.
+}}
+\label{fig:02b_5d}
 \end{figure}
 
-
-\tightsubsubsection{Extension to more sites}~\label{subsubsec:sim_realistic}
+\subsubsection{Extension to more sites}
+\label{subsubsec:sim_realistic}
 
 % We also design a more realistic example to somewhat mimic the structure of the Irish dataset introduced in Section~\ref{sec:ire}.
 % We also design a more realistic example to somewhat mimic the structure of the Irish dataset in our application in Section~\ref{sec:application}.
@@ -1849,7 +1789,7 @@ To reduce the dimensionality of the grid of considered copula parameter values, 
 The results of 500 repetitions of this simulation study are shown in Figure~\ref{fig:03_realistic}.
 % The algorithm is again shown to perform well, particularly where the difference in the t-copula correlation parameters between the clusters is largest, as expected.
 Similarly to the previous simulation studies, our clustering method performs well, particularly when the differences in t-copula correlation parameters between clusters are larger. 
-For example, the best performance is observed where $\rho_{\text{t}_1} = 0.9, \rho_{\text{t}_2} = 0.1, \rho_{\text{t}_3} = 0.5$, as the clusters are most distinct, while conversely, performance is worst for $\rho_{\text{t}_1} = 0.6, \rho_{\text{t}_2} = 0.4, \rho_{\text{t}_3} = 0.5$.
+For example, the best performance is observed where $\rho_{\text{t}_1} = 0.9, \rho_{\text{t}_2} = 0.1, \rho_{\text{t}_3} = 0.5$, as the clusters are most distinct, while conversely, performance is worst for $\rho_{\text{t}_1} = 0.6, \rho_{\text{t}_2} = 0.4, \rho_{\text{t}_3} = 0.5$. \todo{Included this to aid reading of figure, is it necessary?}
 % The variability in ARI across simulations is also quite low, indicating that the clustering solution is robust.
 % Moreover, variability in ARI across simulations is low, indicating that the clustering solution is robust. 
 
@@ -1865,16 +1805,16 @@ For example, the best performance is observed where $\rho_{\text{t}_1} = 0.9, \r
      The true x-axis and facet labels show the t-copula correlation parameters for each of the three true clusters, for a Gaussian copula correlation of $\rhou{Gauss} = 0.5$. 
      % Perturbations were added to these parameters. 
      % This grid search was repeated 500 times. 
-    The smoothed lines show the smoothed Adjusted Rand Index for both clustering methods, with smoothing performing using a generalised additive model.}}
-     % Points show individual values of the ARI for a given simulation.}} 
+    % The smoothed lines show the smoothed Adjusted Rand Index for both clustering methods, with smoothing performing using a generalised additive model.
+    The smoothed lines show the Adjusted Rand Index (ARI), with smoothing performed using a generalised additive model.
+     % Points show individual values of the ARI for a given simulation.
+    }}
  % The line shows the median of the Adjusted Rand Index for both clustering methods, with uncertainty coming from the 90\% credible interval. Points show individual values of the ARI for a given simulation.}} 
-   ~\label{fig:03_realistic}
-   \shrinkfig
+   \label{fig:03_realistic}
 \end{figure}
 
-
-
-% \tightsubsubsection{Parameter estimation pre- and post-clustering}~\label{subsubsec:boot}
+% \subsubsection{Parameter estimation pre- and post-clustering}
+% \label{subsubsec:boot}
 % 
 % % Describe bootstrapping
 % % Finally, we recall that an important reason for spatial clustering is to reduce the uncertainty in parameter estimates while minimising the introduction of bias by grouping similar locations together.
@@ -1935,7 +1875,7 @@ For example, the best performance is observed where $\rho_{\text{t}_1} = 0.9, \r
 %     }}~\label{fig:04_bootstrap}
 % \end{figure}
 
-\tightsection{Application to Irish meteorological data}
+\section{Application to Irish meteorological data}
 \label{sec:application}
 % Section Intro
 We now apply our extremal clustering method to meteorological observations from the Republic of Ireland. 
@@ -1948,7 +1888,8 @@ In Section~\ref{subsec:app_data}, we describe the dataset of precipitation and w
 % In Section~\ref{subsec:app_ce}, we fit the CE model to the data, and in Section~\ref{subsec:app_clust}, we apply our clustering approach to the estimated parameters to identify the spatial dependence structure. 
 In Section~\ref{subsec:app_ce}, we discuss fits of the conditional extremes model, and, in Section~\ref{subsec:app_clust}, we apply our clustering approach. %to the estimated parameters to identify the spatial dependence structure. 
 
-\tightsubsection{Ireland meteorological data}~\label{subsec:app_data}
+\subsection{Ireland meteorological data}
+\label{subsec:app_data}
 
 % % Image of locations and precipitation vs wind speed for two sites
 % \todo{Move elevation legend onto plot}
@@ -1959,7 +1900,7 @@ In Section~\ref{subsec:app_ce}, we discuss fits of the conditional extremes mode
 %     \includegraphics[width = 0.9\linewidth]{plots/02_mot_ex_plot_elev.png}
 %     \caption{\emph{Left: locations of 59 Met Éireann sites with precipitation data available from 1990 to 2020, with elevation in metres above sea level binned into 100m intervals. 
 %     Right: scatter plots of the weekly aggregated precipitation and wind speed maxima, with the 95\% quantile of wind speed and precipitation shown as dashed lines, for Cloone Lake, County Kerry (red), and Malahide Castle, County Dublin (blue), in the Winter months (October -- March), which are the two stations with the highest and lowest mean weekly precipitation, respectively.}}
-%    ~\label{fig:02_locs}
+%    \label{fig:02_locs}
 % \end{figure}
 
 \begin{figure}[htb]
@@ -1970,8 +1911,7 @@ In Section~\ref{subsec:app_ce}, we discuss fits of the conditional extremes mode
     \caption{\emph{Left: elevation (m) profile of Ireland.%, with elevation in metres above sea level binned into 100m intervals with the highest bin for elevations above 500m.
     % Right: $\chi$ statistics between precipitation and wind speed at all 59 locations, estimated at the 95th quantile. Darker colours and larger points indicate stronger asymptotic dependence.}}
     Right: Estimated $\chi(0.95)$ between precipitation and wind speed at all 59 locations. Darker colours and larger points indicate stronger asymptotic dependence.}}
-   ~\label{fig:chi}
-   \shrinkfig
+   \label{fig:chi}
 \end{figure}
 
 
@@ -1980,7 +1920,7 @@ We analyse the joint extremal behaviour of precipitation and wind speed at $D=59
 % The data we have performed our clustering on is precipitation data for the Republic of Ireland, collected from the Met Éireann website at \citet{metHistoricalData}, and wind speed data from the ERA5 Reanalysis dataset at \citet{Hersbach2020}, corresponding to the closest grid point to each location.
 % Precipitation data were collected from the Met Éireann website (accessed 2024-09-01), and wind speed data from the gridded ERA5 Reanalysis dataset \citep{metHistoricalData, Hersbach2020}.
 % Precipitation data are obtained from the Met Éireann archive (accessed 2024-09-01), and wind speed data from the ERA5 Reanalysis dataset \citep{Hersbach2020, metHistoricalData}. 
-Precipitation and wind speed data are obtained from the Met Éireann archive \citep{metHistoricalData}, and ERA5 Reanalysis \citep{Hersbach2020}, respectively.
+Precipitation and wind speed data are obtained from the Met Éireann archive \citep{metHistoricalData}, and ERA5 Reanalysis \citep{Hersbach2020}, respectively. \todo{ERA5 Reanalysis dataset?}
 % ERA5 provides averages over a gridded box of $0.25^{\circ} \times 0.25^{\circ}$, so each site will lie within a grid cell, to which the wind speed data corresponds.
 % ERA5 provides spatial averages on a $0.25^{\circ} \times 0.25^{\circ}$ grid, and each site was matched to the grid cell in which it lies. 
 Met Éireann data are irregularly spaced over space, while ERA5 provides spatial averages on a regular $0.25^{\circ} \times 0.25^{\circ}$ grid.
@@ -2001,7 +1941,7 @@ The dataset spans 11,323 consecutive daily observations.% between 1990-01-01 and
 % Preprocessing follows the procedure outlined in \citet{Vignotto2021}. 
 % Daily precipitation totals were aggregated into weekly sums, and wind speed maxima into weekly averages, for the winter months (October to March). 
 We focus on the winter months, October to March, following \citet{Vignotto2021}.
-Precipitation are aggregated into weekly sums, and wind speed maxima are aggregated into weekly averages.
+Precipitation are aggregated into weekly sums, and daily wind speed maxima are aggregated into weekly averages.
 % This weekly temporal scale was chosen because in the case of storms, precipitation and wind are believed to experience a slight lag \citep{Bengtsson2009}.
 % This weekly temporal scale was chosen because in the case of storms, there is often a slight lag between extreme precipitation and wind speed events \citep{Bengtsson2009}.
 % This thinning may also remove some temporal dependence in the data, which is not accounted for in our model.
@@ -2036,7 +1976,7 @@ Figure~\ref{fig:chi} shows empirical estimates of $\chi(0.95)$ at all 59 sites.
 An elevation profile of Ireland is also shown in Figure~\ref{fig:chi}, which may help further explain some of this spatial structure.
 % We can see that $\chi$ is positive for almost all sites, indicating positive asymptotic dependence of varying degree between precipitation and wind speed. 
 % This means that when, for example, wind speed is high, precipitation is also likely to be high, and vice versa, to a greater or lesser extent depending on the site.
-Non-zero values are observed at almost all sites, indicating positive asymptotic dependence between precipitation and wind speed. 
+Non-zero values are observed at almost all sites, indicating positive asymptotic dependence between precipitation and wind speed. \todo{positive extremal dependence, not asymptotic?}
 In practical terms, this suggests that extreme wind speeds tend to be accompanied by high precipitation, and vice versa. 
 % A clear spatial pattern emerges, whereby asymptotic dependence gets progressively stronger for locations further south and west, being highest along the west coast of Ireland, in counties such as Kerry, Galway, Mayo and Donegal. 
 % Conversely, sites in Dublin, Wicklow and Wexford have lower values of $\chi$ and $\bar{\chi}$, indicating weaker extremal dependence along the east coast. \todo{And Louth?}
@@ -2048,11 +1988,12 @@ The highest $\chi(0.95)$ value (0.414) is observed at Derryhillagh in Mayo, whil
 
 Some spatial outliers are also apparent. 
 Kilcar in Donegal has a relatively low $\chi(0.95)$ value despite its west-coast location, while certain Wicklow sites show unusually high values for the east. 
-The latter may be related to the influence of the Wicklow Mountains, as reflected in the elevation profile (Figure~\ref{fig:chi}).
+The latter may be related to the influence of the Wicklow Mountains, as reflected in the elevation profile (Figure~\ref{fig:chi}). \todo{Need to refer to figure here when whole paragraph is about it?}
 It may be of interest to investigate if these outliers in $\chi(0.95)$ are reflected in the CE model parameter estimates, and whether clustering can identify them.
-These results indicate distinct regional patterns of extremal dependence, as well as notable outliers, motivating the use of our extremal clustering framework to characterise and interpret this spatial structure more formally. 
+These results indicate distinct regional patterns of extremal dependence, as well as notable outliers, motivating the use of our extremal clustering framework to characterise and interpret this spatial structure more formally. \todo{Need to mention outliers again? Can't we say ``In general, ...''}
 
-\tightsubsection{Conditional extremes model}~\label{subsec:app_ce}
+\subsection{Conditional extremes model}
+\label{subsec:app_ce}
 
 % Procedure and results pre-clustering (choice of quantile)
 % In our analysis, we first transformed the data to Laplace margins, using the empirical cumulative distribution function (ECDF) to approximate density functions for precipitation and wind speed at each location. \todo{reference specific equation in methods}
@@ -2070,6 +2011,8 @@ We transform the precipitation and wind speed data, separately at each location 
 To select an appropriate quantile level $q$ for fitting the CE model (see Section~\ref{subsec:ce_model}), we estimate the parameters $(\alpha_{\mid i}, \beta_{\mid i})$ at a sequence of levels $q$, to identify the lowest $q$ beyond which parameter estimates appear stable.
 % This revealed that estimates in general were quite stable up to the 88th quantile.  \todo{Need to expand with more details, could include plots in Appendix?}
 Estimates are generally stable for both models, i.e.,\@ precipitation conditional on wind speed and vice versa, up to $q = 0.85$ quantile, with similar maximum likelihood estimates across bootstrap samples for $(\alpha_{\mid i}, \beta_{\mid i})$. % and clustering solutions obtained when using the 85th quantile were quite similar to higher quantiles.
+\todo{Need to include threshold stability and/or diagnostic plots in supplementary materials?}
+% Diagnostic plots for the CE fits at $q=0.85$ for each location are included in the supplementary material. 
 % Therefore, the 85th quantile was used for subsequent analysis for both models.
 Therefore, we fix $q = 0.85$ for the subsequent analysis. 
 % In Figure~\ref{fig:clust_sens}, we show that clustering solutions are also quite robust to the choice of quantile between the 85th, 88th and 90th quantiles, and so this choice does not have a major impact on results.
@@ -2105,7 +2048,7 @@ To mitigate this uncertainty and aid interpretation, we next cluster the locatio
 %         Maps of site-wise estimated conditional extremes model parameters $\alpha_{\mid i, s}$ (top) and $\beta_{\mid i, s}$ (bottom) for precipitation conditional on wind speed (left) and wind speed conditional on precipitation (right).%, estimated at the 85th quantile. 
 % % The $\alpha$ parameter is shown in the top row, and $\beta$ in the bottom row. 
 % The colour scale is the same for both variables, with darker red indicating larger positive values of $\alpha$ and $\beta$, and darker blue indicating larger negative values.
-%    }}~\label{fig:a_b_vals}
+%    }}\label{fig:a_b_vals}
 % \end{figure}
 
 % \begin{figure}[htb]
@@ -2120,12 +2063,13 @@ To mitigate this uncertainty and aid interpretation, we next cluster the locatio
         Maps of site-wise estimated conditional extremes model parameters $\alpha_{\mid i, s}$ (top) and $\beta_{\mid i, s}$ (bottom) for precipitation conditional on wind speed (left) and wind speed conditional on precipitation (right).%, estimated at the 85th quantile. 
 % The $\alpha$ parameter is shown in the top row, and $\beta$ in the bottom row. 
 The colour scale is the same for both variables, with darker red indicating larger positive values of $\alpha$ and $\beta$, and darker blue indicating larger negative values.
-   }}~\label{fig:a_b_vals}
-   \shrinkfig
+   }}
+   \label{fig:a_b_vals}
 \end{figure}
 
 
-\tightsubsection{Clustering}~\label{subsec:app_clust}
+\subsection{Clustering}
+\label{subsec:app_clust}
 
 % Clustering (including choice of k for each measure)
 % We clustered the locations using the $\JSGa{}$ dissimilarity matrix for their CE parameters, as described in Section~\ref{subsec:div}, for the CE models fit to precipitation conditional on extreme wind speed and vice versa, separately. 
@@ -2135,10 +2079,14 @@ The colour scale is the same for both variables, with darker red indicating larg
 % We also combine information from both models to cluster by summing their dissimilarity matrices.
 % We also considered a combined solution by averaging over the two dissimilarity matrices.
 % We cluster the locations using the ``combined'' dissimilarity matrix aggregated across both models (precipitation conditional on wind speed and vice versa), as defined in Section~\ref{subsec:div} and Equation~\eqref{eq:aggregate_matrix}, and also separately for each individual matrix as in Equation~\eqref{eq:distance_matrix}. 
-We cluster the locations using the ``combined'' dissimilarity matrix aggregated across both conditioning variables, as defined in Equation~\eqref{eq:aggregate_matrix}, and also separately for each individual matrix $M^{i}, i = 1, 2$, as in Equation~\eqref{eq:distance_matrix}. 
+% We cluster the locations using the ``combined'' dissimilarity matrix aggregated across both conditioning variables, as defined in Equation~\eqref{eq:aggregate_matrix}, and also separately for each individual matrix $M^{i}, i = 1, 2$, as in Equation~\eqref{eq:distance_matrix}. 
+% We cluster the locations using the ``combined'' dissimilarity matrix aggregated across both conditioning variables, as defined in Equation~\eqref{eq:aggregate_matrix}, and separately for each individual matrix $M^{i}, i = 1, 2$, as in Equation~\eqref{eq:distance_matrix}.
+We cluster the locations using the ``combined'' dissimilarity matrix $M$ aggregated across both conditioning variables as defined in Equation~\eqref{eq:aggregate_matrix}, and separately for each individual matrix $M^{i}, i = 1, 2$, as in Equation~\eqref{eq:distance_matrix}.
 % The number of clusters $k$ was chosen via the method described in Section~\ref{subsubsec:choose_k}, using the elbow plot of the TWGSS. 
-The number of clusters $k$ is chosen via the method described in Section~\ref{subsec:clustering}, using the elbow plot of the $\mathrm{TWGSS}$. 
-For all three clustering scenarios, clear elbows are observed at $k = 3$. %, so this was the number of clusters chosen. 
+% The number of clusters $k$ is chosen via the method described in Section~\ref{subsec:clustering}, using the elbow plot of the $\mathrm{TWGSS}$. 
+The number of clusters $k$ is chosen via the method in Section~\ref{subsec:clustering}, using the elbow plot of the $\mathrm{TWGSS}$. 
+For all three clustering scenarios, clear elbows are observed at $k = 3$. \todo{Include elbow plots in supplementary material?}
+% Elbow plots are provided in the supplementary material.
 
 % Our clustering solutions for each of the three dissimilarity matrices at the 85th quantile are shown in Figure \ref{fig:clust_sol}.
 % The resulting clustering solutions for the 85th quantile are displayed in Figure~\ref{fig:clust_sol}.  
@@ -2156,10 +2104,10 @@ For precipitation conditional on wind speed, the clustering is somewhat less dis
 % This may indicate greater complexity in the behaviour of wind speed extremes compared to rainfall extremes.%, or data issues.
 % This may also be due to our wind speeds coming from the ERA5 reanalysis dataset, which performs smoothing over a grid and so may underestimate wind speed extremes, and fail to capture more granular local variability.
 % It could also reflect the use of ERA5 reanalysis data for wind speed, which is known to smooth across grid cells, potentially underestimating local extremes and failing to capture fine-scale variability.  
-There are also notable outliers in the clusters, which we further discuss below.
+There are also notable outliers in the clusters, which we further discuss below. \todo{Mentioned above for chi as well, try to link better}
 % Kilcar in Donegal, which had a low $\chi$ value relative to other west coast sites as shown in Figure~\ref{fig:chi}, is assigned to the eastern cluster for $M$, the aggregated dissimilarity matrix, and the central cluster for each individual matrix.
 % Similarly, several Wicklow sites, which had relatively high $\chi$ values for the east coast, are assigned to the central cluster, rather than the eastern one.
-This may be related to the influence of the Wicklow Mountains, as reflected in the elevation profile in Figure~\ref{fig:chi}.
+% This may be related to the influence of the Wicklow Mountains, as reflected in the elevation profile in Figure~\ref{fig:chi}.
 
 \begin{figure}[htb]
     \centering
@@ -2171,8 +2119,7 @@ This may be related to the influence of the Wicklow Mountains, as reflected in t
     % The clusters are shown in different colours.
     Sites are coloured by cluster. 
 }}
-   ~\label{fig:clust_sol}
-   \shrinkfig
+\label{fig:clust_sol}
 \end{figure}
 
 \begin{figure}[htb]
@@ -2184,10 +2131,9 @@ This may be related to the influence of the Wicklow Mountains, as reflected in t
     Heatmap of the estimated aggregated dissimilarity matrix $M$.% for the conditional extremes model parameters estimated at the 85th quantile across all 59 sites. 
 The names of each site are coloured and ordered according to the estimated clustering, matching that of Figure \ref{fig:clust_sol}. 
 The dissimilarity colour scale is shown on the right, with darker colours indicating larger values.
-}}~\label{fig:dist_heatmap}
-\shrinkfig
+}}
+\label{fig:dist_heatmap}
 \end{figure}
-
 
 % Analysis of dissimilarity matrix
 We visualise the dissimilarity matrix for the ``combined'' clusters in Figure~\ref{fig:dist_heatmap}.
@@ -2196,13 +2142,15 @@ The clusters are quite distinct, with the dissimilarity between clusters being m
 In particular, the difference between the eastern and western clusters is quite pronounced, with the intermediate central cluster acting as somewhat of a `buffer' between the two.
 % The western and central clusters exhibit many sites with small pairwise dissimilarities, indicating that their allocations are not always clear-cut. 
 % In particular, several central sites are nearly interchangeable with those in the western cluster, a pattern that is also reflected in the variable-specific clustering solutions in Figure~\ref{fig:clust_sol} and in the quantile sensitivity analysis in Figure~\ref{fig:clust_sens}. 
-In constrast, the western and central clusters seem to be quite close, in that we observe many small inter-cluster pairwise dissimilarities between them. 
+In contrast, the western and central clusters seem to be quite close, in that we observe many small inter-cluster pairwise dissimilarities between them. 
 This indicates that allocation between the two is not always clear-cut and for several sites is nearly interchangeable, as observed in  the variable-specific estimated clusters in Figure~\ref{fig:clust_sol} and in the quantile sensitivity analysis in Figure~\ref{fig:clust_sens}, where membership between the two often switches. % \todo{Mention specific sites}
 % \todo{Add plots for k = 2, k = 4 to Appendix?}
-Also, if we only fit two clusters, we find that most of the central cluster members are assigned to the ``western'' cluster, reflecting this less obvious separation between the two compared to the more markedly different eastern cluster. 
+Also, if we only fit two clusters, we find that most of the central cluster members are assigned to the western cluster, reflecting this less obvious separation between the two compared to the more markedly different eastern cluster. 
+\todo{Link better to chi outliers}
 A noticeable outlier in the dissimilarity matrix is the site at Malahide Castle, which is located in Dublin, which even amongst its own cluster has a relatively high dissimilarity to the other sites.
 % Furthermore, we go to having four clusters, Malahide Castle becomes the only member of the new cluster, and so it is quite distinct from the other sites.
 Furthermore, if we set $k=4$, Malahide Castle becomes its own cluster, and so it is quite distinct from the other sites.
+% Plots of the estimated clusters for $k=2$ and $k=4$ are included in the supplementary material.
 % This site also has the distinction of having the lowest mean weekly precipitation, and the second lowest maximum wind speed, of all sites in our dataset, which may explain its outlying behaviour, even amongst the eastern cluster, which is generally characterised by lower $\alpha^{(\CE{})}$ estimates and $\chi$ values. 
 % Malahide Castle has the lowest mean weekly precipitation of any site, with the second lowest being in Ringsend, which is closest in terms of $\JSGa{}$ to Malahide, which may explain its outlying behaviour, even amongst the eastern cluster, in that rainfall extremes and consequently concomitant extremes are less likely to occur, as shown by its low $\chi$ and $\alpha^{(\CE{})}$ estimates.
 % Malahide Castle has the lowest mean weekly precipitation of any site, with the second lowest being in Ringsend, which is closest in terms of $\JSGa{}$ to Malahide, which may explain its outlying behaviour, even amongst the eastern cluster, in that rainfall extremes and consequently concomitant extremes are less likely to occur, as shown by its low $\chi$ and $\alpha$ estimates.
@@ -2212,15 +2160,15 @@ We also see that Kilcar in county Donegal, which had a low $\chi(0.95)$ value re
 
 \begin{figure}[htb]
     \centering
-    \includegraphics[width = 0.85\linewidth]{plots/cluster_dqu_crop.png}
+    \includegraphics[width = 0.85\linewidth]{plots/cluster_dqu_crop.png} % 0.8 doesn't add more lines than 0.85
     % \caption{\emph{ Clustering solutions for the conditional extremes model parameters estimated at the 88th quantile across all 59 sites, using the $\JSGa{}$ dissimilarity matrix for precipitation conditional on wind speed (centre), wind speed conditional on precipitation (right), and the combined dissimilarity matrix (left). The clusters are shown in different colours.}}
     % \caption{\emph{Clustering solutions for the conditional extremes model parameters estimated at the 85th, 88th and 90th quantiles across all 59 sites, using the combined $\JSGa{}$ dissimilarity matrix for precipitation conditional on wind speed and wind speed conditional on precipitation. The clusters are shown in different colours.}}
     \caption{\emph{
     Estimated extremal clusters with the conditional extremes model parameters estimated at $q = 0.85, q = 0.88$ and $q = 0.9$ quantiles, using the combined dissimilarity matrix. % for precipitation conditional on wind speed and wind speed conditional on precipitation. 
 % The clusters are shown in different colours.
     Sites are coloured by cluster. 
-}}~\label{fig:clust_sens}
-\shrinkfig
+}}
+\label{fig:clust_sens}
 \end{figure}
 
 
@@ -2270,7 +2218,7 @@ Apart from these observations, the estimated clusters are generally quite simila
 %     \item 
 % \end{itemize}
 
-\tightsection{Discussion}
+\section{Discussion}
 \label{sec:discuss}
 
 % Rewrite Intro: Methods
@@ -2302,7 +2250,7 @@ Apart from these observations, the estimated clusters are generally quite simila
 % Our parametric approach is effective and uniquely extendable to higher dimensions, while remaining computationally efficient due to the closed-form for the $\JSGa{}$ divergence. 
 % In Section~\ref{sec:sim}, we showed via a simulation study that our method outperforms the leading competitor in the bivariate case, and is robust to a variety of multivariate dependence structures and scenarios.
 % We also applied our method to a real dataset of Irish meteorological data in Section~\ref{sec:application}, and demonstrated how our method can be used to identify meaningful spatial patterns in the extremal dependence structure of this data.
-In this paper, we introduced a novel method for clustering multivariate extremes using the conditional extremes model \citep{Heffernan2004}.
+In this paper, we introduced a novel method for clustering multivariate extremes using the conditional extremes (CE) model \citep{Heffernan2004}.
 We propose the expected conditional $\JSGa{}$ divergence \citep{Nielsen2019} as a measure of dissimilarity between multivariate conditional extremes models. 
 We use the common Gaussianity assumption to derive a closed-form expression for the $\JSGa{}$ divergence.
 Efficient k-medoids clustering is then performed on the dissimilarity matrix derived from this measure. 
@@ -2318,11 +2266,18 @@ Our method was also shown to be uniquely extendable to $d > 2$ dimensions.
 We applied our extremal clustering method to Irish meteorological data, consisting of 59 locations with weekly rainfall and wind speed observations.
 Without explicitly incorporating spatial information, three clusters with distinct spatial patterns were identified, with well separated clusters representing the east and west coasts and the centre of Ireland.
 
-% % Extension
-% While we focused on spatial applications in this work, our method is applicable to any multivariate extremal dependence setting, and so could be used in a variety of other contexts.
-% % For example, we could apply our method could be explicitly applied to temporal or spatio-temporal data, where we could cluster different time periods and/or locations based on their extremal dependence structure.
-% For example, our method could naturally be applied to temporal or spatio-temporal data, where we could cluster different time periods and/or locations based on their extremal dependence structure.
-% % In financial applications, we could cluster different assets based on their extremal dependence structure over time, which could be useful for portfolio management and risk assessment.
+% Extension
+\todo{Paragraph needs first review!}
+% While our motivating example was spatial, our method is broadly applicable to any multivariate extremal dependence setting and could therefore be employed in a variety of other contexts.
+While we focused on spatial applications in this work, our method is applicable to any multivariate extremal dependence setting, and so could be used in a variety of other contexts.
+For instance, it could be applied to clinical trial or public health data to cluster patients based on the tail dependence structure of their symptoms or biomarker measurements.
+% For instance, our method could naturally be applied to clinical trial or public health data, where we could cluster different patients based on the tail dependence structure of their symptoms or biomarker measurements. 
+% This has been explored in \citet{Talento2025}, where CE was used to study the tail dependence of electroencephalogram (EEG) signals in neonatal subjects prone to seizures. \todo{Word better}
+This application has been explored in \citet{Talento2025}, where CE was used to study the tail dependence of electroencephalogram (EEG) signals in neonates prone to seizures.
+% Also, in financial applications, we could cluster time periods based on the extremal dependence structure of different assets or returns, which could be useful for portfolio management and risk assessment.
+% However, this would require the strong assumption that the time periods are independent.
+In financial applications, we could cluster time periods according to the extremal dependence structure of different assets, offering potential insights for portfolio management and risk assessment.
+However, such an application would rely on the strong assumption that the time periods are independent.
 
 % Limitations: Gaussian assumption
 % There are several limitations to our method as currently implemented.
@@ -2331,9 +2286,9 @@ Without explicitly incorporating spatial information, three clusters with distin
 % This may not hold for all datasets. 
 % For example, in \citet{Farrell2025}, the authors model residuals using the generalised and asymmetric Gaussian distributions.
 While the Gaussianity assumption on which our method relies may not hold for all datasets, our approach showed good performance for all settings in Section~\ref{sec:sim}.
-A possible alternative is to employ the generalised and asymmetric Gaussian distribution by \citet{Farrell2025}. 
+A possible alternative is to employ the generalised and asymmetric Gaussian distributions used in \citet{Farrell2025}. 
 % While our closed-form would not hold in this case, the $\JSGa{}$ divergence could still be used, but would require computationally expensive Monte Carlo sampling to estimate the dissimilarity matrix.
-While we do not have a closed-form divergence in this case, our clustering method could still be used, but would require cosly numerical techniques to estimate the the dissimlarity matrix.
+While we do not have a closed-form divergence in this case, our clustering method could still be used, but would require cosly numerical techniques to estimate the dissimilarity matrix.
 % Indeed, it may be preferable to use the standard $\JS{}$ divergence if choosing to forgo the Gaussian assumption, since it is bounded above by $\log{(2)}$ and so may be more robust, as described in \citet{Thiagarajan2025}.
 Indeed, if choosing to forgo this Gaussian assumption, it may be preferable to use the standard Jensen-Shannon divergence in place of the $\JSGa{}$ divergence, since the former is bounded \citep{Thiagarajan2025}.
 
@@ -2346,7 +2301,8 @@ Another important limitation of our method is in its treatment of uncertainty, a
 % This is less problematic in our simulation study where we often know the true values of $\alpha$ and $\beta$ and can perform extensive grid searches to ensure that the clustering solution is robust.
 % However, in real applications, the uncertainty in these estimates can be quite large, and so vastly different clustering solutions may be obtained depending on the estimated values of $\alpha^{(\CE{})}$ and $\beta^{(\CE{})}$.
 % However, in real applications, the uncertainty in these estimates can be quite large, and so vastly different estimated clusters may be obtained depending on the estimated values of $\alpha$ and $\beta$.
-To account for this uncertainty, one possible approach could be to use the bootstrap method of \citet{Heffernan2004} to generate samples of CE model estimates, and compute our dissimilarity matrix for each sample. 
+% To account for this uncertainty, one possible approach could be to use the bootstrap method of \citet{Heffernan2004} to generate samples of CE model estimates, and compute our dissimilarity matrix for each sample. 
+To account for this, one possible approach is to use the bootstrap method of \citet{Heffernan2004} to generate samples of CE model estimates, and compute our dissimilarity matrix for each sample. 
 We could then produce a distribution of dissimilarity matrices, and use these to compute a distribution of estimated clusters.
 % This would allow us to account for the uncertainty in the CE model parameter estimates, and provide a more robust clustering solution.
 % However, this would be computationally expensive, and so would hurt one of the main advantages of our method, namely its computational efficiency.
@@ -2376,7 +2332,11 @@ However, this would be computationally expensive, and so would compromise one of
 % % For example, \citet{Vettori2020} modelled the extremal dependence structure of California state air pollution and environmental data across 21 sites. 
 % % It would be interesting to see if we could build on such work via exploratory spatial clustering using our method, and whether the CE model would provide greater flexibility than their max-stable process approach, which can only model asymptotic dependence. 
 
-% \section*{Acknowledgements}
+\section*{Acknowledgements}
+
+Patrick O'Toole is supported by a scholarship from the EPSRC Centre for Doctoral Training in Statistical Applied Mathematics at Bath (SAMBa), under the project EP/S022945/1.
+We acknowledge the use of the ERA5 reanalysis dataset, available from the Copernicus Climate Change Service (C3S) Climate Data Store (CDS) (\url{https://cds.climate.copernicus.eu/}). 
+We also acknowledge the use of the Irish meteorological dataset obtained from Met Éireann (\url{https://www.met.ie/climate/available-data/historical-data}).
 
 \bigskip
 \begin{center}
@@ -2385,14 +2345,18 @@ However, this would be computationally expensive, and so would compromise one of
 
 \begin{description}
 
-\item[Supplement:]
+  % % \item[PDF Supplement:] This supplement contains a derivation of the bounds of the $\JSGa{}$ divergence in terms of the $\mathrm{J}$ divergence in Section~\ref{subsec:div}; 
+  % %   additional simulation results, including elbow plots for choosing the number of clusters, and expanding on Section~\ref{subsubsec:sim_extension} to include clustering results for mixture copulas with up to $d=5$ dimensions; and
+  % \item[PDF Supplement:] This supplement contains additional simulation results, including elbow plots for choosing the number of clusters, and expanding on Section~\ref{subsubsec:sim_extension} to include clustering results for mixture copulas with up to $d=5$ dimensions; and
+  %   for the Irish meteorological data application, diagnostic plots for the CE model fits at each location in Section~\ref{subsec:app_ce}, and elbow plots for choosing the number of clusters, and cluster estimates for $k=2$ and $k=4$ clusters in Section~\ref{subsec:app_clust}.
 
-\item[Data and code:] 
+\item[Data and R code:] Available upon request from the corresponding author.
 
 \end{description}
 
-
 \bibliographystyle{apalike}
+% Don't sort bibliography so it stays in chronological order
+% \bibliographystyle{apalike_unsrt}
 {\small
 \bibliography{library.bib}
 }

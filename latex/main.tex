@@ -6,8 +6,8 @@
 \RequirePackage{amsthm,amsmath,multirow,amsfonts,bbm,amssymb,xcolor}
 \usepackage{mathtools}  % must be loaded before \DeclarePairedDelimiter
 % \usepackage{natbib}
-\usepackage[sort&compress]{natbib}    
-\usepackage{url} % not crucial - just used below for the URL 
+\usepackage[compress]{natbib}
+\usepackage{url}
 
 \PassOptionsToPackage{unicode}{hyperref}
 \PassOptionsToPackage{hyphens}{url}
@@ -358,7 +358,7 @@ To illustrate the efficiency of our approach, we consider a motivating applicati
 % A key advantage is that the CE model provides a flexible framework which can capture both AD and AI patterns. % , and other complex extremal dependence patterns.
 % This flexibility, along with its conceptual simplicity and computational efficiency, have made it a popular choice for modelling multivariate extremes. 
 This framework can flexibly capture both AD and AI structure in data, and is both conceptually simple and computationally efficient.
-Spatio-temporal extensions and single-site conditioning methods have been developed to handle high-dimensional settings \citep{Simpson2021, Wadsworth2022}, and adaptations that incorporate covariates, hierarchical structure, and mixtures or random-scale constructions further increase the models flexibility \citep{Tawn2018, Tendijck2023, Richards2023, Talento2025}.
+Spatio-temporal extensions and single-site conditioning methods have been developed to handle high-dimensional settings \citep{Simpson2021, Wadsworth2022}, and adaptations that incorporate covariates, hierarchical structure, and mixtures or random-scale constructions further increase the models flexibility \citep{Tawn2018, Richards2023, Tendijck2023, Talento2025}.
 % As a result, CE models have been applied across a broad range of environmental problems, where AI as well as AD may be prevalent, including modelling river flow and flood risk \citep{Gilleland2013, Jane2020}, rainfall extremes \citep{Richards2022}, sea-surface temperature extremes \citep{Simpson2023,Kakampakou2024}, and heatwaves \citep{Winter2016}, and so are well suited to this class of problems and our motivating example.
 As a result, CE models have been applied across a broad range of environmental problems, where AI as well as AD may be prevalent, including river flow and flood risk \citep{Gilleland2013, Jane2020}, rainfall extremes \citep{Richards2022}, sea-surface temperature extremes \citep{Simpson2023,Kakampakou2024}, and heatwaves \citep{Winter2016}.
 % They are thus well-suited to this class of problems and our motivating example.
@@ -992,7 +992,7 @@ For two multivariate Gaussian distributions, the $\KL{}$ divergence in Equation~
 The $\JSGa{}$ divergence exploits the property that the (weighted) product of two distributions from the same exponential family is proportional to another member of that family, and hence, after normalisation, is itself an exponential-family distribution \citep{Nielsen2019}.
 % It then follows that $G_{\lambda}(H_1, H_2)$ is multivariate Gaussian, and so the $\KL{}$ divergences in Equation~\eqref{eq:jsga} are between multivariate Gaussian distributions and can be computed in closed-form.
 It follows that $G_{\lambda}(H_1, H_2)$ is multivariate Gaussian, and so the $\KL{}$ divergences in Equation~\eqref{eq:jsga} are evaluated on multivariate Gaussian distributions and are therefore available in closed-form.
-Hence, the principle advantage of the $\JSGa{}$ is that it has a closed-form solution for two multivariate Gaussian distributions, and so is computationally efficient to compute \citep{Nielsen2019}, which has led to its use in several applications, including clustering, deep learning, variational inference, and remote sensing \citep{Nielsen2019, Deasy2020, Ni2023-cd, Thiagarajan2025}. \todo{Fix reference order}
+Hence, the principle advantage of the $\JSGa{}$ is that it has a closed-form solution for two multivariate Gaussian distributions, and so is computationally efficient to compute \citep{Nielsen2019}, which has led to its use in several applications, including clustering, deep learning, variational inference, and remote sensing \citep{Nielsen2019, Deasy2020, Ni2023-cd, Thiagarajan2025}.
 % Furthermore, it is clearly symmetric and non-negative, as the sum of two $KL$ divergences, which is also important for clustering.
 % Furthermore, as the average of two $\KL{}$ divergences, it is clearly symmetric and non-negative.
 % Finally, when $\lambda = 0.5$, $\JSGa{}$ is bounded above by $\JSGa{(H_1 \Vert H_2)} \leq \frac{1}{4} \mathrm{J}(H_1 \Vert H_2)$,
@@ -1332,8 +1332,7 @@ Specifically, we define the $\mathrm{TWGSS}$ as
 \end{equation}
 % where $\eJSGa{}(s \Vert m_c)$ is the dissimilarity between site $s$ and the medoid of cluster $c$, measured using the $\eJSGa{}$ divergence defined in Section \ref{subsec:div}, and $S$ is the set of sites in cluster $c$. \todo{Is this right?}
 % where $\eJSGa{s, s_c}$ is the dissimilarity between site $s$ and the medoid site $s_c$ of cluster $c$, and $D$ is the total number of sites. \todo{Is this right?}
-where $\eJSGa{s, s_c}$ is the dissimilarity in Equation \eqref{eq:jsga_integral} evaluated for 
-site $s$ and the medoid site $s_c$ of cluster $c$, $c = 1, \ldots, k$. 
+where $\eJSGa{s, s_c}$ is the dissimilarity in Equation~\eqref{eq:jsga_integral} evaluated for site $s$ and the medoid site $s_c$ of cluster $c$, $c = 1, \ldots, k$.
 We plot $\mathrp{TWGSS}(k)$ against $k$ and choose the optimal number of clusters as the value of $k$ at which the TWGSS reduction sharply slows, or equivalently, the point at which the curve has an ``elbow'' \citep{Hastie2009}. 
 
 \section{Simulation study}

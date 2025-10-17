@@ -1726,7 +1726,8 @@ This may be because the Gaussian copula becomes more similar to the t-copula for
     % The x-axis represents the Gaussian correlation parameter $\rhou{Gauss}$, with facet labels indicating the t-copula correlation parameters $\rhou{t}$ for each true cluster.
     % The x-axis represents the Gaussian correlation parameter $\rhou{Gauss}$, with facet labels indicating the t-copula correlation parameters $\rho_{\text{t}_1}$ and $\rho_{\text{t}_2}$ for the two true clusters.
     The x-axis represents the Gaussian correlation parameter $\rhou{Gauss}$, with facet labels indicating the t-copula correlation parameters, $\rho_{\text{t}_1}$ and $\rho_{\text{t}_2}$, for the two true clusters.
-    The smoothed lines show the Adjusted Rand Index (ARI) for both methods, with smoothing performed using a generalised additive model.
+    % The smoothed lines show the Adjusted Rand Index (ARI) for both methods, with smoothing performed using a generalised additive model.
+    The smoothed lines show the average ARI across bootstrap samples, for both methods, with smoothing performed using a generalised additive model.
     }}
     \label{fig:01_ce_vs_vi}
 \end{figure}
@@ -1768,7 +1769,8 @@ Therefore, the aggregated matrix $M$ in Equation~\eqref{eq:aggregate_matrix} is 
         % The x-axis represents the Gaussian correlation parameter $\rho_{\text{Gauss}}$ for both clusters, and the facet labels show the t-copula correlation parameters, $\rho_{\text{t}_1}$ and $\rho_{\text{t}_2}$, for the two true clusters.
         The x-axis represents the Gaussian correlation parameter $\rhou_{Gauss}$ for both clusters, and the facet labels show the t-copula correlation parameters, $\rho_{\text{t}_1}$ and $\rho_{\text{t}_2}$, for the two true clusters.
         % The smoothed lines show the smoothed median of the Adjusted Rand Index for both dimensions, with smoothing performing using a generalised additive model.}} % Points show individual values of the ARI for a given simulation.
-        The smoothed lines show the Adjusted Rand Index (ARI), with smoothing performed using a generalised additive model.
+        % The smoothed lines show the Adjusted Rand Index (ARI), with smoothing performed using a generalised additive model.
+        The smoothed lines show the average ARI across bootstrap samples, with smoothing performed using a generalised additive model.
     }}
    \label{fig:02_3d}
 \end{figure}
@@ -1804,7 +1806,8 @@ Nevertheless, the results demonstrate that the proposed method scales effectivel
 A sequence of values are considered for the Gaussian correlation parameter $\rhou{Gauss}$, as represented on the x-axis.
     % This grid search was repeated 500 times. 
     % The smoothed lines show the smoothed median of the Adjusted Rand Index for both clustering methods, with smoothing performing using a generalised additive model. 
-    The smoothed lines show the Adjusted Rand Index (ARI), with smoothing performed using a generalised additive model.
+    % The smoothed lines show the Adjusted Rand Index (ARI), with smoothing performed using a generalised additive model.
+    The smoothed lines show the average ARI and associated uncertainty across bootstrap samples, with smoothing performed using a generalised additive model.
     % Points show individual values of the ARI for a given simulation.
 }}
 \label{fig:02b_5d}
@@ -1857,7 +1860,8 @@ For example, the best performance is observed where $\rho_{\text{t}_1} = 0.9, \r
      % Perturbations were added to these parameters. 
      % This grid search was repeated 500 times. 
     % The smoothed lines show the smoothed Adjusted Rand Index for both clustering methods, with smoothing performing using a generalised additive model.
-    The smoothed lines show the Adjusted Rand Index (ARI), with smoothing performed using a generalised additive model.
+    % The smoothed lines show the Adjusted Rand Index (ARI), with smoothing performed using a generalised additive model.
+    The smoothed lines show the average ARI across bootstrap samples, with smoothing performed using a generalised additive model. 
      % Points show individual values of the ARI for a given simulation.
     }}
  % The line shows the median of the Adjusted Rand Index for both clustering methods, with uncertainty coming from the 90\% credible interval. Points show individual values of the ARI for a given simulation.}} 

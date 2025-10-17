@@ -1382,6 +1382,7 @@ Clustering accuracy is evaluated using the adjusted Rand index (ARI) of \citet{H
 % In Section~\ref{subsec:sim_gauss}, a simple simulation design using a Gaussian copula to generate data is described. 
 % This data has the advantage of having theoretical asymptotic values for the CE parameters, to which we can directly compare our finite simulation estimates, as a test to ensure that our clustering is working as desired, reducing uncertainty in parameter estimates. 
 % Section~\ref{subsec:sim_gauss} introduces a simple design based on the Gaussian copula, which provides known asymptotic values for the CE parameters. 
+Unreported experiments showed that the correct $k$ was often chosen, and so we proceed with $k$ fixed to the true number of clusters. 
 In Section~\ref{subsec:sim_gauss}, we generate data from a Gaussian copula for which the parameters of the CE model are known \citep{Keef2013}.
 % These allow us to benchmark our finite-sample estimates and verify that clustering reduces estimation uncertainty. 
 This allows us to verify that our clustering approach reduces estimation uncertainty and to investigate the sensitivity of the results to the choice of conditioning threshold.

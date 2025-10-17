@@ -40,6 +40,7 @@ marg_prob <- 0.9 # marginal threshold quantile
 cond_prob <- seq(0.85, 0.975, by = 0.025) # conditional threshold quantiles
 # n <- 1e3 # number of samples to take
 n_exceed <- 100 # number of exceedances to have for each conditional threshold
+kl_prob <- 0.9
 n <- round(n_exceed / (1 - kl_prob))
 conf_level <- 0.95 # confidence level for CIs in plot
 # try values of k from 2 to max_clust
@@ -77,8 +78,6 @@ plot_file <- paste0(plot_file, ".pdf")
 #   return(which.max(fom) + 1)
 # }
 
-
-
 #### Grid search ####
 
 # TODO: Write note to explain grid setup
@@ -108,7 +107,8 @@ grid <- grid[nrow(grid):1, ]
 
 # run kl_sim_eval for each row in grid
 # TODO Increase n_times to 500
-n_times <- 100
+# n_times <- 100
+n_times <- 1
 # initialise vectors to store results for each repetition of simulations
 # elb_vec <- sil_vec <- aic_vec <- vector(length = n_times)
 results_vec <- mem_vec <- vector(length = n_times)
@@ -116,9 +116,8 @@ elb_vec <- sil_vec <- aic_vec <- vector(length = n_times)
 # i <- 3
 # i <- 13
 set.seed(seed_number)
-results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
-  # results_grid <- bind_rows(lapply(seq_len(nrow(grid)), \(i) {
-
+# results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
+results_grid <- bind_rows(lapply(seq_len(nrow(grid)), \(i) {
   print(paste0("Progress: ", round(i / nrow(grid), 3) * 100, "%"))
   system(sprintf(
     'echo "\n%s\n"',
@@ -176,7 +175,8 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
           cond_prob = row$kl_prob,
           # f           = NULL, # fit models with ismev
           fit_no_keef = TRUE,
-          output_all = FALSE
+          # output_all = FALSE
+          output_all = TRUE
         )
       },
       error = function(cond) {
@@ -185,7 +185,11 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
       }
     )
     # If "true" k was known, how well would clustering do?
-    clust_res <- js_clust(dependence, k = n_cor, cluster_mem = cluster_mem)
+    clust_res <- js_clust(
+      dependence,
+      k = n_cor,
+      cluster_mem = cluster_mem
+    )
     results_vec[[j]] <- clust_res$adj_rand
     # store clustering membership (true values known as cluster_mem)
     mem_vec[[j]] <- NA
@@ -230,24 +234,24 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
     #   filter(mean == max(mean)) %>%
     #   pull(k)
 
-    # cluster for different values of k, refit CE model and calculate AIC
-    aic <- vapply(2:max_clust, \(k) {
-      # aic <- lapply(2:max_clust, \(k) {
-      # cluster
-      pam_fit <- js_clust(
-        dependence,
-        dist_mat = dist, k = k, return_dist = TRUE
-      )
-      # refit CE model
-      # TODO Investigate no exceedances message from this! May just be wrong
-      # TODO Must add cond_prob argument!!
-      dependence_clust <- fit_ce_clust(pam_fit$pam$clustering, data_mix)
-      # calculate AIC
-      ce_aic(dependence_clust)
-    }, numeric(1))
-
-    # aic_vec[[j]] <- opt_k(aic)
-    aic_vec[[j]] <- paste0(round(aic, 0), collapse = "_")
+    # # cluster for different values of k, refit CE model and calculate AIC
+    # aic <- vapply(2:max_clust, \(k) {
+    #   # aic <- lapply(2:max_clust, \(k) {
+    #   # cluster
+    #   pam_fit <- js_clust(
+    #     dependence,
+    #     dist_mat = dist, k = k, return_dist = TRUE
+    #   )
+    #   # refit CE model
+    #   # TODO Investigate no exceedances message from this! May just be wrong
+    #   # TODO Must add cond_prob argument!!
+    #   dependence_clust <- fit_ce_clust(pam_fit$pam$clustering, data_mix)
+    #   # calculate AIC
+    #   ce_aic(dependence_clust)
+    # }, numeric(1))
+    #
+    # # aic_vec[[j]] <- opt_k(aic)
+    # aic_vec[[j]] <- paste0(round(aic, 0), collapse = "_")
 
     # # plot for multiple aic values per k
     # bind_rows(
@@ -280,11 +284,12 @@ results_grid <- bind_rows(mclapply(seq_len(nrow(grid)), \(i) {
     row,
     "adj_rand" = results_vec,
     "membership" = mem_vec,
-    # "k_true"   = n_cor, # true number of clusters
-    "elb" = elb_vec,
-    "aic" = aic_vec
+    # # "k_true"   = n_cor, # true number of clusters
+    # "aic" = aic_vec,
+    "elb" = elb_vec
   ))
-}, mc.cores = n_cores))
+}))
+# }, mc.cores = n_cores))
 
 # remove NAs, give warning
 nas <- is.na(results_grid$adj_rand)

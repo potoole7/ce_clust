@@ -1,3 +1,91 @@
+#### Calculate true empirical quantile in bootstrapping ####
+
+# Laplace helper functions
+FLap <- function(y) ifelse(y < 0, 0.5 * exp(y), 1 - 0.5 * exp(-y))
+TLap <- function(u) ifelse(u < 0.5, log(2 * u), -log(2 * (1 - u)))
+
+# Mixture copula density (Gaussian + t)
+c_mix <- function(u, v, rhoG, rhoT, nu = 3, w = 0.5) {
+  copG <- normalCopula(param = rhoG, dim = 2)
+  copT <- tCopula(param = rhoT, dim = 2, df = nu)
+  dG <- dCopula(cbind(u, v), copula = copG)
+  dT <- dCopula(cbind(u, v), copula = copT)
+  w * dT + (1 - w) * dG
+}
+
+# Numerical integration to compute true conditional expectation
+true_cond_expect <- function(y_i, rhoG, rhoT, nu = 3, w = 0.5) {
+  u <- FLap(y_i)
+  num <- integrate(
+    f = function(v) TLap(v) * c_mix(u, v, rhoG, rhoT, nu, w),
+    lower = 0, upper = 1, rel.tol = 1e-8
+  )$value
+  den <- integrate(
+    f = function(v) c_mix(u, v, rhoG, rhoT, nu, w),
+    lower = 0, upper = 1, rel.tol = 1e-8
+  )$value
+  num / den
+}
+
+true_cond_expect_sep <- function(y_i, rhoG, rhoT, nu = 3, w = 0.5) {
+  #   Compute E[Y2 | Y1 = y_i] under a 2D mixture copula:
+  #     C_mix = w * C_t + (1 - w) * C_G
+  # Approach:
+  #   - Compute conditional expectations for each component separately:
+  #         E_t = E[Y2 | Y1 = y_i, component = t]
+  #         E_G = E[Y2 | Y1 = y_i, component = Gaussian]
+  #   - Combine them with the correct marginal-density weighting:
+  #         E_mix = (w * d_t * E_t + (1 - w) * d_G * E_G) /
+  #                  (w * d_t + (1 - w) * d_G)
+  # Inputs:
+  #   y_i  - value of Y1 for conditioning
+  #   rhoG - Gaussian copula correlation
+  #   rhoT - t-copula correlation
+  #   nu   - degrees of freedom for t-copula
+  #   w    - mixture weight (proportion of t-copula)
+  #
+  # Returns:
+  #   A list with E_mix (mixture expectation), E_t, E_G, d_t, and d_G
+  # --------------------------------------------------------------------------
+
+  # Laplace helpers (for the marginal transform)
+  FLap <- function(y) ifelse(y < 0, 0.5 * exp(y), 1 - 0.5 * exp(-y))
+  TLap <- function(u) ifelse(u < 0.5, log(2 * u), -log(2 * (1 - u)))
+
+  u <- FLap(y_i)
+  copG <- normalCopula(param = rhoG, dim = 2)
+  copT <- tCopula(param = rhoT, dim = 2, df = nu)
+
+  # Component-wise integration
+  component_expect <- function(u, copula) {
+    num <- integrate(function(v) TLap(v) * dCopula(cbind(u, v), copula),
+      0, 1,
+      rel.tol = 1e-8
+    )$value
+    den <- integrate(function(v) dCopula(cbind(u, v), copula),
+      0, 1,
+      rel.tol = 1e-8
+    )$value
+    list(E = num / den, d = den)
+  }
+
+  sT <- component_expect(u, copT)
+  sG <- component_expect(u, copG)
+
+  # Combine using marginal-density weighting
+  E_mix <- (w * sT$d * sT$E + (1 - w) * sG$d * sG$E) /
+    (w * sT$d + (1 - w) * sG$d)
+
+  list(
+    E_mix = E_mix,
+    E_t   = sT$E,
+    E_G   = sG$E,
+    d_t   = sT$d,
+    d_G   = sG$d
+  )
+}
+
+
 #### Choosing K via AIC and TWGSS elbows ####
 
 # function to perform likelihood ratio test for two CE model fits
@@ -797,7 +885,9 @@ sim_cop_dat <- \(
     gauss_cop <- lapply(seq_len(n_locs), \(i) {
       # pull correlation specified for each cluster
       # if membership unspecified, assign equal membership to each cluster
-      if (is.null(cluster_mem)) {
+      if (n_locs == 1) {
+        group <- 1
+      } else if (is.null(cluster_mem)) {
         group <- ceiling(i / (n_locs / n_clust))
       } else {
         group <- cluster_mem[i]

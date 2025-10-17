@@ -16,6 +16,7 @@ library(boot)
 library(parallel)
 library(ggplot2)
 library(tidyr)
+library(copula)
 
 # source simulation and bootstrapping functions
 source("src/functions.R")
@@ -45,6 +46,7 @@ shape_gpd <- -0.05
 cond_prob <- 0.9
 cond_prob_clust <- 0.9
 marg_prob <- 0.98 # marginal quantile to calculate expectation in bootstrap
+y_i <- -log(2 * (1 - marg_prob)) # 98% Laplace quantile
 # R <- 100
 R <- 500 # number of bootstrap samples
 
@@ -55,6 +57,12 @@ laplace_cap <- 0.99 # Take 99th quantile
 
 # Number of cores to use for parallel computation
 n_cores <- detectCores() - 1
+
+#### Calculate true conditional expectation ####
+
+E_true <- sapply(cor_t_ex, \(x) {
+  true_cond_expect(y_i, cor_gauss_ex, x, df_t, 0.5)
+})
 
 
 #### Bootstrap alpha and beta parameter values before clustering ####
@@ -211,11 +219,12 @@ boot_est_df <- bind_cols(lapply(boot_est, unlist)) |>
   setNames(c(1, 2)) |>
   pivot_longer(everything(), names_to = "cluster") |>
   mutate(cluster = as.numeric(cluster)) |>
-  mutate(cluster = ifelse(cluster == 1, cor_t_ex[1], cor_t_ex[2]))
+  mutate(cluster = ifelse(cluster == 1, cor_t_ex[1], cor_t_ex[2])) |>
+  mutate(true_val = ifelse(cluster == cor_t_ex[1], E_true[1], E_true[2]))
 
 # TODO Return to add post-clustering bootstrap results
 plot_boot <- \(boot_est_df) {
-  boot_est_df |>
+  p <- boot_est_df |>
     mutate(cluster = factor(cluster, levels = cor_t_ex)) |>
     ggplot(aes(x = value)) +
     geom_histogram(aes(y = ..density.., fill = cluster), bins = 30, alpha = 0.7) +
@@ -231,6 +240,18 @@ plot_boot <- \(boot_est_df) {
     evc::evc_theme() +
     guides(fill = "none") +
     ggsci::scale_fill_nejm()
+
+  if ("true_val" %in% names(boot_est_df)) {
+    p <- p +
+      geom_vline(
+        data = boot_est_df |> distinct(cluster, true_val),
+        aes(xintercept = true_val, colour = factor(cluster)),
+        linetype = "dashed",
+        size = 1,
+        show.legend = FALSE
+      )
+  }
+  return(p)
 }
 
 plot_boot(boot_est_df)
@@ -268,7 +289,10 @@ boot_est_clust_df <- bind_cols(lapply(boot_est_clust, unlist)) |>
   setNames(c(1, 2)) |>
   pivot_longer(everything(), names_to = "cluster") |>
   mutate(cluster = as.numeric(cluster)) |>
-  mutate(cluster = ifelse(cluster == 1, cor_t_ex[1], cor_t_ex[2]))
+  mutate(
+    cluster = ifelse(cluster == 1, cor_t_ex[1], cor_t_ex[2]),
+    true_val = ifelse(cluster == cor_t_ex[1], E_true[1], E_true[2])
+  )
 
 # plot just the clustered data
 plot_boot(boot_est_clust_df)
@@ -285,12 +309,21 @@ p_dat <- bind_rows(
       TRUE ~ "Post-clustering"
     ), levels = c("Pre-clustering", "Post-clustering"))
   )
+
 # TODO Investigate why histogram for pre-clustering is higher than density?
 p <- p_dat |>
   ggplot(aes(x = value)) +
   # geom_histogram(aes(y = ..density.., fill = ind), bins = 30, alpha = 0.5) +
   # geom_histogram(aes(fill = ind), bins = 30, alpha = 0.5) +
   geom_density(aes(y = ..density.., fill = ind), alpha = 0.5) +
+  geom_vline(
+    data = p_dat |> distinct(cluster, true_val),
+    aes(xintercept = true_val),
+    colour = "black",
+    linetype = "dashed",
+    size = 1,
+    # show.legend = FALSE
+  ) +
   facet_wrap(
     ~cluster,
     scales = "free_y",
@@ -303,19 +336,52 @@ p <- p_dat |>
   evc::evc_theme()
 p
 
-saveRDS(p, "plots/sim_01e_bootstrap.rds") # save plot object
-ggsave("latex/plots/sim_01e_bootstrap.png", p, width = 8, height = 5)
+# saveRDS(p, "plots/sim_01e_bootstrap.rds") # save plot object
+# ggsave("latex/plots/sim_01e_bootstrap.png", p, width = 8, height = 5)
 
 # also do boxplot
+# TODO Change labelling
 p_box <- p_dat |>
-  ggplot(aes(x = cluster, y = value, fill = ind)) +
+  # ggplot(aes(x = cluster, y = value, fill = ind)) +
+  ggplot(aes(y = value, fill = ind)) +
   geom_boxplot(width = 1, outliers = FALSE, key_glyph = "rect") +
-  labs(x = parse(text = "rho[t]"), y = "Conditional Expectation", fill = "") +
+  geom_hline(
+    data = p_dat |> distinct(cluster, true_val),
+    aes(yintercept = true_val, group = cluster),
+    colour = "black",
+    linetype = "dashed",
+    size = 1,
+    # show.legend = FALSE
+  ) +
+  facet_wrap(
+    ~cluster,
+    scales = "free_x",
+    labeller = labeller(cluster = \(x) {
+      return(ifelse(x == 0.1, "rho[t] == 0.1", "rho[t] == 0.9"))
+    }, .default = label_parsed)
+  ) +
+  # labs(x = parse(text = "rho[t]"), y = "Conditional Expectation", fill = "") +
+  labs(y = "Conditional Expectation", fill = "") +
   evc::evc_theme() +
   ggsci::scale_fill_nejm() +
   scale_x_discrete(expand = c(0.25, 0.25)) +
   scale_y_continuous(expand = c(0, 0), breaks = seq(0, 3.5, by = 0.5), limits = c(0, 3.5))
 p_box
 
-saveRDS(p_box, "plots/sim_01e_bootstrap_box.rds")
-ggsave("latex/plots/sim_01e_bootstrap_box.png", p_box, width = 8, height = 5)
+# Calculate bias before and after clustering
+# TODO Introduces additional bias, could be a problem???
+bias_df <- p_dat |>
+  group_by(ind, cluster) |>
+  summarise(
+    mean_est = mean(value),
+    media_est = median(value),
+    true_val = unique(true_val),
+    bias_mean = mean(value) - unique(true_val),
+    bias_median = median(value) - unique(true_val),
+    .groups = "drop"
+  )
+
+bias_df
+
+# saveRDS(p_box, "plots/sim_01e_bootstrap_box.rds")
+# ggsave("latex/plots/sim_01e_bootstrap_box.png", p_box, width = 8, height = 5)

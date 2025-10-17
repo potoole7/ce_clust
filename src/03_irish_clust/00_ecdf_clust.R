@@ -551,7 +551,7 @@ map_plot <- \(ab_df, data, n_breaks = 8, range = c(1, 6), elev_df = NULL) {
           # )
           scico::scale_fill_scico_d(
             palette = "bilbao",
-            name = "Elevation",
+            name = "Elevation\n(m)",
             direction = -1
           )
       } else {
@@ -1012,13 +1012,21 @@ elev_df <- readr::read_csv(
 
 # TODO Change height bins?? > 600m is a mountain, so would make sense!
 if (!is.factor(elev_df$elev_bin)) {
-  elev_df$elev_bin <- factor(
-    elev_df$elev_bin,
-    levels = c(
-      "0–100 m", "100–200 m",
-      "200–300 m", "300–400 m", "400–500 m", "500-600 m", "> 600 m"
+  elev_df <- elev_df |>
+    mutate(
+      elev_bin = stringr::str_remove(elev_bin, " m"),
+      elev_bin = factor(
+        elev_bin,
+        # levels = c(
+        #   "0–100 m", "100–200 m",
+        #   "200–300 m", "300–400 m", "400–500 m", "500-600 m", "> 600 m"
+        # )
+        levels = c(
+          "0–100", "100–200",
+          "200–300", "300–400", "400–500", "500-600", "> 600"
+        )
+      )
     )
-  )
 }
 
 # pull just site names, counties and provinces
@@ -1118,7 +1126,7 @@ p_terrain <- ggplot() +
   ) +
   scico::scale_fill_scico_d(
     palette = "bilbao",
-    name = "Elevation",
+    name = "Elevation (m)",
     direction = -1
   ) +
   # scale_fill_manual(
@@ -1127,7 +1135,7 @@ p_terrain <- ggplot() +
   #     "#A6785B", "#9B5352", "#6D1F23"
   #   )
   # ) +
-  labs(x = "", y = "", fill = "Elevation") +
+  labs(x = "", y = "", fill = "Elevation (m)") +
   theme +
   # TODO position legend in bottom right of plot?
   # theme(
@@ -1144,7 +1152,7 @@ p_terrain <- ggplot() +
   scale_y_continuous(expand = c(0, 0)) +
   NULL
 
-ggsave(filename = "test.png", p_terrain)
+# ggsave(filename = "test.png", p_terrain)
 
 # plot the location of each site
 p1 <- p_terrain +
@@ -1530,7 +1538,7 @@ ce_fit <- lapply(Y_lst, \(x) {
   )
 })
 saveRDS(ce_fit, "data/ce_fit.RDS")
-ce_fit <- readRDS(ce_fit, file = "data/ce_fit.RDS")
+ce_fit <- readRDS(file = "data/ce_fit.RDS")
 
 # pull dependence parameters and residuals out separately
 dep_fit <- lapply(c("resid", "params"), \(x) {
@@ -1542,7 +1550,7 @@ names(dep_fit) <- c("residual", "dependence")
 dep_fit$transformed <- Y_lst
 dep_fit$original <- data_week
 dep_fit$arg_vals <- list("cond_prob" = dqu)
-saveRDS(dep_fit, file = "data/dep_fit.RDS")
+# saveRDS(dep_fit, file = "data/dep_fit.RDS")
 dep_fit <- readRDS("data/dep_fit.RDS")
 
 # pull dependence paramaters into df
@@ -2014,10 +2022,23 @@ plt_clust_map(
 
 # also look at k = 2, k = 4
 # most sites in Western cluster, but Kilcar is noticably an outlier
-plt_clust_map(pts, areas, js_clust(dist_mat = dist_mat, k = 2, n = n_mc))
+p_k2 <- plt_clust_map(pts, areas, js_clust(dist_mat = dist_mat, k = 2, n = n_mc), rm_elev_leg = TRUE)
 # Only Malahide in 4th cluster, interestingly!
-plt_clust_map(pts, areas, js_clust(dist_mat = dist_mat, k = 4, n = n_mc))
-plt_clust_map(pts, areas, js_clust(dist_mat = dist_mat, k = 5, n = n_mc))
+p_k4 <- plt_clust_map(pts, areas, js_clust(dist_mat = dist_mat, k = 4, n = n_mc), rm_elev_leg = TRUE)
+
+# join and save for supplementary materials
+p_k_alt <- wrap_plots(list(
+  p_k2 +
+    NULL,
+  p_k4 +
+    theme(axis.text.y = element_blank(), axis.ticks.y = element_blank())
+))
+ggsave(
+  filename = "latex/plots/cluster_dqu_k_2_4.png",
+  p_k_alt,
+  width = 12,
+  height = 8
+)
 
 
 #### Sensitivity analysis to choice of DQU ####
@@ -2027,7 +2048,7 @@ plt_clust_map(pts, areas, js_clust(dist_mat = dist_mat, k = 5, n = n_mc))
 quantiles <- c(0.85, 0.88, 0.9)
 
 # function to fit CE model and cluster for different DQU
-quant_fit <- \(q, ...) {
+quant_fit <- \(q, k_spec = 3, ...) {
   print(paste0("Fitting DQU = ", q * 100, "%"))
   ce_fit_spec <- lapply(Y_lst, \(x) {
     o <- ce_optim(
@@ -2049,17 +2070,54 @@ quant_fit <- \(q, ...) {
   names(dep_fit_spec) <- c("residual", "dependence")
 
   # cluster for k = 3
-  # pam_fit_spec <- js_clust(dep_fit_spec$dependence, k = 3, mqu = mqu, ...)
-  # pam_fit_spec <- js_clust(dep_fit_spec$dependence, k = 3, n = n_mc, ...)
-  pam_fit_spec <- js_clust(
+  # pam_fit_spec <- js_clust(
+  #   dep_fit_spec$dependence,
+  #   trans = Y_lst,
+  #   # k = 3,
+  #   k = k_spec,
+  #   scree_k = list(1:5, 1:5),
+  #   n = n_mc,
+  #   mc_method = mc_method,
+  #   laplace_cap = laplace_cap,
+  #   return_dist = TRUE,
+  #   ...
+  # )
+
+  # TODO Investigate why dist_obj$total_within_ss is only of length two??
+  dist_obj <- js_clust(
     dep_fit_spec$dependence,
     trans = Y_lst,
-    k = 3,
+    # k = 3,
+    # k = k_spec,
+    k = NULL,
+    scree_k = list(1:5, 1:5), # TODO Why length 2? 2 variables?
     n = n_mc,
     mc_method = mc_method,
     laplace_cap = laplace_cap,
+    return_dist = TRUE,
     ...
   )
+
+  # pull out distance matrices for
+  dist_mats <- list(
+    dist_obj$dist_mat,
+    dist_obj$dist_mats
+  )
+
+  twgss <- c(
+    list(scree_plot(dist_mats[[1]], k = 1:5)), # TWGSS for combined diss mat
+    dist_obj$total_within_ss
+  )
+
+
+  # only keep PAM object
+  pam_fit_spec <- js_clust(
+    dist_mat = dist_obj$dist_mat,
+    dep_fit$dependence,
+    k = k
+  )
+
+  #
 
   # plot
   map_plot_spec <- plt_clust_map(

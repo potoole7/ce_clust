@@ -1724,7 +1724,8 @@ This may be because the Gaussian copula becomes more similar to the t-copula for
     \caption{\emph{
     Comparison of our conditional extremes-based approach and the method of \citet{Vignotto2021}.
     % The x-axis represents the Gaussian correlation parameter $\rhou{Gauss}$, with facet labels indicating the t-copula correlation parameters $\rhou{t}$ for each true cluster.
-    The x-axis represents the Gaussian correlation parameter $\rhou{Gauss}$, with facet labels indicating the t-copula correlation parameters $\rho_{\text{t}_1}$ and $\rho_{\text{t}_2}$ for the two true clusters.
+    % The x-axis represents the Gaussian correlation parameter $\rhou{Gauss}$, with facet labels indicating the t-copula correlation parameters $\rho_{\text{t}_1}$ and $\rho_{\text{t}_2}$ for the two true clusters.
+    The x-axis represents the Gaussian correlation parameter $\rhou{Gauss}$, with facet labels indicating the t-copula correlation parameters, $\rho_{\text{t}_1}$ and $\rho_{\text{t}_2}$, for the two true clusters.
     The smoothed lines show the Adjusted Rand Index (ARI) for both methods, with smoothing performed using a generalised additive model.
     }}
     \label{fig:01_ce_vs_vi}
@@ -1764,7 +1765,8 @@ Therefore, the aggregated matrix $M$ in Equation~\eqref{eq:aggregate_matrix} is 
     \includegraphics[width = 0.8\linewidth]{plots/sim_01d_js_sens_2_3_var_dqu_0.9_man.png}
     \caption{\emph{
         Comparison of clustering perfomance for $d = 2$ and $d=3$ variables and two equally-sized clusters. % for simulations of 12 locations from a mixture of Gaussian and t-copulas.
-        The x-axis represents the Gaussian correlation parameter $\rho_{\text{Gauss}}$ for both clusters, and the facet labels show the t-copula correlation parameters, $\rho_{\text{t}_1}$ and $\rho_{\text{t}_2}$, for the two true clusters.
+        % The x-axis represents the Gaussian correlation parameter $\rho_{\text{Gauss}}$ for both clusters, and the facet labels show the t-copula correlation parameters, $\rho_{\text{t}_1}$ and $\rho_{\text{t}_2}$, for the two true clusters.
+        The x-axis represents the Gaussian correlation parameter $\rhou_{Gauss}$ for both clusters, and the facet labels show the t-copula correlation parameters, $\rho_{\text{t}_1}$ and $\rho_{\text{t}_2}$, for the two true clusters.
         % The smoothed lines show the smoothed median of the Adjusted Rand Index for both dimensions, with smoothing performing using a generalised additive model.}} % Points show individual values of the ARI for a given simulation.
         The smoothed lines show the Adjusted Rand Index (ARI), with smoothing performed using a generalised additive model.
     }}
@@ -1799,7 +1801,7 @@ Nevertheless, the results demonstrate that the proposed method scales effectivel
         Evaluation of clustering for $d = 2$ to $d = 5$ variables and two equally-sized clusters for simulations at 12 sites from a mixture of Gaussian and t-copulas.% each with 1000 observations for each variable, from a mixture of Gaussian and t-copulas. 
     The t-copula correlation parameters for each true cluster were set to $\rho_{\text{t}_1} = 0.4$ and $\rho_{\text{t}_2} = 0.5$. 
     % A grid search was performed over the values of the Gaussian correlation parameter, as represented on the x-axis. 
-    A sequence of values are considered for the Gaussian correlation parameter, $\rhou{Gauss}$, as represented on the x-axis.
+A sequence of values are considered for the Gaussian correlation parameter $\rhou{Gauss}$, as represented on the x-axis.
     % This grid search was repeated 500 times. 
     % The smoothed lines show the smoothed median of the Adjusted Rand Index for both clustering methods, with smoothing performing using a generalised additive model. 
     The smoothed lines show the Adjusted Rand Index (ARI), with smoothing performed using a generalised additive model.
@@ -2117,8 +2119,9 @@ To mitigate uncertainty and aid interpretation, we cluster the locations using o
     \caption{\emph{
         % Maps of site-wise estimated conditional extremes model parameters $\alpha_{\mid i, s}$ (top) and $\beta_{\mid i, s}$ (bottom) for precipitation conditional on wind speed (left) and wind speed conditional on precipitation (right).%, estimated at the 85th quantile. 
         Maps of site-wise estimated model parameters $\alpha_{\mid i, s}$ (top) and $\beta_{\mid i, s}$ (bottom) for precipitation conditional on wind speed (left) and wind speed conditional on precipitation (right).%, estimated at the 85th quantile. 
-% The $\alpha$ parameter is shown in the top row, and $\beta$ in the bottom row. 
-The colour scale is the same for both variables, with darker red indicating larger positive values of $\alpha$ and $\beta$, and darker blue indicating smaller negative values.
+        % The $\alpha$ parameter is shown in the top row, and $\beta$ in the bottom row. 
+        % The colour scale is the same for both variables, with darker red indicating larger positive values of $\alpha$ and $\beta$, and darker blue indicating smaller negative values.
+        The colour scale is the same for both variables, with darker red and larger points indicating larger positive values of $\alpha$ and $\beta$, and darker blue and smaller points indicating smaller negative values.
    }}
    \label{fig:a_b_vals}
 \end{figure}

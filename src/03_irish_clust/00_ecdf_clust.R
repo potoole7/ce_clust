@@ -1291,7 +1291,7 @@ p_sec_2 <- p1 +
   # theme(legend.position = "left") +
   NULL
 
-ggsave("plot_1_test.png", p_sec_2, width = 12, height = 6, units = "in")
+# ggsave("plot_1_test.png", p_sec_2, width = 12, height = 6, units = "in")
 # ggsave("latex/plots/02_mot_ex_plot.png", p_sec_2, width = 10, height = 6, units = "in")
 # ggsave("latex/plots/02_mot_ex_plot_elev.png", p_sec_2, width = 12, height = 6, units = "in")
 
@@ -1356,16 +1356,25 @@ chi_95_sf <- chi_95_df %>%
   st_to_sf()
 
 # function to plot chi and chi bar on map
+# TODO Add ability to add red numbers beside certain points
 scales <- seq(-0.1, 0.6, by = 0.1)
 chi_map_plot <- \(
   chi_95_sf,
   var = c("chi", "chibar"),
   scales = seq(-0.1, 0.6, by = 0.1),
   point_ranges = c(2, 6),
+  spec_locs = NULL,
+  locs_nudge_x = 0.1,
+  locs_nudge_y = 0.1,
   rm_axis = TRUE
 ) {
   # lab <- ifelse(var == "chi", expression(chi(u)), expression(bar(chi)(u)))
-  lab <- ifelse(var == "chi", expression(chi(0.95)), expression(bar(chi)(0.95)))
+  lab <- ifelse(
+    var == "chi",
+    expression(chi(0.95)),
+    expression(bar(chi)(0.95))
+  )
+
   plot_data <- filter(chi_95_sf, var == !!var)
   if (var == "chi") {
     plot_data <- plot_data %>%
@@ -1381,7 +1390,43 @@ chi_map_plot <- \(
       # aes(fill = value, size = value, pattern = show_chi),
       pch = 21,
       stroke = 1
-    ) +
+    )
+
+  # add numbers for specific locations, if desired
+  if (!is.null(spec_locs)) {
+    # plot_data <- plot_data |>
+    #   mutate(spec_name = ifelse(name %in% spec_locs, TRUE, FALSE))
+
+    plot_data_num <- plot_data %>%
+      filter(name %in% spec_locs) |>
+      # arrange by inputted spec_locs
+      slice(match(spec_locs, name)) %>%
+      mutate(label_num = row_number())
+
+    p <- p +
+      geom_sf(
+        data = plot_data_num,
+        aes(fill = value, size = value),
+        colour = "red",
+        pch = 21,
+        stroke = 1,
+        show.legend = FALSE
+      ) +
+      # add numbers beside points
+      geom_sf_text(
+        data = plot_data_num,
+        aes(label = label_num),
+        nudge_x = locs_nudge_x,
+        nudge_y = locs_nudge_y,
+        # size = 5,
+        size = 6,
+        fontface = "bold",
+        colour = "red",
+        show.legend = FALSE
+      )
+  }
+
+  p <- p +
     scale_x_continuous(expand = c(0, 0)) +
     scale_y_continuous(expand = c(0, 0)) +
     # add colour scheme afterwards
@@ -1400,7 +1445,7 @@ chi_map_plot <- \(
     # scale_pattern_manual(values = c("stripe", "none")) +
     # maximise plot within frame
     coord_sf(expand = FALSE) +
-    labs(fill = lab, size = lab) +
+    labs(fill = lab, size = lab, x = "", y = "") +
     guides(fill = guide_legend(), size = guide_legend(), pattern = "none") +
     theme +
     theme(legend.position = "right", legend.key = element_blank())
@@ -1426,7 +1471,19 @@ chibar_p <- chi_map_plot(chi_95_sf, "chibar", rm_axis = FALSE) +
     guide = "legend"
   )
 # chi_p <- chi_map_plot(chi_95_sf, "chi") +
-chi_p <- chi_map_plot(chi_95_sf, "chi", rm_axis = FALSE) +
+# chi_p <- chi_map_plot(chi_95_sf, "chi", rm_axis = FALSE) +
+chi_p <- chi_map_plot(
+  chi_95_sf,
+  "chi",
+  rm_axis = FALSE,
+  spec_locs = c("Malahide Castle", "Dublin (Ringsend)", "Kilcar (Cronasillagh)", "Derryhillagh"),
+  # locs_nudge_x = c(0.15, 0.2, 0.18, 0.1), # for single plot
+  # locs_nudge_x = c(0.15, 0.3, 0.3, 0), # joined with chibar
+  locs_nudge_x = c(0.18, 0.32, -0.35, 0), # joined with p_terrain
+  # locs_nudge_y = c(0.1, 0, 0.05, 0.15) # for single plot
+  # locs_nudge_y = c(0.15, -0.02, 0.12, 0) # joined with chibar
+  locs_nudge_y = c(0.18, -0.03, 0.12, 0) # joined with p_terrain
+) +
   scale_fill_gradientn(
     colours = RColorBrewer::brewer.pal(name = "Blues", n = 7),
     breaks = scales,

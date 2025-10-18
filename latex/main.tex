@@ -1962,11 +1962,15 @@ In Section~\ref{subsec:app_ce}, we discuss fits of the conditional extremes (CE)
 \begin{figure}[htb]
     \centering
     % \includegraphics[width = 0.9\linewidth]{plots/041_chi_plots_man.png}
-    \includegraphics[width = 0.8\linewidth]{plots/043_chi_elevation_man_crop.png}
+    % \includegraphics[width = 0.8\linewidth]{plots/043_chi_elevation_man_crop.png}
+    \includegraphics[width = 0.8\linewidth]{plots/043_chi_elevation_pts_man_crop.png}
     % \caption{\emph{$\chi$ and $\bar{\chi} $ statistics for each of the 59 locations in our Irish meteorological dataset, estimated at the 95th quantile. The $\bar{chi}$ statistic is shown on the left, and $\chi$ on the right. For both maps, darker colours indicate stronger asymptotic dependence.}}
-    \caption{\emph{Left: elevation (m) profile of Ireland.%, with elevation in metres above sea level binned into 100m intervals with the highest bin for elevations above 500m.
+    \caption{\emph{
+    Left: elevation (m) profile of Ireland.%, with elevation in metres above sea level binned into 100m intervals with the highest bin for elevations above 500m.
     % Right: $\chi$ statistics between precipitation and wind speed at all 59 locations, estimated at the 95th quantile. Darker colours and larger points indicate stronger asymptotic dependence.}}
-    Right: Estimated $\chi(0.95)$ between precipitation and wind speed at all 59 locations. Darker colours and larger points indicate stronger asymptotic dependence.}}
+    Right: Estimated $\chi(0.95)$ between precipitation and wind speed at all 59 locations. Darker colours and larger points indicate stronger asymptotic dependence.
+    Locations in red are (1) Malahide Castle, Dublin, (2) Ringsend, Dublin, (3) Kilcar, Donegal, and (4) Derryhillagh, Mayo.
+}}
    \label{fig:chi}
 \end{figure}
 
@@ -2039,12 +2043,12 @@ In practical terms, this suggests that extreme wind speeds tend to be accompanie
 % Conversely, sites in Dublin, Wicklow and Wexford have lower values of $\chi$ and $\bar{\chi}$, indicating weaker extremal dependence along the east coast. \todo{And Louth?}
 % Conversely, in counties such as Dublin, Wexford and Louth, lower values of $\chi$ indicate weaker extremal dependence along the east coast.
 A clear spatial pattern emerges: extremal dependence is strongest in the south west, with the highest values along the Atlantic coast, notably in counties Kerry, Galway, Mayo, and Donegal, and weaker along the east coast, in Dublin, Wexford, and Louth. 
-The highest $\chi(0.95)$ value (0.414) is observed at Derryhillagh in Mayo, while the lowest (0.0005) is at Malahide Castle in Dublin. \todo{Mark on map}
+The highest $\chi(0.95)$ value (0.414) is observed at Derryhillagh in Mayo (Figure~\ref{fig:chi}, location (4)), while the lowest (0.0005) is at Malahide Castle in Dublin (Figure~\ref{fig:chi}, location (1); hereafter `Malahide').
 % This indicates that there are distinct spatial patterns of extremal dependence in the data, motivating an analysis using the CE model and possibly clustering to perform inference on and better understand this dependence structure.
 % These results indicate distinct regional patterns of extremal dependence, as well as notable outliers, motivating the use of our extremal clustering framework to characterise and interpret this spatial structure more formally. 
 
-Some spatial outliers are also apparent. \todo{Mark on map}
-Kilcar in Donegal has a relatively low $\chi(0.95)$ value despite its west-coast location, while certain Wicklow sites show unusually high values for the east. 
+Some spatial outliers are also apparent. 
+Kilcar in Donegal (Figure~\ref{fig:chi}, location (3)) has a relatively low $\chi(0.95)$ value despite its west-coast location, while certain sites in county Wicklow show unusually high values for the east. 
 The latter may be related to the influence of the Wicklow Mountains, as reflected in the elevation profile (Figure~\ref{fig:chi}). 
 It may be of interest to investigate if these outliers in $\chi(0.95)$ are reflected in the CE model parameter estimates, and whether clustering can identify them.
 These results indicate distinct regional patterns of extremal dependence, as well as notable outliers, motivating the use of our extremal clustering framework to characterise and interpret this spatial structure more formally. \todo{Need to mention outliers again? Can't we say ``In general, ...''}
@@ -2216,12 +2220,12 @@ This indicates that allocation between the two is not always clear-cut and for s
 Also, if we only fit two clusters, we find that most of the central cluster members are assigned to the western cluster, reflecting this less obvious separation between the two compared to the more markedly different eastern cluster. 
 \todo{Link better to chi outliers}
 % A noticeable outlier in the dissimilarity matrix is the site at Malahide Castle in county Dublin, which even amongst its own cluster has a relatively high dissimilarity to the other sites.
-A noticeable outlier in the dissimilarity matrix is the site at Malahide Castle in County Dublin. 
-Even within its own cluster, Malahide Castle shows a relatively high dissimilarity to the other sites. 
+A noticeable outlier in the dissimilarity matrix is Malahide, which we previously identified as having the lowest $\chi(0.95)$ value  in Figure~\ref{fig:chi}. 
+Even within its own cluster, Malahide shows a relatively high dissimilarity to the other sites. 
 % Furthermore, if we set $k=4$, Malahide Castle becomes its own cluster, and so it is quite distinct from the other sites. \todo{Include results in supplementary materials}
-Furthermore, if we set $k=4$, it becomes its own cluster. \todo{Include results in supplementary materials} 
+Indeed, if we set $k=4$, Malahide becomes its own cluster. \todo{Include results in supplementary materials} 
 % Malahide Castle has the lowest mean weekly precipitation of any site, with the second lowest being in Ringsend, which is closest in terms of our dissimilarity to Malahide.
-Malahide Castle also has the lowest mean weekly precipitation of any site; the second lowest is Ringsend, also in county Dublin, which is the site closest to Malahide in terms of our dissimilarity measure. 
+Malahide also has the lowest mean weekly precipitation of any site; the second lowest is Ringsend, also in county Dublin (Figure~\ref{fig:chi} location (2)), which is the site closest to Malahide in terms of our dissimilarity measure. 
 % This may explain its outlying behaviour, even amongst the eastern cluster, in that rainfall extremes and consequently concomitant extremes are less likely to occur, as shown by its low $\chi(0.95)$ (Figure~\ref{fig:chi}) and $\alpha_{\mid i}$ (Figure~\ref{fig:a_b_vals}) estimates.
 % This difference in precipitation may explain Malahide’s outlying behaviour within the eastern cluster: rainfall extremes, and consequently associated extremes, are less likely to occur there, as indicated by its low $\chi(0.95)$ (Figure~\ref{fig:chi}) and $\alpha_{\mid i}$ (Figure~\ref{fig:a_b_vals}) estimates. 
 Finally, it has very low $\chi(0.95)$ (Figure~\ref{fig:chi}) and $\alpha_{\mid i}$ (Figure~\ref{fig:a_b_vals}) estimates. 

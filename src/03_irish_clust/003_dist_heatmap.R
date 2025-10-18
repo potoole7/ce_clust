@@ -101,6 +101,16 @@ clust_df <- clust_df |>
   # arrange(cluster)
   arrange(across(any_of(c("cluster", "county")))) # also order by county
 
+clust_df <- clust_df |>
+  # swap the rows with Ringsend and Glen Imaal
+  mutate(
+    name = case_when(
+      name == "Ringsend" ~ "Glen Imaal",
+      name == "Glen Imaal" ~ "Ringsend",
+      TRUE ~ name
+    )
+  )
+
 # Have same colours as map for labelling site names (by cluster)
 colours <- ggsci::pal_nejm()(3)
 names(colours) <- unique(clust_df$cluster)
@@ -204,9 +214,10 @@ p <- off_diag_df |>
     # fill = expression(Distance(plain(JSGa)^{
     #   plain(G)[alpha]
     # }))
-    fill = expression(Distance(plain(JS)^{
-      plain(G)[alpha]
-    }))
+    # fill = expression(Distance(plain(JS)^{
+    #   plain(G)[alpha]
+    # }))
+    fill = "Dissimilarity"
   ) +
   theme(
     # # rotate x-axis labels
@@ -228,8 +239,11 @@ p <- off_diag_df |>
     panel.background = element_blank(),
     panel.grid.major = element_blank(),
     panel.border = element_blank(),
-    axis.text.y = element_text(size = 12),
-    legend.title = element_text(size = 15, face = "bold"),
+    # axis.text.y = element_text(size = 12),
+    axis.text.y = element_text(size = 11.5),
+    # axis.text.y = element_text(size = 10.75),
+    # legend.title = element_text(size = 15, face = "bold"),
+    legend.title = element_text(size = 15),
     legend.text = element_text(size = 14)
   ) +
   NULL
@@ -239,4 +253,5 @@ ggsave(
   plot = p,
   filename = "latex/plots/ire_dist_heatmap.png",
   width = 12, height = 10
+  # width = 12, height = 11.5
 )

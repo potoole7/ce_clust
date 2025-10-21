@@ -115,6 +115,8 @@
 \usepackage{algpseudocode}
 \usepackage[defaultlines=2,all]{nowidow} % prevent widows and orphans
 \usepackage{enumitem} % inline enumeration
+\usepackage{xr-hyper}
+\usepackage{subfiles} % for loading supplementary material
 
 % penalties for breaking equations
 \relpenalty=10000
@@ -542,7 +544,8 @@ Clustering is a popular tool in the extremes literature, where data sparsity and
 Finally, \emph{multivariate} methods cluster on joint tail summaries or fitted multivariate extremal dependence models. 
 % A leading nonparametric example was provided by \citet{Vignotto2021}.
 % \citet{Vignotto2021} is our main competitor here, also considering bivariate extremes of precipitation and wind speeds at locations in Great Britain and Ireland.
-In our motivating setting, \citet{Vignotto2021} consider clusters of bivariate extremes of precipitation and wind speeds across spatial locations in Great Britain and Ireland.
+% In our motivating setting, \citet{Vignotto2021} consider clusters of bivariate extremes of precipitation and wind speeds across spatial locations in Great Britain and Ireland.
+\citet{Vignotto2021} consider clusters of bivariate extremes of precipitation and wind speeds across spatial locations in Great Britain and Ireland.
 Their nonparametric approach estimated pairwise Kullback--Leibler ($\KL{}$) \citep{Kullback1951} divergences for bivariate precipitation and wind extremes (see \citet{Zscheischler2021}) and then applied the $k$-medoids algorithm. % \todo{Jordan wants ``extreme value distributions fitted to'' added here, but I thought they didn't fit any?}
 % Finally, \emph{spatial} methods target regions or processes with similar spatial tail dependence and often build pairwise tail dissimilarities such as the F-madogram before clustering \citep{Cooley2006variograms, Bernard2013, Rohrbeck2021}.
 However, their method is restricted to the bivariate case and,
@@ -590,7 +593,8 @@ Section~\ref{sec:method} introduces our novel dissimilarity measure for multivar
 skew-geometric Jensen-Shannon divergence $\left(\JSGa{}\right)$ of \citet{Nielsen2019}, and we further illustrate how this can be used for clustering of multivariate extremes. 
 % A simulation study is described and performed in Section~\ref{sec:sim}, to compare our method to the leading competitor in the bivariate case, and we show that it outperforms this method across a range of extremal dependence structures.
 % Section~\ref{sec:sim} describes a simulation study, where we demonstrate that our approach outperforms the method by \citet{Vignotto2021} across a range of extremal dependence structures. 
-Section~\ref{sec:sim} provides a simulation study where we demonstrate that our approach outperforms the clustering method of \citet{Vignotto2021} across a range of extremal dependence structures. 
+% Section~\ref{sec:sim} provides a simulation study where we demonstrate that our approach outperforms the clustering method of \citet{Vignotto2021} across a range of extremal dependence structures. 
+Section~\ref{sec:sim} provides a simulation study where we demonstrate that our approach outperforms the clustering method of \citet{Vignotto2021}.
 In Section~\ref{sec:application}, we apply our clustering framework to Irish meteorological data, and identify sites with similar tail dependence between precipitation and wind speeds.
 Section~\ref{sec:discuss} concludes with a discussion of our findings, the limitations of our method, and potential avenues for future work. % \todo{Add future work paragraph in discussion}
 
@@ -603,7 +607,8 @@ In this section, we introduce our clustering framework. % for CE models.
 % We begin in Section~\ref{subsec:ce_model} by introducing the CE model of \citet{Heffernan2004}, which is used to model the joint tail behaviour of a random vector conditional on one of its components exceeding a suitably high threshold.
 Section~\ref{subsec:ce_model} provides background on the conditional extremes (CE) model of \citet{Heffernan2004} and \citet{Keef2013}. %, which is used to model the joint tail behaviour of a random vector conditional on one of its components exceeding a suitably high threshold.
 % We explain how inference with this model is equivalent to estimating a multivariate Gaussian distribution. 
-Section~\ref{subsec:ce_setup} extends the CE model to a spatial setting, and how inference with this model is performed. 
+% Section~\ref{subsec:ce_setup} extends the CE model to a spatial setting, and how inference with this model is performed. 
+Section~\ref{subsec:ce_setup} defines the setup for our clustering model and describes how inference is performed.
 % In Section~\ref{subsec:div}, we describe our chosen dissimilarity measure, the skew-geometric Jensen-Shannon divergence, which has analytical form when comparing Gaussian distributions, and allows us to efficiently quantify the pairwise dissimilarity between fitted CE models.
 % In Section~\ref{subsec:div}, we describe our novel dissimilarity measure for multivariate CE, which uses the skew-geometric Jensen-Shannon divergence, to efficiently quantify pairwise dissimilarity between fitted CE models.
 In Section~\ref{subsec:div}, we describe a novel dissimilarity measure for multivariate CE, which uses the skew-geometric Jensen-Shannon divergence to efficiently quantify dissimilarity between fitted CE models.
@@ -785,9 +790,10 @@ With all operations below taken component-wise, \citet{Heffernan2004} assumed th
 % where $u_i$ is a suitably high threshold. 
 % where the distribution function $G_{\mid i}$ is non-degenerate on $\mathbb{R}^{d-1}$ and, for each margin $j\neq i$, $\lim\limits_{z\to\infty}G_{j\mid i}(z)=1$, so that there is no mass at $+\infty$, while mass at $-\infty$ is permitted to ensure uniqueness \citep{Keef2013}. 
 % where the distribution function $G_{\mid i}\left(\symbf{z}\right)$ is non-degenerate on $\symbf{z} \in \mathbb{R}^{d-1}$ and, for each margin $j\neq i$, $\lim\limits_{z\to\infty}G_{j\mid i}(z)=1$, so that there is no mass at $+\infty$, while mass at $-\infty$ is permitted to ensure uniqueness \citep{Keef2013}. 
-where the distribution function $G_{\mid i}\left(\symbf{z}\right)$ is non-degenerate on $\symbf{z} \in \mathbb{R}^{d-1}$. 
-For each margin $j\neq i$, $\lim\limits_{z\to\infty}G_{j\mid i}(z)=1$, so that there is no mass at $+\infty$.
-Mass at $-\infty$ is permitted to ensure uniqueness \citep{Keef2013}. 
+% where the distribution function $G_{\mid i}\left(\symbf{z}\right)$ is non-degenerate on $\symbf{z} \in \mathbb{R}^{d-1}$. 
+% For each margin $j\neq i$, $\lim\limits_{z\to\infty}G_{j\mid i}(z)=1$, so that there is no mass at $+\infty$.
+% Mass at $-\infty$ is permitted to ensure uniqueness \citep{Keef2013}. 
+where the distribution function $G_{\mid i}\left(\symbf{z}\right)$ is non-degenerate on $\symbf{z} \in \left[ -\infty, \infty \right)^{d-1}$.
 % An important consequence of this formulation is the weak assumption that
 % \begin{equation}~\label{eq:limit_independence}
 %   \mathbb{P}(\symbf{Z}_{\mid i} \le \symbf{z}_{\mid i}, Y_i - u_i = y_i \mid Y_i > u_i) \rightarrow G_{\mid i}(\symbf{z}_{\mid i}) \exp(-y_i) \text{ as } u_i \rightarrow \infty,
@@ -841,7 +847,7 @@ $-1<\alpha_{j\mid i}<1$, which suggests asymptotic independence between $Y_j$ an
 % \subsubsection{Setup}~\label{subsubsec:ce_setup}
 % \subsubsection{Framework and model inference}~\label{subsubsec:ce_setup}
 \subsection{Framework and model inference}
-\label{subsubsec:ce_setup}
+\label{subsec:ce_setup}
 
 % We fit the CE model at different spatial sites. 
 In our motivating spatial application, we consider a CE model that varies across sites and across conditioning variables, $i = 1, \ldots, d$.
@@ -933,7 +939,6 @@ In practice, we set the threshold $u_{i, s} \coloneqq u_i$ to the $q^{\text{th}}
 Choosing $q$ involves the classical bias-variance tradeoff: $q$ must be sufficiently low as to leave enough excesses above $u_i$ for reliable estimation, but high enough to reduce bias induced when the asymptotic arguments in Equation~\eqref{eq:ce_limiting_dist} are not satisfied. 
 % To pick $q$, we use threshold stability plots \citep{Scarrott2012}. \todo{This reference is for univariate cases, need multivariate one? texmex okay?}
 To pick $q$, we use threshold stability plots and assess the stability of parameter estimates at different thresholds \citep{Southworth2012}. % \todo{Cite texmex where I get this method from?}
-% \todo{Include in supplementary materials?}
 % The bootstrapping procedure of \citet{Heffernan2004} is used to obtain standard errors for the parameter estimates, and we choose the highest value of $q$ such that the parameter estimates are stable, and the bootstrap standard errors are reasonably small.
 % Using the bootstrap procedure of \citet{Heffernan2004}, we obtain standard errors for parameter estimates and choose the highest value of $q$ such that the parameter estimates are stable and the bootstrap standard errors are reasonably small. \todo{Say this is done across sites?}
 Using the bootstrap procedure of \citet{Heffernan2004}, we obtain standard errors for parameter estimates at each site and choose the highest value of $q$ such that the parameter estimates are stable and the bootstrap standard errors are reasonably small across sites. % \todo{adequate mention of how this is done across all sites?}
@@ -2075,12 +2080,12 @@ To select an appropriate quantile level $q$ for fitting the CE model (see Sectio
 % This revealed that estimates in general were quite stable up to the 88th quantile.  \todo{Need to expand with more details, could include plots in Appendix?}
 Estimates are generally stable for both models, i.e.,\@ precipitation conditional on wind speed and vice versa, down to $q = 0.85$, with similar maximum likelihood estimates across 500 bootstrap samples for $(\alpha_{\mid i}, \beta_{\mid i})$. % and clustering solutions obtained when using the 85th quantile were quite similar to higher quantiles.
 % \todo{Need to include threshold stability and/or diagnostic plots in supplementary materials?}
-\todo{Add threshold stability and diagnostic plots to supplementary materials}
 % Diagnostic plots for the CE fits at $q=0.85$ for each location are included in the supplementary material. 
 % Therefore, the 85th quantile was used for subsequent analysis for both models.
+Threshold stability plots for the CE fits at the four locations highlighted in Figure~\ref{fig:chi} are included in the supplementary materials.
 Therefore, we fix $q = 0.85$ for the subsequent analysis. 
 % In Figure~\ref{fig:clust_sens}, we show that clustering solutions are also quite robust to the choice of quantile between the 85th, 88th and 90th quantiles, and so this choice does not have a major impact on results.
-In Figure~\ref{fig:clust_sens}, we show that our estimated extremal clustering is robust to the choice of $q$, with estimates shown for $q = 0.85, 0.88,$ and $0.90$.
+In Figure~\ref{fig:clust_sens}, we show that our estimated extremal clustering is robust to the choice of $q$, with estimates shown for $q = 0.85, 0.88$, and $0.90$.
 % Clustering sensitivity to the choice of quantile is discussed further in Section~\ref{subsec:app_clust}, surrounding Figure~\ref{fig:clust_sens}.
 
 % Subsequent analysis was also performed at the 85th, 88th and 90th quantiles, and shown to provide similar MLEs for our CE parameters, and clustering solutions. \todo{Include in Appendix also?}
@@ -2156,8 +2161,8 @@ We cluster the locations using the aggregated dissimilarity matrix $M$ as define
 % The number of clusters $k$ was chosen via the method described in Section~\ref{subsubsec:choose_k}, using the elbow plot of the TWGSS. 
 % The number of clusters $k$ is chosen via the method described in Section~\ref{subsec:clustering}, using the elbow plot of the $\mathrm{TWGSS}$. 
 The number of clusters $k$ is chosen via the method in Section~\ref{subsec:clustering}, using the elbow plot of the $\mathrm{TWGSS}$. 
-For all three clustering scenarios, clear elbows are observed at $k = 3$. \todo{Include elbow plots in supplementary material}
-% Elbow plots are provided in the supplementary material.
+For all three clustering scenarios, clear elbows are observed at $k = 3$.
+The elbow plots are provided in the supplementary materials. \todo{Use xr to crossref supplementary materials}
 
 % Our clustering solutions for each of the three dissimilarity matrices at the 85th quantile are shown in Figure \ref{fig:clust_sol}.
 % The resulting clustering solutions for the 85th quantile are displayed in Figure~\ref{fig:clust_sol}.  
@@ -2180,6 +2185,7 @@ There are also notable outliers in the clusters, which we further discuss below.
 % Similarly, several Wicklow sites, which had relatively high $\chi$ values for the east coast, are assigned to the central cluster, rather than the eastern one.
 % This may be related to the influence of the Wicklow Mountains, as reflected in the elevation profile in Figure~\ref{fig:chi}.
 
+% \begin{figure}[htb]
 \begin{figure}[htb]
     \centering
     \includegraphics[width = 0.8\linewidth]{plots/cluster_dqu_sep_new_crop.png}
@@ -2197,7 +2203,8 @@ There are also notable outliers in the clusters, which we further discuss below.
 \todo{Change fill label to Dissimilarity}
 \begin{figure}[htb]
     \centering
-    \includegraphics[width = 0.9\linewidth]{plots/ire_dist_heatmap_crop.png}
+    % \includegraphics[width = 0.9\linewidth]{plots/ire_dist_heatmap_crop.png}
+    \includegraphics[width = 1.0\linewidth]{plots/ire_dist_heatmap_crop.png}
     % \caption{\emph{Heatmap of the aggregated dissimilarity matrix $M$ for the conditional extremes model parameters estimated at the 85th quantile across all 59 sites. The names of each site are coloured and ordered according to the clustering solution, matching that of Figure \ref{fig:clust_sol}. The dissimilarity colour scale is shown on the right, with darker colours indicating larger values.}}
     \caption{\emph{
     Heatmap of the estimated aggregated dissimilarity matrix $M$.% for the conditional extremes model parameters estimated at the 85th quantile across all 59 sites. 
@@ -2219,12 +2226,11 @@ In contrast, the western and central clusters seem to be quite close, in that we
 This indicates that allocation between the two is not always clear-cut and for several sites is nearly interchangeable, as observed in  the variable-specific estimated clusters in Figure~\ref{fig:clust_sol} and in the quantile sensitivity analysis in Figure~\ref{fig:clust_sens}, where membership between the two often switches. % \todo{Mention specific sites}
 % \todo{Add plots for k = 2, k = 4 to Appendix?}
 Also, if we only fit two clusters, we find that most of the central cluster members are assigned to the western cluster, reflecting this less obvious separation between the two compared to the more markedly different eastern cluster. 
-\todo{Link better to chi outliers}
 % A noticeable outlier in the dissimilarity matrix is the site at Malahide Castle in county Dublin, which even amongst its own cluster has a relatively high dissimilarity to the other sites.
 A noticeable outlier in the dissimilarity matrix is Malahide, which we previously identified as having the lowest $\chi(0.95)$ value  in Figure~\ref{fig:chi}. 
 Even within its own cluster, Malahide shows a relatively high dissimilarity to the other sites. 
 % Furthermore, if we set $k=4$, Malahide Castle becomes its own cluster, and so it is quite distinct from the other sites. \todo{Include results in supplementary materials}
-Indeed, if we set $k=4$, Malahide becomes its own cluster. \todo{Include results in supplementary materials} 
+Indeed, if we set $k=4$, Malahide becomes its own cluster (clustering results for $k=2$ and $k=4$ are provided in the supplementary materials).
 % Malahide Castle has the lowest mean weekly precipitation of any site, with the second lowest being in Ringsend, which is closest in terms of our dissimilarity to Malahide.
 Malahide also has the lowest mean weekly precipitation of any site; the second lowest is Ringsend, also in county Dublin (Figure~\ref{fig:chi} location (2)), which is the site closest to Malahide in terms of our dissimilarity measure. 
 % This may explain its outlying behaviour, even amongst the eastern cluster, in that rainfall extremes and consequently concomitant extremes are less likely to occur, as shown by its low $\chi(0.95)$ (Figure~\ref{fig:chi}) and $\alpha_{\mid i}$ (Figure~\ref{fig:a_b_vals}) estimates.
@@ -2442,6 +2448,7 @@ We also acknowledge the use of the Irish meteorological dataset obtained from Me
   % %   additional simulation results, including elbow plots for choosing the number of clusters, and expanding on Section~\ref{subsubsec:sim_extension} to include clustering results for mixture copulas with up to $d=5$ dimensions; and
   % \item[PDF Supplement:] This supplement contains additional simulation results, including elbow plots for choosing the number of clusters, and expanding on Section~\ref{subsubsec:sim_extension} to include clustering results for mixture copulas with up to $d=5$ dimensions; and
   %   for the Irish meteorological data application, diagnostic plots for the CE model fits at each location in Section~\ref{subsec:app_ce}, and elbow plots for choosing the number of clusters, and cluster estimates for $k=2$ and $k=4$ clusters in Section~\ref{subsec:app_clust}.
+  \item[PDF Supplement:] This supplement contains additional plots for the motivating data application in Section~\ref{subsec:app_clust} of the main paper, including elbow plots for choosing the number of clusters, clustering solutions for $k=2$ and $k=4$ clusters, and threshold stability plots for the conditional extremes model fits at each location.
 
 \item[Data and R code:] Available upon request from the corresponding author.
 
@@ -2452,5 +2459,14 @@ We also acknowledge the use of the Irish meteorological dataset obtained from Me
 % \bibliographystyle{apalike_unsrt}
 {\small
 \bibliography{library.bib}
+
 }
+
+
+% Include supp materials
+% \include{supp_mat.tex}
+\clearpage
+% \input{supp_mat}
+%\subfile{supp_mat}
+
 \end{document}

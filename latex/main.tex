@@ -1129,7 +1129,7 @@ where $H_{i, s}(y)$ and $H_{i, s^*}(y)$ are the conditional $(d-1)$-variate Gaus
 % \end{align*}
 % We can substitute the multivariate Gaussian distribution in Equation~\eqref{eq:ce_norm} into the formula for the $\JSGa{}$ divergence in Equation~\eqref{eq:js_norm_mvn1} to compare the CE models fit at two sites $s$ and $s^*$, with 
 % Equation \eqref{eq:cjsga} has a closed-form expression: from Equation~\eqref{eq:ce_norm}, this can be derived by substituting, into Equation~\eqref{eq:js_norm_mvn1}, the conditional parameters $\symbf{m_s} = \mvmean{s}$, $\symbf{m_{s^*}} = \mvmean{s^*}$,  $\Omega_s = \mvcov{s}$, and $\Omega_{s^*} = \mvcov{s^*}$, 
-Equation \eqref{eq:cjsga} has a closed-form expression: from Equation~\eqref{eq:ce_norm}, this can be derived by substituting, into Equation~\eqref{eq:js_norm_mvn1}, the conditional parameters $\symbf{m}_{s}(y) = \mvmean{s}$, $\symbf{m_}_{s^*}(y) = \mvmean{s^*}$, $\Omega_{s}(y) = \mvcov{s}$, and $\Omega_{s^*}(y) = \mvcov{s^*}$, 
+Equation \eqref{eq:cjsga} has a closed-form expression: from Equation~\eqref{eq:ce_norm}, this can be derived by substituting, into Equation~\eqref{eq:js_norm_mvn1}, the conditional parameters $\symbf{m}_{s}(y) = \mvmean{s}$, $\symbf{m}_{s^*}(y) = \mvmean{s^*}$, $\Omega_{s}(y) = \mvcov{s}$, and $\Omega_{s^*}(y) = \mvcov{s^*}$, 
 % $\Omega_{\lambda} = \left(\lambda\,\left(\mvcov{s}\right)^{-1} + (1-\lambda)\,\left(\mvcov{s^*}\right)^{-1}\right)^{-1}$, and \\
 % $\symbf{m}_{\lambda} = \Omega_{\lambda}\left(\lambda\,
 % \left(\mvcov{s}\right)^{-1}\left(\mvmean{s}\right) + (1-\lambda)\,
@@ -1727,7 +1727,7 @@ This may be because the Gaussian copula becomes more similar to the t-copula for
 \begin{figure}[htb]
     \centering
     \includegraphics[width = 0.8\linewidth]{plots/sim_01b_ce_vs_vi_dqu_0.9_man.png}
-    % \caption{\emph{Comparison of \citep{Vignotto2021} clustering with our proposed method (labelled ``Cond. Extremes''), for two variables and two equally sized clusters for simulations of 12 ``locations'', each with 1000 observations of each variable, from a mixture of Normal and Gaussian copulas. A grid search was performed, with the x-axis representing the Gaussian correlation parameter used for both clusters, and the facet labels showing the t-copula correlation parameters for each ``known'' cluster. This grid search was repeated 500 times. The smoothed lines show the smoothed median of the Adjusted Rand Index for both clustering methods, with smoothing performing using a generalised additive model.}} % The lines show the median of the Adjusted Rand Index for both clustering methods, with uncertainty coming from the 90\% credible interval.}} % The proposed method is shown to be superior to the leading competitor in the bivariate case, that of \cite{Vignotto2021}. Both models perform better when the difference in the t-copula correlation parameters between the two clusters is larger, and when Gaussian correlation is higher.
+    % \caption{\emph{Comparison of \citep{Vignotto2021} clustering with our proposed method (labelled ``Cond. Extremes''), for two variables and two equally sized clusters for simulations of 12 ``locations'', each with 1000 observations of each variable, from a mixture of Normal and Gaussian copulas. A grid search was performed, with the x-axis representing the Gaussian correlation parameter used for both clusters, and the facet labels showing the t-copula correlation parameters for each ``known'' cluster. This grid search was repeated 500 times. The smoothed lines show the smoothed median of the Adjusted Rand Index for both clustering methods, with smoothing performed using a generalised additive model.}} % The lines show the median of the Adjusted Rand Index for both clustering methods, with uncertainty coming from the 90\% credible interval.}} % The proposed method is shown to be superior to the leading competitor in the bivariate case, that of \cite{Vignotto2021}. Both models perform better when the difference in the t-copula correlation parameters between the two clusters is larger, and when Gaussian correlation is higher.
     % \caption{\emph{Comparison of our clustering method based on the Conditional Extremes model and the method of \citet{Vignotto2021} for extremal clustering.  
     % \caption{\emph{Comparison of performance for CE clustering and \citet{Vignotto2021}. 
     %     The x-axis represents the Gaussian correlation parameters $\rhou{Gauss}$, and facet labels indicating the t-copula correlation parameters for each ``known'' cluster, generated from a mixture of Gaussian and t-copulas with Laplace margins.
@@ -1777,13 +1777,13 @@ Therefore, the aggregated matrix $M$ in Equation~\eqref{eq:aggregate_matrix} is 
     % \caption{\emph{Evaluation of clustering performance for three variables and two equally sized clusters for simulations of 12 ``locations'', each with 1000 observations for each variable, from a mixture of Gaussian and t-copulas. 
     % A grid search was performed,  with the x-axis representing the Gaussian correlation parameter used for both clusters, and the facet labels showing the t-copula correlation parameters for each ``known'' cluster. 
     % This grid search was repeated 500 times. 
-    % The smoothed lines show the smoothed median of the Adjusted Rand Index for both clustering methods, with smoothing performing using a generalised additive model.}} % Points show individual values of the ARI for a given simulation.}} 
+    % The smoothed lines show the smoothed median of the Adjusted Rand Index for both clustering methods, with smoothing performed using a generalised additive model.}} % Points show individual values of the ARI for a given simulation.}} 
     \includegraphics[width = 0.8\linewidth]{plots/sim_01d_js_sens_2_3_var_dqu_0.9_man.png}
     \caption{\emph{
-        Comparison of clustering perfomance for $d = 2$ and $d=3$ variables and two equally-sized clusters. % for simulations of 12 locations from a mixture of Gaussian and t-copulas.
+        Comparison of clustering performance for $d = 2$ and $d=3$ variables and two equally-sized clusters. % for simulations of 12 locations from a mixture of Gaussian and t-copulas.
         % The x-axis represents the Gaussian correlation parameter $\rho_{\text{Gauss}}$ for both clusters, and the facet labels show the t-copula correlation parameters, $\rho_{\text{t}_1}$ and $\rho_{\text{t}_2}$, for the two true clusters.
-        The x-axis represents the Gaussian correlation parameter $\rhou_{Gauss}$ for both clusters, and the facet labels show the t-copula correlation parameters, $\rho_{\text{t}_1}$ and $\rho_{\text{t}_2}$, for the two true clusters.
-        % The smoothed lines show the smoothed median of the Adjusted Rand Index for both dimensions, with smoothing performing using a generalised additive model.}} % Points show individual values of the ARI for a given simulation.
+        The x-axis represents the Gaussian correlation parameter $\rhou{Gauss}$ for both clusters, and the facet labels show the t-copula correlation parameters, $\rho_{\text{t}_1}$ and $\rho_{\text{t}_2}$, for the two true clusters.
+        % The smoothed lines show the smoothed median of the Adjusted Rand Index for both dimensions, with smoothing performed using a generalised additive model.}} % Points show individual values of the ARI for a given simulation.
         % The smoothed lines show the Adjusted Rand Index (ARI), with smoothing performed using a generalised additive model.
         The smoothed lines show the average ARI across bootstrap samples, with smoothing performed using a generalised additive model.
     }}
@@ -1820,7 +1820,7 @@ Nevertheless, the results demonstrate that the proposed method scales effectivel
     % A grid search was performed over the values of the Gaussian correlation parameter, as represented on the x-axis. 
 A sequence of values are considered for the Gaussian correlation parameter $\rhou{Gauss}$, as represented on the x-axis.
     % This grid search was repeated 500 times. 
-    % The smoothed lines show the smoothed median of the Adjusted Rand Index for both clustering methods, with smoothing performing using a generalised additive model. 
+    % The smoothed lines show the smoothed median of the Adjusted Rand Index for both clustering methods, with smoothing performed using a generalised additive model. 
     % The smoothed lines show the Adjusted Rand Index (ARI), with smoothing performed using a generalised additive model.
     The smoothed lines show the average ARI and associated uncertainty across bootstrap samples, with smoothing performed using a generalised additive model.
     % Points show individual values of the ARI for a given simulation.
@@ -1874,7 +1874,7 @@ For example, the best performance is observed where $\rho_{\text{t}_1} = 0.9, \r
         The true x-axis and facet labels show the t-copula correlation parameters,  $\rho_{\text{t}_1}, \rho_{\text{t}_2}$, and $\rho_{\text{t}_3}$, for each of the three true clusters, for a Gaussian copula correlation of $\rhou{Gauss} = 0.5$. 
      % Perturbations were added to these parameters. 
      % This grid search was repeated 500 times. 
-    % The smoothed lines show the smoothed Adjusted Rand Index for both clustering methods, with smoothing performing using a generalised additive model.
+    % The smoothed lines show the smoothed Adjusted Rand Index for both clustering methods, with smoothing performed using a generalised additive model.
     % The smoothed lines show the Adjusted Rand Index (ARI), with smoothing performed using a generalised additive model.
     The smoothed lines show the average ARI across bootstrap samples, with smoothing performed using a generalised additive model. 
      % Points show individual values of the ARI for a given simulation.
@@ -2208,8 +2208,6 @@ There are also notable outliers in the clusters, which we further discuss below.
 \label{fig:clust_sol}
 \end{figure}
 
-% \todo{Make bigger to read location names}
-% \todo{Change fill label to Dissimilarity}
 \begin{figure}[htb]
     \centering
     % \includegraphics[width = 0.9\linewidth]{plots/ire_dist_heatmap_crop.png}
@@ -2457,7 +2455,7 @@ We also acknowledge the use of the Irish meteorological dataset obtained from Me
   % %   additional simulation results, including elbow plots for choosing the number of clusters, and expanding on Section~\ref{subsubsec:sim_extension} to include clustering results for mixture copulas with up to $d=5$ dimensions; and
   % \item[PDF Supplement:] This supplement contains additional simulation results, including elbow plots for choosing the number of clusters, and expanding on Section~\ref{subsubsec:sim_extension} to include clustering results for mixture copulas with up to $d=5$ dimensions; and
   %   for the Irish meteorological data application, diagnostic plots for the CE model fits at each location in Section~\ref{subsec:app_ce}, and elbow plots for choosing the number of clusters, and cluster estimates for $k=2$ and $k=4$ clusters in Section~\ref{subsec:app_clust}.
-  \item[PDF Supplement:] This supplement contains additional plots for the motivating data application in Section~\ref{subsec:app_clust} of the main paper, including elbow plots for choosing the number of clusters, estimated clusters for $k=2$ and $k=4$ clusters, and threshold stability plots for the conditional extremes model fits at each location.
+  \item[PDF Supplement:] This supplement contains additional plots for the motivating data application in Section~\ref{subsec:app_clust} of the main paper, including elbow plots for choosing the number of clusters, clustering solutions for $k=2$ and $k=4$ clusters, and threshold stability plots for the conditional extremes model fits for the five locations highlighted in Figure~\ref{fig:chi}.
 
 \item[Data and R code:] Available upon request from the corresponding author.
 

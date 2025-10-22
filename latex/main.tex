@@ -298,7 +298,7 @@ In the multivariate EVT setting, one is interested in the \emph{joint} tail beha
 Multivariate extremes frequently arise in spatial applications, where one or more variables are recorded at a discrete set of sampling locations.
 % In environmental applications, extreme events rarely occur in isolation, and the compounded impact of simultaneous or ``concomitant'' extremes can produce substantially more severe outcomes \citep{zscheischler2018future, bevacqua2021guidelines, Rohrbeck2021, Sando2022}.
 % ``Concomitant'' extremes, where multiple variables or locations simultaneously exhibit extreme behaviour, can produce substantially more severe outcomes than single-variable extremes \citep{zscheischler2018future, bevacqua2021guidelines, Rohrbeck2021, Sando2022}.
-Within such settings, simultaneous or ``concomitant'' extremes, where multiple variables or locations concurrently exhibit extremal behaviour, can produce substantially severer outcomes than single-variable extremes \citep{zscheischler2018future, bevacqua2021guidelines, Rohrbeck2021, Sando2022}.
+Within such settings, simultaneous or ``concomitant'' extremes, where multiple variables or locations concurrently exhibit extremal behaviour, can produce substantially more severe outcomes than single-variable extremes \citep{zscheischler2018future, bevacqua2021guidelines, Rohrbeck2021, Sando2022}.
 % Consequently, these joint risks are liable to be underestimated unless tail \emph{dependence} is explicitly modelled \citep{Zhang2024}. 
 Consequently, joint risks may be underestimated unless tail \emph{dependence} is explicitly modelled \citep{Zhang2024}. 
 % Tail dependence can be described using the coefficient of asymptotic dependence \(\chi\in[0,1]\) (see e.g.\ \citet{Coles1999}), which for two random variables \(X_1,X_2\) with corresponding marginal distribution functions \(F_1,F_2\) is defined as 
@@ -1026,7 +1026,7 @@ The $\JSGa{}$ divergence exploits the property that the (weighted) product of tw
 % It follows that $G_{\lambda}(H, H^*)$ is multivariate Gaussian, and so the $\KL{}$ divergences in Equation~\eqref{eq:jsga} are evaluated on multivariate Gaussian distributions and are therefore available in closed-form.
 It follows that $G_{\lambda}(H, H^*)$ is multivariate Gaussian, and so the $\KL{}$ divergences in Equation~\eqref{eq:jsga} are available in closed-form.
 Hence, the principle advantage of the $\JSGa{}$ divergence is that it has a closed-form solution for multivariate Gaussian distributions.
-Its computationally efficiency \citep{Nielsen2019} has led to its use in several applications, including clustering, deep learning, variational inference, and remote sensing \citep{Nielsen2019, Deasy2020, Ni2023-cd, Thiagarajan2025}.
+Its computational efficiency \citep{Nielsen2019} has led to its use in several applications, including clustering, deep learning, variational inference, and remote sensing \citep{Nielsen2019, Deasy2020, Ni2023-cd, Thiagarajan2025}.
 % Furthermore, it is clearly symmetric and non-negative, as the sum of two $KL$ divergences, which is also important for clustering.
 % Furthermore, as the average of two $\KL{}$ divergences, it is clearly symmetric and non-negative.
 % Finally, when $\lambda = 0.5$, $\JSGa{}$ is bounded above by $\JSGa{(H_1 \Vert H_2)} \leq \frac{1}{4} \mathrm{J}(H_1 \Vert H_2)$,
@@ -1359,7 +1359,7 @@ The PAM algorithm takes a single hyperparameter, the number of clusters, $k$.
 % This may be because it requires aggregating over each location, which if unweighted assumes independence between the models fit for each site.
 % However, this assumption is often violated in spatial applications.
 % We revert, therefore, to the simple method of \citet{Thorndike1953-ie}, which uses the total within-cluster sum of squares (TWGSS) to select $k$. \todo{Fix citation?}
-% This method has been found to perform well in both our simulation study in Section~\ref{sec:sim} and our Irish meterological application in Section~\ref{sec:application}, making clear suggestions as to the value of $k$ to use. 
+% This method has been found to perform well in both our simulation study in Section~\ref{sec:sim} and our Irish meteorological application in Section~\ref{sec:application}, making clear suggestions as to the value of $k$ to use. 
 % We use the method of \citet{Thorndike1953-ie} to select $k$.
 % This uses the total within-cluster sum of squares ($\mathrm{TWGSS}$).
 We follow \citet{Thorndike1953-ie} and use the total within-group sum of squares ($\mathrm{TWGSS}$) to select $k$.
@@ -1684,7 +1684,7 @@ To obtain a sample of size $n = 1000$ from the mixture copula, at each site $s =
 % We consider a range of extremal dependence scenarios defined by a grid over ($\rhou{Gauss}^s, \rhou{t}^s)$ values, and for different numbers of sites, $D$,  and variables, $d$.
 % In Section~\ref{subsubsec:sim_competing_methods}, we compare our method to the leading competitor in the bivariate case, \cite{Vignotto2021}, and also show how our clustering algorithm uniquely provides a tool for clustering in the multivariate extremal dependence setting in  Section~\ref{subsubsec:sim_extension}.
 % In Section~\ref{subsubsec:sim_competing_methods}, we compare our method to the leading competitor in the bivariate case \citep{Vignotto2021}, and in Section~\ref{subsubsec:sim_extension} we show how our approach uniquely handles clustering in the multivariate extremal dependence setting.  
-In Section~\ref{subsubsec:sim_competing_methods}, we compare our method to the leading extremal competitor in the bivariate case \citep{Vignotto2021} and, in Section~\ref{subsubsec:sim_extension}, we show how our approach uniquely handles clustering of multivaraite extremes in higher dimensions ($d > 2$).
+In Section~\ref{subsubsec:sim_competing_methods}, we compare our method to the leading extremal competitor in the bivariate case \citep{Vignotto2021} and, in Section~\ref{subsubsec:sim_extension}, we show how our approach uniquely handles clustering of multivariate extremes in higher dimensions ($d > 2$).
 % A more realistic setting is considered in Section~\ref{subsubsec:sim_realistic}, where we simulate data from 60 locations with three unequally sized clusters, and perturb the correlation parameters to make the clustering solution more challenging.
 % A more realistic experiment is presented in Section~\ref{subsubsec:sim_realistic}, where data are simulated from 60 locations in three unequally sized clusters, with perturbed correlation parameters to make clustering more challenging.  
 Finally, Section~\ref{subsubsec:sim_realistic} considers a setting with $D = 60$ locations across three unequally sized clusters, and locations in the same cluster exhibiting perturbations in their correlation parameters.
@@ -1940,7 +1940,7 @@ For example, the best performance is observed where $\rho_{\text{t}_1} = 0.9, \r
 %     \includegraphics[width = 0.9\linewidth]{plots/sim_01e_bootstrap_box_man.png}
 %     \caption{\emph{
 %     % Boxplots of 500 bootstrapped conditional expectations of one variable given the other is at the $98\%$ marginal quantile $u$, pre- and post-clustering for a simulation of 12 ``locations'', each with 1000 observations for each variable, from a mixture of Normal and Gaussian copulas, with the Gaussian correlation set to 0.5. 
-%     Boxplots of 500 bootstrap estiamtes of the conditional expectation in Equation~\eqref{eq:boot}, pre- and post-clustering. 
+%     Boxplots of 500 bootstrap estimates of the conditional expectation in Equation~\eqref{eq:boot}, pre- and post-clustering. 
 %     The t-copula correlation parameters for the two clusters were set to $\rho_{\text{t}_1} = 0.1$ and $\rho_{\text{t}_2} = 0.9$, as shown on the x-axis.
 %     }}~\label{fig:04_bootstrap}
 % \end{figure}

@@ -129,6 +129,10 @@
 \relpenalty=10000
 \binoppenalty=10000
 
+\renewcommand{\theequation}{S.\arabic{equation}}
+\renewcommand{\thefigure}{S\arabic{figure}}
+\renewcommand{\thesection}{S\arabic{section}}
+
 % Define a custom note command for general notes
 \newcommand{\mynote}[1]{\todo[color=yellow!40,inline]{#1}}
 
@@ -165,7 +169,7 @@
 \if0\blind
 {
   % \title{\bf Clustering of multivariate tail dependence using conditional methods}
-  \title{\bf Supplementary materials for ``Clustering of multivariate tail dependence using conditional methods''}
+  \title{\bf Supplementary material for ``Clustering of multivariate tail dependence using conditional methods''}
   \author{%
   Patrick O'Toole\thanks{Patrick O'Toole is supported by a scholarship from the EPSRC Centre for Doctoral Training in Statistical Applied Mathematics at Bath (SAMBa), under the project EP/S022945/1.}\\
   Department of Mathematical Sciences, University of Bath, UK
@@ -194,7 +198,8 @@
 \begin{abstract}
   % This supplementary materials contains additional plots for the motivating data application in Section 4 of the main paper, including elbow plots for choosing the number of clusters, clustering solutions for $k=2$ and $k=4$ clusters, threshold stability plots, and model diagnostic plots for the conditional extremes model fits at each location.
   % This supplementary materials contains additional plots for the motivating data application in Section 4 of the main paper, including elbow plots for choosing the number of clusters, clustering solutions for $k=2$ and $k=4$ clusters, and threshold stability plots for the conditional extremes model fits at each location.
-  This supplementary materials contains additional plots for the motivating data application in Section~\ref{sec:application} of the main paper, including elbow plots for choosing the number of clusters, clustering solutions for $k=2$ and $k=4$ clusters, and threshold stability plots for the conditional extremes model fits at each location.
+  This supplementary materials contains additional plots for the motivating data application in Section~\ref{sec:application} of the main paper.
+  These include elbow plots for choosing the number of clusters, estimated clusters for $k=2$ and $k=4$, and threshold stability plots for the conditional extremes model fits at five specified locations.
 \end{abstract}
 
 \newpage
@@ -212,22 +217,22 @@
 
 \section{Elbow plots}
 
-Figure~\ref{fig:elbow_plots} gives the ``elbow'' plots of the total within-group sum of squares (TWGSS) against the number of clusters $k$, as described in Section~\ref{subsec:clustering}, for the motivating data application in Section~\ref{sec:application}, both in the main paper.
-These are shown for the clustering solutions obtained using the dissimilarity matrix for wind speed conditional on precipitation, precipitation conditional on wind speed, and the aggregated dissimilarity matrix $M$ as described in Equation~\eqref{eq:aggregate_matrix} of the main paper.
+Figure~\ref{fig:elbow_plots} gives the ``elbow'' plots of the total within-group sum of squares (TWGSS) against the number of clusters $k$, as described in Section~\ref{subsec:clustering} of the main text, for the motivating data application in Section~\ref{sec:application}.
+These are shown for the estimated clusters obtained using the dissimilarity matrix for wind speed conditional on precipitation, precipitation conditional on wind speed, and the aggregated dissimilarity matrix $M$ as described in Equation~\eqref{eq:aggregate_matrix} of the main text.
 
 \begin{figure}[ht]
     \centering
     \includegraphics[width = 0.9\linewidth]{plots/cluster_dqu_sep_elbow.png}
     \caption{\emph{ 
-      ``Elbow'' plots of the total within-group sum of squares (TWGSS) against the number of clusters $k$ for the clustering solutions obtained using the dissimilarity matrix for wind speed conditional on precipitation (centre), precipitation conditional on wind speed (right), and the combined dissimilarity matrix (left).
+      ``Elbow'' plots of the total within-group sum of squares (TWGSS) against the number of clusters $k$ for the estimated clusters obtained using the dissimilarity matrix for wind speed conditional on precipitation (centre), precipitation conditional on wind speed (right), and the combined dissimilarity matrix (left).
     }}
     \label{fig:elbow_plots}
 \end{figure}
 \clearpage
 
-\section{Clustering solutions for $k=2$ and $k=4$}
+\section{Estimates for $k=2$ and $k=4$ clusters}
 
-Figure~\ref{fig:cluster_dqu_k_2_4} shows the clustering solutions for $k=2$ and $k=4$ clusters obtained using the aggregated dissimilarity matrix $M$, as mentioned in Section~\ref{subsec:app_clust} of the main paper.
+Figure~\ref{fig:cluster_dqu_k_2_4} shows the estimates for $k=2$ and $k=4$ clusters, obtained using the aggregated dissimilarity matrix $M$, as mentioned in Section~\ref{subsec:app_clust} of the main text.
 
 \begin{figure}[ht]
     \centering
@@ -242,7 +247,7 @@ Figure~\ref{fig:cluster_dqu_k_2_4} shows the clustering solutions for $k=2$ and 
 
 \section{Threshold stability plots}
 
-Here, we present threshold stability plots for the conditional extremes model fits at the locations highlighted in Figure~\ref{fig:chi} of the main paper, or specifically, Malahide Castle and Ringsend, both in county Dublin, Kilcar in county Donegal, and Derryhillagh in county Mayo.
+Here, we present threshold stability plots for the conditional extremes model fits at the five locations highlighted in Figure~\ref{fig:chi} of the main text, or specifically, Malahide Castle and Ringsend, both in county Dublin, Glenmacnass in county Wicklow, Kilcar in county Donegal, and Derryhillagh in county Mayo.
 
 \begin{figure}[H]
     \centering
@@ -259,6 +264,16 @@ Here, we present threshold stability plots for the conditional extremes model fi
     \includegraphics[width = 0.62\linewidth]{plots/boot_quantiles_ringsend.png}
     \caption{\emph{
         Threshold stability plots for estimated model parameters $\alpha_{\mid i, s}$ (top) and $\beta_{\mid i, s}$ (bottom) for precipitation conditional on wind speed (left) and wind speed conditional on precipitation (right) at Ringsend, county Dublin.
+        Estimates for 500 bootstrap samples at each quantile level $q$ of the standard Laplace distribution are shown as black points, with yellow points indicating the estimates obtained using the full data set at each threshold.
+    }}
+    \label{fig:boot_quantiles_ringsend}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width = 0.62\linewidth]{plots/boot_quantiles_glenmacnass.png}
+    \caption{\emph{
+        Threshold stability plots for estimated model parameters $\alpha_{\mid i, s}$ (top) and $\beta_{\mid i, s}$ (bottom) for precipitation conditional on wind speed (left) and wind speed conditional on precipitation (right) at Glenmacnass, county Wicklow.
         Estimates for 500 bootstrap samples at each quantile level $q$ of the standard Laplace distribution are shown as black points, with yellow points indicating the estimates obtained using the full data set at each threshold.
     }}
     \label{fig:boot_quantiles_ringsend}

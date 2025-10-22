@@ -148,6 +148,10 @@
 % turn off TODO notes
 % \usepackage[disable]{todonotes}
 
+% \subfile{supp_mat}
+\usepackage{xr-hyper}
+\externaldocument{supp_mat}
+
 \begin{document}
 
 \def\spacingset#1{\renewcommand{\baselinestretch}%
@@ -184,7 +188,7 @@
   \medskip
 } \fi
 
-\todo{Ensure figure captions are consistent (rho Gauss, rho t, etc)}
+% \todo{Ensure figure captions are consistent (rho Gauss, rho t, etc)}
 
 % \bigskip
 \begin{abstract}
@@ -372,13 +376,14 @@ To illustrate the efficacy of our approach, we consider a motivating application
 This framework can flexibly capture both AD and AI, and is both conceptually simple and computationally efficient.
 Spatial and spatio-temporal extensions have been developed to handle high-dimensional data \citep{Simpson2021, Wadsworth2022}, and adaptations that incorporate covariates, hierarchical structures, and mixtures have further increased the models' flexibility \citep{Richards2023, Tendijck2023, Talento2025}.
 % As a result, CE models have been applied across a broad range of environmental problems, where AI as well as AD may be prevalent, including modelling river flow and flood risk \citep{Gilleland2013, Jane2020}, rainfall extremes \citep{Richards2022}, sea-surface temperature extremes \citep{Simpson2023,Kakampakou2024}, and heatwaves \citep{Winter2016}, and so are well suited to this class of problems and our motivating example.
-As a result, CE models have been applied across a broad range of applications, where AI as well as AD may be prevalent, including river flow and flood risk \citep{Gilleland2013, Jane2020}, rainfall \citep{Richards2022}, sea-surface temperatures \citep{Simpson2023,Kakampakou2024}, heatwaves \citep{Winter2016}, neuroscience \citep{Guerrero2023, Talento2025}, and finance \citep{Hilal2014}. 
+% As a result, CE models have been applied across a broad range of applications, where AI as well as AD may be prevalent, including river flow and flood risk \citep{Gilleland2013, Jane2020}, rainfall \citep{Richards2022}, sea-surface temperatures \citep{Simpson2023,Kakampakou2024}, heatwaves \citep{Winter2016}, neuroscience \citep{Guerrero2023, Talento2025}, and finance \citep{Hilal2014}. 
+As a result, CE models have seen widespread application in settings where AI as well as AD may be prevalent, including river flow and flood risk \citep{Gilleland2013, Jane2020}, rainfall \citep{Richards2022}, sea-surface temperatures \citep{Simpson2023,Kakampakou2024}, heatwaves \citep{Winter2016}, neuroscience \citep{Guerrero2023, Talento2025}, and finance \citep{Hilal2014}. 
 % They are thus well-suited to this class of problems and our motivating example.
 % Thus, they are well-suited to this class of problems and our motivating example.
 The broad applicability of CE models makes them well-suited to our motivating example.
 % Despite these strengths, sparsity of joint extremes, particularly in high dimensions, can make pattern discovery and interpretation difficult.
 % However, the sparsity of joint extreme observations, particularly in high dimensions, can make pattern discovery and interpretation using the CE model difficult, which requires further addressing to fully exploit its potential.
-However, the scarcity of joint extreme observations, particularly in high dimensions, and the number of required model parameters, often results in high uncertainty in estimates of the CE model.
+However, the scarcity of joint extreme observations, particularly in high dimensions, and the number of model parameters, often results in high uncertainty in estimates of the CE model.
 % As such, it is difficult to visually compare CE models.
 
 % % Clustering: introduction + motivation
@@ -570,17 +575,17 @@ Also, it is undefined where no joint extreme events are observed, which can occu
 % In this paper we perform clustering using the CE model. 
 % To improve on existing approaches, we develop a novel clustering framework based on the CE model, which has hitherto not been explored. 
 % In this paper, we seek to address the limitations of existing methods by developing a clustering framework based on the CE model, which has hitherto not been explored.
-In this paper, we address the limitations of existing methods by developing a clustering framework for multivariate extremes that leverages the CE framework. 
+We address the limitations of existing methods by developing a clustering framework for multivariate extremes that leverages the CE framework. 
 % This will allow us to flexibly capture tail dependence in arbitrary dimensions, while overcoming 
-This enables flexible, parametric exploration of tail dependence in arbitrary dimensions, in contrast to the existing non-parametric approach of \citet{Vignotto2021}, overcoming the data sparsity issues often associated with drawing interpretations from the CE model.
+This enables flexible, parametric exploration of tail dependence in arbitrary dimensions, in contrast to the existing non-parametric approach of \citet{Vignotto2021}, and overcomes the data sparsity issue often associated with drawing interpretations from fitted CE models.
 % Many classical models and clustering frameworks assume AD \citep{Vignotto2021,Boulin2025}, but a growing literature argues that environmental data often exhibit AI and that AD models can be inappropriate in such contexts \citep{Opitz2016,Dawkins2018,Huser2024}. 
-Many classical models and clustering frameworks assume AD \citep{Vignotto2021,Boulin2025}, but a growing literature argues that AD models are inappropriate for environmental data \citep{Opitz2016,Dawkins2018,Huser2024}. 
+Many classical models and clustering frameworks assume AD \citep{Vignotto2021,Boulin2025}, but recent literature argues that AD models are inappropriate for environmental data \citep{Opitz2016,Dawkins2018,Huser2024}. 
 Our clustering method can flexibly handle both AD and AI. 
 % The Gaussian working assumption in the CE model allows for a simple, closed-form divergence measure upon which to base our clustering framework.
 % Using the working conditional Gaussianity assumption of \citet{Heffernan2004} for estimating the CE model, we define a simple, closed-form divergence measure for multivariate extremes which permits clustering.
 % Using the working conditional Gaussian assumption of \citet{Heffernan2004} for estimating the CE model, we define a closed-form divergence measure for CE models which permits clustering.
-Using the working Gaussianity modelling assumption of \citet{Heffernan2004}, we define a closed-form divergence measure for CE models which permits clustering using traditional similarity-based algorithms. 
-Our parametric clustering approach delivers a unified and statistically principled tool for exploratory analysis of multivariate extremes, facilitating the identification of groups with similar tail dependence. % \todo{Mention random vectors as well as spatial locations?}
+Using the working Gaussian modelling assumption of \citet{Heffernan2004}, we define a closed-form divergence measure for CE models which permits clustering using traditional similarity-based algorithms. 
+Our clustering approach delivers a unified and statistically principled tool for exploratory analysis of multivariate extremes, facilitating the identification of groups with similar tail dependence. % \todo{Mention random vectors as well as spatial locations?}
 
 % Structure of paper
 The remainder of this paper is structured as follows.
@@ -588,9 +593,9 @@ The remainder of this paper is structured as follows.
 % Section~\ref{sec:method} introduces our clustering framework for CE models,
 % which includes a novel dissimilarity measure based on the Jensen-Shannon (JS) divergence, and a method for selecting the number of clusters.
 % Section~\ref{sec:method} introduces our clustering framework for CE models, which includes a novel dissimilarity measure based on the 
-Section~\ref{sec:method} introduces our novel dissimilarity measure for multivariate CE, which is based on the 
+Section~\ref{sec:method} introduces our novel dissimilarity measure for multivariate CE models, via the
 % skew-geometric Jensen-Shannon divergence $\left(\text{JS}^{\textrm{G}_{\alpha}}\right)$, and a method for selecting the number of clusters.
-skew-geometric Jensen-Shannon divergence $\left(\JSGa{}\right)$ of \citet{Nielsen2019}, and we further illustrate how this can be used for clustering of multivariate extremes. 
+skew-geometric Jensen-Shannon divergence $\left(\JSGa{}\right)$ of \citet{Nielsen2019}, and we further illustrate its use for clustering of multivariate extremes. 
 % A simulation study is described and performed in Section~\ref{sec:sim}, to compare our method to the leading competitor in the bivariate case, and we show that it outperforms this method across a range of extremal dependence structures.
 % Section~\ref{sec:sim} describes a simulation study, where we demonstrate that our approach outperforms the method by \citet{Vignotto2021} across a range of extremal dependence structures. 
 % Section~\ref{sec:sim} provides a simulation study where we demonstrate that our approach outperforms the clustering method of \citet{Vignotto2021} across a range of extremal dependence structures. 
@@ -611,7 +616,7 @@ Section~\ref{subsec:ce_model} provides background on the conditional extremes (C
 Section~\ref{subsec:ce_setup} defines the setup for our clustering model and describes how inference is performed.
 % In Section~\ref{subsec:div}, we describe our chosen dissimilarity measure, the skew-geometric Jensen-Shannon divergence, which has analytical form when comparing Gaussian distributions, and allows us to efficiently quantify the pairwise dissimilarity between fitted CE models.
 % In Section~\ref{subsec:div}, we describe our novel dissimilarity measure for multivariate CE, which uses the skew-geometric Jensen-Shannon divergence, to efficiently quantify pairwise dissimilarity between fitted CE models.
-In Section~\ref{subsec:div}, we describe a novel dissimilarity measure for multivariate CE, which uses the skew-geometric Jensen-Shannon divergence to efficiently quantify dissimilarity between fitted CE models.
+In Section~\ref{subsec:div}, we describe our novel dissimilarity measure for multivariate extremes, which uses the skew-geometric Jensen-Shannon divergence to efficiently quantify dissimilarity between fitted CE models.
 % Finally, Section~\ref{subsec:clustering} outlines how we perform k-medoids clustering using this dissimilarity measure, to identify sites with similar tail dependence structures, and how the number of clusters is selected.
 % Finally, in Section~\ref{subsec:clustering}, we outline how to perform clustering using this dissimilarity measure, and provide practical advice on choosing the number of clusters.
 Finally, in Section~\ref{subsec:clustering}, we outline how to perform clustering using this dissimilarity measure, and provide practical advice on choosing the number of clusters.
@@ -872,7 +877,7 @@ This leads to a spatial extension of Equation~\eqref{eq:ce_model}, with site-spe
       + y^{\symbf{\beta}_{\mid i, s}} \, \symbf{Z}_{\mid i, s}, 
       \quad y > u_{i, s}, 
 \end{equation}
-\todo{Should I define this as H from equation 10 here?}
+% \todo{Should I define this as H from equation 10 here?}
 % with location-specific residuals $\symbf{Z}_{\mid i}(s) \sim G_{\mid i}(s)$. \todo{Do I need to define alpha(s), beta(s), ui(s) again?}
 % where $\symbf{Y}_{-i}(s) \coloneqq \symbf{Y}(s) \setminus Y_i(s), \symbf{\alpha}_{\mid i}(s), \symbf{\beta}_{\mid i}(s)$ and $\symbf{Z}_{\mid i}(s) \sim G_{\mid i}(\cdot ; s)$ are the site-specific counterparts of the regression parameters and residuals introduced above.  
 % where $\symbf{Y}_{-i, s} \coloneqq \symbf{Y}_{s} \setminus Y_{i, s}$, and $\symbf{\alpha}_{\mid i, s}$, $\symbf{\beta}_{\mid i, s}$ $\symbf{Z}_{\mid i, s} \sim G_{\mid i, s}$ and $u_{i, s}$ are the site-specific counterparts of the regression parameters, residuals and exceedance threshold introduced above in Equations~\eqref{eq:ce_limiting_dist} and~\eqref{eq:ce_model}.
@@ -930,18 +935,18 @@ To compare tail dependence across different random vectors $\symbf{Y}_{s}$ at di
 % Estimation
 % The model parameters $\symbf{\alpha}_{\mid i, s}, \symbf{\beta}_{\mid i, s}, \symbf{\mu}_{\mid i, s}, \Sigma_{\mid i, s}$ in Equation~\eqref{eq:ce_norm} are estimated at each site $s$ and for each conditioning variable, $Y_i, i = 1, \ldots, d$, using maximum likelihood estimation. \todo{Again, i already defined above?}
 % The model parameters $\symbf{\alpha}_{\mid i, s}, \symbf{\beta}_{\mid i, s}, \symbf{\mu}_{\mid i, s}, \Sigma_{\mid i, s}$ in Equation~\eqref{eq:ce_norm} are estimated at each site-specific conditioning variable, $Y_{i, s}, i = 1, \ldots, d, s = 1, \ldots, D$, using maximum likelihood estimation. \todo{Again, i and s already defined above?}
-We estimate the parameters $\symbf{\alpha}_{\mid i, s}, \symbf{\beta}_{\mid i, s}, \symbf{\mu}_{\mid i, s}, \Sigma_{\mid i, s}$, for each conditioning variable $i = 1, \ldots, d$ and site $s = 1, \ldots, D$, using maximum likelihood estimation. % \todo{Again, i and s already defined above?}
+We estimate parameters $\symbf{\alpha}_{\mid i, s}, \symbf{\beta}_{\mid i, s}, \symbf{\mu}_{\mid i, s}, \Sigma_{\mid i, s}$, for each conditioning variable $i = 1, \ldots, d$ and site $s = 1, \ldots, D$, using maximum likelihood estimation. % \todo{Again, i and s already defined above?}
 % In practice, for each $i = 1, \ldots, d$ and $s \in (s_1, \ldots, s_D)$, we set the threshold $u_i(s)$ to the $q^{\text{th}}$ Laplace quantile.  
 % In practice, for each $i$ and $s$, we set the threshold $u_{i, s}$ to the $q^{\text{th}}$ Laplace quantile of $Y_{i, s}$. \todo{Need to use th superscript throughout if keeping}
 % In practice, we set the threshold $u_{i, s} \coloneqq u$ for all $i$ and $s$, to the $q^{\text{th}}$ standard Laplace quantile. \todo{Need to use th superscript throughout if keeping}
 In practice, we set the threshold $u_{i, s} \coloneqq u_i$ to the $q^{\text{th}}$ standard Laplace quantile for all $s$, as this is required to build a symmetric divergence measure for clustering (see Section~\ref{subsec:div}).
 % We choose $q$ such that there are a sufficient number of exceedances above $u_{i, s}$ to fit the CE model, while keeping $q$ high enough so that the limiting assumption in Equation~\eqref{eq:ce_limiting_dist} is reasonable.
-Choosing $q$ involves the classical bias-variance tradeoff: $q$ must be sufficiently low as to leave enough excesses above $u_i$ for reliable estimation, but high enough to reduce bias induced when the asymptotic arguments in Equation~\eqref{eq:ce_limiting_dist} are not satisfied. 
+Choosing $q$ involves the classic bias-variance tradeoff: $q$ must be sufficiently low as to leave enough excesses above $u_i$ for reliable estimation, but high enough to reduce bias induced when the asymptotic arguments in Equation~\eqref{eq:ce_limiting_dist} are not satisfied. 
 % To pick $q$, we use threshold stability plots \citep{Scarrott2012}. \todo{This reference is for univariate cases, need multivariate one? texmex okay?}
 To pick $q$, we use threshold stability plots and assess the stability of parameter estimates at different thresholds \citep{Southworth2012}. % \todo{Cite texmex where I get this method from?}
 % The bootstrapping procedure of \citet{Heffernan2004} is used to obtain standard errors for the parameter estimates, and we choose the highest value of $q$ such that the parameter estimates are stable, and the bootstrap standard errors are reasonably small.
 % Using the bootstrap procedure of \citet{Heffernan2004}, we obtain standard errors for parameter estimates and choose the highest value of $q$ such that the parameter estimates are stable and the bootstrap standard errors are reasonably small. \todo{Say this is done across sites?}
-Using the bootstrap procedure of \citet{Heffernan2004}, we obtain standard errors for parameter estimates at each site and choose the highest value of $q$ such that the parameter estimates are stable and the bootstrap standard errors are reasonably small across sites. % \todo{adequate mention of how this is done across all sites?}
+Using the bootstrap procedure of \citet{Heffernan2004}, we obtain standard errors for parameter estimates at each site and choose the highest value of $q$ such that the estimates are stable and the standard errors are reasonably small across sites. % \todo{adequate mention of how this is done across all sites?}
 % \todo{Mention number of bootstrap samples used?}
 
 \subsection{A divergence measure for multivariate conditional extremes}
@@ -981,7 +986,7 @@ Specifically, we use the dual form of the $\JSGa{}$ divergence \citep{Deasy2020}
 % where $G_{\alpha}(P, Q) = P^{\alpha} Q^{1 - \alpha}, \alpha \in [0, 1]$ is the weighted geometric mean of $P$ and $Q$, with $\alpha$ controlling the weighting between them, and $\KL{(P \Vert Q)}$ is the Kullback--Leibler divergence between $P$ and $Q$ \citep{Kullback1951}. 
 % where $G_{\lambda}(H, H^*) = H_{1}^{1-\lambda} H_{2}^{\lambda}, \lambda \in [0, 1]$, is the weighted geometric mean of $H$ and $H^*$, and $\KL{(H \Vert H^*)}$ is the Kullback--Leibler divergence between $H$ and $H^*$ \citep{Kullback1951}, given by 
 % where $G_{\lambda}(H, H^*) = H^{1-\lambda} {H^*}^{\lambda}$ is the weighted geometric mean of $H$ and $H^*$, with $\lambda \in [0, 1]$, and $\KL{(H \Vert H^*)}$ is the Kullback-Leibler divergence between $H$ and $H^*$ \citep{Kullback1951}, given by 
-where $G_{\lambda}(H, H^*) = H^{1-\lambda} {H^*}^{\lambda}$ is the weighted geometric mean of $H$ and $H^*$, with $\lambda \in [0, 1]$, and $\KL{(H \Vert H^*)}$ is the Kullback-Leibler ($\KL{}$) divergence between $H$ and $H^*$, given by 
+where $G_{\lambda}(H, H^*) = H^{1-\lambda} {(H^*)}^{\lambda}$ is the weighted geometric mean of $H$ and $H^*$, with $\lambda \in [0, 1]$, and $\KL{(H \Vert H^*)}$ is the Kullback-Leibler ($\KL{}$) divergence between $H$ and $H^*$, given by 
 \begin{equation}\label{eq:kl}
   \KL{(H \Vert H^*)} = \int_{\mathbb{R}^{d-1}} h(\symbf{y}) \log\left(\frac{h(\symbf{y})}{h^*(\symbf{y})}\right) \mathrm{d}\symbf{y},
 \end{equation}
@@ -999,7 +1004,7 @@ The weight $\lambda$ skews the geometric mean $G_{\lambda}(H,H^*)$ towards $H$ a
 % One possible advantage for having a skew parameter such as $\lambda$ is that in our divergence measure we can favour sites with a more reliable CE fit, as determined by, for example, the effective sample size.
 % One possible advantage of specifying $\lambda$ is that we can design our divergence measure to place more weight on the CE model at sites with more reliable fit, as determined by, for example, the effective sample size.
 % One possible advantage of specifying $\lambda$ is that we can design our divergence measure to place more weight on the CE model at sites with more reliable fit, as determined by, for example, the effective sample size.
-One possible advantage of specifying $\lambda$ is that we can design our divergence measure to place more weight at sites $s$ with more reliable CE model fit, as determined by, for example, the effective sample size.
+One possible advantage of specifying $\lambda$ is that we can design our divergence measure to place more weight at sites $s$ with more reliable CE model fits, as determined by, for example, the effective sample size.
 % In this paper, we set $\lambda = 0.5$ throughout, as all sites have equal number of observations in both our simulation and case studies.
 In this paper, we set $\lambda = 0.5$ throughout, as all sites have the same number of observations in both our simulations and case study.
 
@@ -1086,7 +1091,7 @@ where the Jeffreys' divergence $\mathrm{J}(H \Vert H^*) = \KL{(H \Vert H^*)} + \
 % Now suppose we have fitted the CE model at two different sites $s$ and $s^*$, and we want to compare the extremal dependence structure of the random vector $\symbf{Y}_{s}$ at site $s$ with that of $\symbf{Y}_{s^*}$ at site $s^*$, for a given conditioning variable $Y_{i, s}$ and $Y_{i, s^*}$, respectively. %, where $i \in \{1, \ldots, d\}, s, s^* \in \{1, \ldots, D\}$.
 % Now suppose we have fitted the CE model at two different sites $s$ and $s^*$, and we want to compare the extremal dependence structure of the random vector $\symbf{Y}_{s}$ at site $s$ with that of $\symbf{Y}_{s^*}$ at site $s^*$, for conditioning variable $i$ (i.e.\ $Y_{i, s}$ and $Y_{i, s^*}$).%, where $i \in \{1, \ldots, d\}, s, s^* \in \{1, \ldots, D\}$.
 % Now suppose we have fitted the CE model at two different sites $s$ and $s^*$, and we want to compare the extremal dependence structure for the conditioning variable $i$ (i.e.\ $Y_{i, s}$ and $Y_{i, s^*}$).%, where $i \in \{1, \ldots, d\}, s, s^* \in \{1, \ldots, D\}$.
-Now, suppose that for a specified conditioning variable $i \in \{1, \ldots, d\}$, we have fitted the CE model at two different sites, $s$ and $s^*$, and we want to compare their induced extremal dependence (i.e.\ the joint tails of $\boldsymbol{Y}_{i, s}$ and $\boldsymbol{Y}{i, s^*}$; see Equation~\eqref{eq:ce_norm}). 
+Now, suppose that for a specified conditioning variable $i \in \{1, \ldots, d\}$, we have fitted the CE model at two different sites, $s$ and $s^*$, and we want to compare their induced extremal dependence (i.e.\ the joint tails of $\boldsymbol{Y}_{i, s}$ and $\boldsymbol{Y}_{i, s^*}$; see Equation~\eqref{eq:ce_norm}). 
 % Using the $\JSGa{}$ divergence in Equation~\eqref{eq:js_norm_mvn1}, we define the \textit{conditional skew-geometric Jensen-Shannon divergence} ($\cJSGa{s, s^*}$) between the two sites $s$ and $s^*$ for the conditioning variable $Y_i$ as
 % Using the $\JSGa{}$ divergence in Equation~\eqref{eq:js_norm_mvn1}, we define the \textit{conditional skew-geometric Jensen-Shannon divergence} ($\cJSGa{s, s^*}$) between the two sites $s$ and $s^*$ for the conditioning variable $Y_i$ as
 % Using the $\JSGa{}$ divergence in Equation~\eqref{eq:js_norm_mvn1}, we define the \textit{conditional skew-geometric Jensen-Shannon divergence} ($\cJSGa{s, s^*}$) between the two sites $s$ and $s^*$, conditional on the $i$-th variable being extreme, defined as
@@ -1268,7 +1273,7 @@ where $D$ is the total number of sites, and $i = 1, \ldots, d$.
 
 % If we have $d$ conditioning variables, we can also aggregate the $d$ distance matrices $M_1, \ldots, M_d$ into a single matrix $M$, by taking the element-wise average across all matrices, i.e. \todo{Do we like this representation of the elementwise average?}
 % If we have $d$ conditioning variables, we can also aggregate the $d$ distance matrices $M^{(1)}, \ldots, M^{(d)}$ into a single matrix $M$, by taking the element-wise average across all matrices, i.e. \todo{Do we like this representation of the elementwise average?}
-If desired, we can aggregate the $d$ dissimilarity matrices $M^{(1)}, \ldots, M^{(d)}$ into a single dissimilarity matrix $M$, by taking, for example, their element-wise average, i.e. 
+If desired, we can aggregate the $d$ dissimilarity matrices $M^{(1)}, \ldots, M^{(d)}$ into a single dissimilarity matrix $M$ by taking, for example, their element-wise average, i.e. 
 \begin{equation} \label{eq:aggregate_matrix}
   M = \frac{1}{d} \sum_{i=1}^d M^{(i)}.
 \end{equation}
@@ -1308,7 +1313,8 @@ We perform clustering on the dissimilarity matrices $M^{(i)}$, $i = 1, \ldots, d
 % The choice remains as to which algorithm to use to perform clustering. 
 As in \citet{Bernard2013} and \citet{Vignotto2021}, we use the Partitioning Around Medoids (PAM) algorithm, which is a variant of the popular k-medoids algorithm of \citet{Kaufman1987}.
 % For the dissimilarity matrix $M^{(i)}$, a brief description of the algorithm is as follows:
-For each site $s \in \{1,\dots,D\}$ and cluster $c$, $\kappa_c\in\{1,\dots,D\}$ denotes the medoid index and $C_c\subseteq\{1,\dots,D\}$ the set of site indices assigned to cluster $c$; the medoid site is the observation with index $\kappa_c$.
+% For each site $s \in \{1,\dots,D\}$ and cluster $c$, $\kappa_c\in\{1,\dots,D\}$ denotes the medoid index and $C_c\subseteq\{1,\dots,D\}$ the set of site indices assigned to cluster $c$; the medoid site is the observation with index $\kappa_c$.
+For each cluster $c = 1, \ldots, k$, $\kappa_c \in \{1, \ldots, D\}$ denotes its medoid index, and $\mathcal{C}_c \subseteq \{1, \ldots, D\}$ the set of site indices assigned to cluster $c$; the medoid site is the location with index $\kappa_c$.
 For the dissimilarity matrix $M^{(i)}$, a brief description of the algorithm is as follows:
 % \todo{Replace with algorithm block}
 % \begin{itemize} 
@@ -1324,16 +1330,17 @@ For the dissimilarity matrix $M^{(i)}$, a brief description of the algorithm is 
   \label{alg:kmedoids_kappa}
   \begin{algorithmic}[1]
     \State \textbf{Input:} dissimilarity matrix $M^{(i)}\in\mathbb{R}^{D\times D}$, number of clusters $k$
-    \State \textbf{Output:} Cluster assignments $C_1,\dots,C_k$, medoid indices $\boldsymbol{\kappa}=(\kappa_1,\dots,\kappa_k)$
+    \State \textbf{Output:} Cluster assignments $\mathcal{C}_1,\dots,\mathcal{C}_k$, medoid indices $\boldsymbol{\kappa}=(\kappa_1,\dots,\kappa_k)$
     \State \textbf{Initialise:} choose $k$ distinct medoid indices $\{\kappa_1,\dots,\kappa_k\}\subseteq\{1,\dots,D\}$ uniformly at random.
     \Repeat
-    \State \textbf{Assignment:} \parbox[t]{.82\linewidth}{\raggedright Assign each vector index $s\in\{1,\dots,D\}$ to its closest medoid in terms of $\eJSGai{}$ (see Equation~\eqref{eq:jsga_integral}), i.e.\ \\ $j = \argmin_{\ell\in\{1,\dots,k\}} \eJSGa{s,\kappa_\ell}$ and assign $s$ to $C_j$.}
-      \For{$j=1,\dots,k$}
-        \State \textbf{Update:} \parbox[t]{.82\linewidth}{\raggedright Update medoid index to minimise intra-cluster dissimilarity, i.e.\ $\kappa_j = \argmin_{p\in C_j}\sum_{q\in C_j} \eJSGa{p,q}$.}
+    % \State \textbf{Assignment:} \parbox[t]{.82\linewidth}{\raggedright Assign each vector index $s\in\{1,\dots,D\}$ to its closest medoid in terms of $\eJSGai{}$ (see Equation~\eqref{eq:jsga_integral}), i.e.\ \\ $j = \argmin_{\ell\in\{1,\dots,k\}} \eJSGa{s,\kappa_\ell}$ and assign $s$ to $C_j$.}
+    \State \textbf{Assignment:} \parbox[t]{.82\linewidth}{\raggedright Assign each vector index $s\in\{1,\dots,D\}$ to its closest medoid in terms of $\eJSGai{}$ (see Equation~\eqref{eq:jsga_integral}), i.e.\ \\ assign $s$ to $\mathcal{C}_c$, where $c = \argmin_{\ell\in\{1,\dots,k\}} \eJSGa{s,\kappa_\ell}$.}
+      \For{$c=1,\dots,k$}
+        \State \textbf{Update:} \parbox[t]{.82\linewidth}{\raggedright Update medoid index to minimise intra-cluster dissimilarity, i.e.\ $\kappa_c = \argmin_{p\in C_c}\sum_{q\in C_c} \eJSGa{p,q}$.}
         \State \Comment{Break ties by choosing the smallest index.}
       \EndFor
     \Until{no observation changes cluster assignment}
-    \State \Return $C_1,\dots,C_k,\ \boldsymbol{\kappa}$
+    \State \Return $\mathcal{C}_1,\dots,\mathcal{C}_k,\ \boldsymbol{\kappa}$
   \end{algorithmic}
 \end{algorithm}
 
@@ -1355,7 +1362,7 @@ The PAM algorithm takes a single hyperparameter, the number of clusters, $k$.
 % This method has been found to perform well in both our simulation study in Section~\ref{sec:sim} and our Irish meterological application in Section~\ref{sec:application}, making clear suggestions as to the value of $k$ to use. 
 % We use the method of \citet{Thorndike1953-ie} to select $k$.
 % This uses the total within-cluster sum of squares ($\mathrm{TWGSS}$).
-We follow \citet{Thorndike1953-ie} to select $k$, and use the total within-group sum of squares ($\mathrm{TWGSS}$).
+We follow \citet{Thorndike1953-ie} and use the total within-group sum of squares ($\mathrm{TWGSS}$) to select $k$.
 % We find in in our simulation study (Section~\ref{sec:sim}) and our Irish meteorological application in Section~\ref{sec:application}, this method provides clear suggestions for the value of $k$ to use.
 We find in our simulation study (Section~\ref{sec:sim}) that this method correctly identifies $k$. % \todo{Need to include plots in supplementary material?}
 Specifically, we define the $\mathrm{TWGSS}$ as
@@ -1367,7 +1374,7 @@ Specifically, we define the $\mathrm{TWGSS}$ as
 \begin{equation}\label{eq:twgss}
   % \mathrm{TWGSS}(k) = \sum_{c=1}^{k} \sum_{s \in S} \eJSGa{}(s \Vert m_c),
   % \mathrm{TWGSS}(k) = \sum_{c=1}^{k} \sum_{s =1}^{D} \eJSGa{s, s_c},
-  \mathrm{TWGSS}(k) = \sum_{c=1}^{k} \sum_{s \in C_c} \eJSGa{s, \kappa_c},
+  \mathrm{TWGSS}(k) = \sum_{c=1}^{k} \sum_{s \in \mathcal{C}_c} \eJSGa{s, \kappa_c},
 \end{equation}
 % where $\eJSGa{}(s \Vert m_c)$ is the dissimilarity between site $s$ and the medoid of cluster $c$, measured using the $\eJSGa{}$ divergence defined in Section \ref{subsec:div}, and $S$ is the set of sites in cluster $c$. \todo{Is this right?}
 % where $\eJSGa{s, s_c}$ is the dissimilarity between site $s$ and the medoid site $s_c$ of cluster $c$, and $D$ is the total number of sites. \todo{Is this right?}
@@ -1850,7 +1857,7 @@ To reduce the dimensionality of the grid of considered copula parameter values, 
 The results of 500 repetitions of this simulation study are shown in Figure~\ref{fig:03_realistic}.
 % The algorithm is again shown to perform well, particularly where the difference in the t-copula correlation parameters between the clusters is largest, as expected.
 Similarly to the previous simulation studies, our clustering method performs well, particularly when the differences in t-copula correlation parameters between clusters are larger. 
-For example, the best performance is observed where $\rho_{\text{t}_1} = 0.9, \rho_{\text{t}_2} = 0.1$, and $\rho_{\text{t}_3} = 0.5$, as the clusters are most distinct, while conversely, performance is worst for $\rho_{\text{t}_1} = 0.6, \rho_{\text{t}_2} = 0.4$, and $\rho_{\text{t}_3} = 0.5$. \todo{Included this to aid reading of figure, is it necessary?}
+For example, the best performance is observed where $\rho_{\text{t}_1} = 0.9, \rho_{\text{t}_2} = 0.1$, and $\rho_{\text{t}_3} = 0.5$, as the clusters are most distinct, while conversely, performance is worst for $\rho_{\text{t}_1} = 0.6, \rho_{\text{t}_2} = 0.4$, and $\rho_{\text{t}_3} = 0.5$. % \todo{Include this to aid reading of figure, is it necessary?}
 % The variability in ARI across simulations is also quite low, indicating that the clustering solution is robust.
 % Moreover, variability in ARI across simulations is low, indicating that the clustering solution is robust. 
 
@@ -1946,7 +1953,7 @@ We now apply our extremal clustering method to meteorological observations from 
 % In Section~\ref{subsec:app_data}, we describe the dataset of precipitation and wind speed measurements collected across the country. 
 % Section~\ref{subsec:app_explore} presents exploratory analysis, using the $\chi$ statistic to assess the extremal dependence between the two variables. 
 % In Section~\ref{subsec:app_data}, we describe the dataset of precipitation and wind speed measurements and present exploratory analysis using the $\chi$ statistic to assess the extremal dependence between the two variables. 
-In Section~\ref{subsec:app_data}, we describe the precipitation and wind speed measurements and present exploratory analysis using the $\chi$ statistic from Equation~\eqref{eq:chi} to assess the extremal dependence between the two variables. 
+In Section~\ref{subsec:app_data}, we describe the precipitation and wind speed measurements used in our analysis and present exploratory analysis (using the $\chi$ statistic from Equation~\eqref{eq:chi}) on the extremal dependence between the two variables. 
 % In Sections \ref{subsec:app_ce} and \ref{subsec:app_clust}, we fit the CE model to the data, and apply our clustering method to the estimated parameters, respectively, to determine the spatial dependence structure of the data.
 % In Section~\ref{subsec:app_ce}, we fit the CE model to the data, and in Section~\ref{subsec:app_clust}, we apply our clustering approach to the estimated parameters to identify the spatial dependence structure. 
 In Section~\ref{subsec:app_ce}, we discuss fits of the conditional extremes (CE) model, and, in Section~\ref{subsec:app_clust}, we apply our extremal clustering approach. %to the estimated parameters to identify the spatial dependence structure. 
@@ -1976,7 +1983,8 @@ In Section~\ref{subsec:app_ce}, we discuss fits of the conditional extremes (CE)
     Left: elevation (m) profile of Ireland.%, with elevation in metres above sea level binned into 100m intervals with the highest bin for elevations above 500m.
     % Right: $\chi$ statistics between precipitation and wind speed at all 59 locations, estimated at the 95th quantile. Darker colours and larger points indicate stronger asymptotic dependence.}}
     Right: Estimated $\chi(0.95)$ between precipitation and wind speed at all 59 locations. Darker colours and larger points indicate stronger asymptotic dependence.
-    Locations in red are (1) Malahide Castle, Dublin, (2) Ringsend, Dublin, (3) Kilcar, Donegal, and (4) Derryhillagh, Mayo.
+    % Locations in red are (1) Malahide Castle, Dublin, (2) Ringsend, Dublin, (3) Kilcar, Donegal, and (4) Derryhillagh, Mayo.
+    Locations in red are (1) Malahide Castle, Dublin, (2) Ringsend, Dublin, (3) Glenmacnass, Wicklow, (4) Kilcar, Donegal, and (5) Derryhillagh, Mayo.
 }}
    \label{fig:chi}
 \end{figure}
@@ -1987,7 +1995,7 @@ We analyse the joint extremal behaviour of precipitation and wind speed at $D=59
 % The data we have performed our clustering on is precipitation data for the Republic of Ireland, collected from the Met Éireann website at \citet{metHistoricalData}, and wind speed data from the ERA5 Reanalysis dataset at \citet{Hersbach2020}, corresponding to the closest grid point to each location.
 % Precipitation data were collected from the Met Éireann website (accessed 2024-09-01), and wind speed data from the gridded ERA5 Reanalysis dataset \citep{metHistoricalData, Hersbach2020}.
 % Precipitation data are obtained from the Met Éireann archive (accessed 2024-09-01), and wind speed data from the ERA5 Reanalysis dataset \citep{Hersbach2020, metHistoricalData}. 
-Precipitation and wind speed data are obtained from the Met Éireann archive \citep{metHistoricalData}, and ERA5 Reanalysis \citep{Hersbach2020}, respectively. \todo{ERA5 Reanalysis dataset?}
+Precipitation and wind speed data are obtained from the Met Éireann archive \citep{metHistoricalData}, and ERA5 Reanalysis \citep{Hersbach2020}, respectively. % \todo{ERA5 Reanalysis dataset?}
 % ERA5 provides averages over a gridded box of $0.25^{\circ} \times 0.25^{\circ}$, so each site will lie within a grid cell, to which the wind speed data corresponds.
 % ERA5 provides spatial averages on a $0.25^{\circ} \times 0.25^{\circ}$ grid, and each site was matched to the grid cell in which it lies. 
 Met Éireann data are irregularly spaced over space, while ERA5 provides spatial averages on a regular $0.25^{\circ} \times 0.25^{\circ}$ grid.
@@ -2050,15 +2058,15 @@ In practical terms, this suggests that extreme wind speeds tend to be accompanie
 % Conversely, sites in Dublin, Wicklow and Wexford have lower values of $\chi$ and $\bar{\chi}$, indicating weaker extremal dependence along the east coast. \todo{And Louth?}
 % Conversely, in counties such as Dublin, Wexford and Louth, lower values of $\chi$ indicate weaker extremal dependence along the east coast.
 A clear spatial pattern emerges: extremal dependence is strongest in the south west, with the highest values along the Atlantic coast, notably in counties Kerry, Galway, Mayo, and Donegal, and weaker along the east coast, in Dublin, Wexford, and Louth. 
-The highest $\chi(0.95)$ value (0.414) is observed at Derryhillagh in Mayo (Figure~\ref{fig:chi}, location (4)), while the lowest (0.0005) is at Malahide Castle in Dublin (Figure~\ref{fig:chi}, location (1); hereafter `Malahide').
+The highest $\chi(0.95)$ value (0.414) is observed at Derryhillagh in Mayo (Figure~\ref{fig:chi}, location (5)), while the lowest (0.0005) is at Malahide Castle in Dublin (Figure~\ref{fig:chi}, location (1); hereafter `Malahide').
 % This indicates that there are distinct spatial patterns of extremal dependence in the data, motivating an analysis using the CE model and possibly clustering to perform inference on and better understand this dependence structure.
 % These results indicate distinct regional patterns of extremal dependence, as well as notable outliers, motivating the use of our extremal clustering framework to characterise and interpret this spatial structure more formally. 
 
 Some spatial outliers are also apparent. 
-Kilcar in Donegal (Figure~\ref{fig:chi}, location (3)) has a relatively low $\chi(0.95)$ value despite its west-coast location, while certain sites in county Wicklow show unusually high values for the east. 
+Kilcar in Donegal (Figure~\ref{fig:chi}, location (4)) has a relatively low $\chi(0.95)$ value (0.109), despite its west-coast location, while some sites in county Wicklow show unusually high values for the east, particularly Glenmacnass (Figure~\ref{fig:chi}, location (3); 0.268).
 The latter may be related to the influence of the Wicklow Mountains, as reflected in the elevation profile (Figure~\ref{fig:chi}). 
 It may be of interest to investigate if these outliers in $\chi(0.95)$ are reflected in the CE model parameter estimates, and whether clustering can identify them.
-These results indicate distinct regional patterns of extremal dependence, as well as notable outliers, motivating the use of our extremal clustering framework to characterise and interpret this spatial structure more formally. \todo{Need to mention outliers again? Can't we say ``In general, ...''}
+These results indicate distinct regional patterns of extremal dependence, as well as notable outliers, motivating the use of our extremal clustering framework to characterise and interpret this spatial structure more formally. % \todo{Need to mention outliers again? Can't we say ``In general, ...''}
 
 \subsection{Conditional extremes estimates}
 \label{subsec:app_ce}
@@ -2082,8 +2090,9 @@ Estimates are generally stable for both models, i.e.,\@ precipitation conditiona
 % \todo{Need to include threshold stability and/or diagnostic plots in supplementary materials?}
 % Diagnostic plots for the CE fits at $q=0.85$ for each location are included in the supplementary material. 
 % Therefore, the 85th quantile was used for subsequent analysis for both models.
-Threshold stability plots for the CE fits at the four locations highlighted in Figure~\ref{fig:chi} are included in the supplementary materials.
-Therefore, we fix $q = 0.85$ for the subsequent analysis. 
+% Threshold stability plots for the CE fits at the four locations highlighted in Figure~\ref{fig:chi} are included in the supplementary materials.
+Threshold stability plots for the CE fits at the five locations highlighted in Figure~\ref{fig:chi} are included in Figures~\ref{fig:boot_quantiles_malahide} -- \ref{fig:boot_quantiles_derryhillagh} of the supplementary materials.
+Therefore, we fix $q = 0.85$ for the subsequent analysis.
 % In Figure~\ref{fig:clust_sens}, we show that clustering solutions are also quite robust to the choice of quantile between the 85th, 88th and 90th quantiles, and so this choice does not have a major impact on results.
 In Figure~\ref{fig:clust_sens}, we show that our estimated extremal clustering is robust to the choice of $q$, with estimates shown for $q = 0.85, 0.88$, and $0.90$.
 % Clustering sensitivity to the choice of quantile is discussed further in Section~\ref{subsec:app_clust}, surrounding Figure~\ref{fig:clust_sens}.
@@ -2162,7 +2171,7 @@ We cluster the locations using the aggregated dissimilarity matrix $M$ as define
 % The number of clusters $k$ is chosen via the method described in Section~\ref{subsec:clustering}, using the elbow plot of the $\mathrm{TWGSS}$. 
 The number of clusters $k$ is chosen via the method in Section~\ref{subsec:clustering}, using the elbow plot of the $\mathrm{TWGSS}$. 
 For all three clustering scenarios, clear elbows are observed at $k = 3$.
-The elbow plots are provided in the supplementary materials. \todo{Use xr to crossref supplementary materials}
+The elbow plots are provided in Figure~\ref{fig:elbow_plots} of the supplementary materials. 
 
 % Our clustering solutions for each of the three dissimilarity matrices at the 85th quantile are shown in Figure \ref{fig:clust_sol}.
 % The resulting clustering solutions for the 85th quantile are displayed in Figure~\ref{fig:clust_sol}.  
@@ -2180,7 +2189,7 @@ For precipitation conditional on wind speed, the clustering is somewhat less dis
 % This may indicate greater complexity in the behaviour of wind speed extremes compared to rainfall extremes.%, or data issues.
 % This may also be due to our wind speeds coming from the ERA5 reanalysis dataset, which performs smoothing over a grid and so may underestimate wind speed extremes, and fail to capture more granular local variability.
 % It could also reflect the use of ERA5 reanalysis data for wind speed, which is known to smooth across grid cells, potentially underestimating local extremes and failing to capture fine-scale variability.  
-There are also notable outliers in the clusters, which we further discuss below. \todo{Mentioned above for chi as well, try to link better?}
+There are also notable outliers in the clusters, which we further discuss below. % \todo{Mentioned above for chi as well, try to link better?}
 % Kilcar in Donegal, which had a low $\chi$ value relative to other west coast sites as shown in Figure~\ref{fig:chi}, is assigned to the eastern cluster for $M$, the aggregated dissimilarity matrix, and the central cluster for each individual matrix.
 % Similarly, several Wicklow sites, which had relatively high $\chi$ values for the east coast, are assigned to the central cluster, rather than the eastern one.
 % This may be related to the influence of the Wicklow Mountains, as reflected in the elevation profile in Figure~\ref{fig:chi}.
@@ -2199,8 +2208,8 @@ There are also notable outliers in the clusters, which we further discuss below.
 \label{fig:clust_sol}
 \end{figure}
 
-\todo{Make bigger to read location names}
-\todo{Change fill label to Dissimilarity}
+% \todo{Make bigger to read location names}
+% \todo{Change fill label to Dissimilarity}
 \begin{figure}[htb]
     \centering
     % \includegraphics[width = 0.9\linewidth]{plots/ire_dist_heatmap_crop.png}
@@ -2230,7 +2239,7 @@ Also, if we only fit two clusters, we find that most of the central cluster memb
 A noticeable outlier in the dissimilarity matrix is Malahide, which we previously identified as having the lowest $\chi(0.95)$ value  in Figure~\ref{fig:chi}. 
 Even within its own cluster, Malahide shows a relatively high dissimilarity to the other sites. 
 % Furthermore, if we set $k=4$, Malahide Castle becomes its own cluster, and so it is quite distinct from the other sites. \todo{Include results in supplementary materials}
-Indeed, if we set $k=4$, Malahide becomes its own cluster (clustering results for $k=2$ and $k=4$ are provided in the supplementary materials).
+Indeed, if we set $k=4$, Malahide becomes its own cluster (clustering results for $k=2$ and $k=4$ are provided in Figure~\ref{fig:cluster_dqu_k_2_4} of the supplementary materials).
 % Malahide Castle has the lowest mean weekly precipitation of any site, with the second lowest being in Ringsend, which is closest in terms of our dissimilarity to Malahide.
 Malahide also has the lowest mean weekly precipitation of any site; the second lowest is Ringsend, also in county Dublin (Figure~\ref{fig:chi} location (2)), which is the site closest to Malahide in terms of our dissimilarity measure. 
 % This may explain its outlying behaviour, even amongst the eastern cluster, in that rainfall extremes and consequently concomitant extremes are less likely to occur, as shown by its low $\chi(0.95)$ (Figure~\ref{fig:chi}) and $\alpha_{\mid i}$ (Figure~\ref{fig:a_b_vals}) estimates.
@@ -2336,13 +2345,13 @@ Apart from these observations, the estimated clusters are generally quite simila
 % Our parametric approach is effective and uniquely extendable to higher dimensions, while remaining computationally efficient due to the closed-form for the $\JSGa{}$ divergence. 
 % In Section~\ref{sec:sim}, we showed via a simulation study that our method outperforms the leading competitor in the bivariate case, and is robust to a variety of multivariate dependence structures and scenarios.
 % We also applied our method to a real dataset of Irish meteorological data in Section~\ref{sec:application}, and demonstrated how our method can be used to identify meaningful spatial patterns in the extremal dependence structure of this data.
-In this paper, we introduced a novel method for clustering multivariate extremes using the conditional extremes (CE) model \citep{Heffernan2004}.
-We proposed the expected conditional $\JSGa{}$ divergence \citep{Nielsen2019} as a measure of dissimilarity between multivariate conditional extremes models. 
+In this paper, we introduced a novel method for clustering multivariate extremes. %using the conditional extremes (CE) model \citep{Heffernan2004}.
+We proposed the expected conditional $\JSGa{}$ divergence \citep{Nielsen2019} as a measure of dissimilarity between multivariate conditional extremes (CE) models \citep{Heffernan2004}.
 % We use the common Gaussianity assumption to derive a closed-form expression for the $\JSGa{}$ divergence.
 We leveraged the commonly-applied working Gaussian assumption to derive a closed-form expression for the $\JSGa{}$ divergence.
 Efficient k-medoids clustering was then performed on the dissimilarity matrix derived from this measure. 
 % In our simulation study, a bivariate Gaussian copula example was used to illustrate that our clustering method reduces parameter unceratinty and bias when the CE model was re-fitted post-clustering. 
-In our simulation study, a bivariate Gaussian copula example illustrated that our clustering method reduces parameter uncertainty and bias when the CE model is re-fitted post-clustering.
+In our simulation study, a bivariate Gaussian copula example illustrated that our clustering method reduces parameter uncertainty and bias when the CE model is re-fitted with data pooled post-clustering.
 % We then used mixtures of Gaussian and t-copulas to show that our method outperforms our competitor \citep{Vignotto2021} across a range of bivariate extremal dependence scenarios. 
 % We then used mixtures of Gaussian and $t$-copulas to show that our method outperforms our competitor \citet{Vignotto2021} across diverse bivariate extremal dependence scenarios.
 Using mixtures of Gaussian and $t$-copulas, we showed that our method outperforms the method of \citet{Vignotto2021} across a range of bivariate extremal dependence scenarios.
@@ -2353,7 +2362,7 @@ Without explicitly incorporating spatial information, three clusters with distin
 
 % Extension
 % While our motivating example was spatial, our method is broadly applicable to any multivariate extremal dependence setting and could therefore be employed in a variety of other contexts.
-While we focused on a spatial application in this work, our method is more generally applicable to any setting, where clustering of multivariate extremal dependence is desired.
+While we focused on a spatial application in this work, our method is more generally applicable to any setting where clustering of multivariate extremal dependence is desired.
 For instance, it could be applied to clinical trial or public health data to cluster patients based on the tail dependence structure of their symptoms or biomarker measurements.
 % For instance, our method could naturally be applied to clinical trial or public health data, where we could cluster different patients based on the tail dependence structure of their symptoms or biomarker measurements. 
 % This has been explored in \citet{Talento2025}, where CE was used to study the tail dependence of electroencephalogram (EEG) signals in neonatal subjects prone to seizures. \todo{Word better}
@@ -2372,10 +2381,10 @@ In financial applications, we could cluster time periods according to the extrem
 % % This may not hold in all cases, particularly for more complex dependence structures, and so this assumption may not always be appropriate. 
 % This may not hold for all datasets. 
 % For example, in \citet{Farrell2025}, the authors model residuals using the generalised and asymmetric Gaussian distributions.
-While the residual Gaussianity assumption on which our method relies may not hold for all datasets, our clustering approach showed good performance for all settings in Section~\ref{sec:sim}.
+While the residual Gaussian assumption on which our method relies may not hold for all datasets, our clustering approach showed good performance for all settings in Section~\ref{sec:sim}.
 A possible alternative is to employ the generalised and asymmetric multivariate Gaussian distribution used in \citet{Farrell2025}. 
 % While our closed-form would not hold in this case, the $\JSGa{}$ divergence could still be used, but would require computationally expensive Monte Carlo sampling to estimate the dissimilarity matrix.
-While this does not permit a closed-form divergence, our extremal clustering method could still be used, but would require costly numerical techniques to estimate the dissimilarity matrix.
+While this does not permit a closed-form divergence, our extremal clustering method could still be used, with costly numerical techniques used to estimate the dissimilarity matrix.
 % Indeed, it may be preferable to use the standard $\JS{}$ divergence if choosing to forgo the Gaussian assumption, since it is bounded above by $\log{(2)}$ and so may be more robust, as described in \citet{Thiagarajan2025}.
 Indeed, if choosing to forgo this Gaussian assumption, it may be preferable to use the standard Jensen-Shannon divergence in place of the $\JSGa{}$ divergence, since the former is bounded \citep{Thiagarajan2025}.
 
@@ -2421,15 +2430,15 @@ However, this would be computationally expensive, and so would compromise one of
 % % It would be interesting to see if we could build on such work via exploratory spatial clustering using our method, and whether the CE model would provide greater flexibility than their max-stable process approach, which can only model asymptotic dependence. 
 
 % Future work
-There is lots of scope for further work in this area.
-Most obviously, we could apply our method to a dataset with $d > 2$ variables.
-This could be as simple as adding a third variable, such as temperature or humidity, from the ERA5 reanalysis dataset to our Irish meteorological example, to explore the multivariate extremal dependence, to see if this provides additional insights into the spatial patterns observed.
+% There is lots of scope for further work in this area.
+% Most obviously, we could apply our method to a dataset with $d > 2$ variables.
+% This could be as simple as adding a third variable, such as temperature or humidity, from the ERA5 reanalysis dataset to our Irish meteorological example, to explore the multivariate extremal dependence, to see if this provides additional insights into the spatial patterns observed.
 In this work, we implicitly assume spatial stationarity in the extremal dependence structure, as we fit a separate CE model at each location.
-Many extensions of the CE model have been proposed to go beyond this, such as those incorporating covariates \citep{Richards2023} and spatio- and spatio-temporal representations of the CE parameters \citep{Simpson2021, Wadsworth2022}.
-These could be incorporated into our clustering framework, but care must be taken to ensure that the residual Gaussianity assumption still holds, or that an appropriate alternative dissimilarity is used, as discussed above.
-Another approach to dealing with the uncertainty in the clustering solution would be to use a Bayesian framework.
+Extensions of the CE model have been proposed, such as those incorporating covariates \citep{Richards2023} and spatio- and spatio-temporal representations of the CE parameters \citep{Simpson2021, Wadsworth2022}.
+These could be incorporated into our clustering framework, but care must be taken to ensure that the residual Gaussian assumption still holds, or that an appropriate alternative dissimilarity is used, as discussed above.
+Another approach to dealing with the uncertainty in the clustering solution would be to adopt a Bayesian perspective.
 By placing priors on the CE model parameters, we could obtain posterior distributions for these parameters, which could be used to compute a distribution of dissimilarity matrices and clustering solutions.
-Approaches such as that of \citep{Rohrbeck2021} have used a Reversible-Jump MCMC scheme to perform Bayesian clustering for spatial extremes, which does not require the number of clusters to be specified in advance.
+Approaches such as that of \citet{Rohrbeck2021} have used a Reversible-Jump MCMC scheme to perform Bayesian clustering for spatial extremes, which does not require the number of clusters to be specified in advance.
 
 \section*{Acknowledgements}
 
@@ -2448,7 +2457,7 @@ We also acknowledge the use of the Irish meteorological dataset obtained from Me
   % %   additional simulation results, including elbow plots for choosing the number of clusters, and expanding on Section~\ref{subsubsec:sim_extension} to include clustering results for mixture copulas with up to $d=5$ dimensions; and
   % \item[PDF Supplement:] This supplement contains additional simulation results, including elbow plots for choosing the number of clusters, and expanding on Section~\ref{subsubsec:sim_extension} to include clustering results for mixture copulas with up to $d=5$ dimensions; and
   %   for the Irish meteorological data application, diagnostic plots for the CE model fits at each location in Section~\ref{subsec:app_ce}, and elbow plots for choosing the number of clusters, and cluster estimates for $k=2$ and $k=4$ clusters in Section~\ref{subsec:app_clust}.
-  \item[PDF Supplement:] This supplement contains additional plots for the motivating data application in Section~\ref{subsec:app_clust} of the main paper, including elbow plots for choosing the number of clusters, clustering solutions for $k=2$ and $k=4$ clusters, and threshold stability plots for the conditional extremes model fits at each location.
+  \item[PDF Supplement:] This supplement contains additional plots for the motivating data application in Section~\ref{subsec:app_clust} of the main paper, including elbow plots for choosing the number of clusters, estimated clusters for $k=2$ and $k=4$ clusters, and threshold stability plots for the conditional extremes model fits at each location.
 
 \item[Data and R code:] Available upon request from the corresponding author.
 

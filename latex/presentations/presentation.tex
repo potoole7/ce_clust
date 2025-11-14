@@ -1,0 +1,466 @@
+% \documentclass[14pt,aspectratio=169]{beamer}
+% \usepackage{pgfpages}
+% \usepackage{fancyvrb}
+% \usepackage{tikz}
+% \usepackage{pgfplots}
+% 
+% % my packages
+% \usepackage{beamerbasenotes}
+% \usepackage{appendixnumberbeamer}
+% \usepackage{hyperref}
+% \usepackage[utf8x]{inputenc}
+% \usepackage{graphicx}
+% \usepackage[nodayofweek]{datetime}
+% \usepackage[colorinlistoftodos]{todonotes}
+% \usepackage{mathtools}
+% \usepackage{amssymb}
+% \usepackage{amsmath}
+% \usepackage{bbm}
+% \usepackage{pdflscape}
+% \usepackage{caption}
+% \usepackage{subcaption}
+% \usepackage[T1]{fontenc}
+% \usepackage{authblk}
+% \usepackage{pdfpages}
+% \usepackage{setspace} 
+% \usepackage{booktabs}
+% \usepackage{longtable}
+% \usepackage{float}
+% \usepackage{bm}
+% \usepackage{siunitx}
+% % \usepackage{natbib}
+% \usepackage[style=authoryear,backend=biber]{biblatex}
+% \usepackage{bibentry}
+% 
+% \ifnotes
+% \setbeamertemplate{note page}[plain]
+% \setbeameroption{show notes on second screen=right}
+% \fi
+% 
+% \usetheme{auriga}
+% \usecolortheme{auriga}
+% 
+% % define some color for a consistent theme across slides
+% \definecolor{red}{RGB}{181, 23, 0}
+% \definecolor{blue}{RGB}{0, 118, 186}
+% \definecolor{gray}{RGB}{146, 146, 146}
+% 
+% % ------------------------------------------------------------------------------
+% % The Document
+% % ------------------------------------------------------------------------------
+% 
+% \titlegraphic{%
+%   \centering
+%   \includegraphics[height=1.5cm]{images/university-of-bath-logo.png}\hspace{1cm}%
+%   \includegraphics[height=1.5cm]{images/UKRIlogo.png}%
+% }
+% 
+% % do an un-numbered \againframe by bumping the counter back
+% \newcommand{\unnumberedagain}[2]{%
+%   \addtocounter{framenumber}{-1}%  remove the extra count
+%   \againframe<#1>{#2}%
+% }
+% 
+% % rather than use the frame options [noframenumbering,plain], we make the
+% % color match, so that the indicated page numbers match PDF page numbers
+% \setbeamercolor{page number in head/foot}{fg=white}
+% \newdate{date}{11}{07}{2025}
+% \date{
+%   % \footnotesize Conference on Applied Statistics in Ireland (CASI) 2025 Talk, \\
+%   % \footnotesize Environmental and Ecological Statistics Conference 2025 Talk, \\
+%   \footnotesize SAMBa Conference 2025 Talk, \\
+%   \displaydate{date}, \\
+%   \emph{Paddy O'Toole, University of Bath} \\
+%   \emph{Supervised by Christian Rohrbeck and Jordan Richards (University of Edinburgh)}
+% }
+% 
+% \begin{document}
+% \begin{frame}[noframenumbering, plain]
+%   \titlepage
+% \end{frame}
+% 
+% \section{Introduction}
+% 
+% % Three panel cartoon
+% \begin{frame}
+%   \centering
+%   % \includegraphics[width=1.4\textwidth]{images/Weathering the Storm.png}
+%   \includegraphics[width=0.9\textwidth]{images/Weathering the Storm.png}
+% \end{frame}
+% 
+% % Rene Magritte paintings
+% \begin{frame}
+%    \begin{minipage}{0.49\textwidth}
+%      \begin{center}
+%        \includegraphics[width=1\textwidth]{images/hegels_holiday.jpg}
+%      \end{center}
+%    \end{minipage}
+%    \hfill
+%    \begin{minipage}{0.49\textwidth}
+%      \hspace*{0.8cm} \includegraphics[width=1\textwidth]{images/the_great_war.jpg} 
+%    \end{minipage}
+% \end{frame}
+% 
+% \end{document} 
+
+\documentclass[14pt,aspectratio=169]{beamer}
+
+% theme (you used auriga)
+\usetheme{auriga}
+\usecolortheme{auriga}
+
+% title graphic (your logos)
+% \titlegraphic{%
+%   \centering
+%   \includegraphics[height=1.5cm]{images/university-of-bath-logo.png}\hspace{1cm}%
+%   \includegraphics[height=1.5cm]{images/UKRIlogo.png}%
+% }
+
+\titlegraphic{%
+  \includegraphics[height=1.5cm]{images/university-of-bath-logo.png}\hspace{1cm}%
+  \includegraphics[height=1.5cm]{images/UKRIlogo.png}%
+}
+
+% \title{\LARGE Weathering the Storm:\\An Example Talk} % smaller title
+\title{\LARGE Clustering of multivariate tail dependence using conditional methods}
+\author[P. O'Toole]{%
+  Paddy O'Toole, Unversity of Bath \\[0.5em]
+  \small \emph{Supervised by:} Christian Rohrbeck and Jordan Richards (University of Edinburgh)
+}
+\date{Statistics Seminar\\ \today}
+
+\titlegraphic{%
+  \centering
+  \includegraphics[height=1.5cm]{images/university-of-bath-logo.png}\hspace{1cm}%
+  \includegraphics[height=1.5cm]{images/UKRIlogo.png}%
+}
+
+\setbeamertemplate{title page}{%
+  \begin{center}
+    {\LARGE \bfseries \inserttitle \par} 
+    \vspace{1.5em}
+    {\large \insertauthor \par}
+    \vspace{1em}
+    {\small \insertdate \par}
+    \vfill
+    {\inserttitlegraphic\par}
+  \end{center}
+}
+
+\begin{document}
+
+% Plain, unnumbered title slide
+\begin{frame}[plain,noframenumbering]
+  \titlepage
+\end{frame}
+
+% % Three panel cartoon
+\begin{frame}
+  \centering
+  \includegraphics[width=0.9\textwidth]{images/Weathering the Storm.png}
+\end{frame}
+
+% Rene Magritte paintings
+\begin{frame}
+   \begin{minipage}{0.49\textwidth}
+     \begin{center}
+       \includegraphics[width=1\textwidth]{images/hegels_holiday.jpg}
+     \end{center}
+   \end{minipage}
+   \hfill
+   \begin{minipage}{0.49\textwidth}
+     \hspace*{0.8cm} \includegraphics[width=1\textwidth]{images/the_great_war.jpg} 
+   \end{minipage}
+\end{frame}
+
+\begin{frame}{Problem} 
+  \begin{itemize}
+    \item Often want to estimate
+      \[
+        \mathbb{P}(X > x, Y > y) = \textcolor{red}{\mathbb{P}(Y > y \mid X > x)}\textcolor{blue}{\mathbb{P}(X > x)}
+      \]
+      for large $x, y$
+    \item ``concomitant''/concurrent extreme events for random vector $\bf{X}$ often particularly devastating
+    \item Goal: \textbf{identify trends by clustering sites with similar \textcolor{red}{tail dependence}}
+  \end{itemize}
+\end{frame}
+
+\section{Dependence Modelling}
+
+\begin{frame}[fragile]{Asymptotic dependence}
+  % reserve space for your citation block
+  \newlength{\TopBoxHeight}
+  \setlength{\TopBoxHeight}{\dimexpr\textheight-3cm\relax}
+
+  \vbox to \TopBoxHeight{
+    \vfill
+    \begin{center}
+      \begin{itemize}
+        % \item Asymptotic dependence is a measure of the strength of dependence between two random variables in the tail of their distribution.
+        \item Coefficient of extremal dependence $\chi\in[0,1]$, 
+              \[
+                \chi = \lim_{u\to1}\mathbb{P}\bigl[F_1(X_1)>u\mid F_2(X_2)>u\bigr]
+              \]
+        \item (Increasingly strong) asymptotic dependence for $\chi > 0$.
+        \item However, $\chi$ only gives summary; inference requires \textbf{dependence model}.
+      \end{itemize}
+    \end{center}
+    \vfill
+  }
+
+  \vspace{1.5cm}
+  {\scriptsize
+    \rule{\linewidth}{0.4pt}\\
+    \makebox[\linewidth]{
+      \citeauthor{Coles1999}, \emph{\citetitle{Coles1999}} (1999)
+    }
+  }
+\end{frame}
+
+% TODO Only highlight Malahide, Wicklow sites and Kilcar
+\begin{frame}{Ireland}
+  % \begin{minipage}{0.4\textwidth}
+  %     \begin{itemize}
+  %       \item Precipitation\textsuperscript{1} \& wind speed\textsuperscript{2} data for 59 sites across Ireland, Winter months (Oct-Mar) 1990-2020
+  %     \end{itemize}
+  % \end{minipage}
+  % \begin{minipage}{0.59\textwidth}
+    % \includegraphics[width = \linewidth]{plots/041_chi_plots_man_crop.png}
+    \includegraphics[width = \linewidth]{plots/043_chi_elevation_pts_man_crop.png}
+  % \end{minipage}
+  % {\scriptsize
+  %   \rule{\linewidth}{0.4pt}\\
+  %   \makebox[\linewidth]{
+  %     \textsuperscript{1} Met Éireann weekly aggregate
+  %     \hfill{}
+  %     \textsuperscript{2} ERA5 reanalysis weekly mean of daily maxima
+  %     \hspace{0.5cm}
+  %   }
+  % }
+\end{frame}
+
+\section{Conditional extremes}
+
+\begin{frame}{Marginal transformation}
+  % allows for heteroskedastic regression model, symmetry means model is the same
+  % for both positive and negative dependence, and also easy to model any
+  % dependence strength
+  \center
+  \includegraphics[width=0.9\textwidth]{plots/transform_costelloe.png} 
+  % {\scriptsize
+  %   \rule{\linewidth}{0.4pt}\\
+  %   \makebox[\linewidth]{
+  %     \citeauthor{Keef2013}, \emph{\citetitle{Keef2013}} (2013)
+  %   }
+  % }
+\end{frame}
+
+% Multivariate piecewise function, Z, Y independent
+\begin{frame}[t]{Conditional extremes}
+% Reduces multivariate model to simple univariate models!
+\begin{itemize}
+  \item \textbf{Heteroskedastic regression dependence model}: 
+  \begin{equation*}
+    \bigl(Y \mid X = x\bigr) = \alpha x + x^{\beta} Z, \text{ for } x > u
+  \end{equation*}
+  \vspace{-5mm}
+  % with
+  \begin{itemize}
+    \item slope parameter $\alpha$ for $Y$ given large $X$,
+    \item ``spread'' parameter $\beta \in (-\infty, 1]$ controls stochasticity of relationship between $Y$ and large $X$. 
+  \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t, noframenumbering]{Conditional extremes}
+% Reduces multivariate model to simple univariate models!
+\begin{itemize}
+  \item <1-> \textbf{Heteroskedastic regression dependence model}: 
+  \begin{equation*}
+      \bigl(\bm{Y}_{-i} \mid Y_i = y_i \bigr) = \bm{\alpha}_{\mid i}\bm{y}_i + \bm{y}_i^{\bm{\beta}_{\mid i}}\bm{Z}_{\mid i}, \text{ for } y_i > u_{Y_i}
+  \end{equation*}
+  \vspace{-5mm}
+  % with
+  \begin{itemize}
+    \item <1-> slope parameter $\alpha_{j \mid i} \in [-1, 1]$  for $Y_j$ given large $Y_i$,
+    \item <1-> ``spread'' parameter $\beta_{j \mid i} \in (-\infty, 1]$ controls stochasticity of relationship between $Y_j$ and large $Y_i$. 
+  \end{itemize}
+  \vspace{2mm}
+  \item <2-> Key assumptions:
+  \begin{itemize}
+    \item <2-> Residuals $\bm{Z}_{\mid i} \sim N(\bm{\mu}_{\mid i}, \bm{\Sigma}_{\mid i})$ 
+    \item <2-> $\bm{Z}_{\mid i}, Y_i$ conditionally independent for large $Y_i$
+  \end{itemize}
+  \vspace{2mm}
+  % \item <2-> Special cases:
+  % \vspace{-4mm}
+  % \begin{alignat*}{2}
+  % &\bm{\alpha}_{\mid i} = 0, \bm{\beta}_{\mid i} = 0    &&\implies \bm{Y}_{-i}, \bm{Y}_{i} \text{ independent,} \\
+  % &\bm{\alpha}_{\mid i} = -1/1, \bm{\beta}_{\mid i} = 0 &&\implies \text{ perfect positive/negative dependence,} \\
+  % &-1 < \bm{\alpha}_{\mid i} < 1 && \implies \text{ asymptotic independence}
+  % \end{alignat*}
+\end{itemize}
+\vspace{1.3cm}
+{\scriptsize
+  \rule{\linewidth}{0.4pt}\\
+  \makebox[\linewidth]{
+    \citeauthor{Heffernan2004}, \emph{\citetitle{Heffernan2004}} (2004)
+  }
+}
+\end{frame}
+
+\begin{frame}{Conditional extremes}
+  \center{}
+  \includegraphics[width=\textwidth]{plots/041_costelloe_fishery.png} 
+\end{frame}
+
+\begin{frame}{Inference}
+  \begin{itemize}
+    Inference assumes conditional distribution follows a multivariate Normal (MVN) distribution: \\
+      \begin{equation*} \label{eq:ce_norm}
+        \bigl( \bm{Y}_{-i} \mid Y_i = y_i \bigr) \sim N\left(\bm{\alpha}_{\mid i} y_i + y_i^{\bm{\beta}_i} \bm{\mu}_{\mid i}, y_i^{\bm{\beta}_i} \bm{\Sigma_{\mid i}}\right), \text{ for } Y_i > u_{Y_i}
+      \end{equation*} \\
+    $\implies$ \textbf{dependence structures at different sites can be compared using their MVN distributions}
+\end{itemize}
+\end{frame}
+
+\section{Clustering}
+% TODO Fill in!
+
+\section{Simulations}
+
+% TODO Rewrite mathematically from paper
+\begin{frame}{Gaussian copula}
+  \todo{Stop plot clipping}
+  \begin{itemize}
+    \item For single ``site'', generate data from bivariate Gaussian copula with correlation $\rho_{\text{Gauss}}$.
+    \item (asymptotic) CE parameters are $\alpha = \rho_{\text{Gauss}}^2, \beta = 1/2$
+    \item Example: 12 ``sites'' with \num[group-separator={,}]{10000} observations of 2 variables
+    \item 3 clusters of 4 locations defined by respective $\rho_{\text{Gauss}}$ values of $0.1, 0.5, 0.9$.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Gaussian copula}
+  \center
+  \includegraphics[width=\textwidth]{plots/gauss_sim_ex_man.png}
+\end{frame}
+
+\begin{frame}{Gaussian copula - results}
+  \center
+  \includegraphics[width=\textwidth]{plots/sim_01_gauss_cop_man.png}
+\end{frame}
+
+\begin{frame}{Mixture simulation}
+  \begin{itemize}
+    \item <1-> Extend design to mixture of Gaussian and t-copulas
+    \item <2-> Idea: 
+    \begin{itemize} 
+      \item Gaussian copula generates observations exhibiting extremal independence, 
+      \item t-copula induces extremal dependence.
+    \end{itemize}
+    \item <3-> Design: 12 sites with \num[group-separator={,}]{10000} bivariate observations
+    \item <3-> 2 clusters each of 6 sites
+    \item <4-> Grid search performed over $\rho_{\text{Gauss}}, \rho_{t_1}, \rho_{t_2} \in [0, 1]$.
+    \item <5-> Clustering compared to competing Vignotto algorithm using Adjusted Rand Index $\text{ARI} \in [-0.5, 1]$ 
+  \end{itemize}
+
+  {\only<5>{\scriptsize
+    \rule{\linewidth}{0.4pt}\\
+    \begin{minipage}{\linewidth}
+      \vspace{2mm}
+      \citeauthor{Vignotto2021},\\
+      \emph{\citetitle{Vignotto2021}} (2021)
+    \end{minipage}
+  }}
+\end{frame}
+
+% \begin{frame}{Mixture simulation}
+%   \center
+%   \includegraphics[width=1\textwidth]{plots/t_sim_ex.png}
+% \end{frame}
+
+\begin{frame}{Mixture simulation}
+  \center
+  \includegraphics[width=1\textwidth]{plots/sim_01b_ce_vs_vi_dqu_0.9_man.png}
+\end{frame}
+
+\begin{frame}{Mixture simulation}
+  \center
+  \includegraphics[width=0.95\textwidth]{plots/sim_01d_js_sens_3_var_dqu_0.9mult_var_man.png}
+\end{frame}
+
+\section{Ireland meteorological data}
+
+% Maps of clustering
+\begin{frame}{Ireland clustering}
+  \center
+  \includegraphics[width=0.9\textwidth]{plots/cluster_dqu_sep.png} 
+\end{frame}
+
+% Dissimilarity matrix
+\begin{frame}{Dissimilarity Matrix}
+  \center
+  \includegraphics[width=0.9\textwidth]{plots/ire_dist_mat_heatmap_man.png} 
+\end{frame}
+
+% Results for k = 2 and k = 4
+\begin{frame}{$k = 2$ and $k = 4$ clusters}
+  \center
+  \includegraphics[width=0.9\textwidth]{plots/cluster_dqu_k_2_4.png}
+\end{frame}
+
+% Sensitivity to choice of dependence quantile
+\begin{frame}{Sensitivity Analysis}
+  \center
+  \includegraphics[width=0.9\textwidth]{plots/cluster_dqu.png} 
+\end{frame}
+
+\section{Discussion}
+
+\begin{frame}{Discussion}
+  \begin{itemize}
+    \item <1-> \textbf{Conclusion}:
+      \begin{itemize}
+        \item Principled \& effective clustering framework for CE models
+        \item Simulations \& application show clustering can group sites with similar tail dependence, which may aid interpretation
+      \end{itemize} 
+    \vspace{2mm}
+    \item <2-> \textbf{Limitations}:
+      \begin{itemize}
+        \item \textbf{CE}: Gaussian assumption for $\bm{Z}_{\mid i}$
+        \item \textbf{Clustering}: Uncertainty in CE fits is ignored in clustering
+      \end{itemize} 
+  \end{itemize} 
+\end{frame}
+
+% TODO QR Code slide
+
+\begin{frame}\frametitle{References}
+\tiny
+\printbibliography[heading=none]
+\end{frame}
+
+\section{Appendix}
+
+\begin{frame}{Mixture simulation}
+  \center
+  \includegraphics[width=1\textwidth]{plots/t_sim_ex.png}
+\end{frame}
+
+\begin{frame}{Mixture simulation (three variables)}
+  \center
+  \includegraphics[width=1\textwidth]{plots/sim_01d_js_sens_3_var_dqu_0.9_man.png}
+\end{frame}
+
+\begin{frame}{More realistic example}
+  \center
+  \includegraphics[width=1\textwidth]{plots/01c2_js_sens_sim_60_locs_dqu_0.9_smooth_man.png}
+\end{frame}
+
+% TODO Move to main body?
+\begin{frame}{$\alpha, \beta$ estimates}
+  \center
+  \includegraphics[width=0.75\textwidth]{plots/ire_ce.png} 
+\end{frame}
+
+\end{document}

@@ -1,127 +1,35 @@
-% \documentclass[14pt,aspectratio=169]{beamer}
-% \usepackage{pgfpages}
-% \usepackage{fancyvrb}
-% \usepackage{tikz}
-% \usepackage{pgfplots}
-% 
-% % my packages
-% \usepackage{beamerbasenotes}
-% \usepackage{appendixnumberbeamer}
-% \usepackage{hyperref}
-% \usepackage[utf8x]{inputenc}
-% \usepackage{graphicx}
-% \usepackage[nodayofweek]{datetime}
-% \usepackage[colorinlistoftodos]{todonotes}
-% \usepackage{mathtools}
-% \usepackage{amssymb}
-% \usepackage{amsmath}
-% \usepackage{bbm}
-% \usepackage{pdflscape}
-% \usepackage{caption}
-% \usepackage{subcaption}
-% \usepackage[T1]{fontenc}
-% \usepackage{authblk}
-% \usepackage{pdfpages}
-% \usepackage{setspace} 
-% \usepackage{booktabs}
-% \usepackage{longtable}
-% \usepackage{float}
-% \usepackage{bm}
-% \usepackage{siunitx}
-% % \usepackage{natbib}
-% \usepackage[style=authoryear,backend=biber]{biblatex}
-% \usepackage{bibentry}
-% 
-% \ifnotes
-% \setbeamertemplate{note page}[plain]
-% \setbeameroption{show notes on second screen=right}
-% \fi
-% 
-% \usetheme{auriga}
-% \usecolortheme{auriga}
-% 
-% % define some color for a consistent theme across slides
-% \definecolor{red}{RGB}{181, 23, 0}
-% \definecolor{blue}{RGB}{0, 118, 186}
-% \definecolor{gray}{RGB}{146, 146, 146}
-% 
-% % ------------------------------------------------------------------------------
-% % The Document
-% % ------------------------------------------------------------------------------
-% 
-% \titlegraphic{%
-%   \centering
-%   \includegraphics[height=1.5cm]{images/university-of-bath-logo.png}\hspace{1cm}%
-%   \includegraphics[height=1.5cm]{images/UKRIlogo.png}%
-% }
-% 
-% % do an un-numbered \againframe by bumping the counter back
-% \newcommand{\unnumberedagain}[2]{%
-%   \addtocounter{framenumber}{-1}%  remove the extra count
-%   \againframe<#1>{#2}%
-% }
-% 
-% % rather than use the frame options [noframenumbering,plain], we make the
-% % color match, so that the indicated page numbers match PDF page numbers
-% \setbeamercolor{page number in head/foot}{fg=white}
-% \newdate{date}{11}{07}{2025}
-% \date{
-%   % \footnotesize Conference on Applied Statistics in Ireland (CASI) 2025 Talk, \\
-%   % \footnotesize Environmental and Ecological Statistics Conference 2025 Talk, \\
-%   \footnotesize SAMBa Conference 2025 Talk, \\
-%   \displaydate{date}, \\
-%   \emph{Paddy O'Toole, University of Bath} \\
-%   \emph{Supervised by Christian Rohrbeck and Jordan Richards (University of Edinburgh)}
-% }
-% 
-% \begin{document}
-% \begin{frame}[noframenumbering, plain]
-%   \titlepage
-% \end{frame}
-% 
-% \section{Introduction}
-% 
-% % Three panel cartoon
-% \begin{frame}
-%   \centering
-%   % \includegraphics[width=1.4\textwidth]{images/Weathering the Storm.png}
-%   \includegraphics[width=0.9\textwidth]{images/Weathering the Storm.png}
-% \end{frame}
-% 
-% % Rene Magritte paintings
-% \begin{frame}
-%    \begin{minipage}{0.49\textwidth}
-%      \begin{center}
-%        \includegraphics[width=1\textwidth]{images/hegels_holiday.jpg}
-%      \end{center}
-%    \end{minipage}
-%    \hfill
-%    \begin{minipage}{0.49\textwidth}
-%      \hspace*{0.8cm} \includegraphics[width=1\textwidth]{images/the_great_war.jpg} 
-%    \end{minipage}
-% \end{frame}
-% 
-% \end{document} 
-
 \documentclass[14pt,aspectratio=169]{beamer}
+
+\usepackage{caption} 
+
+% TODO Add slides with section titles
+% TODO Add slide with spatially varying model
+% TODO Add slides with clustering algorithm steps
+% TODO Update simulation study slides with mathematical description
+% TODO Add QR code slide at end
+% TODO Fix references slide at end
 
 % theme (you used auriga)
 \usetheme{auriga}
 \usecolortheme{auriga}
 
-% title graphic (your logos)
-% \titlegraphic{%
-%   \centering
-%   \includegraphics[height=1.5cm]{images/university-of-bath-logo.png}\hspace{1cm}%
-%   \includegraphics[height=1.5cm]{images/UKRIlogo.png}%
-% }
+% Add section slides
+\AtBeginSection[]{
+  \begin{frame}
+  \vfill
+  \centering
+  \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+    \usebeamerfont{title}\insertsectionhead\par%
+  \end{beamercolorbox}
+  \vfill
+  \end{frame}
+}
 
 \titlegraphic{%
   \includegraphics[height=1.5cm]{images/university-of-bath-logo.png}\hspace{1cm}%
   \includegraphics[height=1.5cm]{images/UKRIlogo.png}%
 }
 
-% \title{\LARGE Weathering the Storm:\\An Example Talk} % smaller title
 \title{\LARGE Clustering of multivariate tail dependence using conditional methods}
 \author[P. O'Toole]{%
   Paddy O'Toole, Unversity of Bath \\[0.5em]
@@ -157,20 +65,50 @@
 % % Three panel cartoon
 \begin{frame}
   \centering
-  \includegraphics[width=0.9\textwidth]{images/Weathering the Storm.png}
+  \includegraphics[width=0.88\textwidth]{images/Weathering the Storm.png}
 \end{frame}
 
-% Rene Magritte paintings
-\begin{frame}
-   \begin{minipage}{0.49\textwidth}
-     \begin{center}
-       \includegraphics[width=1\textwidth]{images/hegels_holiday.jpg}
-     \end{center}
-   \end{minipage}
-   \hfill
-   \begin{minipage}{0.49\textwidth}
-     \hspace*{0.8cm} \includegraphics[width=1\textwidth]{images/the_great_war.jpg} 
-   \end{minipage}
+% % Rene Magritte paintings
+% \begin{frame}
+%    \begin{minipage}{0.49\textwidth}
+%      \begin{center}
+%        \includegraphics[width=1\textwidth]{images/hegels_holiday.jpg}
+%      \end{center}
+%    \end{minipage}
+%    \hfill
+%    \begin{minipage}{0.49\textwidth}
+%      \hspace*{0.8cm} \includegraphics[width=1\textwidth]{images/the_great_war.jpg} 
+%    \end{minipage}
+% \end{frame}
+
+% Storm Darragh, December 2024, Bristol & Watchet, also flights from Bristol
+% airport affected
+\begin{frame}[t]
+
+  \makebox[\textwidth]{%
+    \includegraphics[height=2.2cm,keepaspectratio]{images/bbc_report.png}%
+  }
+  \vspace{3mm}
+
+  \begin{columns}[t,totalwidth=\textwidth]
+    \column{0.49\textwidth}
+      \centering
+      \includegraphics[
+        width=\linewidth,
+        height=\textheight,
+        keepaspectratio
+      ]{images/fallen_tree.png}
+
+    \column{0.02\textwidth}
+
+    \column{0.49\textwidth}
+      \centering
+      \includegraphics[
+        width=\linewidth,
+        height=\textheight,
+        keepaspectratio
+      ]{images/waves.png}
+  \end{columns}
 \end{frame}
 
 \begin{frame}{Problem} 
@@ -217,26 +155,8 @@
   }
 \end{frame}
 
-% TODO Only highlight Malahide, Wicklow sites and Kilcar
 \begin{frame}{Ireland}
-  % \begin{minipage}{0.4\textwidth}
-  %     \begin{itemize}
-  %       \item Precipitation\textsuperscript{1} \& wind speed\textsuperscript{2} data for 59 sites across Ireland, Winter months (Oct-Mar) 1990-2020
-  %     \end{itemize}
-  % \end{minipage}
-  % \begin{minipage}{0.59\textwidth}
-    % \includegraphics[width = \linewidth]{plots/041_chi_plots_man_crop.png}
-    \includegraphics[width = \linewidth]{plots/043_chi_elevation_pts_man_crop.png}
-  % \end{minipage}
-  % {\scriptsize
-  %   \rule{\linewidth}{0.4pt}\\
-  %   \makebox[\linewidth]{
-  %     \textsuperscript{1} Met Éireann weekly aggregate
-  %     \hfill{}
-  %     \textsuperscript{2} ERA5 reanalysis weekly mean of daily maxima
-  %     \hspace{0.5cm}
-  %   }
-  % }
+    \includegraphics[width = \linewidth]{plots/043_chi_elevation_pts_pres_man_crop.png}
 \end{frame}
 
 \section{Conditional extremes}
@@ -247,12 +167,6 @@
   % dependence strength
   \center
   \includegraphics[width=0.9\textwidth]{plots/transform_costelloe.png} 
-  % {\scriptsize
-  %   \rule{\linewidth}{0.4pt}\\
-  %   \makebox[\linewidth]{
-  %     \citeauthor{Keef2013}, \emph{\citetitle{Keef2013}} (2013)
-  %   }
-  % }
 \end{frame}
 
 % Multivariate piecewise function, Z, Y independent
@@ -292,13 +206,6 @@
     \item <2-> $\bm{Z}_{\mid i}, Y_i$ conditionally independent for large $Y_i$
   \end{itemize}
   \vspace{2mm}
-  % \item <2-> Special cases:
-  % \vspace{-4mm}
-  % \begin{alignat*}{2}
-  % &\bm{\alpha}_{\mid i} = 0, \bm{\beta}_{\mid i} = 0    &&\implies \bm{Y}_{-i}, \bm{Y}_{i} \text{ independent,} \\
-  % &\bm{\alpha}_{\mid i} = -1/1, \bm{\beta}_{\mid i} = 0 &&\implies \text{ perfect positive/negative dependence,} \\
-  % &-1 < \bm{\alpha}_{\mid i} < 1 && \implies \text{ asymptotic independence}
-  % \end{alignat*}
 \end{itemize}
 \vspace{1.3cm}
 {\scriptsize
@@ -309,9 +216,12 @@
 }
 \end{frame}
 
+% TODO Make plot fit
 \begin{frame}{Conditional extremes}
   \center{}
-  \includegraphics[width=\textwidth]{plots/041_costelloe_fishery.png} 
+  % \includegraphics[width=\textwidth]{plots/041_costelloe_fishery.png} 
+  % \includegraphics[width=0.9\textwidth, keepaspectratio]{plots/041_costelloe_fishery.png} 
+  \includegraphics[width=0.7\textwidth, keepaspectratio]{plots/041_costelloe_fishery.png} 
 \end{frame}
 
 \begin{frame}{Inference}
@@ -331,7 +241,6 @@
 
 % TODO Rewrite mathematically from paper
 \begin{frame}{Gaussian copula}
-  \todo{Stop plot clipping}
   \begin{itemize}
     \item For single ``site'', generate data from bivariate Gaussian copula with correlation $\rho_{\text{Gauss}}$.
     \item (asymptotic) CE parameters are $\alpha = \rho_{\text{Gauss}}^2, \beta = 1/2$

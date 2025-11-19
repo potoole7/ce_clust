@@ -1,13 +1,16 @@
 \documentclass[14pt,aspectratio=169]{beamer}
 
 \usepackage{caption} 
+\usepackage{siunitx}
 
-% TODO Add slides with section titles
+% Add slides with section titles (done)
 % TODO Add slide with spatially varying model
 % TODO Add slides with clustering algorithm steps
 % TODO Update simulation study slides with mathematical description
+% TODO Fix plot sizes/height
 % TODO Add QR code slide at end
 % TODO Fix references slide at end
+% TODO Go through text and line up with paper (may have better wording there)
 
 % theme (you used auriga)
 \usetheme{auriga}
@@ -15,7 +18,8 @@
 
 % Add section slides
 \AtBeginSection[]{
-  \begin{frame}
+  % \begin{frame}
+  \begin{frame}[t, noframenumbering, plain]
   \vfill
   \centering
   \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
@@ -32,7 +36,7 @@
 
 \title{\LARGE Clustering of multivariate tail dependence using conditional methods}
 \author[P. O'Toole]{%
-  Paddy O'Toole, Unversity of Bath \\[0.5em]
+  Paddy O'Toole, University of Bath \\[0.5em]
   \small \emph{Supervised by:} Christian Rohrbeck and Jordan Richards (University of Edinburgh)
 }
 \date{Statistics Seminar\\ \today}
@@ -156,6 +160,10 @@
 \end{frame}
 
 \begin{frame}{Ireland}
+    \includegraphics[width = 0.9\linewidth]{plots/chi_map_ire.png}
+\end{frame}
+
+\begin{frame}[t, noframenumbering]{Ireland}
     \includegraphics[width = \linewidth]{plots/043_chi_elevation_pts_pres_man_crop.png}
 \end{frame}
 
@@ -191,7 +199,7 @@
 \begin{itemize}
   \item <1-> \textbf{Heteroskedastic regression dependence model}: 
   \begin{equation*}
-      \bigl(\bm{Y}_{-i} \mid Y_i = y_i \bigr) = \bm{\alpha}_{\mid i}\bm{y}_i + \bm{y}_i^{\bm{\beta}_{\mid i}}\bm{Z}_{\mid i}, \text{ for } y_i > u_{Y_i}
+      \bigl(\bm{Y}_{-i} \mid Y_i = y \bigr) = \bm{\alpha}_{\mid i}\bm{y} + \bm{y}^{\bm{\beta}_{\mid i}}\bm{Z}_{\mid i}, \text{ for } y > u_{i}
   \end{equation*}
   \vspace{-5mm}
   % with
@@ -216,11 +224,38 @@
 }
 \end{frame}
 
-% TODO Make plot fit
+\begin{frame}[t, noframenumbering]{Conditional extremes}
+% Reduces multivariate model to simple univariate models!
+\begin{itemize}
+  \item <1-> \textbf{Heteroskedastic regression dependence model}: 
+  \begin{equation*}
+    \bigl(\bm{Y}_{-i, s} \mid Y_{i, s} = y \bigr) = \bm{\alpha}_{\mid i, s}\bm{y} + \bm{y}^{\bm{\beta}_{\mid i, s}}\bm{Z}_{\mid i, s}, \text{ for } y > u_{i, s}
+  \end{equation*}
+  \vspace{-5mm}
+  % with
+  \begin{itemize}
+    \item <1-> slope parameter $\alpha_{j \mid i, s} \in [-1, 1]$  for $Y_{j, s}$ given large $Y_{i, s}$,
+    \item <1-> ``spread'' parameter $\beta_{j \mid i, s} \in (-\infty, 1]$ controls stochasticity of relationship between $Y_{j, s}$ and large $Y_{i, s}$. 
+  \end{itemize}
+  \vspace{2mm}
+  \item <1-> Key assumptions:
+  \begin{itemize}
+    \item <1-> Residuals $\bm{Z}_{\mid i, s} \sim N(\bm{\mu}_{\mid i, s}, \bm{\Sigma}_{\mid i, s})$ 
+    \item <1-> $\bm{Z}_{\mid i, s}, Y_{i, s}$ conditionally independent for large $Y_{i, s}$
+  \end{itemize}
+  \vspace{2mm}
+\end{itemize}
+\vspace{1.3cm}
+{\scriptsize
+  \rule{\linewidth}{0.4pt}\\
+  \makebox[\linewidth]{
+    \citeauthor{Heffernan2004}, \emph{\citetitle{Heffernan2004}} (2004)
+  }
+}
+\end{frame}
+
 \begin{frame}{Conditional extremes}
   \center{}
-  % \includegraphics[width=\textwidth]{plots/041_costelloe_fishery.png} 
-  % \includegraphics[width=0.9\textwidth, keepaspectratio]{plots/041_costelloe_fishery.png} 
   \includegraphics[width=0.7\textwidth, keepaspectratio]{plots/041_costelloe_fishery.png} 
 \end{frame}
 
@@ -228,7 +263,8 @@
   \begin{itemize}
     Inference assumes conditional distribution follows a multivariate Normal (MVN) distribution: \\
       \begin{equation*} \label{eq:ce_norm}
-        \bigl( \bm{Y}_{-i} \mid Y_i = y_i \bigr) \sim N\left(\bm{\alpha}_{\mid i} y_i + y_i^{\bm{\beta}_i} \bm{\mu}_{\mid i}, y_i^{\bm{\beta}_i} \bm{\Sigma_{\mid i}}\right), \text{ for } Y_i > u_{Y_i}
+        % \bigl( \bm{Y}_{-i} \mid Y_i = y_i \bigr) \sim N\left(\bm{\alpha}_{\mid i} y_i + y_i^{\bm{\beta}_i} \bm{\mu}_{\mid i}, y_i^{\bm{\beta}_i} \bm{\Sigma_{\mid i}}\right), \text{ for } Y_i > u_{Y_i}
+        \bigl( \bm{Y}_{-i, s} \mid Y_{i, s} = y \bigr) \sim N\left(\bm{\alpha}_{\mid i, s} y + y^{\bm{\beta}_{\mid i, s}} \bm{\mu}_{\mid i, s}, y^{\bm{\beta}_{\mid i, s}} \bm{\Sigma_{\mid i, s}}\right), \text{ for } Y_{i, s} > u_{i, s}
       \end{equation*} \\
     $\implies$ \textbf{dependence structures at different sites can be compared using their MVN distributions}
 \end{itemize}
@@ -239,41 +275,37 @@
 
 \section{Simulations}
 
-% TODO Rewrite mathematically from paper
 \begin{frame}{Gaussian copula}
   \begin{itemize}
-    \item For single ``site'', generate data from bivariate Gaussian copula with correlation $\rho_{\text{Gauss}}$.
-    \item (asymptotic) CE parameters are $\alpha = \rho_{\text{Gauss}}^2, \beta = 1/2$
-    \item Example: 12 ``sites'' with \num[group-separator={,}]{10000} observations of 2 variables
-    \item 3 clusters of 4 locations defined by respective $\rho_{\text{Gauss}}$ values of $0.1, 0.5, 0.9$.
+    \item \num[group-separator={,}]{10000} observations of $d=2$ variables at $D = 12$ ``sites''
+    \item Bivariate Gaussian copula with correlation $\rho^{s}_{\text{Gauss}} \in [0, 1]$ at site $s = 1, \ldots, D$.
+    \item (asymptotic) CE parameters are $\alpha^{s} = (\rho^{s}_{\text{Gauss}})^2, \beta^{s} = 1/2$
+    \item Example: 3 clusters of 4 locations defined by respective $\rho^{s}_{\text{Gauss}}$ values of $0.1, 0.5, 0.9$.
   \end{itemize}
+
 \end{frame}
 
 \begin{frame}{Gaussian copula}
   \center
-  \includegraphics[width=\textwidth]{plots/gauss_sim_ex_man.png}
+  \includegraphics[width=0.75\textwidth, keepaspectratio]{plots/gauss_sim_ex_man.png}
 \end{frame}
 
 \begin{frame}{Gaussian copula - results}
   \center
-  \includegraphics[width=\textwidth]{plots/sim_01_gauss_cop_man.png}
+  \includegraphics[width=0.75\textwidth, keepaspectratio]{plots/sim_01_gauss_cop_man.png}
 \end{frame}
 
 \begin{frame}{Mixture simulation}
-  \begin{itemize}
-    \item <1-> Extend design to mixture of Gaussian and t-copulas
-    \item <2-> Idea: 
-    \begin{itemize} 
-      \item Gaussian copula generates observations exhibiting extremal independence, 
-      \item t-copula induces extremal dependence.
-    \end{itemize}
-    \item <3-> Design: 12 sites with \num[group-separator={,}]{10000} bivariate observations
-    \item <3-> 2 clusters each of 6 sites
-    \item <4-> Grid search performed over $\rho_{\text{Gauss}}, \rho_{t_1}, \rho_{t_2} \in [0, 1]$.
-    \item <5-> Clustering compared to competing Vignotto algorithm using Adjusted Rand Index $\text{ARI} \in [-0.5, 1]$ 
+  \begin{itemize}\setlength{\itemsep}{2pt}  % smaller space (default ~6pt)
+    \item <1-> Mixture of Gaussian and t-copulas, \\
+      inducing asymptotic independence and dependence, respectively
+    \item <2-> \num[group-separator={,}]{10000} observations of $d=2$ variables at $D = 12$ ``sites''
+    \item <2-> 2 clusters each of 6 sites
+    \item <3-> Grid search performed over $\rho^s_{\text{Gauss}}, \rho^s_{t} = \rho_{t_1}, \rho^s_{t} = \rho_{t_2} \in [0, 1]$.
+    \item <4-> Clustering compared to competing Vignotto algorithm using Adjusted Rand Index $\text{ARI} \in [-0.5, 1]$ 
   \end{itemize}
 
-  {\only<5>{\scriptsize
+{\only<4>{\scriptsize
     \rule{\linewidth}{0.4pt}\\
     \begin{minipage}{\linewidth}
       \vspace{2mm}
@@ -290,38 +322,52 @@
 
 \begin{frame}{Mixture simulation}
   \center
-  \includegraphics[width=1\textwidth]{plots/sim_01b_ce_vs_vi_dqu_0.9_man.png}
+  \includegraphics[width=0.8\textwidth, keepaspectratio]{plots/sim_01b_ce_vs_vi_dqu_0.9_man.png}
 \end{frame}
 
 \begin{frame}{Mixture simulation}
   \center
-  \includegraphics[width=0.95\textwidth]{plots/sim_01d_js_sens_3_var_dqu_0.9mult_var_man.png}
+  \includegraphics[width=0.8\textwidth, keepaspectratio]{plots/sim_01d_js_sens_3_var_dqu_0.9mult_var_man.png}
 \end{frame}
 
 \section{Ireland meteorological data}
 
+% TODO Move colour schemes to the right of plots, can fit in more
+\begin{frame}{$\alpha_{i, s}, \beta_{i, s}$ estimates}
+  \vspace{-0.2cm}
+  \center
+  \includegraphics[width=0.6\textwidth, keepaspectratio]{plots/ire_ce_new.png} 
+\end{frame}
+
 % Maps of clustering
 \begin{frame}{Ireland clustering}
   \center
-  \includegraphics[width=0.9\textwidth]{plots/cluster_dqu_sep.png} 
-\end{frame}
-
-% Dissimilarity matrix
-\begin{frame}{Dissimilarity Matrix}
-  \center
-  \includegraphics[width=0.9\textwidth]{plots/ire_dist_mat_heatmap_man.png} 
-\end{frame}
-
-% Results for k = 2 and k = 4
-\begin{frame}{$k = 2$ and $k = 4$ clusters}
-  \center
-  \includegraphics[width=0.9\textwidth]{plots/cluster_dqu_k_2_4.png}
+  \vspace{-1cm}
+  \includegraphics[width=0.9\textwidth]{plots/cluster_dqu_sep_new_crop.png} 
 \end{frame}
 
 % Sensitivity to choice of dependence quantile
 \begin{frame}{Sensitivity Analysis}
   \center
-  \includegraphics[width=0.9\textwidth]{plots/cluster_dqu.png} 
+  % \vspace{-0.5cm}
+  \vspace{-0.5cm}
+  \includegraphics[width=0.9\textwidth, keepaspectratio]{plots/cluster_dqu_crop.png} 
+\end{frame}
+
+% Dissimilarity matrix
+\begin{frame}{Dissimilarity Matrix}
+  \center
+  % \includegraphics[width=0.75\textwidth, keepaspectratio]{plots/ire_dist_mat_heatmap_man.png} 
+  % \vspace{-0.5cm}
+  \vspace{-0.3cm}
+  \includegraphics[width=0.65\textwidth, keepaspectratio]{plots/ire_dist_heatmap_no_labs_crop.png} 
+\end{frame}
+
+% Results for k = 2 and k = 4
+% TODO Add results for k = 3 here as well for context
+\begin{frame}{$k = 2$ and $k = 4$ clusters}
+  \center
+  \includegraphics[width=0.75\textwidth, keepaspectratio]{plots/cluster_dqu_k_2_4.png}
 \end{frame}
 
 \section{Discussion}
@@ -351,25 +397,21 @@
 
 \section{Appendix}
 
-\begin{frame}{Mixture simulation}
-  \center
-  \includegraphics[width=1\textwidth]{plots/t_sim_ex.png}
-\end{frame}
+% TODO Add elbow & threshold stability plots for Ireland data
+
+% \begin{frame}{Mixture simulation}
+%   \center
+%   \includegraphics[width=1\textwidth]{plots/t_sim_ex.png}
+% \end{frame}
 
 \begin{frame}{Mixture simulation (three variables)}
   \center
-  \includegraphics[width=1\textwidth]{plots/sim_01d_js_sens_3_var_dqu_0.9_man.png}
+  \includegraphics[width=0.75\textwidth, keepaspectratio]{plots/sim_01d_js_sens_3_var_dqu_0.9_man.png}
 \end{frame}
 
 \begin{frame}{More realistic example}
   \center
-  \includegraphics[width=1\textwidth]{plots/01c2_js_sens_sim_60_locs_dqu_0.9_smooth_man.png}
-\end{frame}
-
-% TODO Move to main body?
-\begin{frame}{$\alpha, \beta$ estimates}
-  \center
-  \includegraphics[width=0.75\textwidth]{plots/ire_ce.png} 
+  \includegraphics[width=0.8\textwidth, keepaspectratio]{plots/01c2_js_sens_sim_60_locs_dqu_0.9_smooth_man.png}
 \end{frame}
 
 \end{document}

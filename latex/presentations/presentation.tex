@@ -213,7 +213,7 @@
     }
 \end{frame}
 
-\begin{frame}[t, noframenumbering]{Ireland Meterological Data}
+\begin{frame}[t, noframenumbering]{Ireland}
     \includegraphics[width=\linewidth]{plots/043_chi_elevation_pts_pres_man_crop.png}
 \end{frame}
 
@@ -438,7 +438,7 @@
   % \end{itemize}
 \end{frame}
 
-\begin{frame}{Dissimilarity Matrix}
+\begin{frame}{Dissimilarity matrix}
   \begin{itemize}
     \item <1-> For each conditioning variable $i \in \{1, \ldots, d\}$, compute pairwise $\eJSGai{}$ dissimilarities between all $D$ sites:
     \begin{equation*} 
@@ -539,7 +539,8 @@
 \section{Ireland meteorological data}
 
 % TODO Move colour schemes to the right of plots, can fit in more
-\begin{frame}{$\alpha_{i, s}, \beta_{i, s}$}
+% \begin{frame}{$\alpha_{i, s}, \beta_{i, s}$}
+\begin{frame}{CE estimates}
   \vspace{-0.2cm}
   \center
   % \includegraphics[width=0.6\textwidth, keepaspectratio]{plots/ire_ce_new2.png} 
@@ -547,14 +548,14 @@
 \end{frame}
 
 % Maps of clustering
-\begin{frame}{Ireland clustering}
+\begin{frame}{Clustering}
   \center
   \vspace{-1cm}
   \includegraphics[width=0.9\textwidth]{plots/cluster_dqu_sep_new_crop.png} 
 \end{frame}
 
 % Sensitivity to choice of dependence quantile
-\begin{frame}{Sensitivity Analysis}
+\begin{frame}{Sensitivity analysis}
   \center
   % \vspace{-0.5cm}
   \vspace{-0.5cm}
@@ -563,7 +564,7 @@
 
 % Dissimilarity matrix
 % TODO Flip y-axis
-\begin{frame}{Dissimilarity Matrix}
+\begin{frame}{Dissimilarity matrix}
   \center
   % \includegraphics[width=0.75\textwidth, keepaspectratio]{plots/ire_dist_mat_heatmap_man.png} 
   % \vspace{-0.5cm}
@@ -634,7 +635,6 @@
 
 \section{Appendix}
 
-% TODO Add slide explaining why we use JS divergence over KL/J divergence
 % TODO Add elbow & threshold stability plots for Ireland data
 
 % \begin{frame}{Mixture simulation}
@@ -677,7 +677,7 @@
           + \lambda(\Omega^*)^{-1}
         \right]^{-1} 
     \end{align*}
-  \item $\Omega_{\lambda}$ is matrix barycentre of $\Omega$ and $\Omega^*$ 
+  \item $\Omega_{\lambda}$ is \textbf{harmonic matrix barycentre} of $\Omega$ and $\Omega^*$ 
   \item $\JSGa{(H \Vert H^*)} \leq \frac{1}{2}\max\{\lambda,\,1-\lambda\}\left[\KL{}(H \Vert H^*) + \KL{}(H \Vert H^*)\right]$
   \end{itemize}
 \end{frame}
@@ -691,6 +691,12 @@
 \begin{frame}{More realistic example}
   \center
   \includegraphics[width=0.8\textwidth, keepaspectratio]{plots/01c2_js_sens_sim_60_locs_dqu_0.9_smooth_man.png}
+\end{frame}
+
+\begin{frame}{Threshold stability}
+  \center
+  \vspace{-0.5cm}
+  \includegraphics[width=0.8\textwidth, keepaspectratio]{plots/boot_quantiles_kilcar.png}
 \end{frame}
 
 \end{document}

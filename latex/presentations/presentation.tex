@@ -1,24 +1,57 @@
 \documentclass[14pt,aspectratio=169]{beamer}
-
+\RequirePackage{amsthm,amsmath,multirow,amsfonts,bbm,amssymb,xcolor}
+\usepackage{mathtools}  % must be loaded before \DeclarePairedDelimiter
 \usepackage{caption} 
 \usepackage{siunitx}
+\usepackage{bm}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{textcomp} % provide euro and other symbols
 
 % Add slides with section titles (done)
-% TODO Add slide with spatially varying model
-% TODO Add slides with clustering algorithm steps
-% TODO Update simulation study slides with mathematical description
-% TODO Fix plot sizes/height
+% TODO Fix bf/symbf
+% Add slide with spatially varying model (done)
+% Add slides with clustering algorithm steps (done)
+% Update simulation study slides with mathematical description (done)
+% Fix plot sizes/height (done)
 % TODO Add QR code slide at end
 % TODO Fix references slide at end
-% TODO Go through text and line up with paper (may have better wording there)
+% TODO Go through text and line up with paper (may have better wording/equations there)
+% TODO Redo conclusion slide
+% TODO Check over everything again!
+% TODO Send to Christian
 
 % theme (you used auriga)
 \usetheme{auriga}
 \usecolortheme{auriga}
 
+% Define custom maths equations 
+% \DeclareMathOperator{\KL}{\mathrm{KL}}
+\DeclareMathOperator{\KL}{KL}
+\DeclareMathOperator{\JS}{JS}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}%
+\DeclareMathOperator{\EX}{\mathbb{E}}% expected value
+\newcommand{\JSGa}{\mathop{\mathrm{JS}^{\mathrm{G}_{\lambda}}}\nolimits}
+\newcommand{\cJSGa}[1]{\mathop{\mathrm{cJS}_{i, #1}^{\mathrm{G}_{\lambda}}}\nolimits}
+\newcommand{\eJSGa}[1]{\mathop{\mathrm{eJS}_{i, #1}^{\mathrm{G}_{\lambda}}}\nolimits}
+% \newcommand{\eJSGa2}{\mathop{\mathrm{eJS}^{\mathrm{G}_{\lambda}}}\nolimits}
+\DeclareRobustCommand{\eJSGai}{\mathop{\mathrm{eJS}^{\mathrm{G}_{\lambda}}}\nolimits}
+\DeclareMathOperator{\GJS}{\mathrm{JS}^{\mathrm{G}}}
+\DeclareMathOperator{\CE}{\mathrm{CE}}
+\newcommand{\rhou}[1]{\rho_{\text{#1}}}
+\newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
+
+
+
+\newcommand{\mvmean}[1]{\boldsymbol{\alpha}_{\mid i, #1} y + y^{\boldsymbol{\beta}_{\mid i, #1}} \boldsymbol{\mu}_{\mid i, #1}}
+\newcommand{\mvcov}[1]{\left(y^{\boldsymbol{\beta}_{\mid i, #1}}\right)^{\mathrm{T}} \Sigma_{\mid i, #1} y^{\boldsymbol{\beta}_{\mid i, #1}}}
+
+
+
 % Add section slides
 \AtBeginSection[]{
-  % \begin{frame}
   \begin{frame}[t, noframenumbering, plain]
   \vfill
   \centering
@@ -122,7 +155,7 @@
         \mathbb{P}(X > x, Y > y) = \textcolor{red}{\mathbb{P}(Y > y \mid X > x)}\textcolor{blue}{\mathbb{P}(X > x)}
       \]
       for large $x, y$
-    \item ``concomitant''/concurrent extreme events for random vector $\bf{X}$ often particularly devastating
+    \item ``concomitant''/concurrent extreme events for random vector $\boldsymbol{X}$ often particularly devastating
     \item Goal: \textbf{identify trends by clustering sites with similar \textcolor{red}{tail dependence}}
   \end{itemize}
 \end{frame}
@@ -259,19 +292,115 @@
   \includegraphics[width=0.7\textwidth, keepaspectratio]{plots/041_costelloe_fishery.png} 
 \end{frame}
 
+% TODO fix slide
 \begin{frame}{Inference}
-  \begin{itemize}
-    Inference assumes conditional distribution follows a multivariate Normal (MVN) distribution: \\
-      \begin{equation*} \label{eq:ce_norm}
-        % \bigl( \bm{Y}_{-i} \mid Y_i = y_i \bigr) \sim N\left(\bm{\alpha}_{\mid i} y_i + y_i^{\bm{\beta}_i} \bm{\mu}_{\mid i}, y_i^{\bm{\beta}_i} \bm{\Sigma_{\mid i}}\right), \text{ for } Y_i > u_{Y_i}
-        \bigl( \bm{Y}_{-i, s} \mid Y_{i, s} = y \bigr) \sim N\left(\bm{\alpha}_{\mid i, s} y + y^{\bm{\beta}_{\mid i, s}} \bm{\mu}_{\mid i, s}, y^{\bm{\beta}_{\mid i, s}} \bm{\Sigma_{\mid i, s}}\right), \text{ for } Y_{i, s} > u_{i, s}
-      \end{equation*} \\
-    $\implies$ \textbf{dependence structures at different sites can be compared using their MVN distributions}
-\end{itemize}
+    Inference assumes conditional distribution follows a multivariate Normal ($\mathrm{MVN}$) distribution:
+      \begin{equation*}
+      \hspace*{-1em} % shift left to fit in slide
+      \bigl(\boldsymbol{Y}_{-i, s} \mid Y_{i, s} = y\bigr) \sim \mathrm{MVN}_{d-1}\left(\mvmean{s}, \mvcov{s}\right),
+      \end{equation*}
+      where $y > u_{i, s}$. \\
+      \vspace{1em}
+      $\implies$ \textbf{dependence structures at different sites can be compared using their $\mathrm{MVN}$ distributions}
 \end{frame}
 
 \section{Clustering}
 % TODO Fill in!
+
+% TODO Break up?
+% TODO Need to define KL?
+% TODO Add KL divergence slide
+\begin{frame}{Kullback-Leibler divergence}
+  \begin{itemize}
+  \item $\KL{}$ between two continuous $(d-1)$-variate distribution functions $H$ and $H^*$ is 
+    \begin{equation*}
+      \KL{(H \Vert H^*)} = \int_{\mathbb{R}^{d-1}} h(\symbf{y}) \log\left(\frac{h(\symbf{y})}{h^*(\symbf{y})}\right) \mathrm{d}\symbf{y},
+    \end{equation*}
+    where $h, h^*$ are continuous density functions for $H, H^*$
+  \item <2-> $\KL{}$ has closed form when $H$ and $H^*$ are $\mathrm{MVN}$
+  \item <3-> However, \textbf{asymmetric} and can ``blow up'' if supports of poorly overlap
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Skew-geometric Jensen-Shannon divergence}
+\begin{itemize}\setlength{\itemsep}{2pt}  % smaller space (default ~6pt)
+  % \item $\JSGa{}$ between two continuous $(d-1)$-variate distribution functions $H$ and $H^*$ is 
+  \item $JSGa{}$ between $H, H^*$ is
+  % \begin{equation*}
+  %   \JSGa{(H \Vert H^*)} = (1- \lambda) \KL{\left\{G_{\lambda}(H, H^*) \Vert H\right\}} + \lambda \KL{\left\{G_{\lambda}(H, H^*) \Vert H^*\right\}},
+  % \end{equation*}
+  \begin{align*}
+  \JSGa{(H \Vert H^*)} 
+      &= (1- \lambda) \KL{\left\{G_{\lambda}(H, H^*) \Vert H\right\}} \\
+      &\quad + \lambda \KL{\left\{G_{\lambda}(H, H^*) \Vert H^*\right\}}.
+  \end{align*}
+  % \begin{itemize}
+    \item $G_{\lambda}(H, H^*) = H^{1-\lambda}(H^*)^{\lambda}$ is geometric mean with $\lambda \in (0, 1)$
+    % \item $\KL{(H \Vert H^*)}$ is Kullback-Leibler divergence
+  % \end{itemize}
+    % \item <2-> Symmetric \& has closed form when $H$ and $H^*$ are MVN distributions
+    % \item Symmetric \& has closed form when $H$ and $H^*$ are MVN distributions
+    \item Symmetric, closed form, more stable than $\KL{}$
+  \end{itemize}
+\end{frame}
+
+% Note that we use the same u_i across all sites to be comparable
+\begin{frame}{$\cJSGa{}$ and $\eJSGa{}$}
+  \begin{itemize}\setlength{\itemsep}{2pt}
+    % \item <1-> \emph{Conditional} $\JSGa{}$ between two sites $s$ and $s^*$ given conditioning variable $i$:
+    \item <1-> \emph{Conditional} $\JSGa{}$ for sites $s, s^*$ conditional on variable $i$:
+      \[
+        \cJSGa{s, s^*}(y) = \JSGa{}\left(H_{i, s}(y) \Vert H_{i, s^*}(y)\right),\qquad y > u_i,
+      \]
+      where $H_{i, s}(y), H_{i, s^*}(y)$ are conditional $\mathrm{MVN}$s at $s, s^*$
+    % \item <2-> $\cJSGa{}$ depends on choice of $y > u$ $\implies$ define \emph{expected} $\JSGa{}$:
+    % $\cJSGa{}$ depends on choice of $y > u$
+    \item <2-> \emph{expected} $\JSGa{}$:
+      \begin{align*}
+  \eJSGa{s, s^*} &= \mathbb{E}\left(\cJSGa{s, s^*}(Y_{i,s}) \mid Y_{i,s} > u_i\right) \\
+                 % &= \mathbb{E}\left(\cJSGa{s^*, s}(Y_{i,s^*}) \mid Y_{i,s^*} > u_i\right) \\
+                 &= \int_{u_i}^{\infty} \cJSGa{s, s^*}(y) h(y \mid Y_{i,s} > u_i) \mathrm{d}y
+\end{align*}
+  where $h(y \mid Y_{i,s} > u_i)$ is on standard Laplace scale.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Dissimilarity Matrix}
+  \begin{itemize}
+    \item <1-> For each conditioning variable $i \in \{1, \ldots, d\}$, compute pairwise expected $\eJSGai{}$ dissimilarities between all $D$ sites:
+    \begin{equation*} 
+      M^{(i)} \coloneq \left(\eJSGa{s, s^*} \right)_{s, s^* = \{1, \ldots, D\}}
+    \end{equation*}
+  \item Can aggregate over all conditioning variables to get overall dissimilarity matrix:
+    \begin{equation*}
+      M = \frac{1}{d} \sum_{i=1}^{d} M^{(i)}
+    \end{equation*}
+  \end{itemize}
+\end{frame}
+% TODO Add back in elbow plot
+\begin{frame}{Clustering}
+  \begin{itemize}
+    % \item Use \textbf{k-medoids} to cluster over pairwise $JS_{G_{\alpha}}$ dissimilarity matrix% between sites
+    \item Use \textbf{k-medoids} to cluster over $M$ (or $M^{(i)}$) dissimilarity matrix
+    % \item \textbf{Elbow plot}: $k$ chosen using \textbf{Total Within Group Sum of Squares} between sites $x$ within clusters $C_i$ with medoids $m_i$:
+    %  \[
+    %    \mathrm{TWGSS}(k) = \sum_{i=1}^{k}\sum_{x \in C_i} JS^{G_{\alpha}}\bigl(x \mid \mid m_i\bigr)
+    %  \]
+    \item \textbf{Elbow plot}: $k$ chosen using \textbf{Total Within Group Sum of Squares} (TWGSS):
+      \begin{equation*}
+        \mathrm{TWGSS}(k) = \sum_{c=1}^{k} \sum_{s \in \mathcal{C}_c} \eJSGa{s, \kappa_c},
+      \end{equation*}
+      where $\mathcal{C}_c$ is cluster $c$ with medoid $\kappa_c$
+  \end{itemize}
+  % \vspace{0.1em}
+  % \vspace{-2em}
+  % \begin{center}
+  %   \vspace{-0.3cm}
+  %   \includegraphics[width=0.6\textwidth]{plots/elbow_plot.png}
+  % \end{center}
+\end{frame}
+
+
 
 \section{Simulations}
 
@@ -397,12 +526,27 @@
 
 \section{Appendix}
 
+% TODO Add slide explaining why we use JS divergence over KL/J divergence
 % TODO Add elbow & threshold stability plots for Ireland data
 
 % \begin{frame}{Mixture simulation}
 %   \center
 %   \includegraphics[width=1\textwidth]{plots/t_sim_ex.png}
 % \end{frame}
+
+\begin{frame}{$\JSGa$ for MVNs}
+  \begin{itemize}
+    \item For $H \sim \mathrm{MVN}(\symbf{m}, \Omega)$ and $H^* \sim \mathrm{MVN}(\symbf{m}^*, \Omega^*)$, 
+  \begin{align*}
+    \JSGa{}(H \Vert H^*) &= \frac{1}{2} \left\{ (1-\lambda) \symbf{m}^T \Omega^{-1} \symbf{m} + \lambda (\symbf{m}^*)^T (\Omega^*)^{-1} \symbf{m}^* - {\symbf{m}_{\lambda}}^T \Omega_{\lambda}^{-1} \symbf{m}_{\lambda} + \log{\left( \frac{\abs{\Omega}^{1-\lambda} \abs{\Omega^*}^{\lambda}}{\abs{\Omega_{\lambda}}} \right)} \right\}, \\
+    \symbf{m}_{\lambda} &= \Omega_{\lambda} \left\{(1-\lambda) \Omega^{-1} \symbf{m} + \lambda (\Omega^*)^{-1} \symbf{m}^* \right\}, \text{ and} \\
+    \Omega_{\lambda} &= \left\{ (1-\lambda) \Omega^{-1} + \lambda (\Omega^*)^{-1} \right\}^{-1}. \numberthis
+  \end{align*} 
+  \item $\Omage_{\lambda}$ is matrix barycentre of $\Omega$ and $\Omega^*$ 
+  \item $\JSGa{(H \Vert H^*)} \leq \frac{1}{2}\max\{\lambda,\,1-\lambda\}\KL{}(H \Vert H^*) + KL{}(H \Vert H^*)$
+  \end{itemize}
+\end{frame}
+
 
 \begin{frame}{Mixture simulation (three variables)}
   \center

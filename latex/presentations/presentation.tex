@@ -14,7 +14,7 @@
 \addbibresource{library.bib}
 
 % Add slides with section titles (done)
-% TODO Fix bf/symbf
+% TODO Fix bf/boldsymbol
 % Add slide with spatially varying model (done)
 % Add slides with clustering algorithm steps (done)
 % Update simulation study slides with mathematical description (done)
@@ -51,8 +51,6 @@
 
 \newcommand{\mvmean}[1]{\boldsymbol{\alpha}_{\mid i, #1} y + y^{\boldsymbol{\beta}_{\mid i, #1}} \boldsymbol{\mu}_{\mid i, #1}}
 \newcommand{\mvcov}[1]{\left(y^{\boldsymbol{\beta}_{\mid i, #1}}\right)^{\mathrm{T}} \Sigma_{\mid i, #1} y^{\boldsymbol{\beta}_{\mid i, #1}}}
-
-
 
 % Add section slides
 \AtBeginSection[]{
@@ -105,6 +103,8 @@
   \titlepage
 \end{frame}
 
+\section{Introduction}
+
 % % Three panel cartoon
 \begin{frame}
   \centering
@@ -156,17 +156,19 @@
 
 \begin{frame}{Problem} 
   \begin{itemize}
-    \item Often want to estimate
+    \item <1-> Of interest:
       \[
-        \mathbb{P}(X > x, Y > y) = \textcolor{red}{\mathbb{P}(Y > y \mid X > x)}\textcolor{blue}{\mathbb{P}(X > x)}
+        % \mathbb{P}(X > x, Y > y) = \textcolor{red}{\mathbb{P}(Y > y \mid X > x)}\textcolor{blue}{\mathbb{P}(X > x)}
+        \mathbb{P}(X > x, Y > y) = \textcolor{blue}{\mathbb{P}(X > x)}\textcolor{red}{\mathbb{P}(Y > y \mid X > x)}
       \]
       for large $x, y$
-    \item ``concomitant''/concurrent extreme events for random vector $\boldsymbol{X}$ often particularly devastating
-    \item Goal: \textbf{identify trends by clustering sites with similar \textcolor{red}{tail dependence}}
+    % \item ``concomitant''/concurrent extreme events for random vector $\boldsymbol{X}$ often particularly devastating
+    \item <1-> ``concomitant'' extremes in $\boldsymbol{X}$ particularly devastating
+    \item <2-> Goal: \textbf{identify trends by clustering sites with similar \textcolor{red}{tail dependence}}
   \end{itemize}
 \end{frame}
 
-\section{Dependence Modelling}
+\section{Dependence}
 
 \begin{frame}[fragile]{Asymptotic dependence}
   % reserve space for your citation block
@@ -182,8 +184,8 @@
               \[
                 \chi = \lim_{u\to1}\mathbb{P}\bigl[F_1(X_1)>u\mid F_2(X_2)>u\bigr]
               \]
-        \item (Increasingly strong) asymptotic dependence for $\chi > 0$.
-        \item However, $\chi$ only gives summary; inference requires \textbf{dependence model}.
+        \item (Increasingly strong) asymptotic dependence for $\chi > 0$
+        \item However, $\chi$ only gives summary; inference requires \textbf{dependence model}
       \end{itemize}
     \end{center}
     \vfill
@@ -200,17 +202,25 @@
 \end{frame}
 
 \begin{frame}{Ireland}
-    \includegraphics[width = 0.9\linewidth]{plots/chi_map_ire.png}
+    \hspace{0.5cm}
+    \vspace{-0.5cm}
+    \includegraphics[width=0.9\linewidth]{plots/chi_map_ire.png}
+    {\scriptsize
+      \rule{\linewidth}{0.4pt}\\
+      \makebox[\linewidth]{
+        \textsuperscript{} Data from Met Éireann, ERA5 reanalysis
+      }
+    }
 \end{frame}
 
-\begin{frame}[t, noframenumbering]{Ireland}
-    \includegraphics[width = \linewidth]{plots/043_chi_elevation_pts_pres_man_crop.png}
+\begin{frame}[t, noframenumbering]{Ireland Meterological Data}
+    \includegraphics[width=\linewidth]{plots/043_chi_elevation_pts_pres_man_crop.png}
 \end{frame}
 
 \section{Conditional extremes}
 
 \begin{frame}{Marginal transformation}
-  % allows for heteroskedastic regression model, symmetry means model is the same
+  % allows for heteroscedastic regression model, symmetry means model is the same
   % for both positive and negative dependence, and also easy to model any
   % dependence strength
   \center
@@ -222,7 +232,7 @@
 \begin{frame}[t]{Conditional extremes}
 % Reduces multivariate model to simple univariate models!
 \begin{itemize}
-  \item \textbf{Heteroskedastic regression dependence model}: 
+  \item \textbf{Heteroscedastic regression dependence model}: 
   \begin{equation*}
     \bigl(Y \mid X = x\bigr) = \alpha x + x^{\beta} Z, \text{ for } x > u
   \end{equation*}
@@ -230,35 +240,10 @@
   % with
   \begin{itemize}
     \item slope parameter $\alpha$ for $Y$ given large $X$,
-    \item $\beta \in (-\infty, 1]$ controls ``spread'' induced by large $X$. 
+    \item $\beta \in (-\infty, 1]$ controls ``spread'' induced by large $X$
   \end{itemize}
 \end{itemize}
-\end{frame}
-
-\begin{frame}[t, noframenumbering]{Conditional extremes}
-% Reduces multivariate model to simple univariate models!
-\begin{itemize}
-  \item <1-> \textbf{Heteroskedastic regression dependence model}: 
-  \begin{equation*}
-      \bigl(\bm{Y}_{-i} \mid Y_i = y \bigr) = \bm{\alpha}_{\mid i}\bm{y} + \bm{y}^{\bm{\beta}_{\mid i}}\bm{Z}_{\mid i}, \text{ for } y > u_{i}
-  \end{equation*}
-  \vspace{-5mm}
-  % with
-  \begin{itemize}
-    \item <1-> slope parameter $\alpha_{j \mid i} \in [-1, 1]$  for $Y_j$ given large $Y_i$,
-    % \item <1-> ``spread'' parameter $\beta_{j \mid i} \in (-\infty, 1]$ controls stochasticity of relationship between $Y_j$ and large $Y_i$. 
-    \item $\beta_{j \mid i} \in (-\infty, 1]$ controls ``spread'' induced by large $Y_i$. 
-  \end{itemize}
-  \vspace{2mm}
-  \item <2-> Key assumptions:
-  \begin{itemize}
-    \item <2-> Residuals $\bm{Z}_{\mid i} \sim N(\bm{\mu}_{\mid i}, \bm{\Sigma}_{\mid i})$ 
-    \item <2-> $\bm{Z}_{\mid i}, Y_i$ conditionally independent for large $Y_i$
-  \end{itemize}
-  \vspace{2mm}
-\end{itemize}
-% \vspace{1.3cm}
-\vspace{0.3cm}
+\vspace{29mm}
 {\scriptsize
   \rule{\linewidth}{0.4pt}\\
   \makebox[\linewidth]{
@@ -270,32 +255,63 @@
 \begin{frame}[t, noframenumbering]{Conditional extremes}
 % Reduces multivariate model to simple univariate models!
 \begin{itemize}
-  \item <1-> \textbf{Heteroskedastic regression dependence model}: 
+  \item <1-> \textbf{Heteroscedastic regression dependence model}: 
   \begin{equation*}
-    \bigl(\bm{Y}_{-i, s} \mid Y_{i, s} = y \bigr) = \bm{\alpha}_{\mid i, s}\bm{y} + \bm{y}^{\bm{\beta}_{\mid i, s}}\bm{Z}_{\mid i, s}, \text{ for } y > u_{i, s}
+      \bigl(\boldsymbol{Y}_{-i} \mid Y_i = y \bigr) = \boldsymbol{\alpha}_{\mid i}y + y^{\boldsymbol{\beta}_{\mid i}}\boldsymbol{Z}_{\mid i}, \text{ for } y > u_{i}
   \end{equation*}
   \vspace{-5mm}
   % with
   \begin{itemize}
-    \item <1-> slope parameter $\alpha_{j \mid i, s} \in [-1, 1]$  for $Y_{j, s}$ given large $Y_{i, s}$,
-    % \item <1-> ``spread'' parameter $\beta_{j \mid i, s} \in (-\infty, 1]$ controls stochasticity of relationship between $Y_{j, s}$ and large $Y_{i, s}$. 
-    \item $\beta_{j \mid i, s} \in (-\infty, 1]$ controls ``spread'' induced by large $Y_{i, s}$. 
+    \item <1-> $\boldsymbol{Y}_{-i} \coloneq \boldsymbol{Y} \backslash Y_i \in \mathbb{R}^{d-1}$
+    \item <1-> slope parameter $\alpha_{j \mid i} \in [-1, 1]$  for $Y_j$ given large $Y_i$
+    % \item <1-> ``spread'' parameter $\beta_{j \mid i} \in (-\infty, 1]$ controls stochasticity of relationship between $Y_j$ and large $Y_i$. 
+    \item $\beta_{j \mid i} \in (-\infty, 1]$ controls ``spread'' induced by large $Y_i$
   \end{itemize}
-  \vspace{2mm}
-  \item <1-> Key assumptions:
-  \begin{itemize}
-    \item <1-> Residuals $\bm{Z}_{\mid i, s} \sim N(\bm{\mu}_{\mid i, s}, \bm{\Sigma}_{\mid i, s})$ 
-    \item <1-> $\bm{Z}_{\mid i, s}, Y_{i, s}$ conditionally independent for large $Y_{i, s}$
-  \end{itemize}
+  % \vspace{2mm}
+  % \item <2-> Key assumptions:
+  % \begin{itemize}
+  %   \item <2-> Residuals $\boldsymbol{Z}_{\mid i} \sim N(\boldsymbol{\mu}_{\mid i}, \Sigma_{\mid i})$ 
+  %   \item <2-> $\boldsymbol{Z}_{\mid i}, Y_i$ conditionally independent for large $Y_i$
+  % \end{itemize}
+  \item <2-> \textbf{Key assumption}: Residuals $\boldsymbol{Z}_{\mid i} \sim N(\boldsymbol{\mu}_{\mid i}, \Sigma_{\mid i})$
   \vspace{2mm}
 \end{itemize}
-% \vspace{1.3cm}
-% {\scriptsize
-%   \rule{\linewidth}{0.4pt}\\
-%   \makebox[\linewidth]{
-%     \citeauthor{Heffernan2004}, \emph{\citetitle{Heffernan2004}} (2004)
-%   }
-% }
+\vspace{1.3cm}
+% \vspace{0.3cm}
+{\scriptsize
+  \rule{\linewidth}{0.4pt}\\
+  \makebox[\linewidth]{
+    \citeauthor{Heffernan2004}, \emph{\citetitle{Heffernan2004}} (2004)
+  }
+}
+\end{frame}
+
+\begin{frame}[t, noframenumbering]{Conditional extremes}
+% Reduces multivariate model to simple univariate models!
+\begin{itemize}
+  \item <1-> \textbf{Heteroscedastic regression dependence model}: 
+  \begin{equation*}
+    \bigl(\boldsymbol{Y}_{-i, s} \mid Y_{i, s} = y \bigr) = \boldsymbol{\alpha}_{\mid i, s}y + y^{\boldsymbol{\beta}_{\mid i, s}}\boldsymbol{Z}_{\mid i, s}, \text{ for } y > u_{i, s}
+  \end{equation*}
+  \vspace{-5mm}
+  % with
+  \begin{itemize}
+    \item <1-> $\boldsymbol{Y}_{-i, s} \coloneq \boldsymbol{Y_s} \backslash Y_{i, s} \in \mathbb{R}^{d-1}$
+    \item <1-> slope parameter $\alpha_{j \mid i, s} \in [-1, 1]$  for $Y_{j, s}$ given large $Y_{i, s}$
+    % \item <1-> ``spread'' parameter $\beta_{j \mid i, s} \in (-\infty, 1]$ controls stochasticity of relationship between $Y_{j, s}$ and large $Y_{i, s}$. 
+    \item $\beta_{j \mid i, s} \in (-\infty, 1]$ controls ``spread'' induced by large $Y_{i, s}$
+  \end{itemize}
+  % \vspace{2mm}
+  \item <1-> \textbf{Key assumption}: Residuals $\boldsymbol{Z}_{\mid i, s} \sim N(\boldsymbol{\mu}_{\mid i, s}, \Sigma_{\mid i, s})$ 
+  \vspace{2mm}
+\end{itemize}
+\vspace{1.3cm}
+{\scriptsize
+  \rule{\linewidth}{0.4pt}\\
+  \makebox[\linewidth]{
+    \citeauthor{Heffernan2004}, \emph{\citetitle{Heffernan2004}} (2004)
+  }
+}
 \end{frame}
 
 \begin{frame}{Conditional extremes}
@@ -308,11 +324,12 @@
     Inference assumes conditional distribution follows a multivariate Normal ($\mathrm{MVN}$) distribution:
       \begin{equation*}
       \hspace*{-1em} % shift left to fit in slide
-      \bigl(\boldsymbol{Y}_{-i, s} \mid Y_{i, s} = y\bigr) \sim \mathrm{MVN}_{d-1}\left(\mvmean{s}, \mvcov{s}\right),
+      \bigl(\boldsymbol{Y}_{-i, s} \mid Y_{i, s} = y\bigr) \sim \mathrm{MVN}_{d-1}\left(\mvmean{s}, \mvcov{s}\right)
       \end{equation*}
-      where $y > u_{i, s}$. \\
+      where $y > u_{i, s}$ \\
       \vspace{1em}
-      $\implies$ \textbf{dependence structures at different sites can be compared using their $\mathrm{MVN}$ distributions}
+      % $\implies$ \textbf{dependence structures at different sites can be compared using their $\mathrm{MVN}$ distributions}
+      $\implies$ \textbf{comparing dependence structures at different sites equivalent to comparing $\mathrm{MVN}$ distributions}
 \end{frame}
 
 \section{Clustering}
@@ -325,10 +342,10 @@
   \begin{itemize} \setlength{\itemsep}{2pt}
   \item $\KL{}$ between two continuous $(d-1)$-variate distribution functions $H$ and $H^*$ is 
     \begin{equation*}
-      \KL{(H \Vert H^*)} = \int_{\mathbb{R}^{d-1}} h(\symbf{y}) \log\left(\frac{h(\symbf{y})}{h^*(\symbf{y})}\right) \mathrm{d}\symbf{y},
+      \KL{(H \Vert H^*)} = \int_{\mathbb{R}^{d-1}} h(\boldsymbol{y}) \log\left(\frac{h(\boldsymbol{y})}{h^*(\boldsymbol{y})}\right) \mathrm{d}\boldsymbol{y},
     \end{equation*}
     where $h, h^*$ are continuous density functions for $H, H^*$
-  \item <2-> $\KL{}$ has closed form when $H$ and $H^*$ are $\mathrm{MVN}$
+  \item <2-> Closed form when $H, H^*$ $\mathrm{MVN}$
   % \item <3-> However, asymmetric and can ``blow up'' if supports poorly overlap
   % \item <4-> $\KL{(H \Vert H^*)} + \KL{(H^* \Vert H)}$ symmetric but still unstable
   \item <3-> $\KL{(H \Vert H^*)} + \KL{(H^* \Vert H)}$ symmetric but can be unstable
@@ -349,20 +366,26 @@
       &\quad + \lambda \KL{\left\{G_{\lambda}(H, H^*) \Vert H^*\right\}}.
   \end{align*}
   % \begin{itemize}
-\item $G_{\lambda}(H, H^*) = H^{1-\lambda}(H^*)^{\lambda}$ is geometric mean with $\lambda \in [0, 1]$
+\item <2-> $G_{\lambda}(H, H^*) = H^{1-\lambda}(H^*)^{\lambda}$ is geometric mean with $\lambda \in [0, 1]$
     % \item $\KL{(H \Vert H^*)}$ is Kullback-Leibler divergence
   % \end{itemize}
     % \item <2-> Symmetric \& has closed form when $H$ and $H^*$ are MVN distributions
     % \item Symmetric \& has closed form when $H$ and $H^*$ are MVN distributions
-    \item <2-> Symmetric, closed form, more stable than $\KL{}$
+    \item <3-> Symmetric, closed form, more stable than $\KL{}$
   \end{itemize}
 \vspace{1.3cm}
-  {\only<2>{\scriptsize
+  % {\only<3>{\scriptsize
+  %   \rule{\linewidth}{0.4pt}\\
+  %   \makebox[\linewidth]{
+  %     \citeauthor{Nielsen2019}, \emph{\citetitle{Nielsen2019}} (2019)
+  %   }
+  % }}
+  {\scriptsize
     \rule{\linewidth}{0.4pt}\\
     \makebox[\linewidth]{
       \citeauthor{Nielsen2019}, \emph{\citetitle{Nielsen2019}} (2019)
     }
-  }}
+  }
 \end{frame}
 
 % Note that we use the same u_i across all sites to be comparable
@@ -402,14 +425,16 @@
 \begin{frame}{Expected $\cJSGa{s, s^*}$}
   % \begin{itemize}
     % \item <1-> \emph{Expected} $\cJSGa{}$:
-    \emph{Expected} $\cJSGa{s, s^*}$:
+    % \emph{Expected} $\cJSGa{s, s^*}$:
       % Symmetric (gives same result if we swap s and s*)
-      \begin{align*}
-  \eJSGa{s, s^*} &= \mathbb{E}\left(\cJSGa{s, s^*}(Y_{i,s}) \mid Y_{i,s} > u_i\right) \\
-                 % &= \mathbb{E}\left(\cJSGa{s^*, s}(Y_{i,s^*}) \mid Y_{i,s^*} > u_i\right) \\
-                 &= \int_{u_i}^{\infty} \cJSGa{s, s^*}(y) h(y \mid Y_{i,s} > u_i) \mathrm{d}y
-\end{align*}
-  where $h(y \mid Y_{i,s} > u_i)$ is on standard Laplace scale.
+  \vspace{-1cm}
+  \begin{align*}
+    \eJSGa{s, s^*} &= \mathbb{E}\left(\cJSGa{s, s^*}(Y_{i,s}) \mid Y_{i,s} > u_i\right) \\
+                   &= \mathbb{E}\left(\cJSGa{s^*, s}(Y_{i,s^*}) \mid Y_{i,s^*} > u_i\right) \\
+                   &= \int_{u_i}^{\infty} \cJSGa{s, s^*}(y) h(y \mid Y_{i,s} > u_i) \mathrm{d}y
+  \end{align*}
+  where $h(y \mid Y_{i,s} > u_i)$ is standard Laplace 
+  % $h(y \mid Y_{i, s} > u_i) = h(y \mid Y_{i, s^*} > u_i)$, ensuring symmetry
   % \end{itemize}
 \end{frame}
 
@@ -419,7 +444,7 @@
     \begin{equation*} 
       M^{(i)} \coloneq \left(\eJSGa{s, s^*} \right)_{s, s^* = \{1, \ldots, D\}}
     \end{equation*}
-  \item Can aggregate over all conditioning variables to get overall dissimilarity matrix:
+  \item <2-> Can aggregate over all conditioning variables to get overall dissimilarity matrix:
     \begin{equation*}
       M = \frac{1}{d} \sum_{i=1}^{d} M^{(i)}
     \end{equation*}
@@ -431,8 +456,8 @@
 \begin{columns}[T,totalwidth=\textwidth]
   \column{0.55\textwidth}
   \begin{itemize}\setlength{\itemsep}{2pt}
-    \item Use \textbf{k-medoids} to cluster over $M$ (or $M^{(i)}$) % dissimilarity matrix
-    \item \textbf{Elbow plot}: $k$ chosen using \textbf{Total Within Group Sum of Squares}:
+    \item <1-> Use \textbf{k-medoids} to cluster over $M$ (or $M^{(i)}$) % dissimilarity matrix
+    \item <2-> \textbf{Elbow plot}: $k$ chosen using \textbf{Total Within Group Sum of Squares}:
       \[
         \mathrm{TWGSS}(k)
           = \sum_{c=1}^{k}
@@ -444,7 +469,7 @@
 
   \column{0.45\textwidth}
   \begin{beamercolorbox}[rounded=true,shadow=true,sep=6pt,center]{block body}
-    \includegraphics[width=\linewidth]{plots/elbow_plot_pres.png}
+    \includegraphics<2->[width=\linewidth]{plots/elbow_plot_pres.png}
     % \includegraphics[width=\linewidth]{plots/cluster_dqu_sep_elbow.png}
   \end{beamercolorbox}
 
@@ -457,10 +482,10 @@
 
 \begin{frame}{Gaussian copula}
   \begin{itemize}
-    \item \num[group-separator={,}]{10000} observations of $d=2$ variables at $D = 12$ ``sites''
-    \item Bivariate Gaussian copula with correlation $\rho^{s}_{\text{Gauss}} \in [0, 1]$ at site $s = 1, \ldots, D$.
-    \item (asymptotic) CE parameters are $\alpha^{s} = (\rho^{s}_{\text{Gauss}})^2, \beta^{s} = 1/2$
-    \item Example: 3 clusters of 4 locations defined by respective $\rho^{s}_{\text{Gauss}}$ values of $0.1, 0.5, 0.9$.
+    \item <1-> \num[group-separator={,}]{10000} bivariate observations at $D = 12$ ``sites''
+    \item <1-> Bivariate Gaussian copula with correlation $\rho^{s}_{\text{Gauss}} \in [0, 1]$ at site $s = 1, \ldots, D$
+    \item <2-> (asymptotic) CE parameters are $\alpha^{s} = (\rho^{s}_{\text{Gauss}})^2, \beta^{s} = 1/2$
+    \item <3-> Example: 3 clusters of 4 locations defined by respective $\rho^{s}_{\text{Gauss}}$ values of $0.1, 0.5, 0.9$
   \end{itemize}
 
 \end{frame}
@@ -477,11 +502,11 @@
 
 \begin{frame}{Mixture simulation}
   \begin{itemize}\setlength{\itemsep}{2pt}  % smaller space (default ~6pt)
-    \item <1-> Mixture of Gaussian and t-copulas, \\
-      inducing asymptotic independence and dependence, respectively
-    \item <2-> \num[group-separator={,}]{10000} observations of $d=2$ variables at $D = 12$ ``sites''
-    \item <2-> 2 clusters each of 6 sites
-    \item <3-> Grid search performed over $\rho^s_{\text{Gauss}}, \rho^s_{t} = \rho_{t_1}, \rho^s_{t} = \rho_{t_2} \in [0, 1]$.
+    \item <1-> Mixture of Gaussian and t-copulas
+    \item <1-> Induce asymptotic independence and dependence, respectively
+    \item <2-> \num[group-separator={,}]{10000} bivariate observations at $D = 12$ ``sites''
+    \item <2-> 2 clusters each with 6 sites
+    \item <3-> Grid search performed over $\rho^s_{\text{Gauss}}, \rho^s_{t} = \rho_{t_1}, \rho^s_{t} = \rho_{t_2} \in [0, 1]$
     \item <4-> Clustering compared to competing Vignotto algorithm using Adjusted Rand Index $\text{ARI} \in [-1, 1]$ 
   \end{itemize}
 
@@ -500,13 +525,13 @@
 %   \includegraphics[width=1\textwidth]{plots/t_sim_ex.png}
 % \end{frame}
 
-\begin{frame}{Mixture simulation}
+\begin{frame}{Mixture simulation - results}
   \vspace{-0.2cm}
   \center
   \includegraphics[width=0.85\textwidth, keepaspectratio]{plots/sim_01b_ce_vs_vi_dqu_0.9_man.png}
 \end{frame}
 
-\begin{frame}{Mixture simulation}
+\begin{frame}{Mixture simulation - results}
   \center
   \includegraphics[width=0.8\textwidth, keepaspectratio]{plots/sim_01d_js_sens_3_var_dqu_0.9mult_var_man.png}
 \end{frame}
@@ -514,7 +539,7 @@
 \section{Ireland meteorological data}
 
 % TODO Move colour schemes to the right of plots, can fit in more
-\begin{frame}{$\alpha_{i, s}, \beta_{i, s}$ estimates}
+\begin{frame}{$\alpha_{i, s}, \beta_{i, s}$}
   \vspace{-0.2cm}
   \center
   % \includegraphics[width=0.6\textwidth, keepaspectratio]{plots/ire_ce_new2.png} 
@@ -548,7 +573,7 @@
 
 % Results for k = 2 and k = 4
 % TODO Add results for k = 3 here as well for context
-\begin{frame}{$k = 2, k = 4$ clusters}
+\begin{frame}{$k = 2 \text{ } \& \text{ } k = 4$}
   \center
   \includegraphics[width=0.75\textwidth, keepaspectratio]{plots/cluster_dqu_k_2_4.png}
 \end{frame}
@@ -565,7 +590,7 @@
     \vspace{2mm}
     \item <2-> \textbf{Limitations}:
       \begin{itemize}
-        \item \textbf{CE}: Gaussian assumption for $\bm{Z}_{\mid i}$
+        \item \textbf{CE}: Gaussian assumption for $\boldsymbol{Z}_{\mid i, s}$
         \item \textbf{Clustering}: Uncertainty in CE fits is ignored in clustering
       \end{itemize} 
   \end{itemize} 
@@ -619,20 +644,20 @@
 
 \begin{frame}{$\JSGa$}
   \begin{itemize}\setlength{\itemsep}{2pt}
-    \item <1-> For $H \sim \mathrm{MVN}(\symbf{m}, \Omega)$, $H^* \sim \mathrm{MVN}(\symbf{m}^*, \Omega^*)$, 
+    \item <1-> For $H \sim \mathrm{MVN}(\boldsymbol{m}, \Omega)$, $H^* \sim \mathrm{MVN}(\boldsymbol{m}^*, \Omega^*)$, 
   % \begin{align*} 
   %   % \hspace*{-3em} % shift left to fit in slide
-  %   \JSGa{}(H \Vert H^*) &= \frac{1}{2} \left\{ (1-\lambda) \symbf{m}^T \Omega^{-1} \symbf{m} + \lambda (\symbf{m}^*)^T (\Omega^*)^{-1} \symbf{m}^* - {\symbf{m}_{\lambda}}^T \Omega_{\lambda}^{-1} \symbf{m}_{\lambda} + \log{\left( \frac{\abs{\Omega}^{1-\lambda} \abs{\Omega^*}^{\lambda}}{\abs{\Omega_{\lambda}}} \right)} \right\}, \\
-  %   \symbf{m}_{\lambda} &= \Omega_{\lambda} \left\{(1-\lambda) \Omega^{-1} \symbf{m} + \lambda (\Omega^*)^{-1} \symbf{m}^* \right\}, \\
+  %   \JSGa{}(H \Vert H^*) &= \frac{1}{2} \left\{ (1-\lambda) \boldsymbol{m}^T \Omega^{-1} \boldsymbol{m} + \lambda (\boldsymbol{m}^*)^T (\Omega^*)^{-1} \boldsymbol{m}^* - {\boldsymbol{m}_{\lambda}}^T \Omega_{\lambda}^{-1} \boldsymbol{m}_{\lambda} + \log{\left( \frac{\abs{\Omega}^{1-\lambda} \abs{\Omega^*}^{\lambda}}{\abs{\Omega_{\lambda}}} \right)} \right\}, \\
+  %   \boldsymbol{m}_{\lambda} &= \Omega_{\lambda} \left\{(1-\lambda) \Omega^{-1} \boldsymbol{m} + \lambda (\Omega^*)^{-1} \boldsymbol{m}^* \right\}, \\
   %   \Omega_{\lambda} &= \left\{ (1-\lambda) \Omega^{-1} + \lambda (\Omega^*)^{-1} \right\}^{-1}. 
   % \end{align*} 
     \begin{align*}
     \JSGa{}(H \Vert H^*)
       &= \tfrac12 \Bigl[
-          (1-\lambda)\,\symbf{m}^T \Omega^{-1} \symbf{m}
-          + \lambda (\symbf{m}^*)^T (\Omega^*)^{-1} \symbf{m}^*
+          (1-\lambda)\,\boldsymbol{m}^T \Omega^{-1} \boldsymbol{m}
+          + \lambda (\boldsymbol{m}^*)^T (\Omega^*)^{-1} \boldsymbol{m}^*
     \\[-0.2em] &\quad
-          - \symbf{m}_{\lambda}^T \Omega_{\lambda}^{-1} \symbf{m}_{\lambda}
+          - \boldsymbol{m}_{\lambda}^T \Omega_{\lambda}^{-1} \boldsymbol{m}_{\lambda}
           + \log\!\left(
               \frac{
                 \abs{\Omega}^{1-\lambda} \abs{\Omega^*}^{\lambda}
@@ -641,16 +666,16 @@
               }
             \right)
         \Bigr], \\[0.3em]
-    \symbf{m}_{\lambda}
+    \boldsymbol{m}_{\lambda}
       &= \Omega_{\lambda}\!\left[
-          (1-\lambda)\Omega^{-1}\symbf{m}
-          + \lambda(\Omega^*)^{-1}\symbf{m}^*
+          (1-\lambda)\Omega^{-1}\boldsymbol{m}
+          + \lambda(\Omega^*)^{-1}\boldsymbol{m}^*
         \right], \\
     \Omega_{\lambda}
       &= \left[
           (1-\lambda)\Omega^{-1}
           + \lambda(\Omega^*)^{-1}
-        \right]^{-1}. 
+        \right]^{-1} 
     \end{align*}
   \item $\Omega_{\lambda}$ is matrix barycentre of $\Omega$ and $\Omega^*$ 
   \item $\JSGa{(H \Vert H^*)} \leq \frac{1}{2}\max\{\lambda,\,1-\lambda\}\left[\KL{}(H \Vert H^*) + \KL{}(H \Vert H^*)\right]$

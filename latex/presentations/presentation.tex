@@ -167,12 +167,20 @@
     \item <1-> Of interest:
       \[
         % \mathbb{P}(X > x, Y > y) = \textcolor{red}{\mathbb{P}(Y > y \mid X > x)}\textcolor{blue}{\mathbb{P}(X > x)}
-        \mathbb{P}(X > x, Y > y) = \textcolor{blue}{\mathbb{P}(X > x)}\textcolor{red}{\mathbb{P}(Y > y \mid X > x)}
+        \mathbb{P}(Y_1 > y_1, Y_2 > y_2) = \textcolor{blue}{\mathbb{P}(Y_1 > y_1)}\textcolor{red}{\mathbb{P}(Y_2 > y_2 \mid Y_1 > y_1)}
       \]
-      for large $x, y$
+      for large $y_1, y_2$
     % \item ``concomitant''/concurrent extreme events for random vector $\boldsymbol{X}$ often particularly devastating
-    \item <1-> ``concomitant'' extremes in $\boldsymbol{X}$ particularly devastating
+    \item <1-> ``concomitant'' extremes particularly devastating
     \item <2-> Goal: \textbf{identify trends by clustering sites with similar \textcolor{red}{tail dependence}}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Setting}
+  \begin{itemize}
+    \item Observe $d$ variables at sites $s=1, \ldots, D$
+    \item Estimate \textcolor{red}{tail dependence} at each site
+    \item Cluster sites with similar tail dependence
   \end{itemize}
 \end{frame}
 
@@ -190,7 +198,7 @@
         % \item Asymptotic dependence is a measure of the strength of dependence between two random variables in the tail of their distribution.
         \item Coefficient of extremal dependence $\chi\in[0,1]$, 
               \[
-                \chi = \lim_{u\to1}\mathbb{P}\bigl[F_1(X_1)>u\mid F_2(X_2)>u\bigr]
+                \chi = \lim_{u\to1}\mathbb{P}\bigl[F_1(Y_1)>u\mid F_2(Y_2)>u\bigr]
               \]
         \item (Increasingly strong) asymptotic dependence for $\chi > 0$
         \item <2-> However, $\chi$ only gives summary; inference requires \textbf{dependence model}
@@ -236,20 +244,19 @@
   \includegraphics[width=0.9\textwidth]{plots/transform_costelloe.png} 
 \end{frame}
 
-% TODO Check description of slope and spread parameters
 % Multivariate piecewise function, Z, Y independent
 \begin{frame}[t]{Conditional extremes}
 % Reduces multivariate model to simple univariate models!
 \begin{itemize}
   \item \textbf{Heteroscedastic regression dependence model}: 
   \begin{equation*}
-    \bigl(Y \mid X = x\bigr) = \alpha x + x^{\beta} Z, \text{ for } x > u
+    \bigl(Y_2 \mid Y_1 = y\bigr) = \alpha y + y^{\beta} Z, \text{ for } y > u
   \end{equation*}
   \vspace{-5mm}
   % with
   \begin{itemize}
-    \item slope parameter $\alpha$ for $Y$ given large $X$,
-    \item $\beta \in (-\infty, 1]$ controls ``spread'' induced by large $X$
+    \item slope parameter $\alpha$ for $Y_2$ given large $Y_1$,
+    \item $\beta \in (-\infty, 1]$ controls ``spread'' induced by large $Y_1$
   \end{itemize}
 \item <2-> \textbf{Key assumption}: Residuals $Z \sim \mathrm{N}(\mu, \sigma)$
 \end{itemize}
@@ -329,7 +336,6 @@
   \includegraphics[width=0.7\textwidth, keepaspectratio]{plots/041_costelloe_fishery.png} 
 \end{frame}
 
-% TODO fix slide
 \begin{frame}{Inference}
     Inference assumes conditional distribution follows ($\mathrm{MVN}$) distribution:
       \begin{equation*}
@@ -343,11 +349,7 @@
 \end{frame}
 
 \section{Clustering}
-% TODO Fill in!
 
-% TODO Break up?
-% TODO Need to define KL?
-% TODO Add KL divergence slide
 \begin{frame}{Kullback-Leibler divergence}
   \begin{itemize} \setlength{\itemsep}{2pt}
   \item $\KL{}$ between two continuous $(d-1)$-variate distribution functions $H$ and $H^*$ is 
@@ -363,7 +365,6 @@
   \end{itemize}
 \end{frame}
 
-% TODO Add reference 
 \begin{frame}{Skew-geometric Jensen-Shannon divergence}
 \begin{itemize}%\setlength{\itemsep}{2pt}  % smaller space (default ~6pt)
   % \item $\JSGa{}$ between two continuous $(d-1)$-variate distribution functions $H$ and $H^*$ is 
@@ -441,7 +442,7 @@
   \vspace{-1cm}
   \begin{align*}
     \eJSGa{s, s^*} &= \mathbb{E}\left(\cJSGa{s, s^*}(Y_{i,s}) \mid Y_{i,s} > u_i\right) \\
-                   &= \mathbb{E}\left(\cJSGa{s^*, s}(Y_{i,s^*}) \mid Y_{i,s^*} > u_i\right) \\
+                   % &= \mathbb{E}\left(\cJSGa{s^*, s}(Y_{i,s^*}) \mid Y_{i,s^*} > u_i\right) \\
                    &= \int_{u_i}^{\infty} \cJSGa{s, s^*}(y) h(y \mid Y_{i,s} > u_i) \mathrm{d}y
   \end{align*}
   where $h(y \mid Y_{i,s} > u_i)$ is standard Laplace 
@@ -462,32 +463,38 @@
   \end{itemize}
 \end{frame}
 
+% \begin{frame}{Clustering}
+% 
+% \begin{columns}[T,totalwidth=\textwidth]
+%   \column{0.55\textwidth}
+%   \begin{itemize}\setlength{\itemsep}{2pt}
+%     \item <1-> Use \textbf{k-medoids} to cluster over $M$ (or $M^{(i)}$) % dissimilarity matrix
+%     \item <2-> \textbf{Elbow plot}: $k$ chosen using \textbf{Total Within Group Sum of Squares}:
+%       \[
+%         \mathrm{TWGSS}(k)
+%           = \sum_{c=1}^{k}
+%              \sum_{s \in \mathcal{C}_c}
+%                \eJSGa{s, \kappa_c},
+%       \]
+%       where $\mathcal{C}_c$, $\kappa_c$ are cluster $c$ and its medoid
+%   \end{itemize}
+% 
+%   \column{0.45\textwidth}
+%   \begin{beamercolorbox}[rounded=true,shadow=true,sep=6pt,center]{block body}
+%     \includegraphics<2->[width=\linewidth]{plots/elbow_plot_pres.png}
+%     % \includegraphics[width=\linewidth]{plots/cluster_dqu_sep_elbow.png}
+%   \end{beamercolorbox}
+% 
+% \end{columns}
+% 
+% \end{frame}
+
 \begin{frame}{Clustering}
-
-\begin{columns}[T,totalwidth=\textwidth]
-  \column{0.55\textwidth}
-  \begin{itemize}\setlength{\itemsep}{2pt}
-    \item <1-> Use \textbf{k-medoids} to cluster over $M$ (or $M^{(i)}$) % dissimilarity matrix
-    \item <2-> \textbf{Elbow plot}: $k$ chosen using \textbf{Total Within Group Sum of Squares}:
-      \[
-        \mathrm{TWGSS}(k)
-          = \sum_{c=1}^{k}
-             \sum_{s \in \mathcal{C}_c}
-               \eJSGa{s, \kappa_c},
-      \]
-      where $\mathcal{C}_c$, $\kappa_c$ are cluster $c$ and its medoid
+  \begin{itemize}
+    \item Use \textbf{k-medoids} to cluster over $M$ (or $M^{(i)}$) 
+    \item Use standard methods to choose $k$
   \end{itemize}
-
-  \column{0.45\textwidth}
-  \begin{beamercolorbox}[rounded=true,shadow=true,sep=6pt,center]{block body}
-    \includegraphics<2->[width=\linewidth]{plots/elbow_plot_pres.png}
-    % \includegraphics[width=\linewidth]{plots/cluster_dqu_sep_elbow.png}
-  \end{beamercolorbox}
-
-\end{columns}
-
 \end{frame}
-
 
 \section{Simulations}
 
@@ -518,13 +525,17 @@
     \item <2-> \num[group-separator={,}]{10000} bivariate observations at $D = 12$ ``sites''
     \item <2-> 2 clusters each with 6 sites
     \item <3-> Grid search performed over $\rho^s_{\text{Gauss}}, \rho^s_{t} = \rho_{t_1}, \rho^s_{t} = \rho_{t_2} \in [0, 1]$
-    \item <4-> Clustering compared to competing Vignotto algorithm using Adjusted Rand Index $\text{ARI} \in [-1, 1]$ 
+    % TODO Split into two lines??
+    % \item <4-> Clustering compared to competing Vignotto algorithm using Adjusted Rand Index $\text{ARI} \in [-1, 1]$ 
+    \item <4-> Assessed using adjusted Rand Index $\text{ARI} \in [-1, 1]$ 
+    \item <5-> Compared to competing Vignotto algorithm
   \end{itemize}
 
-{\only<4>{\scriptsize
+\vspace{8mm}
+{\only<5>{\scriptsize
     \rule{\linewidth}{0.4pt}\\
     \begin{minipage}{\linewidth}
-      \vspace{4mm}
+      % \vspace{4mm}
       \citeauthor{Vignotto2021},\\
       \emph{\citetitle{Vignotto2021}} (2021)
     \end{minipage}
@@ -601,7 +612,8 @@
 \end{frame}
 
 % TODO QR codes for arXiv paper and GitHub repo
-\begin{frame}[c, noframenumbering]
+% \begin{frame}[c, noframenumbering]
+\begin{frame}[c]
     \centering
     {\Large \textbf{Thank You!}}\\[1em]
 
@@ -649,7 +661,7 @@
 % \end{frame}
 
 % \begin{frame}{$\JSGa$}
-\begin{frame}[t, noframenumbering]{$\JSGa$}
+\begin{frame}[t, noframenumbering]{$\JSGa$ closed form for $\mathrm{MVNs}$}
   \begin{itemize}\setlength{\itemsep}{2pt}
     \item <1-> For $H \sim \mathrm{MVN}(\boldsymbol{m}, \Omega)$, $H^* \sim \mathrm{MVN}(\boldsymbol{m}^*, \Omega^*)$, 
   % \begin{align*} 
@@ -687,6 +699,32 @@
   \item $\Omega_{\lambda}$ is \textbf{harmonic matrix barycentre} of $\Omega$ and $\Omega^*$ 
   \item $\JSGa{(H \Vert H^*)} \leq \frac{1}{2}\max\{\lambda,\,1-\lambda\}\left[\KL{}(H \Vert H^*) + \KL{}(H \Vert H^*)\right]$
   \end{itemize}
+\end{frame}
+
+\begin{frame}{Clustering}
+
+\begin{columns}[T,totalwidth=\textwidth]
+  \column{0.55\textwidth}
+  \begin{itemize}\setlength{\itemsep}{2pt}
+    \item <1-> Use \textbf{k-medoids} to cluster over $M$ (or $M^{(i)}$) % dissimilarity matrix
+    \item <2-> \textbf{Elbow plot}: $k$ chosen using \textbf{Total Within Group Sum of Squares}:
+      \[
+        \mathrm{TWGSS}(k)
+          = \sum_{c=1}^{k}
+             \sum_{s \in \mathcal{C}_c}
+               \eJSGa{s, \kappa_c},
+      \]
+      where $\mathcal{C}_c$, $\kappa_c$ are cluster $c$ and its medoid
+  \end{itemize}
+
+  \column{0.45\textwidth}
+  \begin{beamercolorbox}[rounded=true,shadow=true,sep=6pt,center]{block body}
+    \includegraphics<2->[width=\linewidth]{plots/elbow_plot_pres.png}
+    % \includegraphics[width=\linewidth]{plots/cluster_dqu_sep_elbow.png}
+  \end{beamercolorbox}
+
+\end{columns}
+
 \end{frame}
 
 \begin{frame}[t, noframenumbering]{Mixture simulation (three variables)}

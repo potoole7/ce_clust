@@ -1,0 +1,402 @@
+\begin{thebibliography}{}
+
+\bibitem[Alonso et~al., 2014]{Alonso2014-rr}
+Alonso, A.~M., de~Zea~Bermudez, P., and Scotto, M.~G. (2014).
+\newblock Comparing generalized {Pareto} models fitted to extreme observations:
+  an application to the largest temperatures in {Spain}.
+\newblock {\em Stochastic Environmental Research and Risk Assessment},
+  28(5):1221--1233.
+
+\bibitem[Bengtsson et~al., 2009]{Bengtsson2009}
+Bengtsson, L., Hodges, K.~I., and Keenlyside, N. (2009).
+\newblock Will extratropical storms intensify in a warmer climate?
+\newblock {\em Journal of Climate}, 22(9):2276--2301.
+
+\bibitem[Bernard et~al., 2013]{Bernard2013}
+Bernard, E., Naveau, P., Vrac, M., and Mestre, O. (2013).
+\newblock {Clustering of maxima: Spatial dependencies among heavy rainfall in
+  France}.
+\newblock {\em Journal of Climate}, 26(20):7929--7937.
+
+\bibitem[Bevacqua et~al., 2021]{bevacqua2021guidelines}
+Bevacqua, E., De~Michele, C., Manning, C., Couasnon, A., Ribeiro, A.~F., Ramos,
+  A.~M., Vignotto, E., Bastos, A., Blesi{\'c}, S., Durante, F., et~al. (2021).
+\newblock Guidelines for studying diverse types of compound weather and climate
+  events.
+\newblock {\em Earth's Future}, 9(11):e2021EF002340.
+
+\bibitem[Boulin et~al., 2025]{Boulin2025}
+Boulin, A., Di~Bernardino, E., Lalo{\"e}, T., and Toulemonde, G. (2025).
+\newblock Identifying regions of concomitant compound precipitation and wind
+  speed extremes over {Europe}.
+\newblock {\em Journal of the Royal Statistical Society Series C: Applied
+  Statistics}.
+\newblock qlaf014.
+
+\bibitem[Carreau et~al., 2017]{Carreau2017}
+Carreau, J., Naveau, P., and Neppel, L. (2017).
+\newblock Partitioning into hazard subregions for regional peaks-over-threshold
+  modeling of heavy precipitation.
+\newblock {\em Water Resources Research}, 53(5):4407--4426.
+
+\bibitem[Coles, 2001]{Coles2001}
+Coles, S. (2001).
+\newblock {\em {An} {Introduction} to {Statistical} {Modeling} of {Extreme}
+  {Values}}.
+\newblock Springer Series in Statistics. Springer.
+
+\bibitem[Coles et~al., 1999]{Coles1999}
+Coles, S., Heffernan, J., and Tawn, J. (1999).
+\newblock Dependence measures for extreme value analyses.
+\newblock {\em Extremes}, 2(4):339--365.
+
+\bibitem[Cooley et~al., 2006]{Cooley2006variograms}
+Cooley, D., Naveau, P., and Poncet, P. (2006).
+\newblock Variograms for {Spatial} {Max--Stable} {Random} {Fields}.
+\newblock In {\em Dependence in Probability and Statistics}, pages 373--390.
+  Springer, New York.
+
+\bibitem[{Copernicus Climate Change Service (C3S)}, 2024]{Hersbach2020}
+{Copernicus Climate Change Service (C3S)} (2024).
+\newblock {ERA5 hourly data on single levels from 1940 to present}.
+\newblock Copernicus Climate Change Service (C3S) Climate Data Store (CDS).
+\newblock Available at \url{https://cds.climate.copernicus.eu/}, last access:
+  31 January 2025.
+
+\bibitem[Davison and Huser, 2015]{Davison2015}
+Davison, A.~C. and Huser, R. (2015).
+\newblock Statistics of extremes.
+\newblock {\em Annual Review of Statistics and Its Application}, 2(1):203--235.
+
+\bibitem[Dawkins and Stephenson, 2018]{Dawkins2018}
+Dawkins, L.~C. and Stephenson, D.~B. (2018).
+\newblock Quantification of extremal dependence in spatial natural hazard
+  footprints: independence of windstorm gust speeds and its impact on aggregate
+  losses.
+\newblock {\em Natural Hazards and Earth System Sciences}, 18(11):2933--2949.
+
+\bibitem[de~Carvalho et~al., 2023]{deCarvalho2023}
+de~Carvalho, M., Huser, R., and Rubio, R. (2023).
+\newblock Similarity-based clustering for patterns of extreme values.
+\newblock {\em Stat}, 12(1):e560.
+
+\bibitem[Deasy et~al., 2020]{Deasy2020}
+Deasy, J., Simidjievski, N., and Li{\`o}, P. (2020).
+\newblock Constraining {Variational} {Inference} with {Geometric}
+  {Jensen–Shannon} {Divergence}.
+\newblock {\em Advances in Neural Information Processing Systems},
+  33:10647--10658.
+
+\bibitem[Demarta and McNeil, 2007]{Demarta2007-ap}
+Demarta, S. and McNeil, A.~J. (2007).
+\newblock The t {Copula} and {Related} {Copulas}.
+\newblock {\em International Statistical Review}, 73(1):111--129.
+
+\bibitem[Duchi, 2007]{Duchi2007}
+Duchi, J. (2007).
+\newblock {Derivations for Linear Algebra and Optimization}.
+\newblock \url{http://ai.stanford.edu/~jduchi/projects/general_notes.pdf}.
+\newblock Accessed: 2025-01-31.
+
+\bibitem[Dupuis et~al., 2023]{Dupuis2023}
+Dupuis, D.~J., Engelke, S., and Trapin, L. (2023).
+\newblock Modeling panels of extremes.
+\newblock {\em The Annals of Applied Statistics}, 17(1):498--517.
+
+\bibitem[Farrell et~al., 2025]{Farrell2025}
+Farrell, A., Eastoe, E.~F., and Lee, C. (2025).
+\newblock Conditional {Extremes} with {Graphical} {Models}.
+\newblock arXiv preprint arXiv:2411.17013.
+
+\bibitem[French et~al., 2019]{french2019quantifying}
+French, J., Kokoszka, P., Stoev, S., and Hall, L. (2019).
+\newblock Quantifying the risk of heat waves using extreme value theory and
+  spatio-temporal functional data.
+\newblock {\em Computational Statistics \& Data Analysis}, 131:176--193.
+
+\bibitem[Gilleland et~al., 2013]{Gilleland2013}
+Gilleland, E., Brown, B.~G., and Ammann, C.~M. (2013).
+\newblock Spatial extreme value analysis to project extremes of large-scale
+  indicators for severe weather.
+\newblock {\em Environmetrics}, 24(6):418--432.
+
+\bibitem[Guerrero et~al., 2023]{Guerrero2023}
+Guerrero, M.~B., Huser, R., and Ombao, H. (2023).
+\newblock Conex--connect: Learning patterns in extremal brain connectivity from
+  multichannel eeg data.
+\newblock {\em The Annals of Applied Statistics}, 17(1):178--198.
+
+\bibitem[Hastie et~al., 2009]{Hastie2009}
+Hastie, T., Tibshirani, R., and Friedman, J. (2009).
+\newblock {\em {The} {Elements} of {Statistical} {Learning}}.
+\newblock Springer Series in Statistics. Springer, New York.
+
+\bibitem[Heffernan and Tawn, 2004]{Heffernan2004}
+Heffernan, J.~E. and Tawn, J.~A. (2004).
+\newblock A conditional approach for multivariate extreme values (with
+  discussion).
+\newblock {\em Journal of the Royal Statistical Society Series B: Statistical
+  Methodology}, 66(3):497--546.
+
+\bibitem[Hilal et~al., 2014]{Hilal2014}
+Hilal, S., Poon, S.-H., and Tawn, J. (2014).
+\newblock Portfolio risk assessment using multivariate extreme value methods.
+\newblock {\em Extremes}, 17(4):531--556.
+
+\bibitem[Hubert and Arabie, 1985]{Hubert1985-ys}
+Hubert, L. and Arabie, P. (1985).
+\newblock Comparing partitions.
+\newblock {\em Journal of Classification}, 2(1):193--218.
+
+\bibitem[Huser et~al., 2024]{Huser2024}
+Huser, R., Opitz, T., and Wadsworth, J. (2024).
+\newblock Modeling of spatial extremes in environmental data science: Time to
+  move away from max-stable processes.
+
+\bibitem[Jane et~al., 2020]{Jane2020}
+Jane, R., Cadavid, L., Obeysekera, J., and Wahl, T. (2020).
+\newblock Multivariate statistical modelling of the drivers of compound flood
+  events in south {Florida}.
+\newblock {\em Natural Hazards and Earth System Sciences}, 20(10):2681--2699.
+
+\bibitem[Kakampakou et~al., 2024]{Kakampakou2024}
+Kakampakou, L., Simpson, E., and Wadsworth, J. (2024).
+\newblock Spatial {Extremal} {Modelling}: {A} {Case} {Study} on the {Interplay}
+  {Between} {Margins} and {Dependence}.
+\newblock {\em Stat}, 13(4).
+
+\bibitem[Keef et~al., 2013]{Keef2013}
+Keef, C., Papastathopoulos, I., and Tawn, J.~A. (2013).
+\newblock {Estimation of the conditional distribution of a multivariate
+  variable given that one of its components is large: Additional constraints
+  for the Heffernan and Tawn model}.
+\newblock {\em Journal of Multivariate Analysis}, 115:396–404.
+
+\bibitem[Koh and Opitz, 2025]{Koh2025}
+Koh, J. and Opitz, T. (2025).
+\newblock Extreme-value modelling of migratory bird arrival dates: {Insights}
+  from citizen science data (with discussion).
+\newblock {\em Journal of the Royal Statistical Society Series A: Statistics in
+  Society}, 188(3):674--699.
+
+\bibitem[Koh et~al., 2023]{Koh2023}
+Koh, J., Pimont, F., Dupuy, J.-L., and Opitz, T. (2023).
+\newblock Spatiotemporal wildfire modeling through point processes with
+  moderate and extreme marks.
+\newblock {\em The Annals of Applied Statistics}, 17(1):560--582.
+
+\bibitem[Kullback and Leibler, 1951]{Kullback1951}
+Kullback, S. and Leibler, R.~A. (1951).
+\newblock On information and sufficiency.
+\newblock {\em The Annals of Mathematical Statistics}, 22(1):79--86.
+
+\bibitem[Lin, 1991]{Lin1991}
+Lin, J. (1991).
+\newblock {Divergence Measures Based on the Shannon Entropy}.
+\newblock {\em IEEE Transactions on Information Theory}, 37(1):145--151.
+
+\bibitem[{Met Éireann}, 2025]{metHistoricalData}
+{Met Éireann} (2025).
+\newblock {Historical Data - Met Éireann - The Irish Meteorological Service
+  --- met.ie}.
+\newblock \url{https://www.met.ie/climate/available-data/historical-data}.
+\newblock [Accessed 2025-08-01].
+
+\bibitem[Miralles and Davison, 2024]{Miralles2024}
+Miralles, O. and Davison, A.~C. (2024).
+\newblock Bayesian modeling of insurance claims for hail damage.
+\newblock {\em The Annals of Applied Statistics}, 18(4):3091--3108.
+
+\bibitem[Mornet et~al., 2017]{Mornet2017-is}
+Mornet, A., Opitz, T., Luzi, M., Loisel, S., and Bailleul, B. (2017).
+\newblock Wind storm risk management: sensitivity of return period calculations
+  and spread on the territory.
+\newblock {\em Stochastic Environmental Research and Risk Assessment},
+  31(8):1977--1995.
+
+\bibitem[Ni et~al., 2023]{Ni2023-cd}
+Ni, S., Lin, C., Wang, H., Li, Y., Liao, Y., and Li, N. (2023).
+\newblock Learning geometric {Jensen-Shannon} divergence for tiny object
+  detection in remote sensing images.
+\newblock {\em Frontiers in Neurorobotics}, 17:1273251.
+
+\bibitem[Nielsen, 2019]{Nielsen2019}
+Nielsen, F. (2019).
+\newblock On the {Jensen-Shannon} {Symmetrization} of {Distances} {Relying} on
+  {Abstract} {Means}.
+\newblock {\em Entropy}, 21(5):485.
+
+\bibitem[Nielsen, 2025]{Nielsen2025}
+Nielsen, F. (2025).
+\newblock {Two tales for a geometric Jensen-Shannon divergence}.
+\newblock arXiv preprint arXiv:2508.05066.
+
+\bibitem[Opitz, 2016]{Opitz2016}
+Opitz, T. (2016).
+\newblock Modeling asymptotically independent spatial extremes based on
+  {Laplace} random fields.
+\newblock {\em Spatial Statistics}, 16:1--18.
+
+\bibitem[Osei et~al., 2021]{osei2021estimation}
+Osei, M.~A., Amekudzi, L.~K., Omari-Sasu, A.~Y., Yamba, E.~I., Quansah, E.,
+  Aryee, J.~N., and Preko, K. (2021).
+\newblock Estimation of the return periods of maxima rainfall and floods at the
+  {Pra River Catchment, Ghana, West Africa} using the {Gumbel} extreme value
+  theory.
+\newblock {\em Heliyon}, 7(5).
+
+\bibitem[Poon et~al., 2004]{Poon2004}
+Poon, S.-H., Rockinger, M., and Tawn, J. (2004).
+\newblock Extreme value dependence in financial markets: {Diagnostics}, models,
+  and financial implications.
+\newblock {\em The Review of Financial Studies}, 17(2):581--610.
+
+\bibitem[Anonymous, 2023]{Richards2023}
+Anonymous (2023).
+\newblock Details omitted for double-blind anonymised reviewing. 
+
+\bibitem[Anonymous, 2022]{Richards2022}
+Anonymous (2022).
+\newblock Details omitted for double-blind anonymised reviewing.
+
+\bibitem[Anonymous, 2018]{Rohrbeck_flooding_2018}
+Anonymous (2018).
+\newblock Details omitted for double-blind anonymised reviewing.
+
+\bibitem[Anonymous, 2021]{Rohrbeck2021}
+Anonymous (2021).
+\newblock Details omitted for double-blind anonymised reviewing.
+
+\bibitem[Rousseeuw and Kaufman, 1987]{Kaufman1987}
+Rousseeuw, L. and Kaufman, P. (1987).
+\newblock Clustering by means of medoids.
+\newblock In {\em Statistical Data Analysis Based on the L1 Norm and Related
+  Methods}, pages 405--416. Neuchâtel, Switzerland.
+
+\bibitem[Sando et~al., 2022]{Sando2022}
+Sando, K., Wada, R., Rohmer, J., Lecacheux, S., and Jonathan, P. (2022).
+\newblock {Estimating} {Joint} {Extremes} of {Significant} {Wave} {Height} and
+  {Wind} {Speed} for {Tropical} {Cyclones}.
+\newblock In {\em Volume 5B: Ocean Engineering; Honoring Symposium for
+  Professor G\"{u}nther F. Clauss on Hydrodynamics and Ocean Engineering},
+  OMAE2022. American Society of Mechanical Engineers.
+
+\bibitem[Anonymous, 2025]{Shao2025}
+Anonymous (2025).
+\newblock Details omitted for double-blind anonymised reviewing.
+
+\bibitem[Simpson et~al., 2023]{Simpson2023}
+Simpson, E.~S., Opitz, T., and Wadsworth, J.~L. (2023).
+\newblock {High-dimensional modeling of spatial and spatio-temporal conditional
+  extremes using INLA and Gaussian Markov random fields}.
+\newblock {\em Extremes}, 26(4):669–713.
+
+\bibitem[Simpson and Wadsworth, 2021]{Simpson2021}
+Simpson, E.~S. and Wadsworth, J.~L. (2021).
+\newblock Conditional modelling of spatio-temporal extremes for {Red Sea}
+  surface temperatures.
+\newblock {\em Spatial Statistics}, 41:100482.
+
+\bibitem[Soukissian and Tsalis, 2015]{soukissian2015effect}
+Soukissian, T.~H. and Tsalis, C. (2015).
+\newblock The effect of the generalized extreme value distribution parameter
+  estimation methods in extreme wind speed prediction.
+\newblock {\em Natural Hazards}, 78:1777--1809.
+
+\bibitem[Southworth and Heffernan, 2012]{Southworth2012}
+Southworth, H. and Heffernan, J.~E. (2012).
+\newblock Multivariate extreme value modelling of laboratory safety data from
+  clinical studies.
+\newblock {\em Pharmaceutical Statistics}, 11(5):367--372.
+
+\bibitem[Steinkohl et~al., 2013]{steinkohl2013extreme}
+Steinkohl, C., Davis, R.~A., and Kl{\"u}ppelberg, C. (2013).
+\newblock Extreme value analysis of multivariate high-frequency wind speed
+  data.
+\newblock {\em Journal of Statistical Theory and Practice}, 7:73--94.
+
+\bibitem[Anonymous, 2025]{Talento2025}
+Anonymous (2025).
+\newblock Details omitted for double-blind anonymised reviewing.
+
+\bibitem[Tanarhte et~al., 2015]{tanarhte2015heat}
+Tanarhte, M., Hadjinicolaou, P., and Lelieveld, J. (2015).
+\newblock Heat wave characteristics in the eastern {Mediterranean} and {Middle}
+  {East} using extreme value theory.
+\newblock {\em Climate Research}, 63(2):99--113.
+
+\bibitem[Tendijck et~al., 2023]{Tendijck2023}
+Tendijck, S., Eastoe, E., Tawn, J., Randell, D., and Jonathan, P. (2023).
+\newblock Modeling the {Extremes} of {Bivariate} {Mixture} {Distributions}
+  {With} {Application} to {Oceanographic} {Data}.
+\newblock {\em Journal of the American Statistical Association},
+  118(542):1373--1384.
+
+\bibitem[Thiagarajan and Ghosh, 2025]{Thiagarajan2025}
+Thiagarajan, P. and Ghosh, S. (2025).
+\newblock {Jensen-Shannon} divergence based novel loss functions for {Bayesian}
+  neural networks.
+\newblock {\em Neurocomputing}, 618(129115):129115.
+
+\bibitem[Thorndike, 1953]{Thorndike1953-ie}
+Thorndike, R.~L. (1953).
+\newblock Who belongs in the family?
+\newblock {\em Psychometrika}, 18(4):267--276.
+
+\bibitem[Vettori et~al., 2019]{Vettori2019}
+Vettori, S., Huser, R., and Genton, M.~G. (2019).
+\newblock Bayesian modeling of air pollution extremes using nested multivariate
+  max-stable processes.
+\newblock {\em Biometrics}, 75(3):831--841.
+
+\bibitem[Vignotto et~al., 2021]{Vignotto2021}
+Vignotto, E., Engelke, S., and Zscheischler, J. (2021).
+\newblock {Clustering bivariate dependencies of compound precipitation and wind
+  extremes over Great Britain and Ireland}.
+\newblock {\em Weather and Climate Extremes}, 32:100318.
+
+\bibitem[Vijendra and Laxman, 2015]{Vijendra2015}
+Vijendra, S. and Laxman, S. (2015).
+\newblock Symmetry based automatic evolution of clusters: A new approach to
+  data clustering.
+\newblock {\em Computational Intelligence and Neuroscience}, 2015:796276.
+
+\bibitem[Wadsworth and Tawn, 2022]{Wadsworth2022}
+Wadsworth, J. and Tawn, J. (2022).
+\newblock Higher-dimensional spatial extremes via single-site conditioning.
+\newblock {\em Spatial Statistics}, 51:100677.
+
+\bibitem[Winter et~al., 2016]{Winter2016}
+Winter, H.~C., Tawn, J.~A., and Brown, S.~J. (2016).
+\newblock {Modelling the effect of the El Niño-Southern Oscillation on extreme
+  spatial temperature events over Australia}.
+\newblock {\em The Annals of Applied Statistics}, 10(4):2075 -- 2101.
+
+\bibitem[Zhang et~al., 2024]{Zhang2024}
+Zhang, L., Risser, M.~D., Wehner, M.~F., and O'Brien, T.~A. (2024).
+\newblock {Leveraging Extremal Dependence to Better Characterize the 2021
+  Pacific Northwest Heatwave}.
+\newblock {\em Journal of Agricultural, Biological and Environmental
+  Statistics}.
+
+\bibitem[Zheng et~al., 2023]{Zheng2023-jf}
+Zheng, S., Fan, K., Hou, Y., Feng, J., and Fu, Y. (2023).
+\newblock Clustering by the probability distributions from extreme value
+  theory.
+\newblock {\em IEEE Transactions on Artificial Intelligence}, 4(2):292--303.
+
+\bibitem[Zscheischler et~al., 2021]{Zscheischler2021}
+Zscheischler, J., Naveau, P., Martius, O., Engelke, S., and Raible, C.~C.
+  (2021).
+\newblock Evaluating the dependence structure of compound precipitation and
+  wind speed extremes.
+\newblock {\em Earth System Dynamics}, 12(1):1--16.
+
+\bibitem[Zscheischler et~al., 2018]{zscheischler2018future}
+Zscheischler, J., Westra, S., Van Den~Hurk, B.~J., Seneviratne, S.~I., Ward,
+  P.~J., Pitman, A., AghaKouchak, A., Bresch, D.~N., Leonard, M., Wahl, T.,
+  et~al. (2018).
+\newblock Future climate risk from compound events.
+\newblock {\em Nature Climate Change}, 8(6):469--477.
+
+\end{thebibliography}

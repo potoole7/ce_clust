@@ -28,34 +28,59 @@
 \newcommand{\red}{\textcolor{red}}
 \newcommand{\purple}{\textcolor{purple}}
 
+\usepackage{todonotes}
+
+% Define custom maths equations 
+\DeclareMathOperator{\KL}{KL}
+\DeclareMathOperator{\JS}{JS}
+\DeclareMathOperator*{\argmin}{arg\,min}
+% \DeclarePairedDelimiter\abs{\lvert}{\rvert}%
+\DeclareMathOperator{\EX}{\mathbb{E}}% expected value
+\newcommand{\JSGa}{\mathop{\mathrm{JS}^{\mathrm{G}_{\lambda}}}\nolimits}
+\newcommand{\cJSGa}[1]{\mathop{\mathrm{cJS}_{i, #1}^{\mathrm{G}_{\lambda}}}\nolimits}
+\newcommand{\eJSGa}[1]{\mathop{\mathrm{eJS}_{i, #1}^{\mathrm{G}_{\lambda}}}\nolimits}
+\DeclareRobustCommand{\eJSGai}{\mathop{\mathrm{eJS}^{\mathrm{G}_{\lambda}}}\nolimits}
+\DeclareMathOperator{\GJS}{\mathrm{JS}^{\mathrm{G}}}
+\DeclareMathOperator{\CE}{\mathrm{CE}}
+\newcommand{\rhou}[1]{\rho_{\text{#1}}}
+\newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
+
+\newcommand{\mvmean}[1]{\symbf{\alpha}_{\mid i, #1} y + y^{\symbf{\beta}_{\mid i, #1}} \symbf{\mu}_{\mid i, #1}}
+\newcommand{\mvcov}[1]{\left(y^{\symbf{\beta}_{\mid i, #1}}\right)^{\mathrm{T}} \Sigma_{\mid i, #1} y^{\symbf{\beta}_{\mid i, #1}}}
+
+
+
 \begin{document}
 
 \noindent \textbf{{\Large Response to Reviewers:\\
-``MOPED: A moving sum method for change point detection in pairwise extremal dependence''}}
+% ``MOPED: A moving sum method for change point detection in pairwise extremal dependence''}}
+``Clustering of multivariate tail dependence using conditional methods''}}
 
 \vspace*{.25cm}
 
-\noindent \textbf{{\large(Manuscript ID: Extremes b660ab30-cacb-4a14-a6a9-e60fcf48c005)}}
+% \noindent \textbf{{\large(Manuscript ID: Extremes b660ab30-cacb-4a14-a6a9-e60fcf48c005)}}
+\noindent \textbf{{\large(Manuscript ID: CSDA-D-25-01358)}}
 
 \vspace*{.25cm}
 
-
-
-\noindent {\it by Euan T.~McGonigle, Matthew Pawley, Jordan Richards\footnote{Corresponding author: Jordan Richards \\
-\hspace*{.75cm} School of Mathematics, University of Edinburgh, UK\\
-\hspace*{.75cm} \href{mailto:jordan.richards@ed.ac.uk}{jordan.richards@ed.ac.uk}} and Christian Rohrbeck}
+% \noindent {\it by Euan T.~McGonigle, Matthew Pawley, Jordan Richards\footnote{Corresponding author: Jordan Richards \\
+\noindent {\it by Patrick O'Toole, Christian Rohrbeck, Jordan Richards\footnote{Corresponding author: Patrick O'Toole \\
+\hspace*{.75cm} Department of Mathematical Sciences, University of Bath, UK\\
+\hspace*{.75cm} \href{mailto:pot23@bath.ac.uk}{pot23@bath.ac.uk}}}
 
 \vspace{.5cm}
 
-\noindent {\it To: Rafal Kulik, Ph.D.} \\
-{\it Editor, Extremes} \\
-{\it Chen Zhou, Ph.D.} \\
-{\it Guest Editor
-} \\
+% \noindent {\it To: Rafal Kulik, Ph.D.} \\
+% {\it Editor, Extremes} \\
+% {\it Chen Zhou, Ph.D.} \\
+% {\it Guest Editor
+% } \\
 
-Dear Rafal and Chen, \\
+% Dear Rafal and Chen, \\
+Dear Referees,
 
-Thank you for the opportunity to provide an updated version of our manuscript entitled ``MOPED: A moving sum method for change point detection in pairwise extremal dependence'' for consideration in Extremes. The comments from the reviewers have been very helpful, and we have addressed them thoroughly.\\
+% Thank you for the opportunity to provide an updated version of our manuscript entitled ``MOPED: A moving sum method for change point detection in pairwise extremal dependence'' for consideration in Extremes. The comments from the reviewers have been very helpful, and we have addressed them thoroughly.\\
+Thank you for the opportunity to provide an updated version of our manuscript entitled ``Clustering of multivariate tail dependence using conditional method'' for consideration in Computational Statistics and Data Analysis. The comments from the reviewers have been very helpful, and we have addressed them thoroughly.\\
 
 Major changes to the text have been highlighted in \textcolor{red}{red}.
 \clearpage
@@ -71,221 +96,310 @@ Major changes to the text have been highlighted in \textcolor{red}{red}.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% Editor %%% Editor %%% Editor %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\noindent {\Large \bf {Responses to the Guest Editor}}\\
+\noindent {\Large \bf {Responses to the Co-Editor}}\\
 
-\noindent \textcolor{violet}{I have received reports from two experts in the field. Referee 1 recommended "Revise" with a list of comments while Referee 2 is more critical.\\
-The main critique of Referee 2  is that the paper is lack of theoretical guarantee. To my view, it is also important to have methodological papers ahead of theoretical work. Therefore, I would not emphasize on developing new theories. Instead, it is sufficient to provide arguments why the proposed procedure has the potential to achieve theoretical guarantee.\\
-With this idea in mind, I'd like to invite the authors for a revision addressing the comments of Referee 1 and the minor comment of Referee 2.}\\
+% \noindent \textcolor{violet}{I have received reports from two experts in the field. Referee 1 recommended "Revise" with a list of comments while Referee 2 is more critical.\\
+% The main critique of Referee 2  is that the paper is lack of theoretical guarantee. To my view, it is also important to have methodological papers ahead of theoretical work. Therefore, I would not emphasize on developing new theories. Instead, it is sufficient to provide arguments why the proposed procedure has the potential to achieve theoretical guarantee.\\
+% With this idea in mind, I'd like to invite the authors for a revision addressing the comments of Referee 1 and the minor comment of Referee 2.}\\
+\noindent \textcolor{violet}{Your article was reviewed by two experts in the field. The topic is clearly interesting, but the article requires a major revision taking into account all the reviewers' comments, especially those of Reviewer 1. Please provide a letter describing all your changes and responses to the reviewers' comments.}\\
 
-\noindent \textcolor{violet}{\bf Response}: Thank you for these comments. We have thoroughly addressed the comments of Reviewer 1, and so the latest version of the manuscript includes two additional simulation studies, a re-write of the methodology section, and additional comments on model assumptions and justification throughout the paper. Per your advice, we have opted to leave the major comments of Reviewer 2 unaddressed, but we have addressed all of the minor comments. \textbf{Note that we have not derived any new theoretical results in this updated manuscript.}\\
+% \noindent \textcolor{violet}{\bf Response}: Thank you for these comments. We have thoroughly addressed the comments of Reviewer 1, and so the latest version of the manuscript includes two additional simulation studies, a re-write of the methodology section, and additional comments on model assumptions and justification throughout the paper. Per your advice, we have opted to leave the major comments of Reviewer 2 unaddressed, but we have addressed all of the minor comments. \textbf{Note that we have not derived any new theoretical results in this updated manuscript.}\\
 
+\todo{Include what we plan to do here!}
+\noindent \textcolor{violet}{\bf Response}: Thank you for these comments. We have thoroughly addressed the comments of $\ldots$ \\
 
 \clearpage
 \newpage
-
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% Reviewer 1 %%% Reviewer 1 %%% Reviewer 1 %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \noindent {\Large {\bf Responses to Reviewer 1}}\\
 
-\noindent \textcolor{teal}{The paper is well-written, interesting, and potentially useful. However, several assumptions are not stated explicitly, some imported results are used
-without verifying their conditions in the present setting, and the theoretical
-guarantees (e.g., consistency for break detection) are not yet articulated.
-Clarifying these points and expanding the Monte Carlo section would substantially
-strengthen the paper.}
-
-
+% \noindent \textcolor{teal}{The paper is well-written, interesting, and potentially useful. However, several assumptions are not stated explicitly, some imported results are used
+% without verifying their conditions in the present setting, and the theoretical
+% guarantees (e.g., consistency for break detection) are not yet articulated.
+% Clarifying these points and expanding the Monte Carlo section would substantially
+% strengthen the paper.}
+\noindent \textcolor{teal}{
+While a substantial body of work exists on the estimation of conditional extremes models in multivariate and spatial contexts, the problem of clustering within this framework has received little attention. 
+The paper under review aims to address this gap by developing clustering algorithms for the analysis of conditional extremes models
+across a broad range of settings, with the goal of supporting exploratory analysis and parameter estimation. 
+While the paper addresses an important and innovative topic, the current version suffers from significant theoretical, methodological, and empirical limitations. 
+The use of heterogeneous data sources without proper justification or harmonization, the lack of validation of key modeling assumptions, and the unclear presentation of the dissimilarity measure and simulation settings are major concerns. 
+In a subsequent revision, my opinion is that the authors must:
+\begin{itemize}
+  \item Clarify and justify the properties and interpretability of the proposed dissimilarity measure.
+  \item Revise the simulation study to clearly demonstrate the method’s robustness and relevance within the CEV framework.
+  \item Provide rigorous validation of the Gaussian assumption for conditional residuals in the real data application, and either justify the use of Met Éireann and ERA5 data or switch to a single, consistent data source.
+  \item Address all minor points regarding clarity and presentation.
+\end{itemize}
+The acceptability of the revised manuscript will depend heavily on the authors’ ability to address these concerns satisfactorily. 
+This is a critical point: the scientific validity of the results hinges on
+these aspects.
+}
 
 %%% Section %%% Section %%% Section %%%
 %%% Section %%% Section %%% Section %%%
 %%% Section %%% Section %%% Section %%%
 \section*{{Major Comments}}
 
+%%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%%
+% \noindent \textcolor{teal}{1. The way you introduce the multivariate time series (viz., Eq. (4)) reads as if a break affects the entire joint distribution, not just extremal
+% dependence. Please clarify.}\\
+% 
+% \noindent \textcolor{teal}{\bf Response}: See below. \\
+
+\noindent \textcolor{teal}{A first concern is the limited readability of Section 2 and the fact that the proposed dissimilarity
+measure is not sufficiently discussed in terms of its properties and interpretability. 
+Further details are provided below.:}
+
+% \noindent \textcolor{teal}{
+%   1. The statement on page 9 claiming that $\mathrm{G}_{\lambda}(H, H^*)$ is multivariate Gaussian is unclear and potentially misleading. 
+%   As currently phrased, it may be interpreted as follows: let $X \sim \mathcal{N}_d(\mu_1, \Sigma_1)$ and $Y \sim \mathcal{N}_d(\mu_2, \Sigma_2)$ be two multivariate Gaussian random vectors with cumulative distribution functions $H$ and $H^*$, respectively. 
+%   Then the weighted geometric mean
+% \[
+%   \mathrm{G}_{\lambda}(H, H^*) = H^{1-\lambda}(H^*)^{\lambda}
+% \]
+% would itself correspond to a multivariate Gaussian distribution. 
+% This interpretation is incorrect in general. 
+% Presumably, the authors intend to refer instead to the normalized weighted geometric mean of the densities, namely
+% \[
+%   \frac{f^{\lambda}h^{1-\lambda}}{\int f^{\lambda}h^{1-\lambda} dx},
+% \]
+% which is indeed Gaussian. 
+% Clarifying this point would help avoid confusion.
+% }
+
+{\color{teal}
+\noindent 1. The statement on page 9 claiming that $\mathrm{G}_{\lambda}(H, H^*)$ is multivariate Gaussian is unclear and potentially misleading. 
+As currently phrased, it may be interpreted as follows: let $X \sim \mathcal{N}_d(\mu_1, \Sigma_1)$ and $Y \sim \mathcal{N}_d(\mu_2, \Sigma_2)$ be two multivariate Gaussian random vectors with cumulative distribution functions $H$ and $H^*$, respectively. 
+Then the weighted geometric mean
+\[
+  \mathrm{G}_{\lambda}(H, H^*) = H^{1-\lambda}(H^*)^{\lambda}
+\]
+would itself correspond to a multivariate Gaussian distribution. 
+This interpretation is incorrect in general. 
+Presumably, the authors intend to refer instead to the normalized weighted geometric mean of the densities, namely
+\[
+  \frac{f^{\lambda}h^{1-\lambda}}{\int f^{\lambda}h^{1-\lambda}\,dx},
+\]
+which is indeed Gaussian. 
+Clarifying this point would help avoid confusion.
+}
+
+\noindent \textcolor{teal}{\bf Response}: \\
+
+%%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%%
+
+{\color{teal}
+\noindent 2. Could the authors discuss possible advantages or interpretations of the expected divergence defined in Equation (11)? 
+At the beginning of Section 2.3, four desirable properties of a divergence measure are listed: non-negativity, symmetry, being upper-bounded, and computational efficiency. 
+Only the second property (symmetry) is briefly addressed. 
+Do the other three properties hold for the proposed divergence? 
+Regarding interpretability, what can be inferred about $Y_{i,s}$ and $Y_{i,s^*}$ if
+$\eJSGa{i, s, s^*} = 0$?
+Do the two variables then have identical conditional $(d - 1)$-variate Gaussian distributions at
+sites $s$ and $s^*$, respectively? 
+If so, do we also have equivalence?
+}
+
+\noindent \textcolor{teal}{\bf Response}: \\
+
+%%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%%
+
+\noindent \textcolor{teal}{My second concern relates to the simulation study, for which it is unclear how the considered setup fits within the framework introduced in Section 2.}
+
+\todo{Fix references here?}
+\noindent \textcolor{teal}{1. In Section 3.1, in the Gaussian copula setting, Keef, Papastathopoulos, and Tawn 2013, Section 2.3 compute the corresponding parameters of the CE framework. 
+However, it is unclear whether the residuals $\boldsymbol{Z}_{\mid i,s}$ follow a multivariate normal distribution, and if so, for which parameters. 
+Since the proposed method relies on this assumption, it is crucial to comment on the validity of the simulation setting and the implications for the method’s performance.}
+
+\noindent \textcolor{teal}{\bf Response}: \\
+
+%%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%%
+
+\noindent \textcolor{teal}{
+2. In Section 3.2, it is unclear whether the introduced model fits within the CEV framework.
+Additionally, what are the parameters $\alpha_{\mid i, s}$ and $\beta{_\mid i, s}$ for $i \in \{1, \ldots, d\}$ and $s \in \{1, \ldots, D\}$?
+}
+
+\noindent \textcolor{teal}{\bf Response}: \\
+
+%%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%%
+
+\todo{Fix references}
+\noindent \textcolor{teal}{
+3. In Section 3.2.1, it is unclear why the comparison between the proposed method and that of
+Vignotto, Engelke, and Zscheischler 2021 adds significant value to the paper. 
+While the method operates within the Asymptotic Dependence (AD) framework, it is not formulated within the CEV framework. 
+Perhaps, an interesting comparison could involve two simulation settings: one under Asymptotic Independence (AI), i.e., $-1 < \alpha_{j \mid i, s} < 1$ for all $i, j \in \{1, \ldots, d\}$ with $j \ne i$ and $s \in \{1, \ldots, D\}$, and another under Asymptotic Dependence (AD), i.e. $\alpha_{j \mid i, s} = 1$ for all $i, j \in \{1, \ldots, d\}$ with $j \ne i$ and $s \in \{1, \ldots, D\}$. 
+One could then compare the performance of the two methods in these distinct settings. 
+Since the proposed method encompasses both AI and AD, while Vignotto, Engelke, and Zscheischler 2021 only handles AD, we would expect the proposed method to perform well in both settings, whereas the competitor would only perform well in the AD scenario. 
+It is possible that the results in Section 3.2.1 already include such comparisons, but as presented, these findings are not clearly discussed.
+}
+
+\noindent \textcolor{teal}{\bf Response}: \\
+
+%%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%%
+
+\noindent \textcolor{teal}{
+4. In Section 3.2.2, it is unclear what the added value of this setting is. 
+As the authors note,
+since $\rho^{s}_t$ is the same across all variable pairs, increasing the dimension d effectively increases the amount of available data. 
+Consequently, the results presented in this section may simply reflect the effect of having more data, rather than a fundamental property of the proposed method. 
+As suggested by the authors, it would be more informative to consider a setting where 
+$\rho^{s}_t$ differs across variable pairs. 
+I strongly recommend that the authors explore this direction. 
+This would provide stronger evidence that ``the proposed method scales effectively to higher dimensions and performs well in multivariate settings.'' 
+Otherwise, the conclusion should be interpreted with caution or possibly omitted, as its current basis is not robust.
+}
+
+\noindent \textcolor{teal}{\bf Response}: \\
+
+%%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%%
+
+\noindent \textcolor{teal}{
+My third concern pertains to the data used in the application and the lack of rigor in assessing
+whether these data fully comply with the modeling assumptions introduced in Section 2, an issue
+that is not addressed by the authors.
+}
+
+\noindent \textcolor{teal}{
+1. As far as I understand, the data are collected from two different sources: precipitation from
+Met Éireann and ERA5 reanalysis. 
+Presumably, the former are observational data, while the latter are modeled data. 
+The use of precipitation data from Met Eireann and wind data from ERA5 raises important methodological questions regarding the potential introduction of biases in the dependence structure between these variables. 
+Observational and reanalysis data differ in spatial/temporal resolution, measurement uncertainty, and processing methods, which may artificially inflate or diminish apparent correlations. 
+The authors should justify this choice, discuss its impact on the results, and consider either using a single data source or applying harmonization techniques to mitigate these biases.
+}
+
+\noindent \textcolor{teal}{\bf Response}: \\
+
+%%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%%
+
+\noindent \textcolor{teal}{
+2. The spatial resolution of ERA5 may be relatively coarse for the Island of Ireland. 
+For example, at locations 1, 2, 3, and 5 in the right panel of Figure 6, there may be multiple points contained within the same $0.25 \times 0.25$ degree pixel, potentially resulting in identical time series for wind speed at these locations. 
+Does this actually occur, or were the selected locations chosen carefully to avoid such overlap? 
+If not, would the conclusions of the study remain unaffected?
+}
+
+\noindent \textcolor{teal}{\bf Response}: \\
+
+%%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%%
+
+\noindent \textcolor{teal}{
+3. The proposed method is developed within the CEV framework defined in Equation (5), where
+$\boldsymbol{Z}_{\mid i, s}$ is assumed to follow a multivariate Gaussian distribution with mean vector $\mu_{\mid i, s} \in \mathbb{R}$ and covariance matrix 
+$\Sigma_{\mid i, s}$ for $i = 1, 2$ and $s = 1, \ldots, 59$. 
+Could the authors provide, in Section 4.2, more quantitative justification supporting the assumption that
+\[
+  \boldsymbol{Z}_{\mid i, s} = \frac{\boldsymbol{Y}_{-i}-\hat{\alpha}_{\mid i, s}\boldsymbol{Y}_i}{\boldsymbol{Y}_{i}^{\hat{\beta}_{i, s}}}
+\]
+for $\boldsymbol{Y}_i > u_{i, s}$ can be reasonably modeled by a multivariate normal distribution? 
+Indeed, the above expression is an estimator of the distribution of $G_{\mid i, s}$, as stated in Keef, Papastathopoulos, and Tawn 2013, Section 2.4. 
+Given the large number of variables considered, the authors could, for instance, provide one or two representative Q–Q plots comparing the fitted Gaussian model to the empirical observations, or diagnostic plots of the residuals. 
+The results for all 118 cases could then be summarized using a boxplot of the 118 coefficients of determination between the fitted values and the observed values. 
+If I am not mistaken, a similar diagnostic analysis has been carried out in Ross et al. 2018, Figure 6 in a same setting to that considered in the present paper, suggesting that such an assessment should be feasible in practice.
+}
+
+\noindent \textcolor{teal}{\bf Response}: \\
 
 
 %%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%%
-\noindent \textcolor{teal}{1. The way you introduce the multivariate time series (viz., Eq. (4)) reads as if a break affects the entire joint distribution, not just extremal
-dependence. Please clarify.}\\
 
-\noindent \textcolor{teal}{\bf Response}: See below. \\
+\noindent \textcolor{teal}{
+4. The authors provide a thorough spatial analysis of the clusters, which helps to assess their
+spatial coherence. 
+However, is it also possible to interpret the clusters in terms of their dissimilarity? 
+For instance, the second cluster (shown in blue) in Figure 9 appears to consist of stations with very small dissimilarity values. 
+Can this observation be interpreted within the CEV framework?
+}
 
-
-%%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%%
-\noindent \textcolor{teal}{2. The authors impose several assumptions within their text. I would
-prefer if assumptions were made more explicit using e.g.
-\begin{itemize}
-\item \textbf{Assumption 1} [Margins]
-\item \textbf{Assumption 2} [(No) Serial dependence]
-\item \textbf{Assumption 3} [Moments]
-\end{itemize}
-Also, state the null hypothesis and alternative explicitly.}\\
-
-\noindent \textcolor{teal}{\bf Response}:  Thank you for these comments. We have added the following text below Eq. (5)\\
-
-\textcolor{red}{To further clarify our proposed change point model, we reiterate our assumptions on the time series $\{\mathbf{X}_t\}^n_{t=1}$:
-\begin{itemize}
-\item \textbf{Assumption 1:}  Marginally, ${X}_{i,t} \in \mbox{RV}^1_+(2)$ for all $i=1,\dots,d,t=1,\dots,n.$ [Margins]
-\item \textbf{Assumption 2:}  $\mathbf{X}_t \in \mbox{RV}^d_+(2),t=1,\dots,n,$ are independent. [Serial independence]
-\item \textbf{Assumption 3:}  There exist a collection of $q+2$ (with $q \geq 0$) change points  $\mathcal C = \{\tau_l \}_{l=0}^{q+1},$ with $\tau_0=0$ and $\tau_{q+1}=n$, such that the TPDM of the regularly varying $\mathbf{X}_t$ is $\Sigma^{(l)}$ for $ \tau_{l-1} < t \leq \tau_{l},l=1,\dots,q,$ with $\Sigma^{(l)}\neq \Sigma^{(l')}$ for all $l\neq l'$. [Change points]
-\end{itemize}}
-
-\textcolor{red}{\textit{Remark}: As an implication of \textbf{Assumption 1}, the $\beta$-th moment of $X_{i,t}$ is finite only for $\beta< 2$. Note that $\mathbf{X}_t \in \mbox{RV}^d_+(2)$ is an asymptotic statement, and we make no assumptions on the sub-asymptotic joint distribution of $\mathbf{X}_t \in \mbox{RV}^d_+(2)$. We assume that only the corresponding TPDM, and thus the pairwise extremal dependence, differs across change points. }\\
-Note that our focus is on the problem of detecting and estimating multiple change points, rather than the closely related testing problem, so that we do not have a null or alternative hypothesis statement. The number of change points, $q\geq 0$, is an estimable parameter in our model, and thus we have framed the hypothesis test as an estimation problem.  \\
-
-%%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%%
-
-\noindent \textcolor{teal}{3. In several places you rely on results from the literature. It is not clear,
-at least to me, whether this is always justified here. For example,
-on page 7, the proposed procedure borrows techniques from Eichinger
-and Kirch (2018, Bernoulli), who impose specific regularity conditions.
-Please state explicitly which results you use and state the corresponding
-conditions; verify that these conditions hold in your current setup.}\\
-
-\noindent \textcolor{teal}{\bf Response}: Thank you for raising this important point. To clarify: we adopt the MOSUM detection methodology from \cite{eichinger2018}, but we do not rely on their theoretical results or consistency guarantees.
-
-Our contribution is empirical and methodological in nature. We do not make theoretical claims about detection consistency or invoke the regularity conditions required for the asymptotic results in \cite{eichinger2018}. Rather, we demonstrate the practical utility of adapting the MOSUM approach to the context of extremal dependence changes through numerical studies and the EEG application.
-
-In the Discussion section, we note that rigorous theoretical justification for change point detection in extremes remains an open area for future research.  \\
-
-%%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%%
-\noindent \textcolor{teal}{4. More generally, some theoretical evidence in terms of a formal result
-(e.g. in form of a theorem) confirming that the proposed procedure is
-able to, for example, consistently detect breakpoints would be welcome.}\\
-
-\noindent \textcolor{teal}{\bf Response}: We agree that formal theoretical guarantees would strengthen the contribution. However, establishing consistency results for change point detection in extremal dependence is beyond the scope of the current work and represents a significant open theoretical challenge.
-
-Standard change point detection techniques, such as those in \cite{eichinger2018}, rely on careful decomposition of test statistics in the presence of change points. Extending these techniques to our setting would require new technical results involving explicit convergence rates in extreme value theory which, to the best of our knowledge, are not currently available in the literature. We view the development of rigorous theoretical foundations for change point detection in extremes as an important direction for future research. \\
-
-%%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%%
-\noindent \textcolor{teal}{5. Given that you work with time series, the assumption of independence
-feels restrictive. Can it be relaxed to allow for some amount of dependence?
-For example, you are citing Hoga (2018, Biometrika), whose method is applicable to short memory ($\beta$-mixing) processes. Alternatively,
-you might discuss a prior filtering step; i.e., your procedure
-would be applied to residuals from estimated marginal time series models.
-Here, the cited paper of B\"ucher, J\"aschke and Wied (2015, JoE)
-contains a preliminary discussion; in a related paper, Borsch, Mayer
-and Wied ('Consistent estimation of multiple breaks \dots ', 2024, JBES)
-provide also some theoretical results in that respect for multiple break
-point detection for copulas. Of course, a technical treatment seems
-beyond the scope, but at least a discussion seems warranted. Adding
-a short simulation comparing e.g. IID and AR-GARCH settings could
-also be very informative here. This is the more important because in your application (p. 16) it seems as if you apply some (pre-)filtering..}\\
-
-\noindent \textcolor{teal}{\bf Response}: This is a great point. We have added an additional simulation study, Scenario 3, which considers change point detection for a vector autoregressive model. We have added the below details to Section 3.2:
- \textcolor{red}{For Scenario 3, we generate data from a first-order vector autoregressive model:
- $$\mathbf{X}_t=\Phi \mathbf{X}_{t-1}+ \boldsymbol{\epsilon}_t,\quad t = 1,\dots,n,$$
- where $\Phi = \phi I_{d\times d}$ for autoregressive (AR) parameter $\phi \in[0,1)$ and where $\boldsymbol{\epsilon}_t$ is $d$-variate Gaussian with zero mean, unit variance, and correlation matrix $\Omega$. The correlation matrix $\Omega$ of $\boldsymbol{\epsilon}_t$ differs across the change points, and it is parametrised as described above for Scenario~1. }
-
-The results are stored in Tables A9--A14 of the Appendix, and summarised at the end of Section 3.2:
-\textcolor{red}{For Scenario 3, Tables~A9--A11 give the results for $d=2$ while Tables~A2--A14 give the results for $d=8$. As the value of the autocorrelation parameter $\psi$ increases from $0$ to $0.6$, we observe the expected degradation in the performance of all considered change point detection methods: MOPED, E-divisive, and the parametric approach of \cite{hazra2025estimating}. For all methods, we observe a reduction in estimation accuracy for $q$, the number of change points, as well as the average covering metric and V-measure. However, we note that the extremal change point methods - MOPED and \cite{hazra2025estimating} - exhibit relative robustness to the presence of autocorrelation in comparison with E-divisive. When $\psi=0$, i.e., the data are independent, E-divisive outperforms MOPED in some cases (Tables~A9 and A12). However, even under mild autocorrelation (Tables~A10 and A13), the performance of E-divisive is markedly worse than MOPED, with E-divisive routinely overestimating the number of change points by at least two. Conversely, MOPED facilitates reasonable estimation accuracy even under strong autocorrelation (Tables~A1 and A4), albeit with some evidence that the true number of change points is underestimated.}
-
-We also note in the application:
-\textcolor{red}{To remove serial dependence in these data, we sub-sample every 256th value, where 256Hz is the sampling rate, and thus we sub-sample every second. While this does not completely remove the autocorrelation in the data, the results from Scenario 3 of the simulation study (Section~3) suggest that MOPED is relatively robust to the presence of mild autocorrelation.}\\
-and comment in Section 2.5:\\
-\textcolor{red}{\textit{Remark}: if independence of observations cannot be assumed, then alternative resampling methods that are applicable to the times series setting could be employed instead; for example the block bootstrapping approach of \cite{ng2022bootstrap}, or the wild bootstrap of \cite{shao2010dependent}.}\\
-
-
-%%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%%
-\noindent \textcolor{teal}{6. At the very beginning you mention that margins are assumed to be unaffected
-from breaks. First, although it seems to be a common assumption
-in the literature, a discussion of when this is reasonable and how
-violations would affect inference would be appreciated (see e.g. Section
-3.7 in B\"ucher, J\"aschke and Wied (2015, JoE)). Second, comment on
-whether the assumption is plausible in your empirical application.}\\
-
-\noindent \textcolor{teal}{\bf Response}: Thank you for this point. MOPED assumes that the margins are regularly varying with index $\alpha=2$, which is a less strict assumption than the margins being completely unaffected by the change point - rather we just require that the marginal regular variation condition is satisfied. 
-
-For our application, previous studies have investigated the temporal non-stationarity in the marginal extremal behaviour, and found that this does exhibit a change point. As we have not explicitly accounted for this in our manuscript, we cannot guarantee that our MOPED estimates are due to changes in only the extremal dependence structure. We have commented on this limitation in the main text:\\
-\textcolor{red}{As discussed by \cite{Guerrero2023}, these data exhibit temporal non-stationarity in their marginal extremal behaviour. For simplicity, we have not explicitly modelled the data margins. As such, the following estimated change points may reflect changes in the marginal extremal behaviour and/or the extremal dependence structure. However, MOPED still provides a quick and convenient exploratory tool for identifying structural changes in the extremal behaviour of these data and, as we are to show, also provides estimates that are in better agreement, relative to the competitor (E-divisive), with expert opinion. }
-
-
-%%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%%
-\noindent \textcolor{teal}{7. On the Monte Carlo experiment:}\\
-
-\noindent \textcolor{teal}{7a. To get a better feeling for the performance of the procedure, also smaller sample sizes than the one chosen (n = 5,000) should be
-considered.}\\
-
-
-\noindent \textcolor{teal}{\bf Response}: Thank you for this point. For brevity, we have only repeated the experiments for Scenario 1 - these are not given in Tables A3--A5 of the Appendix. We have added the accompanying text in Section 3.2:
-
- \textcolor{red}{For Scenario 1, we repeat the numerical experiment with a lower sample size of $n=2000$. In this setting, to reflect the lower sample size, we use a smaller bandwidth of $G=500$ for MOPED, and sequence of bandwidths $\mathcal{H}=\{300,400,500\}$ for MMMOPED. The results are reported in Tables~A3--A5. We observe generally poorer performance of all methods (relative to $n=5000$), but MOPED retains its competitiveness with E-divisive and the parametric detection method \citep{hazra2025estimating}. We also observe that MOPED exhibits robustness to the sample size in cases where change points are easier to detect, i.e., $\rho = 0.6$. Note that, in our real data application (Section~4), the lowest sample size that we consider is $n\approx 3500$.}\\
-
-
-\noindent \textcolor{teal}{7b. Maybe I am missing something, but the performance of all methods in Scenario 2 is rather poor. Correct detections (column $\hat{q}-q$)
-are on average the exception. Can you explain? Is the break-size (too) low relative to window/sample size?.}\\
-
-
-\noindent \textcolor{teal}{\bf Response}: Thank you for this comment. In this case, the change in dependence structure is very subtle - the sub-asymptotic dependence structure, e.g., correlation, does not change, but the limiting extremal dependence structure will transition from asymptotic dependence to asymptotic independence. Despite of this subtlety, MOPED and MMMOPED perform well when the dimension is relatively large, i.e., $d>2$. However, all methods perform poorly when $d=2$. We have added the following comments to the simulation study.
-
-\textcolor{red}{In contrast with Scenario 1, the change in the distribution across the change point is more subtle in Scenario 2; the data generating copula changes from one which exhibits asymptotic dependence to one which exhibits asymptotic independence, but with the (sub-asymptotic) correlation structure remaining constant across the change point. In the case where the change point is particularly difficult to identify, for example, when the dimension is low ($d=2$), all methods underestimate the true number of change points $q$.  However, Tables~A6 and A7 illustrate that the fixed-parameter MOPED method generally outperforms both E-divisive and the method of \cite{hazra2025estimating}.}\\
-
-\noindent \textcolor{teal}{7c. On page 11 you state that you chose two significance levels $\alpha \in \{0.05, 0.10\}$ for the permutation testing. I cannot see which of
-them is used later in the simulations. Some break point procedures
-require $\alpha:=\alpha(n)\rightarrow0$ ad $n\rightarrow \infty$ for consistently estimating
-the number of breaks (e.g. Proposition 8 in Bai and Perron 'Estimating
-and testing linear models \dots', Econometrica, 1998). Could
-you comment on why this is here not needed?}\\
-
-
-\noindent \textcolor{teal}{\bf Response}: Thank you for catching this: we use the significance level $\alpha = 0.1$ in the simulations, which has now been clarified in the main text in Section 3.1. 
-
-The permutation test (if completely enumerated for all $n!$ permutations) is exact for a finite sample, and controls the proportion of false positives (any change point declared when there are none) at the prescribed level $\alpha$. We demonstrate in the numerical experiments that the permutation test is able to achieve close to the nominal size level when there are no change points present for a variety of sample sizes.
+\noindent \textcolor{teal}{\bf Response}: \\
 
 %%% Section %%% Section %%% Section %%%
 %%% Section %%% Section %%% Section %%%
 %%% Section %%% Section %%% Section %%%
 \section*{{Minor Comments}}
 
+%%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%%
+{\color{teal}
+\noindent 
+On page 11, $h(y \mid \boldsymbol{Y}_{i,s} > u_i)$ is defined as the conditional density of $\boldsymbol{Y}_{i,s} \mid (Y_{i,s} > u_i)$. 
+However, it is unclear what is meant by $h(y \mid \boldsymbol{Y}_{i,s^*} > u_i)$. 
+Is this intended to be the conditional density of $\boldsymbol{Y}_{i,s} \mid (\boldsymbol{Y}_{i,s^*} > u_i)$, or of $\boldsymbol{Y}_{i,s^*} \mid (\boldsymbol{Y}_{i,s^*} > u_i)$? 
+If the first interpretation is intended, it would be helpful to provide more details or justification for why $h(y \mid \boldsymbol{Y}_{i,s} > u_i) = h(y \mid \boldsymbol{Y}_{i,s^*} > u_i)$.
+}
 
+\noindent \textcolor{teal}{\bf Response}: \\
 
 %%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%%
-\noindent \textcolor{teal}{1. On page 7 you argue that ‘asymptotically, the quantity $\sigma_{i,j}$ for $i=j$ is one’. Please clarify what the limit is taken over. For example, $\sigma_{i,j}$ seems not to depend on the sample size $n$.}\\
+\todo{Check that eJSGa is correct here}
+{\color{teal}
+\noindent 
+  In Section 2.4, Algorithm 1 is described as depending on the conditioning variable $i$ as an input. 
+However, in Section 3.1 it is applied using the matrix
+\[
+  M = \frac{1}{d}\sum_{i=1}^d M^{(i)}.
+\]
+In this context, it is unclear how $\eJSGa{i,s,s^*}$ for $i \in \{1, \ldots, d\}$ and $s, s^* \in \{1, \ldots, D\}$ is defined, since the divergence depends on i, but $M$ does not. 
+Presumably, the authors intend to refer to
+\[
+  \frac{1}{d}\sum^d_{i=1}\eJSGa{i, s, s^*}
+\]
+for two specific sites $s, s^* \in \{1, \ldots, D\}$. 
+As currently stated, Algorithm 1 does not flexibly accommodate this situation. 
+A slight rewriting of the algorithm would make it more general, allowing it to handle both the per-$i$ and aggregated cases.
+}
 
-\noindent \textcolor{teal}{\bf Response}: Thank you for pointing this out. We have replaced ``asymptotically'' with ``theoretically''.\\ 
-
+\noindent \textcolor{teal}{\bf Response}: \\
 
 %%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%%
-\noindent \textcolor{teal}{2. The introductory Section 2.1. to the method is technically quite dense. I would welcome if the mathematically concepts could be presented in
-a more accessible way.}\\
 
-\noindent \textcolor{teal}{\bf Response}: Thank you for this point. We have re-written the opening of Section 2.1, which is provided below.  \\
+{\color{teal}
+\noindent
+In Section 3.1, it is unclear what the term ``pre-clustering'' refers to. 
+My understanding is that no clustering method has been applied. 
+If that is the case, why does the ``pre-clustering'' panel in Figure 1 display three boxplots for each dependence quantile? 
+Could the authors clarify what is being shown in this panel?
+}
 
-  \textcolor{red}{A $d$-dimensional random vector $\mathbf{X}\in \mathbbm{R}^d_+$ is regularly varying with tail index $\alpha>0$, denoted by $\mathbf{X}\in {\rm RV}^d_+(\alpha)$, if there exists a sequence $b_n\to \infty$ such that $n\Pr(b_n^{-1}\mathbf{X} \in\cdot)\xrightarrow{v} v(\cdot)$ as $n\to\infty$, where the limiting Radon measure $v(\cdot)$ is supported on the cone $\mathbbm{E}^d_+:=[0,\infty]^d\setminus{\{\mathbf{0}\}}$ and where $\xrightarrow{v}$ denotes vague convergence; see, e.g., \cite{resnick2007heavy}. As a result of this vague convergence statement, the limit measure $v(\cdot)$ satisfies $(-\alpha)$-homogeneity, i.e., $v(r\mathcal{B})=r^{-\alpha}v(\mathcal{B})$ for any $r>0$ and any Borel subset $\mathcal{B}\subset \mathbbm{E}^d_+$. Courtesy of the $(-\alpha)$-homogeneity of  $v(\cdot)$, we can make $v(\cdot)$ amenable to modelling via a radial-angular decomposition of the limit measure into a product measure, defined on $\mathbb{R}_+ \times \mathcal{S}^{d-1}_+$, where {$\mathcal{S}^{d-1}_+:=\{\mathbf{x}\in \mathbbm{R}_+^d: ||\mathbf{x}||_2=1\}$} is the positive part of the unit $(d-1)$-sphere: for $r>0$, we consider $${v(\{\mathbf{x}\in \mathbbm{E}^d_+: ||\mathbf{x}||_2\geq r, \mathbf{x}/||\mathbf{x}||_2\in \mathcal{B}_H \})}=r^{-\alpha}H(\mathcal{B}_H),$$ where $\mathcal{B}_H \subset\mathcal{S}^{d-1}_+ $ is a Borel subset and where $H(\cdot)$ is an angular mass measure supported on $\mathcal{S}^{d-1}_+$. Loosely speaking, the angular measure $H(\cdot)$ determines the direction of a multivariate extreme event, while the measure $r^{-\alpha}$ determines the relative magnitude.} \\
-  
-
+\noindent \textcolor{teal}{\bf Response}: \\
 
 %%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%%
-\noindent \textcolor{teal}{3. The authors opt for a MOSUM detector. Personally, I would have
-appreciated a discussion of why the authors did not choose a CUSUM
-statistic using e.g. the procedure of Vostrikova (1981) (see also, more
-recently, the wild binary segmentation of Fryzlewicz (‘\textit{Wild binary} \dots ’,
-2014, Annals of Statistics)).}\\
 
-\noindent \textcolor{teal}{\bf Response}: Thank you for this helpful suggestion. Change point methods based on applying test statistics in a localised manner, such as those based on MOSUMs or CUSUMs, have benefits and drawbacks, and we would not advocate that there is a uniformly best approach for change point detection. We selected the MOSUM approach for several reasons that are particularly relevant to our application. 
+{\color{teal}
+\noindent
+ On page 21, could the authors be more precise about where Bengtsson, Hodges, and Keenlyside
+2009 indicates that the weekly temporal scale reflects the lag between extreme precipitation
+and wind speed during storm events?
+}
 
-One benefit of the MOSUM approach is that it provides a straightforward method for simultaneous estimation of multiple change points using the local maxima of the test statistics, without the need for careful choice of search intervals as required in CUSUM-based approaches.
+\noindent \textcolor{teal}{\bf Response}: \\
 
-A key advantage of the MOSUM approach over cumulative sum (CUSUM) approaches is the use of symmetric windows, which is particularly important for a test statistic based on threshold exceedances since it ensures that the same number of threshold exceedances occur in the left and right windows, which is not the case for CUSUM approaches. This ensures the "effective sample size" is equal in both windows.
+%%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%%
 
-Lastly, the MOSUM approach is computationally more efficient than CUSUM-based approaches in our implementation; for a given bandwidth the permutation test only needs to be performed once regardless of the number of change points, whereas in CUSUM approaches, it would need to be performed on each search interval.
+{\color{teal}
+\noindent
+In Figure 7, the estimates of $\alpha_{j \mid i, s}$ for all $i, j \in \{1, 2\}$ with $j \ne i$ lie between 0 and 1, which implies asymptotic independence between precipitation and wind speed (see, e.g., Keef, Papastathopoulos, and Tawn 2013, Section 2.3). 
+Is this not in contradiction with the statement in Section 4.1 that all sites exhibit positive extremal dependence between precipitation and wind speed, or am I missing an important distinction?
+}
 
-We have added a summary of this discussion at the end of Section 2.4: \\
+\noindent \textcolor{teal}{\bf Response}: \\
 
-\textcolor{red}{We remark that, whilst here we use the MOSUM-based approach,  alternatives based on cumulative sums (CUSUMs) such as the wild binary segmentation algorithm \citep{piotr2014} are also possible. The MOSUM approach, however, offers several advantages relevant to our application: the use of two symmetric windows of size $G$ in the computation of the test statistic allows for a natural use of order statistics to set the exceedance threshold (see discussion on extremal threshold selection in Section 3.1). This ensures that the same number of exceedances contribute in both windows, which helps with the empirical behaviour of the test statistic. Secondly, the MOSUM approach offers superior computational efficiency when combined with resampling methods (see Section 2.6), since the resampling procedure only need be performed once for a given bandwidth $G$.} \\
+%%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%%
 
-We have also added a brief motivation for MOSUM's usage in change point detection at the start of Section 2.4.\\ 
+{\color{teal}
+\noindent
+ In Figure 8, I think the last item should be ``$> 0.08$'' instead of ``$> 0.8$''.
+}
 
-\textcolor{red}{The moving sum (MOSUM) methodology has successfully been applied to a variety of change point testing \citep{chu1995mosum} and estimation problems \citep{eichinger2018}}.\\
-
-\noindent \textcolor{teal}{4. On page 6, there is an a to much, i.e. ‘of a a candidate’.}\\
-
-\noindent \textcolor{teal}{\bf Response}: Fixed.\\ 
+\noindent \textcolor{teal}{\bf Response}: \\
 
 \clearpage
 \newpage
-
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -293,151 +407,107 @@ We have also added a brief motivation for MOSUM's usage in change point detectio
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \noindent {\Large {\bf Responses to Reviewer 2}}\\
 
-\noindent \textcolor{blue}{The manuscript proposes a nonparametric method, named MOPED, for detecting multiple
-change points in pairwise extremal dependence in multivariate time series. Pairwise
-extremal dependence is summarised through the Tail Pairwise Dependence Matrix
-(TPDM), see Cooley and Thibault (2019), which acts as a covariance-type summary for
-multivariate heavy-tailed distributions.
-For a moving window of width G, the authors compute left and right local estimates of
-the TPDM and measure their discrepancy using a Moving Sum type statistic. Significant
-peaks above a data-driven threshold, obtained via a permutation procedure under the
-null of no change and independence, yield potential change points. The authors further
-propose a multiscale and multi-threshold extension combining multiple bandwidths and
-multiple extremal thresholds.
-A simulation study compares the method with established procedures (E-divisive and,
-in the bivariate case, the parametric method of Hazra et al.). Finally, an application to
-multichannel neonatal EEG data demonstrates that the procedure can detect structural
-changes associated with seizure episodes.}\\
+\noindent \textcolor{blue}{
+This manuscript addresses the challenge of interpreting and comparing extremal dependence structures across high-dimensional multivariate data, particularly in environmental contexts.
+The authors build on the conditional extremes (CE) framework, which models joint tail behavior, and introduce a novel clustering method that employs a closed-form skew-geometric Jensen-Shannon divergence to quantify dissimilarities between CE models across sites or variables.
+Their approach outperforms existing bivariate clustering methods in simulations and extends naturally to higher dimensions. 
+Applying this to Irish meteorological data, the authors identify spatially coherent regions with similar extremal dependence between precipitation and wind speeds, providing new insights into the spatial structure of environmental extremes.
+}
 
-
-%%% Section %%% Section %%% Section %%%
-%%% Section %%% Section %%% Section %%%
-%%% Section %%% Section %%% Section %%%
-
-\section*{{Strengths}}
-
-%%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%%
-
-\noindent \textcolor{blue}{3.1. Typos and language:
-\begin{itemize}
-\item The topic is highly relevant to Extremes: detecting changes in multivariate tail
-dependence is an important and timely problem.
-\item The idea of applying a MOSUM detector to local TPDM estimates is natural,
-interpretable, and well motivated.
-\item The method is nonparametric and applicable in moderately high dimensions.
-\item The empirical work is extensive and generally well executed, including a diverse set
-of simulation scenarios.
-\item The EEG application is convincing and demonstrates the practical usefulness of the
-approach.
-\item Availability of an R package enhances reproducibility and practical impact.
-\end{itemize}
+\noindent \textcolor{blue}{
+I found the manuscript interesting, well written, and well structured. 
+The proposed clustering method clearly addresses an important gap in multivariate extreme clustering. 
+From a methodological perspective, the contribution appears to rely more on a thoughtful combination of existing concepts—namely, the CE framework and the skew-geometric Jensen-Shannon divergence—than on fundamentally new methodological developments. 
+Nevertheless, the proposed approach, together with the synthetic and real case studies, yields interesting results and represents a worthwhile contribution.
 }
 
 \noindent \textcolor{blue}{\bf Response}: Thank you for these positive comments.\\
 
-
 %%% Section %%% Section %%% Section %%%
 %%% Section %%% Section %%% Section %%%
 %%% Section %%% Section %%% Section %%%
 
-\section*{{Weaknesses and Limitations}}
-
-\subsection*{{Major concern: lack of theoretical guarantees}}
+\section*{{Minor Comments}}
 
 %%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%%
 
-\noindent \textcolor{blue}{The most significant limitation of the manuscript is the absence of fundamental theoretical
-results regarding the proposed procedure. In particular:
-\begin{itemize}
-\item No consistency result is provided for the estimation of the number or locations of
-change points.
-\item No rate of convergence is established for the estimated change-point positions.
-\item The asymptotic behaviour of the MOSUM-TPDM detector is not analysed, even
-under simplified conditions.
-\item The validity of the permutation test, crucial to the procedure, is not justified in the
-context of multivariate extremes.
-\item The method relies on an independence assumption that is unrealistic for many
-applications.
-\end{itemize}
-For a methodological article submitted to Extremes, it is essential to provide at least
-a partial theoretical framework. In its present form, the contribution remains essentially
-empirical.
+{\color{blue}
+\noindent
+1. Some parts of the Introduction could benefit from improved flow. In particular, on p.3 (second paragraph), the statement ``we have limited tools for identifying random vectors\ldots'' is made without immediately providing examples (which appear later in the Introduction). 
+In addition, the paragraph concludes by introducing the use of the CE framework as a contribution, but without sufficient justification at that stage, which is only partly developed later.
 }
 
-\noindent \textcolor{blue}{\bf Response}: Per the Editors comments, we have opted not to introduce any new theoretical results to our work, which we believe stands alone as a useful computational framework for identifying structural changes in the extremal dependence of time series. While theoretical support for MOPED is desirable, this is outside of the scope of the paper.\\
-
-\subsection*{{Additional limitations}}
+\noindent \textcolor{blue}{\bf Response}: \\
 
 %%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%%
 
-\noindent \textcolor{blue}{
-\begin{itemize}
-\item  The procedure is sensitive to tuning parameters $(G,k)$, despite the multiscale extension.\\
-\noindent \textcolor{blue}{\bf Response}: \textcolor{black}{Thank you for this point. Sensitivity of the MOPED estimator to the choice of hyperparameters is, of course, a limitation of our method, which was our motivation for introducing the multiscale MOPED procedure which partially addresses this issue by allowing for adaptivity to multiscale change point scenarios.}
-\item The focus on pairwise dependence means that changes in higher-order extremal
-structure may remain undetected. \\
-\noindent \textcolor{blue}{\bf Response}: \textcolor{black}{Added to Discussion: In this context, it is important to note that our approach is not able to detect all types of \textcolor{red}{changes in extremal dependence, due to the TPDM only considering pairwise tail dependence. Further work may develop change point algorithms designed to detect higher-order changes in extremal dependence by, for example, identifying changes in the angular measure.} } 
-\item Minor issues in notation and presentation (e.g., TPDM/TDPM inconsistencies,
-typographical errors). \\
-\noindent \textcolor{blue}{\bf Response}: \textcolor{black}{The TPDM/TDPM inconsistency has been fixed and minor typos have been addressed throughout the manuscript.}
-\end{itemize}
+{\color{blue}
+\noindent
+2. On p.9, at the end of the first paragraph, I believe this should be specified for a given $i, 1 \le i \le d$. 
 }
 
-%%% Section %%% Section %%% Section %%%
-%%% Section %%% Section %%% Section %%%
-%%% Section %%% Section %%% Section %%%
-
-\section*{{Minor Corrections and Suggestions}}
-
-
+\noindent \textcolor{blue}{\bf Response}: \\
 
 %%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%%
 
-\noindent \textcolor{blue}{3.1. Typos and language:
-\begin{itemize}
-\item “timesseries” should be corrected to “time series”.\\
-\noindent \textcolor{blue}{\bf Response}: \textcolor{black}{Fixed.}\\
-\item Ensure consistent spelling: “nonstationary” vs. “non-stationary”.\\
-\noindent \textcolor{blue}{\bf Response}: \textcolor{black}{Fixed.}\\
-\item In the abstract and introduction, harmonise the use of capitalisation for “MOving
-sum” or use “moving-sum-based”.\\
-\noindent \textcolor{blue}{\bf Response}: \textcolor{black}{Fixed.}\\
-\item Replace any occurrences of “TDPM” by the correct acronym “TPDM”. \\
-\noindent \textcolor{blue}{\bf Response}: \textcolor{black}{Fixed.}
-\item Minor style improvements: use “it is advisable” instead of “it is advised”.\\
-\noindent \textcolor{blue}{\bf Response}: \textcolor{black}{Fixed.}
-\end{itemize}
+{\color{blue}
+\noindent
+3. On p.9, the last sentence (``Its computational efficiency \ldots'') would be more appropriately placed in the Introduction.
 }
 
+\noindent \textcolor{blue}{\bf Response}: \\
 
 %%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%%
 
-\noindent \textcolor{blue}{3.2. Notation and clarity:}
-\begin{itemize}
-\item Add a clarification that margins are transformed empirically to Pareto(2) and that
-the TPDM is (asymptotically) invariant under marginal transformations.\\
-\noindent \textcolor{blue}{\bf Response}: \textcolor{black}{Added. \textcolor{red}{Note that $\mathbf{X}=(X_1,\dots,X_d) \in \mbox{RV}^d_+(\alpha)\Rightarrow X_i \in \mbox{RV}^1_+(\alpha), i=1,\dots,d,$ and that the TPDM is invariant under marginal transformations of $\mathbf{X}$ which conserve $\mbox{RV}^1_+(\alpha)$. }}
-\item Explicitly state that the diagonal of the TPDM equals 1 asymptotically.\\
-\noindent \textcolor{blue}{\bf Response}: \textcolor{black}{Added.}
-\item In Section 2.3, clarify whether changes occur in the full angular measure or only in
-pairwise dependence.\\
-\noindent \textcolor{blue}{\bf Response}: \textcolor{black}{Added.}
-
-\item In the multiscale algorithms, explicitly note that the indexing proceeds from smallest
-to largest k (or G).\\
-\noindent \textcolor{blue}{\bf Response}: Algorithms 2 and 3 now have a note saying that we consider the change point values in increasing order with respect to $k$ or $\mathcal{G}$, respectively.
-\end{itemize}
-
-%%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%%
-
-\noindent \textcolor{blue}{3.3. Figures and tables:
-\begin{itemize}
-\item Add bandwidth G and threshold k choices directly in captions of key figures. \\
-\noindent \textcolor{blue}{\bf Response}: \textcolor{black}{We have added the values of $G$ and $k$ for MOPED to the figure and table captions.}\\
-\item Consider moving large simulation tables to an appendix or supplementary material. \noindent \textcolor{blue}{\bf Response}: \textcolor{black}{We have moved Table 2 to the Appendix.}\\
-\item In EEG case study figures, add a clear legend or annotation explaining seizure labels and expert annotations.  \\ \textcolor{blue}{\bf Response}: \textcolor{black}{To avoid overcrowding in the figures, we have opted not to include these annotations. }\\
-\end{itemize}
+{\color{blue}
+\noindent
+4. On p.11, since Monte Carlo methods are required to estimate Eq.(11), providing an estimate of the associated computational cost would be useful.
 }
+
+\noindent \textcolor{blue}{\bf Response}: \\
+
+%%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%%
+
+{\color{blue}
+\noindent
+5. On p.13, Algorithm 1 uses $M^(i)$ as input, but $M^(i)$ is never referenced in the calculations inside the algorithm; I believe this is a mistake.
+}
+
+\noindent \textcolor{blue}{\bf Response}: \\
+
+%%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%%
+
+{\color{blue}
+\noindent
+6. On p.14, fourth line: I believe it should be the correlation matrix rather than the covariance matrix, since the off-diagonal entries are pairwise correlations.
+}
+
+%%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%%
+
+{\color{blue}
+\noindent
+7. End of p.14: I suggest: The explanations of the pre-clustering and post-clustering steps should be clearer and more straightforward.
+}
+
+\noindent \textcolor{blue}{\bf Response}: \\
+
+%%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%%
+
+{\color{blue}
+\noindent
+8. On p.15, sec. 3.2: I suggest: I would like a more detailed justification for this specific mixture choice - for example, why not use a mixture of Student's t distributions only?
+}
+
+\noindent \textcolor{blue}{\bf Response}: \\
+
+%%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%% Item %%%
+
+{\color{blue}
+\noindent
+9. On p.20, sec. 4.1: could you compare your results with those of Vignotto et al. (2021)?
+}
+
+\noindent \textcolor{blue}{\bf Response}: \\
 
 \bibliographystyle{apalike}
 {\small

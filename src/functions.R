@@ -1058,6 +1058,265 @@ sim_cop_dat <- \(
   ))
 }
 
+# function to convert vector to correlation matrix (useful below)
+vec_to_cor_mat <- function(rho, n_vars) {
+  R <- diag(1, n_vars) # 1 across diagonal
+  R[lower.tri(R)] <- rho
+  R[upper.tri(R)] <- t(R)[upper.tri(R)]
+  R
+}
+
+# function to check that correlation matrix is valid
+# (i.e. symmetric, unit diagonal, entries in [-1, 1], PSD)
+is_valid_cor_vec <- function(rho, n_vars, tol = 1e-8) {
+  if (length(rho) != choose(n_vars, 2)) {
+    return(FALSE)
+  }
+  if (any(!is.finite(rho)) || any(rho <= -1) || any(rho >= 1)) {
+    return(FALSE)
+  }
+  R <- vec_to_cor_mat(rho, n_vars)
+  eig <- eigen(R, symmetric = TRUE, only.values = TRUE)$values
+  all(eig > tol)
+}
+
+# Function to generate copula data for vector of t-copula correlation params
+# (which are converted into correlation matrix using vec_to_crr_mat)
+# (Only list of vectors for cor_t, cor_gauss remains scalar)
+sim_cop_dat_vec <- \(
+  n_locs = 12, # number of locations
+  n_vars = 2, # number of variables at each location
+  n = 1e4, # number of simulations for each variable
+  n_clust = 2, # number of clusters
+  cluster_mem = NULL, # desired membership, if NULL then evenly split
+  cor_gauss = NULL, # bulk correlation for n_clust clusters from Gaussian copula
+  # params_norm,         # normal marginal parameters (same for both)
+  cor_t = NULL, # extreme correlation for n_clust clusters from t-copula
+  df_t = NULL, # degrees of freedom for t-copula
+  # params_gpd = NULL, # GPD margin parameters
+  mix_p = c(0.5, 0.5), # mixture weights
+  perturb_cor = FALSE, # perturb correlation for each location within clusters
+  perturb_val = 0.05, # value to perturb by if desired
+  quiet = FALSE, # do return messages
+  qfun = evd:::qgpd,
+  qargs = NULL
+) {
+  # many arguments must be of length n_clust
+  # stopifnot(all(vapply(
+  #   # list(cor_gauss, cor_t, df_t, params_gpd, mix_p),
+  #   list(cor_gauss, cor_t, df_t),
+  #   \(x) length(x) == n_clust, logical(1)
+  # )))
+
+  # check that cor_t is correctly specified
+  n_pairs <- choose(n_vars, 2)
+
+  stopifnot("cor_t must be a list" = is.list(cor_t))
+  stopifnot("cor_t must have length n_clust" = length(cor_t) == n_clust)
+  stopifnot(
+    "each element of cor_t must have length choose(n_vars, 2)" =
+      all(vapply(cor_t, length, integer(1)) == n_pairs)
+  )
+
+  stopifnot(
+    "all cor_t vectors must define valid correlation matrices" =
+      all(vapply(cor_t, is_valid_cor_vec, logical(1), n_vars = n_vars))
+  )
+
+  # checks for mixture percentages
+  stopifnot(is.numeric(mix_p) && length(mix_p) == 2 && sum(mix_p) == 1)
+
+  # if (!quiet && is.null(params_gpd)) {
+  #   message("No GPD parameters supplied, assuming Laplace margins")
+  # }
+
+  # Simulate from Gaussian Copula with GPD margins
+  gen_gauss_cop <- \() {
+    gauss_cop <- lapply(seq_len(n_locs), \(i) {
+      # pull correlation specified for each cluster
+      # if membership unspecified, assign equal membership to each cluster
+      if (n_locs == 1) {
+        group <- 1
+      } else if (is.null(cluster_mem)) {
+        group <- ceiling(i / (n_locs / n_clust))
+      } else {
+        group <- cluster_mem[i]
+      }
+      # Assign the corresponding value to the result
+      cor <- cor_gauss[group]
+
+      # set correlation matrix/vector with correct dimensions
+      cor <- rep(cor, n_vars * (n_vars - 1) / 2)
+
+      # create (Gaussian) copula object
+      cop_norm <- copula::normalCopula(cor, dim = n_vars, dispstr = "un")
+      # simulate uniform draws from copula
+      u <- copula::rCopula(n, cop_norm)
+      # transform to GPD margins, if GPD parameters specified
+      # if (!is.null(params_gpd)) {
+      #   evd::qgpd(
+      #     p     = u,
+      #     loc   = 0,
+      #     scale = params_gpd[1],
+      #     shape = params_gpd[2]
+      #   )
+      #   # Otherwise, assume Laplace margins (i.e. we skip GPD and go to CE)
+      # } else {
+      #   # TODO Change to be called qlaplace
+      #   # TODO This could just be an rlaplace/rmvlaplace function!
+      #   evc:::inv_laplace_trans(u)
+      # }
+      # TODO Functionalise, the same for t-copula as well!
+      # use supplied quantile function; defaults to default parameters
+      if (!is.null(qfun) && is.null(qargs)) {
+        return(do.call(qfun, list(u)))
+        # if marginal parameters are the same for all variables
+      } else if (!is.null(qfun) && !is.list(qargs)) {
+        return(do.call(qfun, c(list(u), qargs)))
+        # if marginal parameters are different for each variable
+      } else if (!is.null(qfun) && is.list(qargs)) {
+        return(tryCatch(
+          {
+            mapply(
+              \(u, qarg) {
+                do.call(qfun, c(list(u), qarg))
+              },
+              as.list(as.data.frame(u)),
+              qargs,
+              SIMPLIFY = TRUE
+            )
+          },
+          error = function(e) {
+            browser()
+          }
+        ))
+      } else {
+        return(u)
+      }
+    })
+    return(gauss_cop)
+  }
+
+  if (mix_p[[1]] == 0) {
+    if (!quiet) {
+      message("Data from t-copula only")
+    }
+    gauss_cop <- NULL
+  } else {
+    gauss_cop <- gen_gauss_cop()
+  }
+
+  # simulate from t-Copula with GPD margins
+  gen_t_cop <- \() {
+    t_cop <- lapply(seq_len(n_locs), \(i) {
+      if (is.null(cluster_mem)) {
+        group <- ceiling(i / (n_locs / n_clust))
+      } else {
+        group <- cluster_mem[i]
+      }
+      # Assign the corresponding value to the result
+      # cor <- cor_t[group]
+      cor <- cor_t[[group]]
+      df <- df_t[group]
+
+      # optionally perturb correlation for each location within clusters
+      # if (perturb_cor) {
+      #   cor <- cor + runif(1, -perturb_val, perturb_val)
+      #   cor <- pmax(pmin(cor, 1), 0) # ensure within [0, 1]
+      # }
+      if (perturb_cor) {
+        cor <- cor + runif(length(cor), -perturb_val, perturb_val)
+        cor <- pmax(pmin(cor, 0.999), -0.999)
+
+        if (!is_valid_cor_vec(cor, n_vars)) {
+          stop("Perturbed t-copula correlation vector is not positive definite")
+        }
+      }
+
+      # cor <- rep(cor, n_vars * (n_vars - 1) / 2)
+      cop_t <- copula::tCopula(cor, dim = n_vars, df = df, dispstr = "un")
+      u <- copula::rCopula(n, cop_t)
+      # if (!is.null(params_gpd)) {
+      #   evd::qgpd(
+      #     p     = u,
+      #     loc   = 0,
+      #     scale = params_gpd[1],
+      #     shape = params_gpd[2]
+      #   )
+      #   # Otherwise, assume Laplace margins (i.e. we skip GPD and go to CE)
+      # } else {
+      #   message("No GPD parameters supplied, assuming Laplace margins")
+      #   evc:::inv_laplace_trans(u)
+      # }
+      # if (is.null(qargs)) {
+      #   return(do.call(qfun, list(u)))
+      # } else {
+      #   return(do.call(qfun, c(list(u), qargs)))
+      # }
+      if (!is.null(qfun) && is.null(qargs)) {
+        return(do.call(qfun, list(u)))
+        # if marginal parameters are the same for all variables
+      } else if (!is.null(qfun) && !is.list(qargs)) {
+        return(do.call(qfun, c(list(u), qargs)))
+        # if marginal parameters are different for each variable
+      } else if (!is.null(qfun) && is.list(qargs)) {
+        return(tryCatch(
+          {
+            mapply(
+              \(u, qarg) {
+                do.call(qfun, c(list(u), qarg))
+              },
+              as.list(as.data.frame(u)),
+              qargs,
+              SIMPLIFY = TRUE
+            )
+          },
+          error = function(e) {
+            browser()
+          }
+        ))
+      } else {
+        return(u)
+      }
+    })
+    return(t_cop)
+  }
+
+
+  if (mix_p[[2]] == 0) {
+    if (!quiet) {
+      message("Data from Gaussian copula only")
+    }
+    t_cop <- NULL
+  } else {
+    t_cop <- gen_t_cop()
+  }
+
+  # Return margins of t-copula if Gaussian copula is NULL, and vice versa
+  if (is.null(gauss_cop)) {
+    data_mix <- t_cop
+  } else if (is.null(t_cop)) {
+    data_mix <- gauss_cop
+    # Return mixture of Gaussian and t-copulas if desired
+  } else {
+    data_mix <- lapply(seq_len(n_locs), \(i) {
+      x <- nrow(gauss_cop[[i]])
+      y <- nrow(t_cop[[i]])
+      # sample mix_p * nrow(gauss_cop) rows from gauss_cop (same for t_cop)
+      rbind(
+        gauss_cop[[i]][sample(seq_len(x), size = mix_p[[1]] * x), ],
+        t_cop[[i]][sample(seq_len(y), size = mix_p[[2]] * y), ]
+      )
+    })
+  }
+  return(list(
+    "gauss_cop" = gauss_cop,
+    "t_cop"     = t_cop,
+    "data_mix"  = data_mix
+  ))
+}
+
+
 
 #### handy sf functions ####
 

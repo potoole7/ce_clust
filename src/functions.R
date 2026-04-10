@@ -1208,7 +1208,9 @@ sim_cop_dat_vec <- \(
 
   # simulate from t-Copula with GPD margins
   gen_t_cop <- \() {
+    # browser()
     t_cop <- lapply(seq_len(n_locs), \(i) {
+      print(i)
       if (is.null(cluster_mem)) {
         group <- ceiling(i / (n_locs / n_clust))
       } else {
@@ -1217,7 +1219,10 @@ sim_cop_dat_vec <- \(
       # Assign the corresponding value to the result
       # cor <- cor_t[group]
       cor <- cor_t[[group]]
-      df <- df_t[group]
+      df <- df_t
+      if (length(df) > 1) {
+        df <- df[group]
+      }
 
       # optionally perturb correlation for each location within clusters
       # if (perturb_cor) {

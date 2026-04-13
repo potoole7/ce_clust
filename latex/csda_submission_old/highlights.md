@@ -1,0 +1,5 @@
+- Novel framework clustering multivariate tail dependence via conditional extremes.
+- Uses conditional extremes for flexible, parsimonious tail-dependence models.
+- Clusters parameters with skew-geometric Jensen–Shannon divergence (closed-form).
+- Groups similar tail-dependence structures in high-dimensional settings.
+- Simulations beat existing methods; applied to Irish precipitation & wind speed data.

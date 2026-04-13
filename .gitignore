@@ -7,6 +7,7 @@ src/0_testing/*
 *.txt
 
 # ignore data files
+*.rds
 *.RDS
 *.rda
 *.csv
